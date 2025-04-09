@@ -1,11 +1,7 @@
-import { Client } from '@planetscale/database'
-import { drizzle } from 'drizzle-orm/planetscale-serverless'
+import { neon } from '@neondatabase/serverless'
+import { drizzle } from 'drizzle-orm/neon-http'
 import { env } from '~/lib/env'
 
-const client = new Client({
-  host: env.DATABASE_HOST,
-  username: env.DATABASE_USERNAME,
-  password: env.DATABASE_PASSWORD
-})
+const client = neon(env.EVERYNEWS_DB_DATABASE_URL)
 
 export const database = drizzle(client)

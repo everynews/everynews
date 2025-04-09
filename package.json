@@ -6,10 +6,17 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "db:push": "drizzle-kit push",
+    "db:pull": "pnpm drizzle-kit pull",
+    "db:generate": "pnpm drizzle-kit generate",
+    "db:migrate": "pnpm drizzle-kit migrate",
+    "db:check": "pnpm drizzle-kit check",
+    "db:studio": "pnpm drizzle-kit studio",
+    "db:deploy": "pnpm drizzle-kit migrate",
     "format": "biome check"
   },
   "dependencies": {
-    "@planetscale/database": "^1.19.0",
+    "@neondatabase/serverless": "^1.0.0",
     "better-auth": "^1.2.5",
     "drizzle-orm": "^0.41.0",
     "hono": "^4.7.6",
