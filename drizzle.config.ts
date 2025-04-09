@@ -1,6 +1,5 @@
-import { defineConfig } from 'drizzle-kit';
-import { env } from '~/lib/env';
-
+import { defineConfig } from 'drizzle-kit'
+import { env } from '~/lib/env'
 
 export default defineConfig({
   out: './drizzle',
@@ -9,4 +8,4 @@ export default defineConfig({
   dbCredentials: {
     url: env.EVERYNEWS_DB_DATABASE_URL,
   },
-});
+})
