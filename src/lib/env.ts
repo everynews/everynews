@@ -6,4 +6,7 @@ const envSchema = z.object({
   EVERYNEWS_DB_DATABASE_URL: z.string().min(1),
 })
 
-export const env = envSchema.parse(process.env)
+export const env = envSchema.parse({
+  ...process.env,
+  EVERYNEWS_AUTH_URL: process.env.EVERYNEWS_AUTH_URL || process.env.VERCEL_URL,
+})
