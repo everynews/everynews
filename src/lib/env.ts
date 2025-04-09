@@ -8,5 +8,5 @@ const envSchema = z.object({
 
 export const env = envSchema.parse({
   ...process.env,
-  EVERYNEWS_AUTH_URL: process.env.EVERYNEWS_AUTH_URL || process.env.VERCEL_URL,
+  EVERYNEWS_AUTH_URL: process.env.EVERYNEWS_AUTH_URL ?? process.env.VERCEL_URL,
 })
