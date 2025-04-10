@@ -1,26 +1,32 @@
 'use client'
+
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { XIcon } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { cn } from '~/lib/cn'
+
 const Dialog = ({ ...props }: ComponentProps<typeof DialogPrimitive.Root>) => (
   <DialogPrimitive.Root data-slot="dialog" {...props} />
 )
+
 const DialogTrigger = ({
   ...props
 }: ComponentProps<typeof DialogPrimitive.Trigger>) => (
   <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
 )
+
 const DialogPortal = ({
   ...props
 }: ComponentProps<typeof DialogPrimitive.Portal>) => (
   <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
 )
+
 const DialogClose = ({
   ...props
 }: ComponentProps<typeof DialogPrimitive.Close>) => (
   <DialogPrimitive.Close data-slot="dialog-close" {...props} />
 )
+
 const DialogOverlay = ({
   className,
   ...props
@@ -34,6 +40,7 @@ const DialogOverlay = ({
     {...props}
   />
 )
+
 const DialogContent = ({
   className,
   children,
@@ -60,6 +67,7 @@ const DialogContent = ({
     </DialogPrimitive.Content>
   </DialogPortal>
 )
+
 const DialogHeader = ({ className, ...props }: ComponentProps<'div'>) => (
   <div
     data-slot="alert-dialog-header"
@@ -67,6 +75,7 @@ const DialogHeader = ({ className, ...props }: ComponentProps<'div'>) => (
     {...props}
   />
 )
+
 const DialogFooter = ({ className, ...props }: ComponentProps<'div'>) => (
   <div
     data-slot="alert-dialog-footer"
@@ -77,6 +86,7 @@ const DialogFooter = ({ className, ...props }: ComponentProps<'div'>) => (
     {...props}
   />
 )
+
 const DialogTitle = ({
   className,
   ...props
@@ -87,6 +97,7 @@ const DialogTitle = ({
     {...props}
   />
 )
+
 const DialogDescription = ({
   className,
   ...props
@@ -97,6 +108,7 @@ const DialogDescription = ({
     {...props}
   />
 )
+
 export {
   Dialog,
   DialogClose,

@@ -1,7 +1,9 @@
 'use client'
+
 import * as SeparatorPrimitive from '@radix-ui/react-separator'
 import type { ComponentProps } from 'react'
 import { cn } from '~/lib/cn'
+
 const Separator = ({
   className,
   orientation = 'horizontal',
@@ -19,4 +21,5 @@ const Separator = ({
     {...props}
   />
 )
+
 export { Separator }

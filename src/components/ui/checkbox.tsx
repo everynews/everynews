@@ -1,7 +1,9 @@
 'use client'
+
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
 import type { ComponentProps } from 'react'
 import { cn } from '~/lib/cn'
+
 const Checkbox = ({
   className,
   ...props
@@ -52,4 +54,5 @@ const Checkbox = ({
     </CheckboxPrimitive.Indicator>
   </CheckboxPrimitive.Root>
 )
+
 export { Checkbox }

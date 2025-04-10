@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react'
 import { cn } from '~/lib/cn'
+
 const Skeleton = ({ className, ...props }: ComponentProps<'div'>) => (
   <div
     data-slot="skeleton"
@@ -7,4 +8,5 @@ const Skeleton = ({ className, ...props }: ComponentProps<'div'>) => (
     {...props}
   />
 )
+
 export { Skeleton }

@@ -1,16 +1,10 @@
 'use client'
+
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from 'lucide-react'
-// import type { Metadata } from "next";
-
-// export const metadata: Metadata = {
-//   title: "Everynews",
-//   description: "Everynews",
-// };
-
 import { AppSidebar } from '~/components/app-sidebar'
 import ThemeToggle from '~/components/theme-toggle'
 import { Button } from '~/components/ui/button'
@@ -28,8 +22,15 @@ import {
 } from '~/components/ui/sidebar'
 import { cn } from '~/lib/cn'
 
+// import type { Metadata } from "next";
+
+// export const metadata: Metadata = {
+//   title: "Everynews",
+//   description: "Everynews",
+// };
 export default function Page() {
   const { open } = useSidebar()
+
   return (
     <>
       <AppSidebar />

@@ -1,8 +1,10 @@
 'use client'
+
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
 import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react'
 import { type ComponentProps, useCallback, useRef } from 'react'
 import { cn } from '~/lib/cn'
+
 type PointerDownEvent = Parameters<
   NonNullable<DropdownMenuPrimitive.DropdownMenuContentProps['onPointerDown']>
 >[0]
@@ -16,16 +18,19 @@ const DropdownMenu = ({
 }: ComponentProps<typeof DropdownMenuPrimitive.Root>) => (
   <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />
 )
+
 const DropdownMenuPortal = ({
   ...props
 }: ComponentProps<typeof DropdownMenuPrimitive.Portal>) => (
   <DropdownMenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />
 )
+
 const DropdownMenuTrigger = ({
   ...props
 }: ComponentProps<typeof DropdownMenuPrimitive.Trigger>) => (
   <DropdownMenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
 )
+
 const DropdownMenuContent = ({
   className,
   sideOffset = 4,
@@ -35,6 +40,7 @@ const DropdownMenuContent = ({
   ...props
 }: ComponentProps<typeof DropdownMenuPrimitive.Content>) => {
   const isCloseFromMouse = useRef<boolean>(false)
+
   const handlePointerDown = useCallback(
     (e: PointerDownEvent) => {
       isCloseFromMouse.current = true
@@ -42,6 +48,7 @@ const DropdownMenuContent = ({
     },
     [onPointerDown],
   )
+
   const handlePointerDownOutside = useCallback(
     (e: PointerDownOutsideEvent) => {
       isCloseFromMouse.current = true
@@ -49,6 +56,7 @@ const DropdownMenuContent = ({
     },
     [onPointerDownOutside],
   )
+
   const handleCloseAutoFocus = useCallback(
     (e: Event) => {
       if (onCloseAutoFocus) {
@@ -62,6 +70,7 @@ const DropdownMenuContent = ({
     },
     [onCloseAutoFocus],
   )
+
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
@@ -79,11 +88,13 @@ const DropdownMenuContent = ({
     </DropdownMenuPrimitive.Portal>
   )
 }
+
 const DropdownMenuGroup = ({
   ...props
 }: ComponentProps<typeof DropdownMenuPrimitive.Group>) => (
   <DropdownMenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />
 )
+
 const DropdownMenuItem = ({
   className,
   inset,
@@ -104,6 +115,7 @@ const DropdownMenuItem = ({
     {...props}
   />
 )
+
 const DropdownMenuCheckboxItem = ({
   className,
   children,
@@ -127,6 +139,7 @@ const DropdownMenuCheckboxItem = ({
     {children}
   </DropdownMenuPrimitive.CheckboxItem>
 )
+
 const DropdownMenuRadioGroup = ({
   ...props
 }: ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>) => (
@@ -135,6 +148,7 @@ const DropdownMenuRadioGroup = ({
     {...props}
   />
 )
+
 const DropdownMenuRadioItem = ({
   className,
   children,
@@ -156,6 +170,7 @@ const DropdownMenuRadioItem = ({
     {children}
   </DropdownMenuPrimitive.RadioItem>
 )
+
 const DropdownMenuLabel = ({
   className,
   inset,
@@ -173,6 +188,7 @@ const DropdownMenuLabel = ({
     {...props}
   />
 )
+
 const DropdownMenuSeparator = ({
   className,
   ...props
@@ -183,6 +199,7 @@ const DropdownMenuSeparator = ({
     {...props}
   />
 )
+
 const DropdownMenuShortcut = ({
   className,
   ...props
@@ -196,11 +213,13 @@ const DropdownMenuShortcut = ({
     {...props}
   />
 )
+
 const DropdownMenuSub = ({
   ...props
 }: ComponentProps<typeof DropdownMenuPrimitive.Sub>) => (
   <DropdownMenuPrimitive.Sub data-slot="dropdown-menu-sub" {...props} />
 )
+
 const DropdownMenuSubTrigger = ({
   className,
   inset,
@@ -222,6 +241,7 @@ const DropdownMenuSubTrigger = ({
     <ChevronRightIcon size={16} className="text-muted-foreground/80 ml-auto" />
   </DropdownMenuPrimitive.SubTrigger>
 )
+
 const DropdownMenuSubContent = ({
   className,
   ...props
@@ -235,6 +255,7 @@ const DropdownMenuSubContent = ({
     {...props}
   />
 )
+
 export {
   DropdownMenu,
   DropdownMenuCheckboxItem,

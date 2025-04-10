@@ -16,6 +16,7 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from '~/components/ui/sidebar'
+
 const data = {
   user: {
     name: 'Sofia Safier',
@@ -24,6 +25,7 @@ const data = {
       'https://res.cloudinary.com/dlzlfasou/image/upload/v1743935337/user-01_l4if9t.png',
   },
 }
+
 export const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => (
   <Sidebar
     variant="inset"

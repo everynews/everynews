@@ -1,15 +1,21 @@
 'use client'
+
 import { RiMoonClearLine, RiSunLine } from '@remixicon/react'
 import { useTheme } from 'next-themes'
 import { useId, useState } from 'react'
+
 export default function ThemeToggle() {
   const id = useId()
+
   const { theme, setTheme } = useTheme()
+
   const [system, setSystem] = useState(false)
+
   const smartToggle = () => {
     const prefersDarkScheme = window.matchMedia(
       '(prefers-color-scheme: dark)',
     ).matches
+
     if (theme === 'system') {
       setTheme(prefersDarkScheme ? 'light' : 'dark')
       setSystem(false)
@@ -24,6 +30,7 @@ export default function ThemeToggle() {
       setSystem(true)
     }
   }
+
   return (
     <div className="flex flex-col justify-center">
       <input

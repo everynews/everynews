@@ -1,4 +1,5 @@
 import { boolean, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
@@ -12,6 +13,7 @@ export const users = pgTable('users', {
   banReason: text('ban_reason'),
   banExpires: timestamp('ban_expires'),
 })
+
 export const sessions = pgTable('sessions', {
   id: text('id').primaryKey(),
   expiresAt: timestamp('expires_at').notNull(),
@@ -26,6 +28,7 @@ export const sessions = pgTable('sessions', {
   impersonatedBy: text('impersonated_by'),
   activeOrganizationId: text('active_organization_id'),
 })
+
 export const accounts = pgTable('accounts', {
   id: text('id').primaryKey(),
   accountId: text('account_id').notNull(),
@@ -43,6 +46,7 @@ export const accounts = pgTable('accounts', {
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at').notNull(),
 })
+
 export const verifications = pgTable('verifications', {
   id: text('id').primaryKey(),
   identifier: text('identifier').notNull(),
@@ -51,6 +55,7 @@ export const verifications = pgTable('verifications', {
   createdAt: timestamp('created_at'),
   updatedAt: timestamp('updated_at'),
 })
+
 export const apikeys = pgTable('apikeys', {
   id: text('id').primaryKey(),
   name: text('name'),
@@ -76,6 +81,7 @@ export const apikeys = pgTable('apikeys', {
   permissions: text('permissions'),
   metadata: text('metadata'),
 })
+
 export const organizations = pgTable('organizations', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
@@ -84,6 +90,7 @@ export const organizations = pgTable('organizations', {
   createdAt: timestamp('created_at').notNull(),
   metadata: text('metadata'),
 })
+
 export const members = pgTable('members', {
   id: text('id').primaryKey(),
   organizationId: text('organization_id')
@@ -95,6 +102,7 @@ export const members = pgTable('members', {
   role: text('role').notNull(),
   createdAt: timestamp('created_at').notNull(),
 })
+
 export const invitations = pgTable('invitations', {
   id: text('id').primaryKey(),
   organizationId: text('organization_id')
@@ -108,6 +116,7 @@ export const invitations = pgTable('invitations', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
 })
+
 export const passkeys = pgTable('passkeys', {
   id: text('id').primaryKey(),
   name: text('name'),

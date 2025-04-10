@@ -1,7 +1,9 @@
 'use client'
+
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group'
 import type { ComponentProps } from 'react'
 import { cn } from '~/lib/cn'
+
 const RadioGroup = ({
   className,
   ...props
@@ -12,6 +14,7 @@ const RadioGroup = ({
     {...props}
   />
 )
+
 const RadioGroupItem = ({
   className,
   ...props
@@ -38,4 +41,5 @@ const RadioGroupItem = ({
     </RadioGroupPrimitive.Indicator>
   </RadioGroupPrimitive.Item>
 )
+
 export { RadioGroup, RadioGroupItem }

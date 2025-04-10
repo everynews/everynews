@@ -4,14 +4,17 @@ import { ThemeProvider } from '~/providers/theme-provider'
 import './globals.css'
 import type { ReactNode } from 'react'
 import { SidebarProvider } from '~/components/ui/sidebar'
+
 const fontSans = Geist({
   variable: '--font-sans',
   subsets: ['latin'],
 })
+
 const fontMono = Geist_Mono({
   variable: '--font-mono',
   subsets: ['latin'],
 })
+
 export default function RootLayout({
   children,
 }: Readonly<{

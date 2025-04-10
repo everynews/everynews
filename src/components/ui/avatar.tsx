@@ -1,7 +1,9 @@
 'use client'
+
 import * as AvatarPrimitive from '@radix-ui/react-avatar'
 import type { ComponentProps } from 'react'
 import { cn } from '~/lib/cn'
+
 const Avatar = ({
   className,
   ...props
@@ -15,6 +17,7 @@ const Avatar = ({
     {...props}
   />
 )
+
 const AvatarImage = ({
   className,
   ...props
@@ -25,6 +28,7 @@ const AvatarImage = ({
     {...props}
   />
 )
+
 const AvatarFallback = ({
   className,
   ...props
@@ -38,4 +42,5 @@ const AvatarFallback = ({
     {...props}
   />
 )
+
 export { Avatar, AvatarImage, AvatarFallback }

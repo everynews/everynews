@@ -1,21 +1,26 @@
 'use client'
+
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { cn } from '~/lib/cn'
+
 const Select = ({ ...props }: ComponentProps<typeof SelectPrimitive.Root>) => (
   <SelectPrimitive.Root data-slot="select" {...props} />
 )
+
 const SelectGroup = ({
   ...props
 }: ComponentProps<typeof SelectPrimitive.Group>) => (
   <SelectPrimitive.Group data-slot="select-group" {...props} />
 )
+
 const SelectValue = ({
   ...props
 }: ComponentProps<typeof SelectPrimitive.Value>) => (
   <SelectPrimitive.Value data-slot="select-value" {...props} />
 )
+
 const SelectTrigger = ({
   className,
   children,
@@ -38,6 +43,7 @@ const SelectTrigger = ({
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 )
+
 const SelectContent = ({
   className,
   children,
@@ -69,6 +75,7 @@ const SelectContent = ({
     </SelectPrimitive.Content>
   </SelectPrimitive.Portal>
 )
+
 const SelectLabel = ({
   className,
   ...props
@@ -82,6 +89,7 @@ const SelectLabel = ({
     {...props}
   />
 )
+
 const SelectItem = ({
   className,
   children,
@@ -103,6 +111,7 @@ const SelectItem = ({
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 )
+
 const SelectSeparator = ({
   className,
   ...props
@@ -113,6 +122,7 @@ const SelectSeparator = ({
     {...props}
   />
 )
+
 const SelectScrollUpButton = ({
   className,
   ...props
@@ -128,6 +138,7 @@ const SelectScrollUpButton = ({
     <ChevronUpIcon size={16} />
   </SelectPrimitive.ScrollUpButton>
 )
+
 const SelectScrollDownButton = ({
   className,
   ...props
@@ -143,6 +154,7 @@ const SelectScrollDownButton = ({
     <ChevronDownIcon size={16} />
   </SelectPrimitive.ScrollDownButton>
 )
+
 export {
   Select,
   SelectContent,

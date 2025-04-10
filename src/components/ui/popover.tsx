@@ -1,17 +1,21 @@
 'use client'
+
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import type { ComponentProps } from 'react'
 import { cn } from '~/lib/cn'
+
 const Popover = ({
   ...props
 }: ComponentProps<typeof PopoverPrimitive.Root>) => (
   <PopoverPrimitive.Root data-slot="popover" {...props} />
 )
+
 const PopoverTrigger = ({
   ...props
 }: ComponentProps<typeof PopoverPrimitive.Trigger>) => (
   <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
 )
+
 const PopoverContent = ({
   className,
   align = 'center',
@@ -39,9 +43,11 @@ const PopoverContent = ({
     </PopoverPrimitive.Content>
   </PopoverPrimitive.Portal>
 )
+
 const PopoverAnchor = ({
   ...props
 }: ComponentProps<typeof PopoverPrimitive.Anchor>) => (
   <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />
 )
+
 export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger }
