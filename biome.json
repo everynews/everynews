@@ -46,7 +46,7 @@
       "quoteProperties": "asNeeded",
       "trailingCommas": "all",
       "semicolons": "asNeeded",
-      "arrowParentheses": "always",
+      "arrowParentheses": "asNeeded",
       "bracketSpacing": true,
       "bracketSameLine": false,
       "quoteStyle": "single",

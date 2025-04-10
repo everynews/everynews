@@ -11,7 +11,6 @@ import { passkey } from 'better-auth/plugins/passkey'
 import { database } from '~/database'
 import { sendMagicLink } from '~/email'
 import { env } from '~/lib/env'
-
 export const auth = betterAuth({
   appName: '@everynews/api/auth',
   basePath: '/auth',
