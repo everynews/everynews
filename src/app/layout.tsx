@@ -18,13 +18,13 @@ export default function RootLayout({
   children: ReactNode
 }>) {
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${fontSans.variable} ${fontMono.variable} bg-sidebar font-sans antialiased`}
       >
         <ThemeProvider
-          attribute='class'
-          defaultTheme='system'
+          attribute="class"
+          defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
