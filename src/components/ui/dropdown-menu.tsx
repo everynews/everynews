@@ -3,7 +3,7 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
 import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react'
 import { type ComponentProps, useCallback, useRef } from 'react'
-import { cn } from '~/lib/cn'
+import { cn } from '~/lib/utils'
 
 type PointerDownEvent = Parameters<
   NonNullable<DropdownMenuPrimitive.DropdownMenuContentProps['onPointerDown']>

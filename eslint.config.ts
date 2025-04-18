@@ -1,9 +1,9 @@
 import js from '@eslint/js'
-import globals from 'globals'
-import tseslint from 'typescript-eslint'
+import preferArrowPlugin from 'eslint-plugin-prefer-arrow-functions'
 import reactPlugin from 'eslint-plugin-react'
 import reactHooksPlugin from 'eslint-plugin-react-hooks'
-import preferArrowPlugin from 'eslint-plugin-prefer-arrow-functions'
+import globals from 'globals'
+import tseslint from 'typescript-eslint'
 
 // Define file patterns
 const tsFiles = ['**/*.ts', '**/*.tsx']

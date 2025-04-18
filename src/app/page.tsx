@@ -20,7 +20,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '~/components/ui/sidebar'
-import { cn } from '~/lib/cn'
+import { cn } from '~/lib/utils'
 
 // import type { Metadata } from "next";
 

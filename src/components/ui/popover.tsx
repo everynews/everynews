@@ -2,7 +2,7 @@
 
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import type { ComponentProps } from 'react'
-import { cn } from '~/lib/cn'
+import { cn } from '~/lib/utils'
 
 const Popover = ({
   ...props
