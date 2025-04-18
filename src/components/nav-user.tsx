@@ -21,7 +21,7 @@ import {
 } from '~/components/ui/sidebar'
 import { authClient, signOut } from '~/auth/client'
 import { Dialog, DialogTrigger } from '~/components/ui/dialog'
-import Component from '~/components/sign-in'
+import SignIn from '~/components/sign-in'
 
 export const NavUser = async () => {
   const { data: session } = await authClient.getSession()
@@ -45,7 +45,7 @@ export const NavUser = async () => {
                 <RiLoginCircleLine className="text-muted-foreground/80 ml-auto size-5" />
               </SidebarMenuButton>
             </DialogTrigger>
-            <Component />
+            <SignIn />
           </Dialog>
         </SidebarMenuItem>
       </SidebarMenu>
