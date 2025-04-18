@@ -1,7 +1,6 @@
 'use client'
 
-import type React from 'react'
-import { useCallback, useMemo, useState } from 'react'
+import { type ReactNode, useCallback, useMemo, useState } from 'react'
 
 interface TreeNode {
   id: string
@@ -61,7 +60,9 @@ const useCheckboxTree = (initialTree: TreeNode) => {
         } else {
           newCheckedNodes.delete(n.id)
         }
-        n.children?.forEach(child => toggleNode(child, check))
+        for (const child of n.children ?? []) {
+          toggleNode(child, check)
+        }
       }
 
       const currentStatus = isChecked(node)
@@ -83,14 +84,14 @@ interface CheckboxTreeProps {
     node: TreeNode
     isChecked: boolean | 'indeterminate'
     onCheckedChange: () => void
-    children: React.ReactNode
-  }) => React.ReactNode
+    children: ReactNode
+  }) => ReactNode
 }
 
 export const CheckboxTree = ({ tree, renderNode }: CheckboxTreeProps) => {
   const { isChecked, handleCheck } = useCheckboxTree(tree)
 
-  const renderTreeNode = (node: TreeNode): React.ReactNode => {
+  const renderTreeNode = (node: TreeNode): ReactNode => {
     const children = node.children?.map(renderTreeNode)
 
     return renderNode({

@@ -1,10 +1,10 @@
 'use client'
 
-import type React from 'react'
 import {
   type ChangeEvent,
   type DragEvent,
   type InputHTMLAttributes,
+  type Ref,
   useCallback,
   useRef,
   useState,
@@ -54,7 +54,7 @@ export type FileUploadActions = {
   getInputProps: (
     props?: InputHTMLAttributes<HTMLInputElement>,
   ) => InputHTMLAttributes<HTMLInputElement> & {
-    ref: React.Ref<HTMLInputElement>
+    ref: Ref<HTMLInputElement>
   }
 }
 

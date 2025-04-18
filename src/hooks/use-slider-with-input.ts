@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { type ChangeEvent, useCallback, useState } from 'react'
 
 type UseSliderWithInputProps = {
   minValue?: number
@@ -74,7 +74,7 @@ export const useSliderWithInput = ({
   )
 
   const handleInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    (e: ChangeEvent<HTMLInputElement>, index: number) => {
       const newValue = e.target.value
 
       if (newValue === '' || /^-?\d*\.?\d*$/.test(newValue)) {

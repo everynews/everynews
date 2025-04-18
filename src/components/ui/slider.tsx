@@ -1,7 +1,14 @@
 'use client'
 
 import * as SliderPrimitive from '@radix-ui/react-slider'
-import type { ComponentProps } from 'react'
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useState,
+  type ComponentProps,
+  type ReactNode,
+} from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -21,9 +28,9 @@ const Slider = ({
   ...props
 }: ComponentProps<typeof SliderPrimitive.Root> & {
   showTooltip?: boolean
-  tooltipContent?: (value: number) => React.ReactNode
+  tooltipContent?: (value: number) => ReactNode
 }) => {
-  const [internalValues, setInternalValues] = React.useState<number[]>(
+  const [internalValues, setInternalValues] = useState<number[]>(
     Array.isArray(value)
       ? value
       : Array.isArray(defaultValue)
@@ -31,7 +38,7 @@ const Slider = ({
         : [min, max],
   )
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (value !== undefined) {
       setInternalValues(Array.isArray(value) ? value : [value])
     }
@@ -42,7 +49,7 @@ const Slider = ({
     props.onValueChange?.(newValue)
   }
 
-  const [showTooltipState, setShowTooltipState] = React.useState(false)
+  const [showTooltipState, setShowTooltipState] = useState(false)
 
   const handlePointerDown = () => {
     if (showTooltip) {
@@ -50,13 +57,13 @@ const Slider = ({
     }
   }
 
-  const handlePointerUp = React.useCallback(() => {
+  const handlePointerUp = useCallback(() => {
     if (showTooltip) {
       setShowTooltipState(false)
     }
   }, [showTooltip])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (showTooltip) {
       document.addEventListener('pointerup', handlePointerUp)
       return () => {
@@ -120,9 +127,9 @@ const Slider = ({
         />
       </SliderPrimitive.Track>
       {Array.from({ length: internalValues.length }, (_, index) => (
-        <React.Fragment key={index}>
+        <Fragment key={internalValues[index]}>
           {renderThumb(internalValues[index])}
-        </React.Fragment>
+        </Fragment>
       ))}
     </SliderPrimitive.Root>
   )

@@ -3,7 +3,7 @@
 import * as ToastPrimitives from '@radix-ui/react-toast'
 import { type VariantProps, cva } from 'class-variance-authority'
 import { XIcon } from 'lucide-react'
-import type { ComponentPropsWithoutRef } from 'react'
+import type { ComponentPropsWithoutRef, ReactElement } from 'react'
 import { cn } from '~/lib/utils'
 
 const ToastProvider = ToastPrimitives.Provider
@@ -116,7 +116,7 @@ const ToastDescription = ({
 
 type ToastProps = ComponentPropsWithoutRef<typeof Toast>
 
-type ToastActionElement = React.ReactElement<typeof ToastAction>
+type ToastActionElement = ReactElement<typeof ToastAction>
 
 export {
   Toast,
