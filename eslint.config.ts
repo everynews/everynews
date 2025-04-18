@@ -4,6 +4,8 @@ import reactPlugin from 'eslint-plugin-react'
 import reactHooksPlugin from 'eslint-plugin-react-hooks'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
+// @ts-expect-error Next.js ESLint Config is still JS-based
+import next from '@next/eslint-plugin-next'
 
 // Define file patterns
 const tsFiles = ['**/*.ts', '**/*.tsx']
@@ -31,6 +33,7 @@ const tsConfig = [
       react: reactPlugin,
       'react-hooks': reactHooksPlugin,
       'prefer-arrow-functions': preferArrowPlugin,
+      '@next/next': next,
     },
     languageOptions: {
       ...languageOptions,
@@ -91,6 +94,9 @@ const tsConfig = [
           allowNamedFunctions: false,
         },
       ],
+
+      ...next.configs.recommended.rules,
+      ...next.configs['core-web-vitals'].rules,
     },
   },
 ]
@@ -104,6 +110,7 @@ const jsConfig = [
       react: reactPlugin,
       'react-hooks': reactHooksPlugin,
       'prefer-arrow-functions': preferArrowPlugin,
+      '@next/next': next,
     },
     languageOptions: {
       ...languageOptions,
@@ -145,6 +152,9 @@ const jsConfig = [
         { blankLine: 'always', prev: '*', next: 'break' },
         { blankLine: 'always', prev: '*', next: 'continue' },
       ],
+
+      ...next.configs.recommended.rules,
+      ...next.configs['core-web-vitals'].rules,
 
       // Prefer arrow function rule
       'prefer-arrow-functions/prefer-arrow-functions': [
