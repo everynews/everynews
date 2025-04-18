@@ -1,7 +1,6 @@
 'use client'
 
 import * as CollapsiblePrimitive from '@radix-ui/react-collapsible'
-import type { ComponentProps } from 'react'
 
 const Collapsible = ({
   ...props
@@ -27,4 +26,4 @@ const CollapsibleContent = ({
   />
 )
 
-export { Collapsible, CollapsibleTrigger, CollapsibleContent }
+export { Collapsible, CollapsibleContent, CollapsibleTrigger }

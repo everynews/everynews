@@ -1,6 +1,8 @@
 'use client'
 
+import { Key, Loader2 } from 'lucide-react'
 import { useId, useState } from 'react'
+import { signIn } from '~/auth/client'
 import { Button } from '~/components/ui/button'
 import {
   Dialog,
@@ -12,8 +14,6 @@ import {
 } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { Loader2, Key } from 'lucide-react'
-import { signIn } from '~/auth/client'
 
 export default function Component() {
   const id = useId()

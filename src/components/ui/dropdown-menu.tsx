@@ -2,7 +2,7 @@
 
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
 import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react'
-import { type ComponentProps, useCallback, useRef } from 'react'
+import type { ComponentProps } from 'react'
 import { cn } from '~/lib/utils'
 
 type PointerDownEvent = Parameters<
@@ -13,6 +13,7 @@ type PointerDownOutsideEvent = Parameters<
     DropdownMenuPrimitive.DropdownMenuContentProps['onPointerDownOutside']
   >
 >[0]
+
 const DropdownMenu = ({
   ...props
 }: ComponentProps<typeof DropdownMenuPrimitive.Root>) => (
@@ -39,9 +40,9 @@ const DropdownMenuContent = ({
   onCloseAutoFocus,
   ...props
 }: ComponentProps<typeof DropdownMenuPrimitive.Content>) => {
-  const isCloseFromMouse = useRef<boolean>(false)
+  const isCloseFromMouse = React.useRef<boolean>(false)
 
-  const handlePointerDown = useCallback(
+  const handlePointerDown = React.useCallback(
     (e: PointerDownEvent) => {
       isCloseFromMouse.current = true
       onPointerDown?.(e)
@@ -49,7 +50,7 @@ const DropdownMenuContent = ({
     [onPointerDown],
   )
 
-  const handlePointerDownOutside = useCallback(
+  const handlePointerDownOutside = React.useCallback(
     (e: PointerDownOutsideEvent) => {
       isCloseFromMouse.current = true
       onPointerDownOutside?.(e)
@@ -57,14 +58,16 @@ const DropdownMenuContent = ({
     [onPointerDownOutside],
   )
 
-  const handleCloseAutoFocus = useCallback(
+  const handleCloseAutoFocus = React.useCallback(
     (e: Event) => {
       if (onCloseAutoFocus) {
         return onCloseAutoFocus(e)
       }
+
       if (!isCloseFromMouse.current) {
         return
       }
+
       e.preventDefault()
       isCloseFromMouse.current = false
     },

@@ -5,17 +5,9 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { cn } from '~/lib/utils'
 
-import type { ComponentProps } from 'react'
-import { forwardRef } from 'react'
-import * as SelectPrimitive from '@radix-ui/react-select'
-
-const Select = forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Root>,
-  ComponentProps<typeof SelectPrimitive.Root>
->(({ ...props }, ref) => (
-  <SelectPrimitive.Root ref={ref} data-slot="select" {...props} />
-))
-Select.displayName = SelectPrimitive.Root.displayName
+const Select = ({ ...props }: ComponentProps<typeof SelectPrimitive.Root>) => (
+  <SelectPrimitive.Root data-slot="select" {...props} />
+)
 
 const SelectGroup = ({
   ...props

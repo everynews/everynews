@@ -1,11 +1,11 @@
 import js from '@eslint/js'
+// @ts-expect-error Next.js ESLint Config is still JS-based
+import next from '@next/eslint-plugin-next'
 import preferArrowPlugin from 'eslint-plugin-prefer-arrow-functions'
 import reactPlugin from 'eslint-plugin-react'
 import reactHooksPlugin from 'eslint-plugin-react-hooks'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
-// @ts-expect-error Next.js ESLint Config is still JS-based
-import next from '@next/eslint-plugin-next'
 
 // Define file patterns
 const tsFiles = ['**/*.ts', '**/*.tsx']

@@ -1,12 +1,15 @@
 import {
   RiExpandUpDownLine,
   RiGroupLine,
+  RiLoginCircleLine,
   RiLogoutCircleLine,
   RiSparklingLine,
   RiUserLine,
-  RiLoginCircleLine,
 } from '@remixicon/react'
+import { authClient, signOut } from '~/auth/client'
+import SignIn from '~/components/sign-in'
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
+import { Dialog, DialogTrigger } from '~/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,9 +22,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '~/components/ui/sidebar'
-import { authClient, signOut } from '~/auth/client'
-import { Dialog, DialogTrigger } from '~/components/ui/dialog'
-import SignIn from '~/components/sign-in'
 
 export const NavUser = async () => {
   const { data: session } = await authClient.getSession()
