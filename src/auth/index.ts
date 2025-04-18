@@ -10,12 +10,15 @@ import {
 import { passkey } from 'better-auth/plugins/passkey'
 import { database } from '~/database'
 import { sendMagicLink } from '~/email'
-import { env } from '~/lib/env'
+
+if (!process.env.AUTH_SECRET) {
+  throw new Error('AUTH_SECRET is not defined')
+}
 
 export const auth = betterAuth({
   appName: '@everynews/api/auth',
   basePath: '/auth',
-  secret: env.EVERYNEWS_AUTH_SECRET,
+  secret: process.env.AUTH_SECRET,
   database: drizzleAdapter(database, {
     provider: 'pg',
     usePlural: true,
