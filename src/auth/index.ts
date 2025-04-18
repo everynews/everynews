@@ -15,7 +15,7 @@ import { env } from '~/lib/env'
 export const auth = betterAuth({
   appName: '@everynews/api/auth',
   basePath: '/auth',
-  secret: env.EVERYNEWS_AUTH_SECRET,
+  secret: env.AUTH_SECRET,
   database: drizzleAdapter(database, {
     provider: 'pg',
     usePlural: true,

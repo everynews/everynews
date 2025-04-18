@@ -3,7 +3,7 @@ import { magicLinkClient, passkeyClient } from 'better-auth/client/plugins'
 import { env } from '~/lib/env'
 
 export const authClient = createAuthClient({
-  baseURL: env.EVERYNEWS_AUTH_URL,
+  baseURL: env.AUTH_URL,
   plugins: [magicLinkClient(), passkeyClient()],
 })
 

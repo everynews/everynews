@@ -17,15 +17,6 @@ import {
   SidebarTrigger,
 } from '~/components/ui/sidebar'
 
-const data = {
-  user: {
-    name: 'Sofia Safier',
-    email: 'sofia@safier.com',
-    avatar:
-      'https://res.cloudinary.com/dlzlfasou/image/upload/v1743935337/user-01_l4if9t.png',
-  },
-}
-
 export const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => (
   <Sidebar
     variant="inset"
@@ -96,7 +87,7 @@ export const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => (
       </SidebarGroup>
     </SidebarContent>
     <SidebarFooter>
-      <NavUser user={data.user} />
+      <NavUser />
     </SidebarFooter>
   </Sidebar>
 )

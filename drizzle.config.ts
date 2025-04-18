@@ -6,6 +6,6 @@ export default defineConfig({
   schema: './src/database/schema.ts',
   dialect: 'postgresql',
   dbCredentials: {
-    url: env.EVERYNEWS_DB_DATABASE_URL,
+    url: env.DATABASE_URL,
   },
 })
