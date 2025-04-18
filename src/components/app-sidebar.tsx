@@ -44,7 +44,7 @@ export const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => (
             />
           </svg>
         </Link>
-        <SidebarTrigger className="text-muted-foreground/80 hover:text-foreground/80 hover:bg-transparent!" />
+        <SidebarTrigger className="text-muted-foreground/80 hover:text-foreground/80 hover:bg-transparent" />
       </div>
     </SidebarHeader>
     <SidebarContent className="mt-3 gap-0 border-t pt-3">
