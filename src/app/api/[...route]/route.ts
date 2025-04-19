@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { handle } from 'hono/vercel'
-import { auth } from '~/auth/config'
+import { auth } from '~/auth'
 
 export const dynamic = 'force-dynamic'
 

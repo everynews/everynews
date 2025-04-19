@@ -3,7 +3,8 @@ import { Toaster } from '~/components/ui/sonner'
 import { ThemeProvider } from '~/providers/theme-provider'
 import './globals.css'
 import type { ReactNode } from 'react'
-import { SidebarProvider } from '~/components/ui/sidebar'
+import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar'
+import { AppSidebar } from '~/components/app-sidebar'
 
 const fontSans = Geist({
   variable: '--font-sans',
@@ -32,8 +33,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <SidebarProvider>
-            {children}
-            <Toaster />
+            <AppSidebar />
+            <SidebarInset>
+              {children}
+              <Toaster />
+            </SidebarInset>
           </SidebarProvider>
         </ThemeProvider>
       </body>
