@@ -17,7 +17,7 @@ if (!process.env.AUTH_SECRET) {
 
 export const auth = betterAuth({
   appName: '@everynews/api/auth',
-  basePath: '/auth',
+  basePath: '/api/auth',
   secret: process.env.AUTH_SECRET,
   database: drizzleAdapter(database, {
     provider: 'pg',
