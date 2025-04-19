@@ -1,3 +1,5 @@
+'use client'
+
 import {
   RiExpandUpDownLine,
   RiGroupLine,
@@ -6,7 +8,7 @@ import {
   RiUserLine,
 } from '@remixicon/react'
 import type { User } from 'better-auth'
-import { signOut } from '~/auth/server'
+import { auth } from '~/auth/client'
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
 import {
   DropdownMenu,
@@ -21,7 +23,7 @@ import {
   SidebarMenuItem,
 } from '~/components/ui/sidebar'
 
-export const NavUserSignedIn = async (user: User) => (
+export const NavUserSignedIn = (user: User) => (
   <SidebarMenu>
     <SidebarMenuItem>
       <DropdownMenu>
@@ -75,7 +77,7 @@ export const NavUserSignedIn = async (user: User) => (
             </DropdownMenuItem>
             <DropdownMenuItem
               className="focus:bg-sidebar-accent gap-3"
-              onClick={async () => signOut()}
+              onClick={() => auth.signOut()}
             >
               <RiLogoutCircleLine
                 size={20}
