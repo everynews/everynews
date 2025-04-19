@@ -10,11 +10,8 @@ import {
 } from '~/components/ui/sidebar'
 
 export const AppSidebarContent = () => (
-  <SidebarContent className="mt-3 gap-0 border-t pt-3">
-    <SidebarGroup className="px-1">
-      <h2 className="text-muted-foreground/65">TOP H2</h2>
-    </SidebarGroup>
-    <SidebarGroup className="mt-3 border-t px-1 pt-4">
+  <SidebarContent>
+    <SidebarGroup>
       <SidebarGroupLabel className="text-muted-foreground/65 uppercase">
         Calendars
       </SidebarGroupLabel>

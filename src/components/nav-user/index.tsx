@@ -35,10 +35,11 @@ export const NavUser = () => {
       <SidebarMenu>
         <SidebarMenuItem>
           <Dialog>
-            <DialogTrigger asChild>
+            <DialogTrigger asChild data-slot="sidebar-menu-button">
               <SidebarMenuButton
                 size="lg"
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground [&>svg]:size-5"
+                type="button"
               >
                 <Avatar className="size-8">
                   <AvatarFallback className="rounded-lg">?</AvatarFallback>
@@ -62,10 +63,11 @@ export const NavUser = () => {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild data-slot="sidebar-menu-button">
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground [&>svg]:size-5"
+              type="button"
             >
               <Avatar className="size-8">
                 <AvatarImage
