@@ -29,7 +29,7 @@ export const NavUser = () => {
   if (session.isPending) {
     return <NavUserLoading />
   }
-  
+
   if (!session.data) {
     return (
       <SidebarMenu>
