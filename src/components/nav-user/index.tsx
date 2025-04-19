@@ -1,15 +1,11 @@
-import {
-  RiExpandUpDownLine,
-  RiGroupLine,
-  RiLoginCircleLine,
-  RiLogoutCircleLine,
-  RiSparklingLine,
-  RiUserLine,
-} from '@remixicon/react'
-import { authClient, signOut } from '~/auth/client'
-import SignIn from '~/components/sign-in'
+'use client'
+
+import { auth } from '~/auth'
+import { NavUserLoading } from './loading'
+import { SidebarMenu, SidebarMenuItem } from '~/components/ui/sidebar'
+import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
+import { SidebarMenuButton } from '~/components/ui/sidebar'
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
-import { Dialog, DialogTrigger } from '~/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,15 +14,23 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
 import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '~/components/ui/sidebar'
+  RiExpandUpDownLine,
+  RiGroupLine,
+  RiLoginCircleLine,
+  RiLogoutCircleLine,
+  RiSparklingLine,
+  RiUserLine,
+} from '@remixicon/react'
+import SignIn from '../sign-in'
 
-export const NavUser = async () => {
-  const { data: session } = await authClient.getSession()
+export const NavUser = () => {
+  const session = auth.useSession()
 
-  if (!session) {
+  if (session.isPending) {
+    return <NavUserLoading />
+  }
+  
+  if (!session.data) {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
@@ -45,7 +49,9 @@ export const NavUser = async () => {
                 <RiLoginCircleLine className="text-muted-foreground/80 ml-auto size-5" />
               </SidebarMenuButton>
             </DialogTrigger>
-            <SignIn />
+            <DialogContent>
+              <SignIn />
+            </DialogContent>
           </Dialog>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -63,16 +69,16 @@ export const NavUser = async () => {
             >
               <Avatar className="size-8">
                 <AvatarImage
-                  src={session.user?.image || ''}
-                  alt={session.user?.name || ''}
+                  src={session.data?.user.image || ''}
+                  alt={session.data?.user.name || ''}
                 />
                 <AvatarFallback className="rounded-lg">
-                  {session.user?.name?.[0] || 'U'}
+                  {session.data?.user.name?.[0] || 'U'}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
-                  {session.user?.name || session.user?.email}
+                  {session.data?.user.name || session.data?.user.email}
                 </span>
               </div>
               <RiExpandUpDownLine className="text-muted-foreground/80 ml-auto size-5" />
@@ -108,7 +114,7 @@ export const NavUser = async () => {
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="focus:bg-sidebar-accent gap-3"
-                onClick={() => signOut()}
+                onClick={() => auth.signOut()}
               >
                 <RiLogoutCircleLine
                   size={20}

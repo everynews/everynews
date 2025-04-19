@@ -1,21 +1,10 @@
-'use client'
-
 import Link from 'next/link'
-import type { ComponentProps } from 'react'
+import { Suspense, type ComponentProps } from 'react'
+import { AppSidebarContent } from '~/components/app-sidebar-content'
+import { AppSidebarLoading } from '~/components/app-sidebar-loading'
+import { AppSidebarTrigger } from '~/components/app-sidebar-trigger'
 import { NavUser } from '~/components/nav-user'
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarTrigger,
-} from '~/components/ui/sidebar'
+import { Sidebar, SidebarFooter, SidebarHeader } from '~/components/ui/sidebar'
 
 export const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => (
   <Sidebar
@@ -44,48 +33,12 @@ export const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => (
             />
           </svg>
         </Link>
-        <SidebarTrigger className="text-muted-foreground/80 hover:text-foreground/80 hover:bg-transparent" />
+        <AppSidebarTrigger />
       </div>
     </SidebarHeader>
-    <SidebarContent className="mt-3 gap-0 border-t pt-3">
-      <SidebarGroup className="px-1">
-        <h2 className="text-muted-foreground/65">TOP H2</h2>
-      </SidebarGroup>
-      <SidebarGroup className="mt-3 border-t px-1 pt-4">
-        <SidebarGroupLabel className="text-muted-foreground/65 uppercase">
-          Calendars
-        </SidebarGroupLabel>
-        <SidebarGroupContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/personal">Personal</Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/work">Work</Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/family">Family</Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/holidays">Holidays</Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/birthdays">Birthdays</Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
-    </SidebarContent>
+    <Suspense fallback={<AppSidebarLoading />}>
+      <AppSidebarContent />
+    </Suspense>
     <SidebarFooter>
       <NavUser />
     </SidebarFooter>

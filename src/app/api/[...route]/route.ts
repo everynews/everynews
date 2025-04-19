@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { handle } from 'hono/vercel'
-import { auth } from '~/auth'
+import { auth } from '~/auth/config'
 
 export const dynamic = 'force-dynamic'
 const app = new Hono().basePath('/api')
