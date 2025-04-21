@@ -1,7 +1,7 @@
 'use client'
 
 import * as SelectPrimitive from '@radix-ui/react-select'
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
+import { CheckmarkIcon, ExpandDownIcon, ExpandUpIcon } from '~/icons'
 import type { ComponentProps } from 'react'
 import { cn } from '~/lib/utils'
 
@@ -36,10 +36,7 @@ const SelectTrigger = ({
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDownIcon
-        size={16}
-        className="text-muted-foreground/80 in-aria-invalid:text-destructive/80 shrink-0"
-      />
+      <ExpandDownIcon className="text-muted-foreground/80 in-aria-invalid:text-destructive/80 shrink-0" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 )
@@ -105,7 +102,7 @@ const SelectItem = ({
   >
     <span className="absolute start-2 flex size-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <CheckIcon size={16} />
+        <CheckmarkIcon />
       </SelectPrimitive.ItemIndicator>
     </span>
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
@@ -135,7 +132,7 @@ const SelectScrollUpButton = ({
     )}
     {...props}
   >
-    <ChevronUpIcon size={16} />
+    <ExpandUpIcon />
   </SelectPrimitive.ScrollUpButton>
 )
 
@@ -151,7 +148,7 @@ const SelectScrollDownButton = ({
     )}
     {...props}
   >
-    <ChevronDownIcon size={16} />
+    <ExpandDownIcon />
   </SelectPrimitive.ScrollDownButton>
 )
 

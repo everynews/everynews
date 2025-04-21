@@ -1,7 +1,6 @@
 'use client'
 
-import { RiLoginCircleLine } from '@remixicon/react'
-import { Key, Loader2 } from 'lucide-react'
+import { LoginIcon, PasskeyIcon, SpinnerIcon } from '~/icons'
 import { useId, useState } from 'react'
 import { auth } from '~/auth/client'
 import { Avatar, AvatarFallback } from '~/components/ui/avatar'
@@ -43,7 +42,7 @@ export const NavUserNotSignedIn = () => {
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">Sign In</span>
               </div>
-              <RiLoginCircleLine className="text-muted-foreground/80 ml-auto size-5" />
+              <LoginIcon className="text-muted-foreground/80 ml-auto size-5" />
             </SidebarMenuButton>
           </DialogTrigger>
           <DialogContent>
@@ -101,7 +100,7 @@ export const NavUserNotSignedIn = () => {
                   }}
                 >
                   {loading ? (
-                    <Loader2 size={16} className="animate-spin" />
+                    <SpinnerIcon className="animate-spin" />
                   ) : (
                     'Sign in with Magic Link'
                   )}
@@ -126,7 +125,7 @@ export const NavUserNotSignedIn = () => {
                 }
               }}
             >
-              <Key size={16} />
+              <PasskeyIcon />
               Sign in with Passkey
             </Button>
           </DialogContent>

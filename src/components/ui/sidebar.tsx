@@ -1,7 +1,7 @@
 'use client'
 
 import { Slot } from '@radix-ui/react-slot'
-import { RiLayoutLeft2Line, RiSkipLeftLine } from '@remixicon/react'
+import { SidebarExpandIcon, SidebarCollapseIcon } from '~/icons'
 import { type VariantProps, cva } from 'class-variance-authority'
 import {
   type CSSProperties,
@@ -295,11 +295,7 @@ const SidebarTrigger = ({
       }}
       {...props}
     >
-      {!isOutsideSidebar ? (
-        <RiSkipLeftLine className="size-5" size={20} />
-      ) : (
-        <RiLayoutLeft2Line className="size-5" size={20} />
-      )}
+      {!isOutsideSidebar ? <SidebarCollapseIcon /> : <SidebarExpandIcon />}
       <span className="sr-only">
         {isOutsideSidebar ? 'Collapse sidebar' : 'Expand sidebar'}
       </span>

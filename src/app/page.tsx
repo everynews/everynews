@@ -1,8 +1,4 @@
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from 'lucide-react'
+import { ExpandDownIcon, PrevIcon, NextIcon } from '~/icons'
 import ThemeToggle from '~/components/theme-toggle'
 import { Button } from '~/components/ui/button'
 import {
@@ -39,7 +35,7 @@ export default function Page() {
                   className="max-sm:size-8"
                   aria-label="Previous"
                 >
-                  <ChevronLeftIcon size={16} aria-hidden="true" />
+                  <PrevIcon />
                 </Button>
                 <Button
                   variant="ghost"
@@ -47,7 +43,7 @@ export default function Page() {
                   className="max-sm:size-8"
                   aria-label="Next"
                 >
-                  <ChevronRightIcon size={16} aria-hidden="true" />
+                  <NextIcon />
                 </Button>
               </div>
               <Button className="max-sm:h-8 max-sm:px-2.5!">Today</Button>
@@ -63,11 +59,7 @@ export default function Page() {
                     className="gap-1.5 max-sm:h-8 max-sm:gap-1 max-sm:px-2!"
                   >
                     <span className="capitalize">Month</span>
-                    <ChevronDownIcon
-                      className="-me-1 opacity-60"
-                      size={16}
-                      aria-hidden="true"
-                    />
+                    <ExpandDownIcon className="-me-1 opacity-60" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="min-w-32">

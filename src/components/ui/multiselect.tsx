@@ -1,7 +1,7 @@
 'use client'
 
 import { Command as CommandPrimitive, useCommandState } from 'cmdk'
-import { XIcon } from 'lucide-react'
+import { CloseIcon } from '~/icons'
 import type {
   ComponentProps,
   ReactNode,
@@ -492,7 +492,7 @@ const MultipleSelector = ({
                 onClick={() => handleUnselect(option)}
                 aria-label="Remove"
               >
-                <XIcon size={14} aria-hidden="true" />
+                <CloseIcon />
               </button>
             </div>
           ))}
@@ -550,7 +550,7 @@ const MultipleSelector = ({
             )}
             aria-label="Clear all"
           >
-            <XIcon size={16} aria-hidden="true" />
+            <CloseIcon />
           </button>
         </div>
       </div>

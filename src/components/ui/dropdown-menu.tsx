@@ -1,7 +1,7 @@
 'use client'
 
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
-import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react'
+import { CheckmarkIcon, NextIcon, BulletIcon } from '~/icons'
 import { useCallback, useRef, type ComponentProps } from 'react'
 import { cn } from '~/lib/utils'
 
@@ -136,7 +136,7 @@ const DropdownMenuCheckboxItem = ({
   >
     <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator>
-        <CheckIcon size={16} />
+        <CheckmarkIcon />
       </DropdownMenuPrimitive.ItemIndicator>
     </span>
     {children}
@@ -167,7 +167,7 @@ const DropdownMenuRadioItem = ({
   >
     <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator>
-        <CircleIcon className="size-2 fill-current" />
+        <BulletIcon className="size-2 fill-current" />
       </DropdownMenuPrimitive.ItemIndicator>
     </span>
     {children}
@@ -241,7 +241,7 @@ const DropdownMenuSubTrigger = ({
     {...props}
   >
     {children}
-    <ChevronRightIcon size={16} className="text-muted-foreground/80 ml-auto" />
+    <NextIcon className="text-muted-foreground/80 ml-auto" />
   </DropdownMenuPrimitive.SubTrigger>
 )
 

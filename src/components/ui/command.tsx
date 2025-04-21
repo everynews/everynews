@@ -1,7 +1,7 @@
 'use client'
 
 import { Command as CommandPrimitive } from 'cmdk'
-import { SearchIcon } from 'lucide-react'
+import { SearchIcon } from '~/icons'
 import type { ComponentProps } from 'react'
 import {
   Dialog,
@@ -56,7 +56,7 @@ const CommandInput = ({
     className="border-input flex items-center border-b px-5"
     cmdk-input-wrapper=""
   >
-    <SearchIcon size={20} className="text-muted-foreground/80 me-3" />
+    <SearchIcon className="text-muted-foreground/80 me-3" />
     <CommandPrimitive.Input
       data-slot="command-input-wrapper"
       className={cn(

@@ -10,12 +10,14 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "dev": "next dev --turbopack",
-    "format": "prettier .",
-    "lint": "eslint .",
+    "format": "prettier . --write",
+    "lint": "eslint . --fix",
+    "tidy": "pnpm lint && pnpm format",
     "test": "echo \"Not Implemented\"",
     "start": "next start"
   },
   "dependencies": {
+    "@heroicons/react": "^2",
     "@internationalized/date": "^3.8.0",
     "@neondatabase/serverless": "^1.0.0",
     "@radix-ui/react-accordion": "^1.2.4",

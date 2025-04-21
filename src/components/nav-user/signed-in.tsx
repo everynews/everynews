@@ -1,12 +1,10 @@
-'use client'
-
 import {
-  RiExpandUpDownLine,
-  RiGroupLine,
-  RiLogoutCircleLine,
-  RiSparklingLine,
-  RiUserLine,
-} from '@remixicon/react'
+  MenuExpandIcon,
+  AccountsIcon,
+  LogoutIcon,
+  SparkleIcon,
+  ProfileIcon,
+} from '~/icons'
 import type { User } from 'better-auth'
 import { auth } from '~/auth/client'
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
@@ -22,6 +20,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '~/components/ui/sidebar'
+import { redirect } from 'next/navigation'
 
 export const NavUserSignedIn = (user: User) => (
   <SidebarMenu>
@@ -30,7 +29,7 @@ export const NavUserSignedIn = (user: User) => (
         <DropdownMenuTrigger asChild data-slot="sidebar-menu-button">
           <SidebarMenuButton
             size="lg"
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground [&>svg]:size-5"
+            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground [&>svg] size-5"
             type="button"
           >
             <Avatar className="size-8">
@@ -44,7 +43,7 @@ export const NavUserSignedIn = (user: User) => (
                 {user.name || user.email || 'User'}
               </span>
             </div>
-            <RiExpandUpDownLine className="text-muted-foreground/80 ml-auto size-5" />
+            <MenuExpandIcon className="text-muted-foreground/80 ml-auto" />
           </SidebarMenuButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -55,34 +54,25 @@ export const NavUserSignedIn = (user: User) => (
         >
           <DropdownMenuGroup>
             <DropdownMenuItem className="focus:bg-sidebar-accent gap-3">
-              <RiUserLine
-                size={20}
-                className="text-muted-foreground/80 size-5"
-              />
+              <ProfileIcon className="text-muted-foreground/80 size-5" />
               Profile
             </DropdownMenuItem>
             <DropdownMenuItem className="focus:bg-sidebar-accent gap-3">
-              <RiGroupLine
-                size={20}
-                className="text-muted-foreground/80 size-5"
-              />
+              <AccountsIcon className="text-muted-foreground/80" />
               Accounts
             </DropdownMenuItem>
             <DropdownMenuItem className="focus:bg-sidebar-accent gap-3">
-              <RiSparklingLine
-                size={20}
-                className="text-muted-foreground/80 size-5"
-              />
+              <SparkleIcon className="text-muted-foreground/80" />
               Upgrade
             </DropdownMenuItem>
             <DropdownMenuItem
               className="focus:bg-sidebar-accent gap-3"
-              onClick={() => auth.signOut()}
+              onClick={async () => {
+                await auth.signOut()
+                redirect('/')
+              }}
             >
-              <RiLogoutCircleLine
-                size={20}
-                className="text-muted-foreground/80 size-5"
-              />
+              <LogoutIcon className="text-muted-foreground/80" />
               Logout
             </DropdownMenuItem>
           </DropdownMenuGroup>

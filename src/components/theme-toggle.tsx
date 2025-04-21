@@ -1,6 +1,6 @@
 'use client'
 
-import { RiMoonClearLine, RiSunLine } from '@remixicon/react'
+import { MoonIcon, SunIcon } from '~/icons'
 import { useTheme } from 'next-themes'
 import { useId, useState } from 'react'
 
@@ -47,12 +47,8 @@ export default function ThemeToggle() {
         htmlFor={id}
         aria-hidden="true"
       >
-        <RiSunLine className="dark:hidden" size={20} aria-hidden="true" />
-        <RiMoonClearLine
-          className="hidden dark:block"
-          size={20}
-          aria-hidden="true"
-        />
+        <SunIcon className="dark:hidden" />
+        <MoonIcon className="hidden dark:block" aria-hidden="true" />
         <span className="sr-only">Switch to system/light/dark version</span>
       </label>
     </div>

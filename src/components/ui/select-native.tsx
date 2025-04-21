@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from 'lucide-react'
+import { ExpandDownIcon } from '~/icons'
 import type { ComponentProps } from 'react'
 import { cn } from '~/lib/utils'
 
@@ -23,7 +23,7 @@ const SelectNative = ({
     </select>
     {!props.multiple && (
       <span className="text-muted-foreground/80 peer-aria-invalid:text-destructive/80 pointer-events-none absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center peer-disabled:opacity-50">
-        <ChevronDownIcon size={16} aria-hidden="true" />
+        <ExpandDownIcon />
       </span>
     )}
   </div>

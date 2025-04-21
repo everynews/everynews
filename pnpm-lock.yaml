@@ -7,6 +7,9 @@ settings:
 importers:
   .:
     dependencies:
+      '@heroicons/react':
+        specifier: ^2
+        version: 2.2.0(react@19.1.0)
       '@internationalized/date':
         specifier: ^3.8.0
         version: 3.8.0
@@ -837,6 +840,14 @@ packages:
       {
         integrity: sha512-ePEgLgVCqi2BBFnTMWPfIghu6FkbZnnBVhO2sSxvLfrdFw7wCHAHiDoM2h4NRgjbaY7+B7HgOLZGkK187pZTZg==,
       }
+
+  '@heroicons/react@2.2.0':
+    resolution:
+      {
+        integrity: sha512-LMcepvRaS9LYHJGsF0zzmgKCUim/X3N/DQKc4jepAXJ7l8QxJ1PmxJzqplF2Z3FE4PqBAIGyJAQ/w4B5dsqbtQ==,
+      }
+    peerDependencies:
+      react: '>= 16 || ^19.0.0-rc'
 
   '@hexagon/base64@1.1.28':
     resolution:
@@ -7056,6 +7067,10 @@ snapshots:
   '@formatjs/intl-localematcher@0.6.1':
     dependencies:
       tslib: 2.8.1
+
+  '@heroicons/react@2.2.0(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
 
   '@hexagon/base64@1.1.28': {}
 

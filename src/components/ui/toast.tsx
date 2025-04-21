@@ -2,7 +2,7 @@
 
 import * as ToastPrimitives from '@radix-ui/react-toast'
 import { type VariantProps, cva } from 'class-variance-authority'
-import { XIcon } from 'lucide-react'
+import { CloseIcon } from '~/icons'
 import type { ComponentPropsWithoutRef, ReactElement } from 'react'
 import { cn } from '~/lib/utils'
 
@@ -85,8 +85,7 @@ const ToastClose = ({
     {asChild ? (
       props.children
     ) : (
-      <XIcon
-        size={16}
+      <CloseIcon
         className="opacity-60 transition-opacity group-hover:opacity-100"
         aria-hidden="true"
       />
