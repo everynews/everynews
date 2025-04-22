@@ -72,12 +72,6 @@ export const SunIcon = createIcon(HeroIcons.SunIcon, 'SunIcon')
 
 export const MoonIcon = createIcon(HeroIcons.MoonIcon, 'MoonIcon')
 
-// Authentication
-export const LoginIcon = createIcon(
-  HeroIcons.ArrowRightStartOnRectangleIcon,
-  'LoginIcon',
-)
-
 export const LogoutIcon = createIcon(
   HeroIcons.ArrowLeftStartOnRectangleIcon,
   'LogoutIcon',

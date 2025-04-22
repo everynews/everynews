@@ -1,23 +1,20 @@
 'use client'
 
-import { LoginIcon, PasskeyIcon, SpinnerIcon } from '~/icons'
 import { useId, useState } from 'react'
 import { auth } from '~/auth/client'
-import { Avatar, AvatarFallback } from '~/components/ui/avatar'
 import { Button } from '~/components/ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '~/components/ui/dialog'
 import {
-  DialogDescription,
+  Dialog, DialogContent, DialogDescription,
   DialogHeader,
-  DialogTitle,
+  DialogTitle, DialogTrigger
 } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import {
   SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
+  SidebarMenuItem
 } from '~/components/ui/sidebar'
+import { PasskeyIcon, SpinnerIcon } from '~/icons'
 
 export const NavUserNotSignedIn = () => {
   const id = useId()
@@ -31,19 +28,12 @@ export const NavUserNotSignedIn = () => {
       <SidebarMenuItem>
         <Dialog>
           <DialogTrigger asChild data-slot="sidebar-menu-button">
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground [&>svg]:size-5"
+            <Button
+              className="w-full flex items-center gap-2 py-2 px-4"
               type="button"
             >
-              <Avatar className="size-8">
-                <AvatarFallback className="rounded-lg">?</AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">Sign In</span>
-              </div>
-              <LoginIcon className="text-muted-foreground/80 ml-auto size-5" />
-            </SidebarMenuButton>
+              Sign In
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <div className="flex flex-col items-center gap-2">
