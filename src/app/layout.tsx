@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Bricolage_Grotesque } from 'next/font/google'
 import { Toaster } from '~/components/ui/sonner'
 import { ThemeProvider } from '~/providers/theme-provider'
 import './globals.css'
@@ -7,13 +7,8 @@ import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar'
 import { AppSidebar } from '~/components/app-sidebar'
 import { cn } from '~/lib/utils'
 
-const fontSans = Geist({
+const fontSans = Bricolage_Grotesque({
   variable: '--font-sans',
-  subsets: ['latin'],
-})
-
-const fontMono = Geist_Mono({
-  variable: '--font-mono',
   subsets: ['latin'],
 })
 
@@ -26,9 +21,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
+          'min-h-screen bg-sidebar font-sans antialiased',
           fontSans.variable,
-          fontMono.variable,
-          'bg-sidebar font-sans antialiased',
         )}
       >
         <ThemeProvider

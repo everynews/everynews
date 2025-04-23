@@ -15,9 +15,9 @@ export const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => (
   >
     <SidebarHeader>
       <div className="flex items-center justify-between gap-2">
-        <Link className="inline-flex items-center gap-2" href="/">
+        <Link className="inline-flex items-center gap-1" href="/">
           <Image src="/logo.png" alt="Everynews Logo" width="32" height="32" />
-          <span className="text-lg font-bold">Everynews</span>
+          <span className="text-2xl font-bold tracking-tighter">Everynews</span>
         </Link>
         <AppSidebarTrigger />
       </div>

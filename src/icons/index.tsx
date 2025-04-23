@@ -52,8 +52,6 @@ export const CheckmarkIcon = createIcon(HeroIcons.CheckIcon, 'CheckmarkIcon')
 
 export const BulletIcon = createIcon(HeroIcons.CircleStackIcon, 'BulletIcon')
 
-export const PasskeyIcon = createIcon(HeroIcons.KeyIcon, 'PasskeyIcon')
-
 export const SpinnerIcon = createIcon(HeroIcons.ArrowPathIcon, 'SpinnerIcon')
 
 // Sidebar controls

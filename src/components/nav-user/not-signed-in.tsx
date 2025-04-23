@@ -12,9 +12,9 @@ import {
   DialogTrigger,
 } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
 import { SidebarMenu, SidebarMenuItem } from '~/components/ui/sidebar'
-import { PasskeyIcon, SpinnerIcon } from '~/icons'
+import { SpinnerIcon } from '~/icons'
+import Image from 'next/image'
 
 export const NavUserNotSignedIn = () => {
   const id = useId()
@@ -37,27 +37,13 @@ export const NavUserNotSignedIn = () => {
           </DialogTrigger>
           <DialogContent>
             <div className="flex flex-col items-center gap-2">
-              <div
-                className="flex size-11 shrink-0 items-center justify-center rounded-full border"
-                aria-hidden="true"
-              >
-                <svg
-                  className="stroke-zinc-800 dark:stroke-zinc-100"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 32 32"
-                  aria-hidden="true"
-                >
-                  <circle cx="16" cy="16" r="12" fill="none" strokeWidth="8" />
-                </svg>
-              </div>
+              <Image src="/logo.png" alt="Everynews Logo" width="64" height="64" />
               <DialogHeader>
-                <DialogTitle className="sm:text-center">
-                  Welcome back
+                <DialogTitle className="text-2xl font-bold tracking-tighter text-center">
+                  Welcome
                 </DialogTitle>
-                <DialogDescription className="sm:text-center">
-                  Enter your credentials to login to your account.
+                <DialogDescription className="text-muted-foreground text-center">
+                  Enter your email to sign in or sign up
                 </DialogDescription>
               </DialogHeader>
             </div>
@@ -65,10 +51,9 @@ export const NavUserNotSignedIn = () => {
             <form className="space-y-5">
               <div className="space-y-4">
                 <div className="*:not-first:mt-2">
-                  <Label htmlFor={`${id}-email`}>Email</Label>
                   <Input
                     id={`${id}-email`}
-                    placeholder="hi@yourcompany.com"
+                    placeholder="elon@twitter.com"
                     type="email"
                     required
                     value={email}
@@ -92,7 +77,7 @@ export const NavUserNotSignedIn = () => {
                   {loading ? (
                     <SpinnerIcon className="animate-spin" />
                   ) : (
-                    'Sign in with Magic Link'
+                    'Send Magic Link'
                   )}
                 </Button>
               </div>
@@ -115,8 +100,7 @@ export const NavUserNotSignedIn = () => {
                 }
               }}
             >
-              <PasskeyIcon />
-              Sign in with Passkey
+              Use Passkey
             </Button>
           </DialogContent>
         </Dialog>
