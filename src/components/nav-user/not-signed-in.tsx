@@ -4,16 +4,16 @@ import { useId, useState } from 'react'
 import { auth } from '~/auth/client'
 import { Button } from '~/components/ui/button'
 import {
-  Dialog, DialogContent, DialogDescription,
+  Dialog,
+  DialogContent,
+  DialogDescription,
   DialogHeader,
-  DialogTitle, DialogTrigger
+  DialogTitle,
+  DialogTrigger,
 } from '~/components/ui/dialog'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import {
-  SidebarMenu,
-  SidebarMenuItem
-} from '~/components/ui/sidebar'
+import { SidebarMenu, SidebarMenuItem } from '~/components/ui/sidebar'
 import { PasskeyIcon, SpinnerIcon } from '~/icons'
 
 export const NavUserNotSignedIn = () => {
@@ -29,7 +29,7 @@ export const NavUserNotSignedIn = () => {
         <Dialog>
           <DialogTrigger asChild data-slot="sidebar-menu-button">
             <Button
-              className="w-full flex items-center gap-2 py-2 px-4"
+              className="flex w-full items-center gap-2 px-4 py-2"
               type="button"
             >
               Sign In

@@ -5,6 +5,7 @@ import './globals.css'
 import type { ReactNode } from 'react'
 import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar'
 import { AppSidebar } from '~/components/app-sidebar'
+import { cn } from '~/lib/utils'
 
 const fontSans = Geist({
   variable: '--font-sans',
@@ -24,7 +25,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${fontSans.variable} ${fontMono.variable} bg-sidebar font-sans antialiased`}
+        className={cn(
+          fontSans.variable,
+          fontMono.variable,
+          'bg-sidebar font-sans antialiased',
+        )}
       >
         <ThemeProvider
           attribute="class"
