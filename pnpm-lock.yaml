@@ -112,6 +112,9 @@ importers:
       drizzle-orm:
         specifier: ^0.41.0
         version: 0.41.0(@neondatabase/serverless@1.0.0)(@types/pg@8.11.13)(gel@2.0.2)(kysely@0.27.6)
+      drizzle-zod:
+        specifier: ^0.7.1
+        version: 0.7.1(drizzle-orm@0.41.0(@neondatabase/serverless@1.0.0)(@types/pg@8.11.13)(gel@2.0.2)(kysely@0.27.6))(zod@3.24.3)
       emblor:
         specifier: ^1.4.8
         version: 1.4.8(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -170,7 +173,7 @@ importers:
         specifier: ^3.4.2
         version: 3.4.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       zod:
-        specifier: ^3.24.2
+        specifier: 3.24.3
         version: 3.24.3
     devDependencies:
       '@eslint/eslintrc':
@@ -4438,6 +4441,15 @@ packages:
         optional: true
       sqlite3:
         optional: true
+
+  drizzle-zod@0.7.1:
+    resolution:
+      {
+        integrity: sha512-nZzALOdz44/AL2U005UlmMqaQ1qe5JfanvLujiTHiiT8+vZJTBFhj3pY4Vk+L6UWyKFfNmLhk602Hn4kCTynKQ==,
+      }
+    peerDependencies:
+      drizzle-orm: '>=0.36.0'
+      zod: '>=3.0.0'
 
   dunder-proto@1.0.1:
     resolution:
@@ -9904,6 +9916,11 @@ snapshots:
       '@types/pg': 8.11.13
       gel: 2.0.2
       kysely: 0.27.6
+
+  drizzle-zod@0.7.1(drizzle-orm@0.41.0(@neondatabase/serverless@1.0.0)(@types/pg@8.11.13)(gel@2.0.2)(kysely@0.27.6))(zod@3.24.3):
+    dependencies:
+      drizzle-orm: 0.41.0(@neondatabase/serverless@1.0.0)(@types/pg@8.11.13)(gel@2.0.2)(kysely@0.27.6)
+      zod: 3.24.3
 
   dunder-proto@1.0.1:
     dependencies:

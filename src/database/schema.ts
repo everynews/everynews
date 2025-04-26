@@ -1,4 +1,12 @@
-import { pgTable, text, timestamp, boolean, integer } from 'drizzle-orm/pg-core'
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  integer,
+  json,
+  numeric,
+} from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
   id: text('id').primaryKey(),
@@ -58,7 +66,7 @@ export const verifications = pgTable('verifications', {
 
 export const apikeys = pgTable('apikeys', {
   id: text('id').primaryKey(),
-  name: text('name'),
+  name: text('name').notNull(),
   start: text('start'),
   prefix: text('prefix'),
   key: text('key').notNull(),
@@ -130,4 +138,61 @@ export const passkeys = pgTable('passkeys', {
   backedUp: boolean('backed_up').notNull(),
   transports: text('transports'),
   createdAt: timestamp('created_at'),
+})
+
+export const news = pgTable('news', {
+  id: text('id').primaryKey(),
+  organizationId: text('organization_id')
+    .notNull()
+    .references(() => organizations.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  searchQuery: json('search_query').notNull(), // SERP API configuration
+  relevanceSettings: json('relevance_settings').notNull(), // Scoring rules
+  waitSettings: json('wait_settings').notNull(), // Batch/digest settings
+  isActive: boolean('is_active').notNull().default(true),
+  lastRun: timestamp('last_run'), // Last search execution
+  lastSent: timestamp('last_sent'), // Last batch sent
+  nextRun: timestamp('next_run'), // Next scheduled execution
+  createdAt: timestamp('created_at').notNull(),
+  updatedAt: timestamp('updated_at').notNull(),
+})
+
+export const schedules = pgTable('schedules', {
+  id: text('id').primaryKey(),
+  newsId: text('news_id')
+    .notNull()
+    .references(() => news.id, { onDelete: 'cascade' }),
+  cronExpr: text('cron_expr').notNull(),
+  isActive: boolean('is_active').notNull().default(true),
+  lastSuccess: timestamp('last_success'),
+  lastFailure: timestamp('last_failure'),
+  errorDetails: json('error_details'),
+  createdAt: timestamp('created_at').notNull(),
+  updatedAt: timestamp('updated_at').notNull(),
+})
+
+export const stories = pgTable('stories', {
+  id: text('id').primaryKey(),
+  newsId: text('news_id')
+    .notNull()
+    .references(() => news.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  url: text('url').notNull().unique(), // For deduplication
+  snippet: text('snippet'),
+  relevanceScore: numeric('relevance_score').notNull(),
+  wasDelivered: boolean('was_delivered').notNull().default(false), // Queued for delivery
+  foundAt: timestamp('found_at').notNull(),
+  createdAt: timestamp('created_at').notNull(),
+})
+
+export const channels = pgTable('channels', {
+  id: text('id').primaryKey(),
+  organizationId: text('organization_id')
+    .notNull()
+    .references(() => organizations.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(), // email, slack, etc
+  config: json('config').notNull(), // Channel-specific configuration
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').notNull(),
+  updatedAt: timestamp('updated_at').notNull(),
 })
