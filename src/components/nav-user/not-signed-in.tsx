@@ -37,9 +37,14 @@ export const NavUserNotSignedIn = () => {
           </DialogTrigger>
           <DialogContent>
             <div className="flex flex-col items-center gap-2">
-              <Image src="/logo.png" alt="Everynews Logo" width="64" height="64" />
+              <Image
+                src="/logo.png"
+                alt="Everynews Logo"
+                width="64"
+                height="64"
+              />
               <DialogHeader>
-                <DialogTitle className="text-2xl font-bold tracking-tighter text-center">
+                <DialogTitle className="text-center text-2xl font-bold tracking-tighter">
                   Welcome
                 </DialogTitle>
                 <DialogDescription className="text-muted-foreground text-center">
