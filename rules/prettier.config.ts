@@ -17,6 +17,7 @@ const config: Config = {
     prettierPluginSortImport,
     prettierPluginTailwindCss,
   ],
+  tailwindConfig: './tailwind.config.ts',
   tailwindFunctions: ['clsx', 'cn'],
 }
 

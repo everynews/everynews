@@ -1,8 +1,8 @@
 'use client'
 
+import { cn } from '@everynews/lib/utils'
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card'
 import type { ComponentProps } from 'react'
-import { cn } from '~/lib/utils'
 
 const HoverCard = ({
   ...props

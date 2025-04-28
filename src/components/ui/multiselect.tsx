@@ -1,21 +1,21 @@
 'use client'
 
-import { Command as CommandPrimitive, useCommandState } from 'cmdk'
-import { CloseIcon } from '~/icons'
-import type {
-  ComponentProps,
-  ReactNode,
-  KeyboardEvent,
-  ComponentPropsWithoutRef,
-} from 'react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Command,
   CommandGroup,
   CommandItem,
   CommandList,
-} from '~/components/ui/command'
-import { cn } from '~/lib/utils'
+} from '@everynews/components/ui/command'
+import { CloseIcon } from '@everynews/icons'
+import { cn } from '@everynews/lib/utils'
+import { Command as CommandPrimitive, useCommandState } from 'cmdk'
+import type {
+  ComponentProps,
+  ComponentPropsWithoutRef,
+  KeyboardEvent,
+  ReactNode,
+} from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 export interface Option {
   value: string

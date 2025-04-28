@@ -1,6 +1,6 @@
 'use client'
 
-import { type ChangeEvent, useCallback, useState } from 'react'
+import { useCallback, useState, type ChangeEvent } from 'react'
 
 type UseSliderWithInputProps = {
   minValue?: number

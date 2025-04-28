@@ -1,9 +1,9 @@
 'use client'
 
+import { CheckmarkIcon, ExpandDownIcon, ExpandUpIcon } from '@everynews/icons'
+import { cn } from '@everynews/lib/utils'
 import * as SelectPrimitive from '@radix-ui/react-select'
-import { CheckmarkIcon, ExpandDownIcon, ExpandUpIcon } from '~/icons'
 import type { ComponentProps } from 'react'
-import { cn } from '~/lib/utils'
 
 const Select = ({ ...props }: ComponentProps<typeof SelectPrimitive.Root>) => (
   <SelectPrimitive.Root data-slot="select" {...props} />

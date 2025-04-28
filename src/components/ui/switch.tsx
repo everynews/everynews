@@ -1,8 +1,8 @@
 'use client'
 
+import { cn } from '@everynews/lib/utils'
 import * as SwitchPrimitive from '@radix-ui/react-switch'
 import type { ComponentProps } from 'react'
-import { cn } from '~/lib/utils'
 
 const Switch = ({
   className,

@@ -1,6 +1,6 @@
-import { ExpandDownIcon } from '~/icons'
+import { ExpandDownIcon } from '@everynews/icons'
+import { cn } from '@everynews/lib/utils'
 import type { ComponentProps } from 'react'
-import { cn } from '~/lib/utils'
 
 const SelectNative = ({
   className,

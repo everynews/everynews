@@ -1,20 +1,22 @@
 {
   "name": "everynews",
+  "version": "0.1.0",
+  "type": "module",
   "scripts": {
     "build": "next build",
-    "db:check": "drizzle-kit check",
-    "db:deploy": "drizzle-kit migrate",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:pull": "drizzle-kit pull",
-    "db:push": "drizzle-kit push",
+    "db:check": "drizzle-kit check --config drizzle/config.ts",
+    "db:deploy": "drizzle-kit migrate --config drizzle/config.ts",
+    "db:generate": "drizzle-kit generate --config drizzle/config.ts",
+    "db:migrate": "drizzle-kit migrate --config drizzle/config.ts",
+    "db:pull": "drizzle-kit pull --config drizzle/config.ts",
+    "db:push": "drizzle-kit push --config drizzle/config.ts",
     "db:studio": "drizzle-kit studio",
     "dev": "next dev --turbopack",
-    "format": "prettier . --write",
-    "lint": "eslint . --fix",
-    "tidy": "pnpm format && pnpm lint && pnpm db:check",
+    "format": "NODE_OPTIONS=\"--experimental-strip-types\" prettier --config rules/prettier.config.ts --ignore-path rules/.prettierignore --write .",
+    "lint": "eslint --config rules/eslint.config.ts . --fix",
+    "start": "next start",
     "test": "echo \"Not Implemented\"",
-    "start": "next start"
+    "tidy": "pnpm format && pnpm lint && pnpm db:check"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -77,6 +79,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.25.1",
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
     "@next/eslint-plugin-next": "^15.3.1",
     "@tailwindcss/postcss": "^4.1.4",
     "@types/node": "^22.15.3",
@@ -92,11 +95,11 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "globals": "^16.0.0",
+    "prettier-plugin-pkg": "^0.19.0",
     "tailwindcss": "^4.1.4",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.8.3"
   },
-  "type": "module",
-  "version": "0.1.0",
   "pnpm": {
     "onlyBuiltDependencies": [
       "@vercel/speed-insights",

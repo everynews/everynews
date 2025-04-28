@@ -1,12 +1,28 @@
 'use client'
 
-import { Slot } from '@radix-ui/react-slot'
-import { SidebarExpandIcon, SidebarCollapseIcon } from '~/icons'
-import { type VariantProps, cva } from 'class-variance-authority'
+import { Button } from '@everynews/components/ui/button'
+import { Input } from '@everynews/components/ui/input'
+import { Separator } from '@everynews/components/ui/separator'
 import {
-  type CSSProperties,
-  type ComponentProps,
-  type ElementRef,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@everynews/components/ui/sheet'
+import { Skeleton } from '@everynews/components/ui/skeleton'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@everynews/components/ui/tooltip'
+import { useIsMobile } from '@everynews/hooks/use-mobile'
+import { SidebarCollapseIcon, SidebarExpandIcon } from '@everynews/icons'
+import { cn } from '@everynews/lib/utils'
+import { Slot } from '@radix-ui/react-slot'
+import { cva, type VariantProps } from 'class-variance-authority'
+import {
   createContext,
   forwardRef,
   useCallback,
@@ -14,26 +30,10 @@ import {
   useEffect,
   useMemo,
   useState,
+  type ComponentProps,
+  type CSSProperties,
+  type ElementRef,
 } from 'react'
-import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
-import { Separator } from '~/components/ui/separator'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '~/components/ui/sheet'
-import { Skeleton } from '~/components/ui/skeleton'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '~/components/ui/tooltip'
-import { useIsMobile } from '~/hooks/use-mobile'
-import { cn } from '~/lib/utils'
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state'
 

@@ -1,14 +1,14 @@
-import { ExpandDownIcon, PrevIcon, NextIcon } from '~/icons'
-import ThemeToggle from '~/components/theme-toggle'
-import { Button } from '~/components/ui/button'
+import ThemeToggle from '@everynews/components/theme-toggle'
+import { Button } from '@everynews/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu'
-import { cn } from '~/lib/utils'
+} from '@everynews/components/ui/dropdown-menu'
+import { ExpandDownIcon, NextIcon, PrevIcon } from '@everynews/icons'
+import { cn } from '@everynews/lib/utils'
 
 export default function Page() {
   return (

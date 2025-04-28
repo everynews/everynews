@@ -1,8 +1,8 @@
 'use client'
 
+import { cn } from '@everynews/lib/utils'
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
 import type { ComponentProps } from 'react'
-import { cn } from '~/lib/utils'
 
 const ScrollArea = ({
   className,

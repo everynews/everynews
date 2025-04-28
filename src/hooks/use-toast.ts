@@ -1,8 +1,11 @@
 'use client'
 
-import { type ReactNode, useEffect, useState } from 'react'
 // Inspired by react-hot-toast library
-import type { ToastActionElement, ToastProps } from '~/components/ui/toast'
+import type {
+  ToastActionElement,
+  ToastProps,
+} from '@everynews/components/ui/toast'
+import { useEffect, useState, type ReactNode } from 'react'
 
 const TOAST_LIMIT = 1
 

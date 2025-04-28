@@ -1,5 +1,5 @@
-import { auth } from './index'
 import { headers } from 'next/headers'
+import { auth } from './index'
 
 export const getUser = async () =>
   await auth.api

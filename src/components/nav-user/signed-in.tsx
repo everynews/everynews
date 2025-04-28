@@ -1,25 +1,29 @@
+import { auth } from '@everynews/auth/client'
 import {
-  MenuExpandIcon,
-  AccountsIcon,
-  LogoutIcon,
-  SparkleIcon,
-  ProfileIcon,
-} from '~/icons'
-import type { User } from 'better-auth'
-import { auth } from '~/auth/client'
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@everynews/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu'
+} from '@everynews/components/ui/dropdown-menu'
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '~/components/ui/sidebar'
+} from '@everynews/components/ui/sidebar'
+import {
+  AccountsIcon,
+  LogoutIcon,
+  MenuExpandIcon,
+  ProfileIcon,
+  SparkleIcon,
+} from '@everynews/icons'
+import type { User } from 'better-auth'
 import { redirect } from 'next/navigation'
 
 export const NavUserSignedIn = (user: User) => (

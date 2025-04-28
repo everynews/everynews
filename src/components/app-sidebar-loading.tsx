@@ -1,4 +1,8 @@
-import { Sidebar, SidebarContent, SidebarGroup } from '~/components/ui/sidebar'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+} from '@everynews/components/ui/sidebar'
 
 export const AppSidebarLoading = () => (
   <Sidebar variant="inset" className="dark scheme-only-dark max-lg:p-3 lg:pe-1">

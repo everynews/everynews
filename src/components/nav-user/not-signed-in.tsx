@@ -1,8 +1,7 @@
 'use client'
 
-import { useId, useState } from 'react'
-import { auth } from '~/auth/client'
-import { Button } from '~/components/ui/button'
+import { auth } from '@everynews/auth/client'
+import { Button } from '@everynews/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -10,11 +9,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '~/components/ui/dialog'
-import { Input } from '~/components/ui/input'
-import { SidebarMenu, SidebarMenuItem } from '~/components/ui/sidebar'
-import { SpinnerIcon } from '~/icons'
+} from '@everynews/components/ui/dialog'
+import { Input } from '@everynews/components/ui/input'
+import { SidebarMenu, SidebarMenuItem } from '@everynews/components/ui/sidebar'
+import { SpinnerIcon } from '@everynews/icons'
 import Image from 'next/image'
+import { useId, useState } from 'react'
 
 export const NavUserNotSignedIn = () => {
   const id = useId()

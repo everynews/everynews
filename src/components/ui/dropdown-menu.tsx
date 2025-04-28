@@ -1,9 +1,9 @@
 'use client'
 
+import { BulletIcon, CheckmarkIcon, NextIcon } from '@everynews/icons'
+import { cn } from '@everynews/lib/utils'
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
-import { CheckmarkIcon, NextIcon, BulletIcon } from '~/icons'
 import { useCallback, useRef, type ComponentProps } from 'react'
-import { cn } from '~/lib/utils'
 
 type PointerDownEvent = Parameters<
   NonNullable<DropdownMenuPrimitive.DropdownMenuContentProps['onPointerDown']>

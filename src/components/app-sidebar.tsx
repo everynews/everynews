@@ -1,11 +1,15 @@
+import { AppSidebarContent } from '@everynews/components/app-sidebar-content'
+import { AppSidebarLoading } from '@everynews/components/app-sidebar-loading'
+import { AppSidebarTrigger } from '@everynews/components/app-sidebar-trigger'
+import { NavUser } from '@everynews/components/nav-user'
+import {
+  Sidebar,
+  SidebarFooter,
+  SidebarHeader,
+} from '@everynews/components/ui/sidebar'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense, type ComponentProps } from 'react'
-import { AppSidebarContent } from '~/components/app-sidebar-content'
-import { AppSidebarLoading } from '~/components/app-sidebar-loading'
-import { AppSidebarTrigger } from '~/components/app-sidebar-trigger'
-import { NavUser } from '~/components/nav-user'
-import { Sidebar, SidebarFooter, SidebarHeader } from '~/components/ui/sidebar'
-import Image from 'next/image'
 
 export const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => (
   <Sidebar

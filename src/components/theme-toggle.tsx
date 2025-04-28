@@ -1,6 +1,6 @@
 'use client'
 
-import { MoonIcon, SunIcon } from '~/icons'
+import { MoonIcon, SunIcon } from '@everynews/icons'
 import { useTheme } from 'next-themes'
 import { useId, useState } from 'react'
 

@@ -8,10 +8,10 @@
 // using internally – making it trivial to change the underlying provider in
 // the future.
 
+import { cn } from '@everynews/lib/utils'
+import * as HeroIcons from '@heroicons/react/24/outline'
 import { forwardRef } from 'react'
 import type { ComponentProps } from 'react'
-import * as HeroIcons from '@heroicons/react/24/outline'
-import { cn } from '~/lib/utils'
 
 // Helper to create wrapped icon components with forwardRef
 const createIcon = (

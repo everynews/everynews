@@ -1,5 +1,12 @@
 'use client'
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@everynews/components/ui/tooltip'
+import { cn } from '@everynews/lib/utils'
 import * as SliderPrimitive from '@radix-ui/react-slider'
 import {
   Fragment,
@@ -9,13 +16,6 @@ import {
   type ComponentProps,
   type ReactNode,
 } from 'react'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '~/components/ui/tooltip'
-import { cn } from '~/lib/utils'
 
 const Slider = ({
   className,

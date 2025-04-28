@@ -1,11 +1,11 @@
+import { Toaster } from '@everynews/components/ui/sonner'
+import { ThemeProvider } from '@everynews/providers/theme-provider'
 import { Bricolage_Grotesque } from 'next/font/google'
-import { Toaster } from '~/components/ui/sonner'
-import { ThemeProvider } from '~/providers/theme-provider'
 import './globals.css'
+import { AppSidebar } from '@everynews/components/app-sidebar'
+import { SidebarInset, SidebarProvider } from '@everynews/components/ui/sidebar'
+import { cn } from '@everynews/lib/utils'
 import type { ReactNode } from 'react'
-import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar'
-import { AppSidebar } from '~/components/app-sidebar'
-import { cn } from '~/lib/utils'
 
 const fontSans = Bricolage_Grotesque({
   variable: '--font-sans',

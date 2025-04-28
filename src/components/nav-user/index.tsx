@@ -1,8 +1,8 @@
-import { NavUserNotSignedIn } from './not-signed-in'
-import { NavUserSignedIn } from './signed-in'
+import { getUser } from '@everynews/auth/server'
 import { Suspense } from 'react'
 import { NavUserLoading } from './loading'
-import { getUser } from '~/auth/server'
+import { NavUserNotSignedIn } from './not-signed-in'
+import { NavUserSignedIn } from './signed-in'
 
 export const NavUser = async () => {
   const user = await getUser()

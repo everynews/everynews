@@ -1,9 +1,9 @@
 'use client'
 
+import { CloseIcon } from '@everynews/icons'
+import { cn } from '@everynews/lib/utils'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
-import { CloseIcon } from '~/icons'
 import type { ComponentProps } from 'react'
-import { cn } from '~/lib/utils'
 
 const Dialog = ({ ...props }: ComponentProps<typeof DialogPrimitive.Root>) => (
   <DialogPrimitive.Root data-slot="dialog" {...props} />

@@ -1,3 +1,5 @@
+import { database } from '@everynews/db'
+import { sendMagicLink } from '@everynews/email'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import {
@@ -8,8 +10,6 @@ import {
   organization,
 } from 'better-auth/plugins'
 import { passkey } from 'better-auth/plugins/passkey'
-import { database } from '~/database'
-import { sendMagicLink } from '~/email'
 
 if (!process.env.AUTH_SECRET) {
   throw new Error('AUTH_SECRET is not defined')

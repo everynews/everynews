@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import {
   SidebarContent,
   SidebarGroup,
@@ -7,7 +6,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '~/components/ui/sidebar'
+} from '@everynews/components/ui/sidebar'
+import Link from 'next/link'
 
 export const AppSidebarContent = () => (
   <SidebarContent>

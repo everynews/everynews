@@ -1,7 +1,8 @@
 'use client'
 
+import { NextIcon, PrevIcon } from '@everynews/icons'
+import { cn } from '@everynews/lib/utils'
 import { getLocalTimeZone, today } from '@internationalized/date'
-import { PrevIcon, NextIcon } from '~/icons'
 import type { ComponentProps } from 'react'
 import {
   Button,
@@ -11,11 +12,10 @@ import {
   CalendarGrid as CalendarGridRac,
   CalendarHeaderCell as CalendarHeaderCellRac,
   Calendar as CalendarRac,
+  composeRenderProps,
   Heading as HeadingRac,
   RangeCalendar as RangeCalendarRac,
-  composeRenderProps,
 } from 'react-aria-components'
-import { cn } from '~/lib/utils'
 
 interface BaseCalendarProps {
   className?: string

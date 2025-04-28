@@ -1,8 +1,8 @@
 'use client'
 
+import { cn } from '@everynews/lib/utils'
 import * as AvatarPrimitive from '@radix-ui/react-avatar'
 import type { ComponentProps } from 'react'
-import { cn } from '~/lib/utils'
 
 const Avatar = ({
   className,

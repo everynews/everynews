@@ -11,11 +11,11 @@
     "prefix": ""
   },
   "aliases": {
-    "components": "~/components",
-    "utils": "~/lib/utils",
-    "ui": "~/components/ui",
-    "lib": "~/lib",
-    "hooks": "~/hooks"
+    "components": "@everynews/components",
+    "utils": "@everynews/lib/utils",
+    "ui": "@everynews/components/ui",
+    "lib": "@everynews/lib",
+    "hooks": "@everynews/hooks"
   },
   "iconLibrary": "lucide"
 }

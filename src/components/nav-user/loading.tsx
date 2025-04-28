@@ -1,9 +1,9 @@
-import { Avatar, AvatarFallback } from '~/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@everynews/components/ui/avatar'
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '~/components/ui/sidebar'
+} from '@everynews/components/ui/sidebar'
 
 export const NavUserLoading = () => (
   <SidebarMenu>
