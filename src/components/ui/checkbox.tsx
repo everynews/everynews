@@ -28,6 +28,7 @@ const Checkbox = ({
           fill="currentcolor"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <title>Indeterminate</title>
           <path
             fillRule="evenodd"
             clipRule="evenodd"
@@ -42,6 +43,7 @@ const Checkbox = ({
           fill="currentcolor"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <title>Checked</title>
           <path
             fillRule="evenodd"
             clipRule="evenodd"
