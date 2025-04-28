@@ -8,6 +8,6 @@ if (!process.env.DATABASE_URL) {
 
 const client = neon(process.env.DATABASE_URL)
 
-export const database = drizzle(client, {
+export const db = drizzle(client, {
   schema,
 })

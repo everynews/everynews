@@ -1,7 +1,8 @@
-import { database } from '@everynews/db'
+import { db } from '@everynews/db'
 import { sendMagicLink } from '@everynews/email'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { nextCookies } from 'better-auth/next-js'
 import {
   admin,
   apiKey,
@@ -19,7 +20,7 @@ export const auth = betterAuth({
   appName: '@everynews/api/auth',
   basePath: '/api/auth',
   secret: process.env.AUTH_SECRET,
-  database: drizzleAdapter(database, {
+  database: drizzleAdapter(db, {
     provider: 'pg',
     usePlural: true,
   }),
@@ -31,6 +32,7 @@ export const auth = betterAuth({
     magicLink({
       sendMagicLink,
     }),
+    nextCookies(),
     openAPI(),
   ],
 })
