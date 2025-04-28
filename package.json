@@ -56,7 +56,6 @@
     "drizzle-orm": "^0.43.1",
     "drizzle-zod": "^0.7.1",
     "emblor": "^1.4.8",
-    "hono": "^4.7.8",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.503.0",
     "next": "15.4.0-canary.10",
