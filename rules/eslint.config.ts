@@ -72,7 +72,6 @@ const tsConfig = [
       'padding-line-between-statements': [
         'error',
         { blankLine: 'always', prev: 'directive', next: '*' },
-        { blankLine: 'always', prev: 'import', next: '*' },
         { blankLine: 'never', prev: 'import', next: 'import' },
         { blankLine: 'always', prev: '*', next: 'export' },
         { blankLine: 'always', prev: '*', next: 'function' },
@@ -140,7 +139,6 @@ const jsConfig = [
         'error',
         { blankLine: 'never', prev: 'import', next: 'import' },
         { blankLine: 'always', prev: 'directive', next: '*' },
-        { blankLine: 'always', prev: 'import', next: '*' },
         { blankLine: 'always', prev: '*', next: 'export' },
         { blankLine: 'always', prev: '*', next: 'function' },
         { blankLine: 'always', prev: 'function', next: '*' },
