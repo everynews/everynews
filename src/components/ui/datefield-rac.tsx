@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import {
   composeRenderProps,
   DateField as DateFieldRac,

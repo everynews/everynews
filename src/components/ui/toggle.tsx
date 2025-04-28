@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as TogglePrimitive from '@radix-ui/react-toggle'
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { ComponentProps } from 'react'

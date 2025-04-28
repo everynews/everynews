@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as HoverCardPrimitive from '@radix-ui/react-hover-card'
 import type { ComponentProps } from 'react'
 

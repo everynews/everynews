@@ -1,7 +1,7 @@
 'use client'
 
 import { CheckmarkIcon, ExpandDownIcon, ExpandUpIcon } from '@everynews/icons'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import type { ComponentProps } from 'react'
 

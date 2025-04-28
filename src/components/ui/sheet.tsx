@@ -1,7 +1,7 @@
 'use client'
 
 import { CloseIcon } from '@everynews/icons'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as SheetPrimitive from '@radix-ui/react-dialog'
 import type { ComponentProps } from 'react'
 

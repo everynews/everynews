@@ -7,7 +7,7 @@ import {
   CommandList,
 } from '@everynews/components/ui/command'
 import { CloseIcon } from '@everynews/icons'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import { Command as CommandPrimitive, useCommandState } from 'cmdk'
 import type {
   ComponentProps,

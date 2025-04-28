@@ -4,7 +4,7 @@ import { Bricolage_Grotesque } from 'next/font/google'
 import './globals.css'
 import { AppSidebar } from '@everynews/components/app-sidebar'
 import { SidebarInset, SidebarProvider } from '@everynews/components/ui/sidebar'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import type { ReactNode } from 'react'
 
 const fontSans = Bricolage_Grotesque({

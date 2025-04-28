@@ -1,7 +1,7 @@
 'use client'
 
 import { CloseIcon } from '@everynews/icons'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as ToastPrimitives from '@radix-ui/react-toast'
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { ComponentPropsWithoutRef, ReactElement } from 'react'

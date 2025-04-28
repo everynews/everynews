@@ -1,7 +1,7 @@
 'use client'
 
 import { BulletIcon, CheckmarkIcon, NextIcon } from '@everynews/icons'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
 import { useCallback, useRef, type ComponentProps } from 'react'
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { NextIcon, PrevIcon } from '@everynews/icons'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import { getLocalTimeZone, today } from '@internationalized/date'
 import type { ComponentProps } from 'react'
 import {

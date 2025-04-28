@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
 import type { ComponentProps } from 'react'
 

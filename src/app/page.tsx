@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@everynews/components/ui/dropdown-menu'
 import { ExpandDownIcon, NextIcon, PrevIcon } from '@everynews/icons'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 
 export default function Page() {
   return (

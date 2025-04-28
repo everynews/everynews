@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as SwitchPrimitive from '@radix-ui/react-switch'
 import type { ComponentProps } from 'react'
 

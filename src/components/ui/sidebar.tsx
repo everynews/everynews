@@ -19,7 +19,7 @@ import {
 } from '@everynews/components/ui/tooltip'
 import { useIsMobile } from '@everynews/hooks/use-mobile'
 import { SidebarCollapseIcon, SidebarExpandIcon } from '@everynews/icons'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 import {

@@ -1,7 +1,7 @@
 'use client'
 
 import { buttonVariants } from '@everynews/components/ui/button'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
 import type { ComponentProps } from 'react'
 

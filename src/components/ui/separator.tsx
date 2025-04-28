@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as SeparatorPrimitive from '@radix-ui/react-separator'
 import type { ComponentProps } from 'react'
 

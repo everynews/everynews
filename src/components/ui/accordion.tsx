@@ -1,7 +1,7 @@
 'use client'
 
 import { ExpandDownIcon } from '@everynews/icons'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import type { ComponentProps } from 'react'
 

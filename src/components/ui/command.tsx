@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from '@everynews/components/ui/dialog'
 import { SearchIcon } from '@everynews/icons'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import { Command as CommandPrimitive } from 'cmdk'
 import type { ComponentProps } from 'react'
 

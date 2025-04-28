@@ -1,4 +1,4 @@
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import type { ComponentProps } from 'react'
 
 const Input = ({ className, type, ...props }: ComponentProps<'input'>) => (

@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as PopoverPrimitive from '@radix-ui/react-popover'
 import type { ComponentProps } from 'react'
 

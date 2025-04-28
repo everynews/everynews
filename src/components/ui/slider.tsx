@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@everynews/components/ui/tooltip'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as SliderPrimitive from '@radix-ui/react-slider'
 import {
   Fragment,

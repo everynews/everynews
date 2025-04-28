@@ -8,7 +8,7 @@
 // using internally – making it trivial to change the underlying provider in
 // the future.
 
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as HeroIcons from '@heroicons/react/24/outline'
 import { forwardRef } from 'react'
 import type { ComponentProps } from 'react'

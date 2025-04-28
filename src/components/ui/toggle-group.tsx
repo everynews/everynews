@@ -1,7 +1,7 @@
 'use client'
 
 import { toggleVariants } from '@everynews/components/ui/toggle'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group'
 import type { VariantProps } from 'class-variance-authority'
 import { createContext, useContext, type ComponentProps } from 'react'

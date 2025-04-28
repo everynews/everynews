@@ -1,5 +1,5 @@
 import { ExpandDownIcon } from '@everynews/icons'
-import { cn } from '@everynews/lib/utils'
+import { cn } from '@everynews/lib/cn'
 import type { ComponentProps } from 'react'
 
 const SelectNative = ({
