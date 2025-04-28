@@ -1,3 +1,4 @@
+import { nanoid } from '@everynews/lib/id'
 import {
   boolean,
   integer,
@@ -9,7 +10,7 @@ import {
 } from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(nanoid),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
   emailVerified: boolean('email_verified').notNull(),
@@ -23,7 +24,7 @@ export const users = pgTable('users', {
 })
 
 export const sessions = pgTable('sessions', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(nanoid),
   expiresAt: timestamp('expires_at').notNull(),
   token: text('token').notNull().unique(),
   createdAt: timestamp('created_at').notNull(),
@@ -38,7 +39,7 @@ export const sessions = pgTable('sessions', {
 })
 
 export const accounts = pgTable('accounts', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(nanoid),
   accountId: text('account_id').notNull(),
   providerId: text('provider_id').notNull(),
   userId: text('user_id')
@@ -56,7 +57,7 @@ export const accounts = pgTable('accounts', {
 })
 
 export const verifications = pgTable('verifications', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(nanoid),
   identifier: text('identifier').notNull(),
   value: text('value').notNull(),
   expiresAt: timestamp('expires_at').notNull(),
@@ -65,7 +66,7 @@ export const verifications = pgTable('verifications', {
 })
 
 export const apikeys = pgTable('apikeys', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(nanoid),
   name: text('name').notNull(),
   start: text('start'),
   prefix: text('prefix'),
@@ -91,7 +92,7 @@ export const apikeys = pgTable('apikeys', {
 })
 
 export const organizations = pgTable('organizations', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(nanoid),
   name: text('name').notNull(),
   slug: text('slug').unique(),
   logo: text('logo'),
@@ -100,7 +101,7 @@ export const organizations = pgTable('organizations', {
 })
 
 export const members = pgTable('members', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(nanoid),
   organizationId: text('organization_id')
     .notNull()
     .references(() => organizations.id, { onDelete: 'cascade' }),
@@ -112,7 +113,7 @@ export const members = pgTable('members', {
 })
 
 export const invitations = pgTable('invitations', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(nanoid),
   organizationId: text('organization_id')
     .notNull()
     .references(() => organizations.id, { onDelete: 'cascade' }),
@@ -126,7 +127,7 @@ export const invitations = pgTable('invitations', {
 })
 
 export const passkeys = pgTable('passkeys', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(nanoid),
   name: text('name'),
   publicKey: text('public_key').notNull(),
   userId: text('user_id')
@@ -141,7 +142,7 @@ export const passkeys = pgTable('passkeys', {
 })
 
 export const news = pgTable('news', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(nanoid),
   organizationId: text('organization_id')
     .notNull()
     .references(() => organizations.id, { onDelete: 'cascade' }),
@@ -158,7 +159,7 @@ export const news = pgTable('news', {
 })
 
 export const schedules = pgTable('schedules', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(nanoid),
   newsId: text('news_id')
     .notNull()
     .references(() => news.id, { onDelete: 'cascade' }),
@@ -172,7 +173,7 @@ export const schedules = pgTable('schedules', {
 })
 
 export const stories = pgTable('stories', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(nanoid),
   newsId: text('news_id')
     .notNull()
     .references(() => news.id, { onDelete: 'cascade' }),
@@ -186,7 +187,7 @@ export const stories = pgTable('stories', {
 })
 
 export const channels = pgTable('channels', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(nanoid),
   organizationId: text('organization_id')
     .notNull()
     .references(() => organizations.id, { onDelete: 'cascade' }),
