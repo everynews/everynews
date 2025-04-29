@@ -16,7 +16,7 @@
     "check": "bunx biome check --write . --config-path dev/biome.json",
     "start": "next start",
     "test": "echo \"Not Implemented\"",
-    "tidy": "bun format && bun lint && bun db:check"
+    "tidy": "bun check && bun db:check"
   },
   "dependencies": {
     "@internationalized/date": "^3.8.0",
