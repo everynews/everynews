@@ -7,7 +7,7 @@ import {
   DrawerContent,
   DrawerTitle,
 } from '@everynews/components/ui/drawer'
-import { useIsMobile } from '@everynews/lib/use-mobile'
+import { useIsMobile } from '@everynews/hooks/use-mobile'
 import { cx, focusRing } from '@everynews/lib/utils'
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
 import { RiCloseLine } from '@remixicon/react'
