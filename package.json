@@ -56,6 +56,7 @@
     "drizzle-orm": "^0.43.1",
     "drizzle-zod": "^0.7.1",
     "emblor": "^1.4.8",
+    "hono": "^4.7.8",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.503.0",
     "nanoid": "^5.1.5",
@@ -99,13 +100,5 @@
     "tailwindcss": "^4.1.4",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.8.3"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@vercel/speed-insights",
-      "esbuild",
-      "sharp",
-      "unrs-resolver"
-    ]
   }
 }
