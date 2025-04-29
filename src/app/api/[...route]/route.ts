@@ -1,4 +1,3 @@
-
 import { auth } from '@everynews/auth'
 import { Hono } from 'hono'
 import { handle } from 'hono/vercel'
@@ -20,4 +19,5 @@ app.on('*', '/auth/**', c => auth.handler(c.req.raw))
 
 // Export handlers
 export const GET = handle(app)
+
 export const POST = handle(app)

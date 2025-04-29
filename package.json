@@ -16,7 +16,7 @@
     "lint": "eslint --config rules/eslint.config.ts . --fix",
     "start": "next start",
     "test": "echo \"Not Implemented\"",
-    "tidy": "pnpm format && pnpm lint && pnpm db:check"
+    "tidy": "bun format && bun lint && bun db:check"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
