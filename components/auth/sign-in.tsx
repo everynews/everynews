@@ -64,7 +64,7 @@ export const SignIn = ({
                     <Input
                       id='email'
                       type='email'
-                      placeholder='m@example.com'
+                      placeholder='elon@twitter.com'
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
