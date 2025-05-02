@@ -1,5 +1,5 @@
 {
-  "$schema": "../node_modules/@biomejs/biome/configuration_schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 
   "assist": {
     "actions": {
@@ -76,7 +76,24 @@
       "complexity": {
         "useArrowFunction": "error"
       },
-      "recommended": true
+      "recommended": true,
+      "nursery": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": ["./*"],
+                "message": "Use an alias (@everynews) instead of a relative path."
+              },
+              {
+                "group": ["../**/*"],
+                "message": "Relative parent paths are not allowed."
+              }
+            ]
+          }
+        }
+      }
     }
   },
 
