@@ -68,9 +68,25 @@ export const formatters: FormatterFunctions = {
     currency = 'USD',
   }: CurrencyParams): string => {
     return new Intl.NumberFormat('en-US', {
-      style: 'currency',
       currency,
       maximumFractionDigits: maxFractionDigits,
+      style: 'currency',
+    }).format(number)
+  },
+
+  million: ({ number, decimals = 1 }: MillionParams): string => {
+    return `${new Intl.NumberFormat('en-US', {
+      maximumFractionDigits: decimals,
+      minimumFractionDigits: decimals,
+      style: 'decimal',
+    }).format(number)}M`
+  },
+
+  percentage: ({ number, decimals = 1 }: PercentageParams): string => {
+    return new Intl.NumberFormat('en-US', {
+      maximumFractionDigits: decimals,
+      minimumFractionDigits: decimals,
+      style: 'percent',
     }).format(number)
   },
 
@@ -78,21 +94,5 @@ export const formatters: FormatterFunctions = {
     return new Intl.NumberFormat('en-US', {
       style: 'decimal',
     }).format(number)
-  },
-
-  percentage: ({ number, decimals = 1 }: PercentageParams): string => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'percent',
-      minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals,
-    }).format(number)
-  },
-
-  million: ({ number, decimals = 1 }: MillionParams): string => {
-    return `${new Intl.NumberFormat('en-US', {
-      style: 'decimal',
-      minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals,
-    }).format(number)}M`
   },
 }

@@ -1,23 +1,5 @@
 {
-  "name": "everynews",
-  "version": "0.1.0",
-  "type": "module",
   "author": "Sunghyun Cho <sunghyun@every.news>",
-  "scripts": {
-    "build": "next build",
-    "db:check": "drizzle-kit check --config drizzle/config.ts",
-    "db:deploy": "drizzle-kit migrate --config drizzle/config.ts",
-    "db:generate": "drizzle-kit generate --config drizzle/config.ts",
-    "db:migrate": "drizzle-kit migrate --config drizzle/config.ts",
-    "db:pull": "drizzle-kit pull --config drizzle/config.ts",
-    "db:push": "drizzle-kit push --config drizzle/config.ts",
-    "db:studio": "drizzle-kit studio",
-    "dev": "next dev --turbopack",
-    "check": "bunx biome check --write . --config-path dev/biome.json",
-    "start": "next start",
-    "test": "echo \"Not Implemented\"",
-    "tidy": "bun check && bun db:check"
-  },
   "dependencies": {
     "@internationalized/date": "^3.8.0",
     "@neondatabase/serverless": "^1.0.0",
@@ -62,7 +44,7 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "^2.0.0-beta.2",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/postcss": "^4.1.4",
     "@types/node": "^22.15.3",
@@ -73,10 +55,24 @@
     "tailwindcss": "^4.1.4",
     "typescript": "^5.8.3"
   },
+  "name": "everynews",
+  "scripts": {
+    "build": "next build",
+    "check": "bunx biome check --write . --config-path dev/biome.json",
+    "check-db": "drizzle-kit check --config drizzle/config.ts",
+    "dev": "next dev --turbopack",
+    "start": "next start",
+    "test": "echo \"Not Implemented\"",
+    "tidy": "bun check && bun db:check && bun run build",
+    "update-better-auth": "bunx @better-auth/cli generate --config auth/index.ts --output db/auth-schema.ts && bun check",
+    "update-db": "drizzle-kit push --config drizzle/config.ts"
+  },
   "trustedDependencies": [
     "@biomejs/biome",
     "esbuild",
     "sharp",
     "unrs-resolver"
-  ]
+  ],
+  "type": "module",
+  "version": "0.1.0"
 }

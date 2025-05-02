@@ -24,60 +24,60 @@ import * as React from 'react'
 
 const navigation = [
   {
-    name: 'Home',
+    active: false,
     href: '#',
     icon: House,
+    name: 'Home',
     notifications: false,
-    active: false,
   },
   {
-    name: 'My Alerts',
+    active: false,
     href: '#',
     icon: PackageSearch,
+    name: 'My Alerts',
     notifications: 2,
-    active: false,
   },
 ] as const
 
 const navigation2 = [
   {
-    name: 'Alerts',
+    children: [
+      {
+        active: true,
+        href: '#',
+        name: 'Alerts 1',
+      },
+      {
+        active: false,
+        href: '#',
+        name: 'Alerts 2',
+      },
+      {
+        active: false,
+        href: '#',
+        name: 'Alerts 3',
+      },
+    ],
     href: '#',
     icon: BookText,
-    children: [
-      {
-        name: 'Alerts 1',
-        href: '#',
-        active: true,
-      },
-      {
-        name: 'Alerts 2',
-        href: '#',
-        active: false,
-      },
-      {
-        name: 'Alerts 3',
-        href: '#',
-        active: false,
-      },
-    ],
+    name: 'Alerts',
   },
   {
-    name: 'Notifications',
-    href: '#',
-    icon: PackageSearch,
     children: [
       {
-        name: 'Alerts 4',
-        href: '#',
         active: false,
+        href: '#',
+        name: 'Alerts 4',
       },
       {
-        name: 'Alerts 5',
-        href: '#',
         active: false,
+        href: '#',
+        name: 'Alerts 5',
       },
     ],
+    href: '#',
+    icon: PackageSearch,
+    name: 'Notifications',
   },
 ] as const
 

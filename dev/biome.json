@@ -1,73 +1,87 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "files": {
-    "ignore": [
-      "**/node_modules/**",
-      "**/.next/**",
-      "**/.turbo/**",
-      "**/dist/**",
-      "**/build/**",
-      "**/.cache/**"
-    ],
-    "ignoreUnknown": true
-  },
-  "formatter": {
-    "enabled": true,
-    "formatWithErrors": false,
-    "indentStyle": "space",
-    "indentWidth": 2,
-    "lineEnding": "lf",
-    "lineWidth": 80,
-    "attributePosition": "auto",
-    "ignore": [
-      "**/.cache/**",
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/build/**",
-      "**/.next/**",
-      "**/public/**",
-      "**/*.json",
-      "**/*.md"
-    ]
-  },
-  "organizeImports": {
-    "enabled": true
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true
-    },
-    "ignore": [
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/build/**",
-      "**/.cache/**",
-      "**/public/**",
-      "**/*.esm.js"
-    ]
-  },
-  "javascript": {
-    "formatter": {
-      "jsxQuoteStyle": "single",
-      "quoteProperties": "asNeeded",
-      "trailingCommas": "all",
-      "semicolons": "asNeeded",
-      "arrowParentheses": "always",
-      "bracketSpacing": true,
-      "bracketSameLine": false,
-      "quoteStyle": "single",
-      "attributePosition": "auto"
+  "$schema": "../node_modules/@biomejs/biome/configuration_schema.json",
+
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on",
+        "useSortedKeys": "on"
+      }
     }
   },
+
   "css": {
     "formatter": {
       "quoteStyle": "single"
     }
   },
+
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "**",
+      "!**/node_modules/**",
+      "!**/.next/**",
+      "!**/.turbo/**",
+      "!**/dist/**",
+      "!**/build/**",
+      "!**/.cache/**"
+    ]
+  },
+
+  "formatter": {
+    "attributePosition": "auto",
+    "enabled": true,
+    "formatWithErrors": false,
+    "includes": [
+      "**",
+      "!**/.cache/**",
+      "!**/node_modules/**",
+      "!**/dist/**",
+      "!**/build/**",
+      "!**/.next/**",
+      "!**/public/**",
+      "!**/*.md"
+    ],
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 80
+  },
+
+  "javascript": {
+    "formatter": {
+      "arrowParentheses": "always",
+      "attributePosition": "auto",
+      "bracketSameLine": false,
+      "bracketSpacing": true,
+      "jsxQuoteStyle": "single",
+      "quoteProperties": "asNeeded",
+      "quoteStyle": "single",
+      "semicolons": "asNeeded",
+      "trailingCommas": "all"
+    }
+  },
+
+  "linter": {
+    "enabled": true,
+    "includes": [
+      "**",
+      "!**/node_modules/**",
+      "!**/dist/**",
+      "!**/build/**",
+      "!**/.cache/**",
+      "!**/public/**",
+      "!**/*.esm.js"
+    ],
+    "rules": {
+      "recommended": true
+    }
+  },
+
   "overrides": [
     {
-      "include": ["*.ts", "*.tsx"]
+      "includes": ["*.ts", "*.tsx"]
     }
   ]
 }

@@ -6,8 +6,8 @@ import { cx } from '@everynews/lib/utils'
 import * as DropdownMenuPrimitives from '@radix-ui/react-dropdown-menu'
 import {
   RiArrowRightSLine,
-  RiCheckLine,
   RiCheckboxBlankCircleLine,
+  RiCheckLine,
   RiRadioButtonFill,
 } from '@remixicon/react'
 import * as React from 'react'

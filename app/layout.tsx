@@ -7,16 +7,12 @@ import {
   SidebarTrigger,
 } from '@everynews/components/ui/sidebar'
 import type { Metadata } from 'next'
-import { ThemeProvider } from 'next-themes'
 import { cookies } from 'next/headers'
+import { ThemeProvider } from 'next-themes'
 
 export const experimental_ppr = true
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
-  title: siteConfig.name,
-  description: siteConfig.description,
-  keywords: ['Dashboard', 'Data Visualization', 'Software'],
   authors: [
     {
       name: 'Sunghyun Cho',
@@ -24,22 +20,26 @@ export const metadata: Metadata = {
     },
   ],
   creator: '@anaclumos',
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: siteConfig.url,
-    title: siteConfig.name,
-    description: siteConfig.description,
-    siteName: siteConfig.name,
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: siteConfig.name,
-    description: siteConfig.description,
-    creator: '@anaclumos',
-  },
+  description: siteConfig.description,
   icons: {
     icon: '/logo.png',
+  },
+  keywords: ['Dashboard', 'Data Visualization', 'Software'],
+  metadataBase: new URL(siteConfig.url),
+  openGraph: {
+    description: siteConfig.description,
+    locale: 'en_US',
+    siteName: siteConfig.name,
+    title: siteConfig.name,
+    type: 'website',
+    url: siteConfig.url,
+  },
+  title: siteConfig.name,
+  twitter: {
+    card: 'summary_large_image',
+    creator: '@anaclumos',
+    description: siteConfig.description,
+    title: siteConfig.name,
   },
 }
 

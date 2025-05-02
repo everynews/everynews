@@ -1,7 +1,7 @@
 import { cx, focusInput, focusRing, hasErrorInput } from '@everynews/lib/utils'
 import { RiEyeFill, RiEyeOffFill, RiSearchLine } from '@remixicon/react'
 import React from 'react'
-import { type VariantProps, tv } from 'tailwind-variants'
+import { tv, type VariantProps } from 'tailwind-variants'
 
 const inputStyles = tv({
   base: [
@@ -33,13 +33,13 @@ const inputStyles = tv({
     '[&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden',
   ],
   variants: {
-    hasError: {
-      true: hasErrorInput,
-    },
     // number input
     enableStepper: {
       false:
         '[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
+    },
+    hasError: {
+      true: hasErrorInput,
     },
   },
 })
@@ -73,7 +73,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={forwardedRef}
           type={isPassword ? typeState : type}
           className={cx(
-            inputStyles({ hasError, enableStepper }),
+            inputStyles({ enableStepper, hasError }),
             {
               'pl-8': isSearch,
               'pr-10': isPassword,
