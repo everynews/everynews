@@ -6,22 +6,27 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@everynews/components/ui/dialog'
 import { Input } from '@everynews/components/ui/input'
-import { cn } from '@everynews/lib/utils'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@everynews/components/ui/tabs'
+import { useIsMobile } from '@everynews/hooks/use-mobile'
+import Link from 'next/link'
 import { useState } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
 import { PhoneNumberInput } from './phone-number-input'
 
-export const SignIn = ({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<'div'>) => {
+export const SignIn = () => {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const isMobile = useIsMobile()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,62 +45,45 @@ export const SignIn = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant='outline' size='sm' className='w-full'>
-          Sign In
-        </Button>
+        <Button>Sign In</Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
-        <DialogHeader>
-          <DialogTitle>Welcome!</DialogTitle>
-          <DialogDescription>
-            Select Email or Phone number.
-          </DialogDescription>
-        </DialogHeader>
-        <div className={cn('flex flex-col gap-6', className)} {...props}>
-          <Tabs defaultValue="email" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="email">Email</TabsTrigger>
-              <TabsTrigger value="phone">Phone</TabsTrigger>
+      <DialogContent>
+        <form onSubmit={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle>Welcome to Everynews</DialogTitle>
+            <DialogDescription>
+              By logging in, you agree to our{' '}
+              <Link href='/terms' className='text-blue-500'>
+                terms of service
+              </Link>
+              .
+            </DialogDescription>
+          </DialogHeader>
+          <Tabs defaultValue={isMobile ? 'phone' : 'email'} className='py-6'>
+            <TabsList className='grid w-full grid-cols-2'>
+              <TabsTrigger value='email'>Email</TabsTrigger>
+              <TabsTrigger value='phone'>Phone</TabsTrigger>
             </TabsList>
-            <TabsContent value="email">
-              <form onSubmit={handleSubmit}>
-                <div className='flex flex-col gap-6'>
-                  <div className='grid gap-2'>
-                    <Input
-                      id='email'
-                      type='email'
-                      placeholder='elon@twitter.com'
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <Button type='submit' className='w-full' disabled={isLoading}>
-                    {isLoading ? 'Signing in...' : 'Sign in'}
-                  </Button>
-                </div>
-                <div className='mt-4 text-center text-sm'>
-                  By logging in, you agree to our terms of service.
-                </div>
-              </form>
+            <TabsContent value='email'>
+              <Input
+                id='email'
+                type='email'
+                placeholder='elon@twitter.com'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </TabsContent>
-            <TabsContent value="phone">
-              <form onSubmit={handleSubmit}>
-                <div className='flex flex-col gap-6'>
-                  <div className='grid gap-2'>
-                  <PhoneNumberInput/>
-                  </div>
-                  <Button type='submit' className='w-full' disabled={isLoading}>
-                    {isLoading ? 'Sending link...' : 'Send Magic Link'}
-                  </Button>
-                </div>
-                <div className='mt-4 text-center text-sm'>
-                  By logging in, you agree to our terms of service.
-                </div>
-              </form>
+            <TabsContent value='phone'>
+              <PhoneNumberInput />
             </TabsContent>
           </Tabs>
-        </div>
+          <DialogFooter>
+            <Button type='submit' disabled={isLoading}>
+              {isLoading ? 'Signing In...' : 'Sign In'}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   )
