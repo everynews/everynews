@@ -48,7 +48,8 @@
     "test": "echo \"Not Implemented\"",
     "tidy": "bun check && bun check-db && bun run build",
     "update-better-auth": "bunx @better-auth/cli generate --config auth/index.ts --output db/auth-schema.ts && bun check",
-    "update-db": "drizzle-kit push --config drizzle/drizzle/config.ts"
+    "update-db": "drizzle-kit push --config drizzle/drizzle.config.ts",
+    "local-db": "docker run --rm --name everynewsdb -e POSTGRES_PASSWORD=everynewspw -p 5432:5432 postgres:latest"
   },
   "type": "module",
   "version": "0.1.0"
