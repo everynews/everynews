@@ -76,24 +76,7 @@
       "complexity": {
         "useArrowFunction": "error"
       },
-      "recommended": true,
-      "nursery": {
-        "noRestrictedImports": {
-          "level": "error",
-          "options": {
-            "patterns": [
-              {
-                "group": ["./*"],
-                "message": "Use an alias (@everynews) instead of a relative path."
-              },
-              {
-                "group": ["../**/*"],
-                "message": "Relative parent paths are not allowed."
-              }
-            ]
-          }
-        }
-      }
+      "recommended": true
     }
   },
 

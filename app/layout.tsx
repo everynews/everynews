@@ -1,10 +1,12 @@
 import '@everynews/app/globals.css'
 import { siteConfig } from '@everynews/app/site-config'
+import { auth } from '@everynews/auth/client'
 import { AppSidebar } from '@everynews/components/app-sidebar'
 import {
   SidebarProvider,
   SidebarTrigger,
 } from '@everynews/components/ui/sidebar'
+import { Toaster } from '@everynews/components/ui/sonner'
 import type { Metadata } from 'next'
 
 export const experimental_ppr = true
@@ -50,6 +52,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
           {children}
         </main>
       </SidebarProvider>
+      <Toaster richColors position='top-center' />
     </body>
   </html>
 )

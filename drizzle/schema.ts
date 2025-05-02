@@ -1,5 +1,5 @@
-import * as authSchema from './auth-schema'
-import * as serviceSchema from './service-schema'
+import * as authSchema from '@everynews/drizzle/auth-schema'
+import * as serviceSchema from '@everynews/drizzle/service-schema'
 
 const allSchemas = {
   ...authSchema,
