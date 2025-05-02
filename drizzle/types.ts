@@ -1,4 +1,4 @@
-import schema from '@everynews/db/schema'
+import schema from '@everynews/drizzle/schema'
 import { createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
 

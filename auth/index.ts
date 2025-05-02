@@ -1,5 +1,5 @@
-import { sendMagicLink, sendOTP } from '@everynews/comms'
-import { db } from '@everynews/db'
+import { db } from '@everynews/drizzle'
+import { sendMagicLink, sendOTP } from '@everynews/messages'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { nextCookies } from 'better-auth/next-js'
