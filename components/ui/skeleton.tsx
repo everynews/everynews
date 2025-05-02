@@ -1,6 +1,9 @@
 import { cn } from '@everynews/lib/utils'
 
-function Skeleton({ className, ...props }: React.ComponentProps<'div'>) {
+export const Skeleton = ({
+  className,
+  ...props
+}: React.ComponentProps<'div'>) => {
   return (
     <div
       data-slot='skeleton'
@@ -9,5 +12,3 @@ function Skeleton({ className, ...props }: React.ComponentProps<'div'>) {
     />
   )
 }
-
-export { Skeleton }

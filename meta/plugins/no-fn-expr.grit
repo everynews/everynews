@@ -1,0 +1,5 @@
+language js
+
+`$var = function $maybeName?($params) { $body }` where {
+  register_diagnostic(span=$var, message="Prefer an arrow function over a function expression")
+}

@@ -1,0 +1,5 @@
+language js
+
+`function $name($params) { $body }` where {
+  register_diagnostic(span=$name, message="Use `const $name = ($params) => …` instead of a function declaration")
+}

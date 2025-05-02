@@ -11,9 +11,7 @@
   },
 
   "css": {
-    "formatter": {
-      "quoteStyle": "single"
-    }
+    "formatter": { "quoteStyle": "single" }
   },
 
   "files": {
@@ -75,13 +73,14 @@
       "!**/*.esm.js"
     ],
     "rules": {
+      "complexity": {
+        "useArrowFunction": "error"
+      },
       "recommended": true
     }
   },
 
-  "overrides": [
-    {
-      "includes": ["*.ts", "*.tsx"]
-    }
-  ]
+  "overrides": [{ "includes": ["*.ts", "*.tsx"] }],
+
+  "plugins": ["./plugins/no-fn-decl.grit", "./plugins/no-fn-expr.grit"]
 }
