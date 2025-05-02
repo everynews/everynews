@@ -1,5 +1,10 @@
 import '@everynews/app/globals.css'
 import { siteConfig } from '@everynews/app/site-config'
+import { AppSidebar } from '@everynews/components/app-sidebar'
+import {
+  SidebarProvider,
+  SidebarTrigger,
+} from '@everynews/components/ui/sidebar'
 import type { Metadata } from 'next'
 
 export const experimental_ppr = true
@@ -35,16 +40,18 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <html lang='en' className='h-full' suppressHydrationWarning>
-      <body className='bg-white-50 h-full antialiased dark:bg-gray-950'>
-        {children}
-      </body>
-    </html>
-  )
-}
+const Layout = ({ children }: { children: React.ReactNode }) => (
+  <html lang='en' suppressHydrationWarning>
+    <body className='bg-white-50 dark:bg-gray-950'>
+      <SidebarProvider>
+        <AppSidebar />
+        <main>
+          <SidebarTrigger />
+          {children}
+        </main>
+      </SidebarProvider>
+    </body>
+  </html>
+)
+
+export default Layout
