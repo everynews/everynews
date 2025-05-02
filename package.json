@@ -40,16 +40,18 @@
   },
   "name": "everynews",
   "scripts": {
+    "auth:update": "bunx @better-auth/cli generate --config auth/index.ts --output db/auth-schema.ts && bun style:check",
     "build": "next build",
-    "check": "bunx biome check --write .",
-    "check-db": "drizzle-kit check --config drizzle/drizzle.config.ts",
+    "db:check": "drizzle-kit check --config drizzle/drizzle.config.ts",
+    "db:generate": "drizzle-kit generate --config drizzle/drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate --config drizzle/drizzle.config.ts",
+    "db:push": "drizzle-kit push --config drizzle/drizzle.config.ts",
     "dev": "next dev --turbopack",
     "local-db": "docker compose up -d",
     "start": "next start",
+    "style:check": "bunx biome check --write .",
     "test": "echo \"Not Implemented\"",
-    "tidy": "bun check && bun check-db && bun run build",
-    "update-better-auth": "bunx @better-auth/cli generate --config auth/index.ts --output db/auth-schema.ts && bun check",
-    "update-db": "drizzle-kit push --config drizzle/drizzle.config.ts"
+    "tidy": "bun style:check && bun db:check && bun run build"
   },
   "type": "module",
   "version": "0.1.0"
