@@ -29,14 +29,14 @@
   "name": "everynews",
   "scripts": {
     "build": "next build",
-    "check": "bunx biome check --write . --config-path dev/biome.json",
-    "check-db": "drizzle-kit check --config drizzle/config.ts",
+    "check": "bunx biome check --write . --config-path meta/biome.json",
+    "check-db": "drizzle-kit check --config drizzle/drizzle.config.ts",
     "dev": "next dev --turbopack",
     "start": "next start",
     "test": "echo \"Not Implemented\"",
     "tidy": "bun check && bun db:check && bun run build",
     "update-better-auth": "bunx @better-auth/cli generate --config auth/index.ts --output db/auth-schema.ts && bun check",
-    "update-db": "drizzle-kit push --config drizzle/config.ts"
+    "update-db": "drizzle-kit push --config drizzle/drizzle/config.ts"
   },
   "type": "module",
   "version": "0.1.0"
