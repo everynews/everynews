@@ -47,7 +47,6 @@
     "db:migrate": "drizzle-kit migrate --config drizzle/drizzle.config.ts",
     "db:push": "drizzle-kit push --config drizzle/drizzle.config.ts",
     "dev": "next dev --turbopack",
-    "local-db": "docker compose up -d",
     "start": "next start",
     "style:check": "bunx biome check --write .",
     "tidy": "bun style:check && bun db:check && bun run build"
