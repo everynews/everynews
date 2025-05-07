@@ -50,7 +50,6 @@
     "local-db": "docker compose up -d",
     "start": "next start",
     "style:check": "bunx biome check --write .",
-    "test": "echo \"Not Implemented\"",
     "tidy": "bun style:check && bun db:check && bun run build"
   },
   "type": "module",
