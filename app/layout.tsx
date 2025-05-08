@@ -1,6 +1,5 @@
 import '@everynews/app/globals.css'
 import { siteConfig } from '@everynews/app/site-config'
-import { auth } from '@everynews/auth/client'
 import { AppSidebar } from '@everynews/components/app-sidebar'
 import {
   SidebarProvider,
@@ -47,10 +46,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
     <body className='bg-white-50 dark:bg-gray-950'>
       <SidebarProvider>
         <AppSidebar />
-        <main>
-          <SidebarTrigger />
-          {children}
-        </main>
+        <main>{children}</main>
       </SidebarProvider>
       <Toaster richColors position='top-center' />
     </body>

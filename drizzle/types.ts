@@ -92,6 +92,8 @@ export const newsSchema = createSelectSchema(schema.news, {
   waitSettings: waitSettingsSchema,
 })
 
+export const newsArraySchema = z.array(newsSchema)
+
 export const channelsSchema = createSelectSchema(schema.channels, {
   config: channelConfigSchema,
 })
@@ -111,6 +113,8 @@ export type WaitSettings = z.infer<typeof waitSettingsSchema>
 export type ChannelConfig = z.infer<typeof channelConfigSchema>
 
 export type News = z.infer<typeof newsSchema>
+
+export type NewsArray = z.infer<typeof newsArraySchema>
 
 export type Channel = z.infer<typeof channelsSchema>
 
