@@ -1,10 +1,7 @@
 import '@everynews/app/globals.css'
 import { siteConfig } from '@everynews/app/site-config'
 import { AppSidebar } from '@everynews/components/app-sidebar'
-import {
-  SidebarProvider,
-  SidebarTrigger,
-} from '@everynews/components/ui/sidebar'
+import { SidebarProvider } from '@everynews/components/ui/sidebar'
 import { Toaster } from '@everynews/components/ui/sonner'
 import type { Metadata } from 'next'
 

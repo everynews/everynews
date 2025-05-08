@@ -1,7 +1,6 @@
 'use client'
 
 import { Input } from '@everynews/components/ui/input'
-import { Label } from '@everynews/components/ui/label'
 import { cn } from '@everynews/lib/utils'
 import { ChevronDownIcon, PhoneIcon } from 'lucide-react'
 import React, { useId, useState } from 'react'

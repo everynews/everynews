@@ -1,9 +1,9 @@
 'use client'
 
+import { cn } from '@everynews/lib/utils'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
-import { cn } from '../lib/utils'
 
 interface SidebarNavItemProps {
   href: string

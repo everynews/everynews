@@ -1,17 +1,8 @@
 'use client'
 
-import { News, newsSchema } from '@everynews/drizzle/types'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { hc } from 'hono/client'
-import { Loader2, Save } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { api } from '../../app/api'
-import { AppType } from '../../server/hono'
-import { Button } from '../ui/button'
-import { Card, CardContent } from '../ui/card'
+import { api } from '@everynews/app/api'
+import { Button } from '@everynews/components/ui/button'
+import { Card, CardContent } from '@everynews/components/ui/card'
 import {
   Form,
   FormControl,
@@ -20,11 +11,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form'
-import { Input } from '../ui/input'
-import { toast } from '../ui/sonner'
-import { Switch } from '../ui/switch'
-import { Textarea } from '../ui/textarea'
+} from '@everynews/components/ui/form'
+import { Input } from '@everynews/components/ui/input'
+import { toast } from '@everynews/components/ui/sonner'
+import { Switch } from '@everynews/components/ui/switch'
+import { Textarea } from '@everynews/components/ui/textarea'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2, Save } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 // Simplified form schema for create form
 const createFormSchema = z.object({
@@ -142,7 +139,6 @@ export const CreateNewsForm = () => {
                   <FormControl>
                     <Textarea
                       placeholder='artificial intelligence OR machine learning'
-                      className='min-h-[100px]'
                       {...field}
                     />
                   </FormControl>

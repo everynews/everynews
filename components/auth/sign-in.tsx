@@ -1,6 +1,7 @@
 'use client'
 
 import { auth } from '@everynews/auth/client'
+import { PhoneNumberInput } from '@everynews/components/auth/phone-number-input'
 import { Button } from '@everynews/components/ui/button'
 import {
   Dialog,
@@ -21,7 +22,6 @@ import {
 import { useIsMobile } from '@everynews/hooks/use-mobile'
 import Link from 'next/link'
 import { useState } from 'react'
-import { PhoneNumberInput } from './phone-number-input'
 
 export const SignIn = () => {
   const [email, setEmail] = useState('')

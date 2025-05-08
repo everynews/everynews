@@ -1,15 +1,8 @@
 'use client'
 
 import { api } from '@everynews/app/api'
-import { News, newsSchema } from '@everynews/drizzle/types'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Save } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { Button } from '../ui/button'
-import { Card, CardContent } from '../ui/card'
+import { Button } from '@everynews/components/ui/button'
+import { Card, CardContent } from '@everynews/components/ui/card'
 import {
   Form,
   FormControl,
@@ -18,10 +11,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form'
-import { Input } from '../ui/input'
-import { Switch } from '../ui/switch'
-import { Textarea } from '../ui/textarea'
+} from '@everynews/components/ui/form'
+import { Input } from '@everynews/components/ui/input'
+import { Switch } from '@everynews/components/ui/switch'
+import { Textarea } from '@everynews/components/ui/textarea'
+import { News, newsSchema } from '@everynews/drizzle/types'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2, Save } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 interface EditNewsFormProps {
   news: News

@@ -1,8 +1,8 @@
 'use client'
 
+import { SidebarTrigger } from '@everynews/components/ui/sidebar'
+import { cn } from '@everynews/lib/utils'
 import { ReactNode } from 'react'
-import { cn } from '../../lib/utils'
-import { SidebarTrigger } from './sidebar'
 
 interface PageHeaderProps {
   title: string

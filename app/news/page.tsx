@@ -1,3 +1,4 @@
+import { api } from '@everynews/app/api'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import { PageHeader } from '@everynews/components/ui/page-header'
@@ -13,7 +14,6 @@ import { News, newsArraySchema } from '@everynews/drizzle/types'
 import { Edit, PlusCircle, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { Suspense } from 'react'
-import { api } from '../api'
 
 export const dynamic = 'force-dynamic'
 

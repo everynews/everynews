@@ -1,4 +1,4 @@
-import { boolean, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
 export const users = pgTable('users', {
   createdAt: timestamp('created_at').notNull(),

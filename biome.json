@@ -76,6 +76,9 @@
       "complexity": {
         "useArrowFunction": "error"
       },
+      "correctness": {
+        "noUnusedImports": "error"
+      },
       "recommended": true
     }
   },
