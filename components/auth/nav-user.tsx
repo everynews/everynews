@@ -23,7 +23,6 @@ import { User } from 'better-auth'
 import {
   BadgeCheck,
   Bell,
-  ChevronsUpDown,
   CreditCard,
   LogOut,
   UserIcon,
@@ -38,6 +37,7 @@ export const NavUser = ({ user }: { user: User }) => {
             <SidebarMenuButton
               size='lg'
               className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
+              variant="outline"
             >
               <Avatar>
                 <AvatarImage src={user.image ?? undefined} alt={user.name} />
@@ -46,10 +46,9 @@ export const NavUser = ({ user }: { user: User }) => {
                 </AvatarFallback>
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
-                <span className='truncate font-semibold'>{user.name}</span>
-                <span className='truncate text-xs'>{user.email}</span>
+                <span className='truncate text-sm font-semibold'>{user.name || "User"}</span>
+                <span className='truncate text-xs text-muted-foreground'>{user.email}</span>
               </div>
-              <ChevronsUpDown className='ml-auto size-4' />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -67,8 +66,8 @@ export const NavUser = ({ user }: { user: User }) => {
                   </AvatarFallback>
                 </Avatar>
                 <div className='grid flex-1 text-left text-sm leading-tight'>
-                  <span className='truncate font-semibold'>{user.name}</span>
-                  <span className='truncate text-xs'>{user.email}</span>
+                  <span className='truncate text-sm font-semibold'>{user.name || "User"}</span>
+                  <span className='truncate text-xs text-muted-foreground'>{user.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
