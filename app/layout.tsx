@@ -17,9 +17,8 @@ export const metadata: Metadata = {
   creator: '@anaclumos',
   description: siteConfig.description,
   icons: {
-    icon: '/logo.png',
+    icon: '/favicon.svg'
   },
-  keywords: ['Dashboard', 'Data Visualization', 'Software'],
   metadataBase: new URL(siteConfig.url),
   openGraph: {
     description: siteConfig.description,
@@ -43,7 +42,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
     <body className='bg-white-50 dark:bg-gray-950'>
       <SidebarProvider>
         <AppSidebar />
-        <main>{children}</main>
+        <main className='w-full'>{children}</main>
       </SidebarProvider>
       <Toaster richColors position='top-center' />
     </body>
