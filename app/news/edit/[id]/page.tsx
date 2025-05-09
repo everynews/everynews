@@ -7,6 +7,16 @@ interface EditNewsPageParams {
   params: Promise<{ id: string }>
 }
 
+/**
+ * Server component for editing a news item by its ID.
+ *
+ * Awaits the `id` parameter, fetches the corresponding news data from the API, validates it, and renders the edit form within a suspense boundary.
+ *
+ * @param params - A promise resolving to an object containing the news item ID.
+ * @returns A React element rendering the edit form for the specified news item.
+ *
+ * @throws {ZodError} If the fetched news data fails schema validation.
+ */
 export default async function EditNewsPage({ params }: EditNewsPageParams) {
   const { id } = await params
   const res = await api.news[':id'].$get({

@@ -16,6 +16,13 @@ import { DeleteButton } from './delete-button'
 
 export const dynamic = 'force-dynamic'
 
+/**
+ * Displays a table of news items fetched from the API, allowing users to view, edit, or delete each item.
+ *
+ * Fetches news data asynchronously and renders it in a table with columns for name, status, last run, next run, and actions. Shows an error message if the API request fails.
+ *
+ * @returns A React element displaying the news list or an error message.
+ */
 export default async function NewsPage() {
   const res = await api.news.$get()
   const { data, error } = await res.json()
