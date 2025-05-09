@@ -16,7 +16,7 @@ const NewsLayout = ({ children }: { children: React.ReactNode }) => (
         </Link>
       }
     />
-    <main className='p-4'>{children}</main>
+    <main>{children}</main>
   </>
 )
 

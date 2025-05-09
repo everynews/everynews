@@ -2,7 +2,6 @@
 
 import { api } from '@everynews/app/api'
 import { Button } from '@everynews/components/ui/button'
-import { Card, CardContent } from '@everynews/components/ui/card'
 import {
   Form,
   FormControl,
@@ -13,170 +12,151 @@ import {
   FormMessage,
 } from '@everynews/components/ui/form'
 import { Input } from '@everynews/components/ui/input'
-import { Switch } from '@everynews/components/ui/switch'
-import { Textarea } from '@everynews/components/ui/textarea'
-import { News, newsSchema } from '@everynews/drizzle/types'
+import { News } from '@everynews/drizzle/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { z } from 'zod'
 
-interface EditNewsFormProps {
-  news: News
-}
-
-export const EditNewsForm = ({ news }: EditNewsFormProps) => {
+export const EditNewsForm = ({ news }: { news: News }) => {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const form = useForm<News>({
-    defaultValues: news,
-    resolver: zodResolver(newsSchema),
+  const formSchema = z.object({
+    active: z.boolean(),
+    name: z.string().min(1, 'Name is required'),
+    strategy: z.object({
+      provider: z.string(),
+      query: z.string().optional(),
+    }),
+    wait: z.object({
+      count: z.number().nullable(),
+      cron: z.string().nullable(),
+    }),
   })
 
-  useEffect(() => {
-    if (news) {
-      form.reset(news)
-    }
-  }, [news, form])
+  const form = useForm({
+    defaultValues: {
+      active: news.active,
+      name: news.name,
+      strategy: {
+        provider: news.strategy.provider,
+        query: news.strategy.query,
+      },
+      wait: {
+        count: news.wait.count,
+        cron: news.wait.cron,
+      },
+    },
+    resolver: zodResolver(formSchema),
+  })
 
-  const onSubmit = async (values: News) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true)
     try {
-      const response = await api.news[':id'].$put({
+      const res = await api.news[':id'].$put({
         json: {
-          isActive: values.isActive,
+          active: values.active,
           name: values.name,
-          strategy: {
-            provider: values?.strategy?.provider ?? '',
-            query: values?.strategy?.query ?? '',
-          },
-          waitSettings: {
-            timeSettings: {
-              sendAt: values?.waitSettings?.timeSettings?.sendAt ?? '',
-              timezone: values?.waitSettings?.timeSettings?.timezone ?? '',
-            },
-            type: values?.waitSettings?.type ?? '',
+          strategy: values.strategy,
+          wait: {
+            count: values.wait.count,
+            cron: values.wait.cron,
           },
         },
         param: { id: news.id },
       })
 
-      if (response.ok) {
-        toast.success('Updated', {
-          description: 'News item updated successfully.',
-        })
+      if (res.ok) {
+        toast.success('News item updated successfully.')
         router.push('/news')
         router.refresh()
       } else {
-        const errorData = await response.json()
-        toast.error('Error', {
-          description: errorData.error || 'Failed to update news item',
-        })
+        const { error } = await res.json()
+        toast.error(error || 'Failed to update news item')
       }
     } catch (error) {
-      toast.error('Error', {
-        description: 'An error occurred while updating the news item',
-      })
+      toast.error('An error occurred while updating the news item')
     } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <Card>
-      <CardContent className='pt-6'>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
-            <FormField
-              control={form.control}
-              name='name'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder='Daily Tech News' {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Give your news source a descriptive name
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+        <FormField
+          control={form.control}
+          name='name'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder='Daily Tech News' {...field} />
+              </FormControl>
+              <FormDescription>
+                Give your news source a descriptive name
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-            <FormField
-              control={form.control}
-              name='strategy'
-              render={({ field }) => {
-                const query =
-                  typeof field.value === 'string'
-                    ? field.value
-                    : field.value?.query || ''
+        <FormField
+          control={form.control}
+          name='strategy.provider'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Provider</FormLabel>
+              <FormControl>
+                <Input placeholder='Provider' {...field} />
+              </FormControl>
+              <FormDescription>
+                Enter provider (e.g., hn for HackerNews or query for Web Search)
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-                return (
-                  <FormItem>
-                    <FormLabel>Search Query</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder='artificial intelligence OR machine learning'
-                        className='min-h-[100px]'
-                        value={query}
-                        onChange={(e) => field.onChange(e.target.value)}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Enter keywords or phrases to search for
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )
-              }}
-            />
+        <FormField
+          control={form.control}
+          name='strategy.query'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Search Query</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder='Enter your search query'
+                  value={field.value || ''}
+                  onChange={(e) => field.onChange(e.target.value)}
+                />
+              </FormControl>
+              <FormDescription>
+                Enter keywords or phrases to search for
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-            <FormField
-              control={form.control}
-              name='isActive'
-              render={({ field }) => (
-                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
-                  <div className='space-y-0.5'>
-                    <FormLabel className='text-base'>Active Status</FormLabel>
-                    <FormDescription>
-                      Enable or disable this news source
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value ?? false}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <div className='flex justify-end'>
-              <Button
-                type='button'
-                variant='outline'
-                className='mr-2'
-                onClick={() => router.back()}
-              >
-                Cancel
-              </Button>
-              <Button type='submit' disabled={isSubmitting}>
-                {isSubmitting && (
-                  <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                )}
-                <Save className='mr-2 h-4 w-4' />
-                Update News Item
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+        <div className='flex justify-end'>
+          <Link href='/news'>
+            <Button type='button' variant='outline' className='mr-2'>
+              Cancel
+            </Button>
+          </Link>
+          <Button type='submit' disabled={isSubmitting}>
+            {isSubmitting && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+            <Save className='mr-2 h-4 w-4' />
+            Update News Item
+          </Button>
+        </div>
+      </form>
+    </Form>
   )
 }

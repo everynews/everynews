@@ -9,10 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from '@everynews/components/ui/table'
-import { newsArraySchema } from '@everynews/drizzle/types'
-import { Edit, Trash2 } from 'lucide-react'
+import { Edit } from 'lucide-react'
 import Link from 'next/link'
 import { Suspense } from 'react'
+import { DeleteButton } from './delete-button'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,10 +21,10 @@ export default async function NewsPage() {
   const { data, error } = await res.json()
 
   if (error) {
-    return <div>Error: {error}</div>
+    return <div>Error: {JSON.stringify(error)}</div>
   }
 
-  const news = newsArraySchema.parse(data)
+  const news = data
 
   return (
     <Suspense fallback={'Loading...'}>
@@ -44,19 +44,15 @@ export default async function NewsPage() {
               <TableCell className='font-medium'>{item.name}</TableCell>
               <TableCell>
                 <div className='flex items-center space-x-2'>
-                  <Badge variant={item.isActive ? 'default' : 'outline'}>
-                    {item.isActive ? 'Active' : 'Inactive'}
+                  <Badge variant={item.active ? 'default' : 'outline'}>
+                    {item.active ? 'Active' : 'Inactive'}
                   </Badge>
                 </div>
               </TableCell>
+              <TableCell>{'Never'}</TableCell>
               <TableCell>
-                {item.lastRun
-                  ? new Date(item.lastRun).toLocaleString()
-                  : 'Never'}
-              </TableCell>
-              <TableCell>
-                {item.nextRun
-                  ? new Date(item.nextRun).toLocaleString()
+                {item.next
+                  ? new Date(item.next).toLocaleString()
                   : 'Not scheduled'}
               </TableCell>
               <TableCell className='text-right'>
@@ -66,14 +62,7 @@ export default async function NewsPage() {
                       <Edit className='h-4 w-4' />
                     </Button>
                   </Link>
-                  <Button
-                    size='sm'
-                    variant='outline'
-                    className='text-destructive'
-                    disabled={true}
-                  >
-                    <Trash2 className='h-4 w-4' />
-                  </Button>
+                  <DeleteButton id={item.id} />
                 </div>
               </TableCell>
             </TableRow>

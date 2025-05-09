@@ -1,6 +1,6 @@
 import { api } from '@everynews/app/api'
 import { EditNewsForm } from '@everynews/app/news/edit/[id]/form'
-import { News, newsSchema } from '@everynews/drizzle/types'
+import { News, newsReadSchema } from '@everynews/drizzle/types'
 import { Suspense } from 'react'
 
 interface EditNewsPageParams {
@@ -9,11 +9,11 @@ interface EditNewsPageParams {
 
 export default async function EditNewsPage({ params }: EditNewsPageParams) {
   const { id } = await params
-  const response = await api.news[':id'].$get({
+  const res = await api.news[':id'].$get({
     param: { id },
   })
-  const news = await response.json()
-  const newsItems: News = newsSchema.parse(news)
+  const { data } = await res.json()
+  const newsItems: News = newsReadSchema.parse(data)
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <EditNewsForm news={newsItems} />

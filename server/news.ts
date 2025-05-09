@@ -1,28 +1,10 @@
 import { db } from '@everynews/drizzle'
 import { news } from '@everynews/drizzle/service-schema'
+import { newsCreateSchema, newsUpdateSchema } from '@everynews/drizzle/types'
 import { nanoid } from '@everynews/lib/id'
 import { zValidator } from '@hono/zod-validator'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
-import { z } from 'zod'
-
-const createNewsSchema = z.object({
-  isActive: z.boolean(),
-  name: z.string(),
-  strategy: z.object({
-    provider: z.string(),
-    query: z.string(),
-  }),
-  waitSettings: z.object({
-    timeSettings: z.object({
-      sendAt: z.string(),
-      timezone: z.string(),
-    }),
-    type: z.string(),
-  }),
-})
-
-const editNewsSchema = createNewsSchema.partial()
 
 export const newsHono = new Hono()
   .get('/', async (c) => {
@@ -53,7 +35,7 @@ export const newsHono = new Hono()
     }
   })
 
-  .post('/', zValidator('json', createNewsSchema), async (c) => {
+  .post('/', zValidator('json', newsCreateSchema), async (c) => {
     try {
       const data = c.req.valid('json')
       const now = new Date()
@@ -61,9 +43,9 @@ export const newsHono = new Hono()
         ...data,
         createdAt: now,
         id: nanoid(),
-        lastRun: new Date(0),
-        lastSent: new Date(0),
-        nextRun: new Date(0),
+        lastRun: null,
+        lastSent: null,
+        nextRun: null,
         updatedAt: now,
       }
 
@@ -84,7 +66,7 @@ export const newsHono = new Hono()
     }
   })
 
-  .put('/:id', zValidator('json', editNewsSchema), async (c) => {
+  .put('/:id', zValidator('json', newsUpdateSchema), async (c) => {
     try {
       const id = c.req.param('id')
       const data = c.req.valid('json')
@@ -123,11 +105,9 @@ export const newsHono = new Hono()
   .delete('/:id', async (c) => {
     try {
       const id = c.req.param('id')
-
       const existingNews = await db.query.news.findFirst({
         where: eq(news.id, id),
       })
-
       if (!existingNews) {
         return c.json({ error: 'News item not found' }, 404)
       }

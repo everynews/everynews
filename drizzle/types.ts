@@ -1,89 +1,94 @@
 import * as schema from '@everynews/drizzle/schema'
-import { createSelectSchema } from 'drizzle-zod'
+import { createSchemaFactory } from 'drizzle-zod'
 import { z } from 'zod'
 
 export const strategySchema = z.object({
   provider: z.string(),
-  query: z.string(),
+  query: z.string().optional(),
 })
+
+const { createSelectSchema, createInsertSchema, createUpdateSchema } =
+  createSchemaFactory({
+    coerce: {
+      date: true,
+    },
+  })
 
 export const waitSettingsSchema = z
   .object({
-    countSettings: z
-      .object({
-        threshold: z.number().int().positive(),
-      })
-      .optional(),
-    timeSettings: z
-      .object({
-        sendAt: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/), // HH:mm format
-        timezone: z.string(),
-      })
-      .optional(),
-    type: z.enum(['time', 'count', 'both']),
+    count: z.number().nullable(),
+    cron: z.string().nullable(),
   })
-  .refine(
-    (data) => {
-      if (data.type === 'time' && !data.timeSettings) return false
-      if (data.type === 'count' && !data.countSettings) return false
-      if (data.type === 'both' && (!data.timeSettings || !data.countSettings))
-        return false
-      return true
-    },
-    {
-      message: 'Settings must match the specified type',
-    },
-  )
+  .refine((data) => Object.keys(data).length > 0, {
+    message: 'At least one wait setting must be provided',
+  })
 
 export const channelConfigSchema = z
   .object({
-    discord: z
-      .object({
-        template: z.string().optional(),
-        webhook: z.string().url(),
-      })
-      .optional(),
     email: z
       .object({
         recipients: z.array(z.string().email()),
         template: z.string().optional(),
       })
-      .optional(),
+      .nullable(),
     slack: z
       .object({
         channel: z.string().optional(),
         template: z.string().optional(),
         webhook: z.string().url(),
       })
-      .optional(),
+      .nullable(),
     text: z
       .object({
-        // TODO: replace to z.e164() when Zod 4 releases
         recipients: z.array(z.string().regex(/^\+?[1-9]\d{1,14}$/)),
         template: z.string().optional(),
       })
-      .optional(),
+      .nullable(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: 'At least one channel configuration must be provided',
   })
 
-export const newsSchema = createSelectSchema(schema.news, {
+export const newsReadSchema = createSelectSchema(schema.news, {
   strategy: strategySchema,
-  waitSettings: waitSettingsSchema,
+  wait: waitSettingsSchema,
 })
 
-export const newsArraySchema = z.array(newsSchema)
+export const newsArraySchema = z.array(newsReadSchema)
 
-export const channelsSchema = createSelectSchema(schema.channels, {
+export const newsCreateSchema = createInsertSchema(schema.news, {
+  strategy: strategySchema,
+  wait: waitSettingsSchema,
+})
+
+export const newsUpdateSchema = createUpdateSchema(schema.news, {
+  strategy: strategySchema,
+  wait: waitSettingsSchema,
+})
+
+export const channelsReadSchema = createSelectSchema(schema.channels, {
   config: channelConfigSchema,
 })
 
-export const storiesSchema = createSelectSchema(schema.stories)
+export const channelsCreateSchema = createInsertSchema(schema.channels, {
+  config: channelConfigSchema,
+})
+
+export const channelsUpdateSchema = createUpdateSchema(schema.channels, {
+  config: channelConfigSchema,
+})
+
+export const storiesReadSchema = createSelectSchema(schema.stories)
+
+export const storiesCreateSchema = createInsertSchema(schema.stories)
+
+export const storiesUpdateSchema = createUpdateSchema(schema.stories)
 
 export const schedulesSchema = createSelectSchema(schema.schedules)
 
-export const usersSchema = createSelectSchema(schema.users)
+export const schedulesInsertSchema = createInsertSchema(schema.schedules)
+
+export const schedulesUpdateSchema = createUpdateSchema(schema.schedules)
 
 export type strategy = z.infer<typeof strategySchema>
 
@@ -91,14 +96,12 @@ export type WaitSettings = z.infer<typeof waitSettingsSchema>
 
 export type ChannelConfig = z.infer<typeof channelConfigSchema>
 
-export type News = z.infer<typeof newsSchema>
+export type News = z.infer<typeof newsReadSchema>
 
 export type NewsArray = z.infer<typeof newsArraySchema>
 
-export type Channel = z.infer<typeof channelsSchema>
+export type Channel = z.infer<typeof channelsReadSchema>
 
-export type Story = z.infer<typeof storiesSchema>
+export type Story = z.infer<typeof storiesReadSchema>
 
 export type Schedule = z.infer<typeof schedulesSchema>
-
-export type User = z.infer<typeof usersSchema>
