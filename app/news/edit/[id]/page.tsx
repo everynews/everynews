@@ -1,6 +1,5 @@
 import { api } from '@everynews/app/api'
-import { EditNewsForm } from '@everynews/components/news/edit-news-form'
-import { PageHeader } from '@everynews/components/ui/page-header'
+import { EditNewsForm } from '@everynews/app/news/edit/[id]/form'
 import { News, newsSchema } from '@everynews/drizzle/types'
 import { Suspense } from 'react'
 
@@ -13,17 +12,11 @@ export default async function EditNewsPage({ params }: EditNewsPageParams) {
   const response = await api.news[':id'].$get({
     param: { id },
   })
-  const data = await response.json()
-  const newsItems: News = newsSchema.parse(data)
+  const news = await response.json()
+  const newsItems: News = newsSchema.parse(news)
   return (
-    <div className='container py-8'>
-      <PageHeader
-        title='Edit News Item'
-        description='Update your news source configuration'
-      />
-      <Suspense fallback={<div>Loading...</div>}>
-        <EditNewsForm news={newsItems} />
-      </Suspense>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <EditNewsForm news={newsItems} />
+    </Suspense>
   )
 }

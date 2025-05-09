@@ -6,7 +6,7 @@
   },
   "dialect": "postgresql",
   "enums": {},
-  "id": "9ffd3d37-4fde-4ca5-b76c-379dc3baa53e",
+  "id": "5dcf0254-75eb-49b6-9979-d57f82976d27",
   "policies": {},
   "prevId": "00000000-0000-0000-0000-000000000000",
   "roles": {},
@@ -210,14 +210,8 @@
           "primaryKey": false,
           "type": "timestamp"
         },
-        "relevance_settings": {
-          "name": "relevance_settings",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "json"
-        },
-        "search_query": {
-          "name": "search_query",
+        "strategy": {
+          "name": "strategy",
           "notNull": true,
           "primaryKey": false,
           "type": "json"
@@ -425,12 +419,6 @@
           "notNull": true,
           "primaryKey": false,
           "type": "text"
-        },
-        "relevance_score": {
-          "name": "relevance_score",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "numeric"
         },
         "snippet": {
           "name": "snippet",

@@ -2,27 +2,10 @@ import * as schema from '@everynews/drizzle/schema'
 import { createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
 
-export const searchQuerySchema = z.object({
+export const strategySchema = z.object({
   filters: z.record(z.any()).optional(),
   provider: z.string(),
   query: z.string(),
-})
-
-export const relevanceSettingsSchema = z.object({
-  filters: z
-    .object({
-      domains: z.array(z.string()).optional(),
-      excludeDomains: z.array(z.string()).optional(),
-      excludeKeywords: z.array(z.string()).optional(),
-      keywords: z.array(z.string()).optional(),
-    })
-    .optional(),
-  minScore: z.number().min(0).max(1),
-  weights: z.object({
-    content: z.number().optional(),
-    title: z.number().optional(),
-    url: z.number().optional(),
-  }),
 })
 
 export const waitSettingsSchema = z
@@ -87,8 +70,7 @@ export const channelConfigSchema = z
   })
 
 export const newsSchema = createSelectSchema(schema.news, {
-  relevanceSettings: relevanceSettingsSchema,
-  searchQuery: searchQuerySchema,
+  strategy: strategySchema,
   waitSettings: waitSettingsSchema,
 })
 
@@ -104,9 +86,7 @@ export const schedulesSchema = createSelectSchema(schema.schedules)
 
 export const usersSchema = createSelectSchema(schema.users)
 
-export type SearchQuery = z.infer<typeof searchQuerySchema>
-
-export type RelevanceSettings = z.infer<typeof relevanceSettingsSchema>
+export type strategy = z.infer<typeof strategySchema>
 
 export type WaitSettings = z.infer<typeof waitSettingsSchema>
 

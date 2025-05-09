@@ -13,95 +13,74 @@ import {
   FormMessage,
 } from '@everynews/components/ui/form'
 import { Input } from '@everynews/components/ui/input'
-import { toast } from '@everynews/components/ui/sonner'
 import { Switch } from '@everynews/components/ui/switch'
 import { Textarea } from '@everynews/components/ui/textarea'
+import { News, newsSchema } from '@everynews/drizzle/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
+import { toast } from 'sonner'
 
-// Simplified form schema for create form
-const createFormSchema = z.object({
-  isActive: z.boolean(),
-  name: z.string().min(1, 'Name is required'),
-  searchQueryText: z.string().min(2, 'Search query is required'),
-})
+interface EditNewsFormProps {
+  news: News
+}
 
-type CreateFormValues = z.infer<typeof createFormSchema>
-
-export const CreateNewsForm = () => {
+export const EditNewsForm = ({ news }: EditNewsFormProps) => {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Default values for new news item
-  const defaultValues: CreateFormValues = {
-    isActive: true,
-    name: '',
-    searchQueryText: '',
-  }
-
-  // Set up form with simplified schema
-  const form = useForm<CreateFormValues>({
-    defaultValues,
-    resolver: zodResolver(createFormSchema),
+  const form = useForm<News>({
+    defaultValues: news,
+    resolver: zodResolver(newsSchema),
   })
 
-  const onSubmit = async (values: CreateFormValues) => {
+  useEffect(() => {
+    if (news) {
+      form.reset(news)
+    }
+  }, [news, form])
+
+  const onSubmit = async (values: News) => {
     setIsSubmitting(true)
     try {
-      const apiData = {
-        createdAt: new Date(), // Add a unique ID
-        id: crypto.randomUUID(),
-        isActive: values.isActive,
-        lastRun: null,
-        lastSent: null,
-        name: values.name,
-        nextRun: null,
-        relevanceSettings: {
-          minScore: 0.7,
-          weights: {
-            content: 0.8,
-            title: 1.0,
-            url: 0.5,
+      const response = await api.news[':id'].$put({
+        json: {
+          isActive: values.isActive,
+          name: values.name,
+          strategy: {
+            filters: {
+              provider: values?.strategy?.provider ?? '',
+              query: values?.strategy?.query ?? '',
+            },
+          },
+          waitSettings: {
+            timeSettings: {
+              sendAt: values?.waitSettings?.timeSettings?.sendAt ?? '',
+              timezone: values?.waitSettings?.timeSettings?.timezone ?? '',
+            },
+            type: values?.waitSettings?.type ?? '',
           },
         },
-        searchQuery: {
-          filters: {},
-          provider: 'google',
-          query: values.searchQueryText,
-        },
-        updatedAt: new Date(),
-        waitSettings: {
-          timeSettings: {
-            sendAt: '09:00',
-            timezone: 'UTC',
-          },
-          type: 'time' as const,
-        },
-      }
-
-      const response = await api.news.$post({
-        json: apiData,
+        param: { id: news.id },
       })
 
       if (response.ok) {
-        toast.success('Created', {
-          description: 'News item created successfully.',
+        toast.success('Updated', {
+          description: 'News item updated successfully.',
         })
         router.push('/news')
         router.refresh()
       } else {
         const errorData = await response.json()
         toast.error('Error', {
-          description: errorData.error || 'Failed to create news item',
+          description: errorData.error || 'Failed to update news item',
         })
       }
     } catch (error) {
       toast.error('Error', {
-        description: 'An error occurred while creating the news item',
+        description: 'An error occurred while updating the news item',
       })
     } finally {
       setIsSubmitting(false)
@@ -132,22 +111,31 @@ export const CreateNewsForm = () => {
 
             <FormField
               control={form.control}
-              name='searchQueryText'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Search Query</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder='artificial intelligence OR machine learning'
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Enter keywords or phrases to search for
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+              name='strategy'
+              render={({ field }) => {
+                const query =
+                  typeof field.value === 'string'
+                    ? field.value
+                    : field.value?.query || ''
+
+                return (
+                  <FormItem>
+                    <FormLabel>Search Query</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder='artificial intelligence OR machine learning'
+                        className='min-h-[100px]'
+                        value={query}
+                        onChange={(e) => field.onChange(e.target.value)}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Enter keywords or phrases to search for
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )
+              }}
             />
 
             <FormField
@@ -163,7 +151,7 @@ export const CreateNewsForm = () => {
                   </div>
                   <FormControl>
                     <Switch
-                      checked={field.value}
+                      checked={field.value ?? false}
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
@@ -185,7 +173,7 @@ export const CreateNewsForm = () => {
                   <Loader2 className='mr-2 h-4 w-4 animate-spin' />
                 )}
                 <Save className='mr-2 h-4 w-4' />
-                Create News Item
+                Update News Item
               </Button>
             </div>
           </form>

@@ -1,22 +1,14 @@
-import {
-  boolean,
-  json,
-  numeric,
-  pgTable,
-  text,
-  timestamp,
-} from 'drizzle-orm/pg-core'
+import { boolean, json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
 export const news = pgTable('news', {
   createdAt: timestamp('created_at').notNull(),
   id: text('id').primaryKey(),
-  isActive: boolean('is_active').notNull().default(true), // SERP API configuration
-  lastRun: timestamp('last_run'), // Scoring rules
-  lastSent: timestamp('last_sent'), // Batch/digest settings
+  isActive: boolean('is_active').notNull().default(true),
+  lastRun: timestamp('last_run'),
+  lastSent: timestamp('last_sent'),
   name: text('name').notNull(),
-  nextRun: timestamp('next_run'), // Last search execution
-  relevanceSettings: json('relevance_settings').notNull(), // Last batch sent
-  searchQuery: json('search_query').notNull(), // Next scheduled execution
+  nextRun: timestamp('next_run'),
+  strategy: json('strategy').notNull(),
   updatedAt: timestamp('updated_at').notNull(),
   waitSettings: json('wait_settings').notNull(),
 })
@@ -42,7 +34,6 @@ export const stories = pgTable('stories', {
   newsId: text('news_id')
     .notNull()
     .references(() => news.id, { onDelete: 'cascade' }), // For deduplication
-  relevanceScore: numeric('relevance_score').notNull(),
   snippet: text('snippet'),
   title: text('title').notNull(), // Queued for delivery
   url: text('url').notNull().unique(),

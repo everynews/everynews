@@ -66,8 +66,7 @@ CREATE TABLE "news" (
 	"last_sent" timestamp,
 	"name" text NOT NULL,
 	"next_run" timestamp,
-	"relevance_settings" json NOT NULL,
-	"search_query" json NOT NULL,
+	"strategy" json NOT NULL,
 	"updated_at" timestamp NOT NULL,
 	"wait_settings" json NOT NULL
 );
@@ -89,7 +88,6 @@ CREATE TABLE "stories" (
 	"found_at" timestamp NOT NULL,
 	"id" text PRIMARY KEY NOT NULL,
 	"news_id" text NOT NULL,
-	"relevance_score" numeric NOT NULL,
 	"snippet" text,
 	"title" text NOT NULL,
 	"url" text NOT NULL,

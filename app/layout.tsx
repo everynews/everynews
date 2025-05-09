@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   creator: '@anaclumos',
   description: siteConfig.description,
   icons: {
-    icon: '/favicon.svg'
+    icon: '/favicon.svg',
   },
   metadataBase: new URL(siteConfig.url),
   openGraph: {

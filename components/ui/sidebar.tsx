@@ -258,21 +258,19 @@ export const SidebarTrigger = ({
   ...props
 }: React.ComponentProps<typeof Button>) => {
   const { toggleSidebar } = useSidebar()
-
   return (
     <Button
       data-sidebar='trigger'
       data-slot='sidebar-trigger'
-      variant='ghost'
+      variant='outline'
       size='icon'
-      className={cn('size-7', className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      <PanelLeftIcon />
+      <PanelLeftIcon className='text-sidebar-foreground size-5' />
       <span className='sr-only'>Toggle Sidebar</span>
     </Button>
   )
