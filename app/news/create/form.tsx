@@ -27,7 +27,7 @@ import { z } from 'zod'
 const createFormSchema = z.object({
   isActive: z.boolean(),
   name: z.string().min(1, 'Name is required'),
-  strategyText: z.string().min(2, 'Search query is required'),
+  query: z.string().min(2, 'Search query is required'),
 })
 
 type CreateFormValues = z.infer<typeof createFormSchema>
@@ -40,7 +40,7 @@ export const CreateNewsForm = () => {
   const defaultValues: CreateFormValues = {
     isActive: true,
     name: '',
-    strategyText: '',
+    query: '',
   }
 
   // Set up form with simplified schema
@@ -53,19 +53,12 @@ export const CreateNewsForm = () => {
     setIsSubmitting(true)
     try {
       const apiData = {
-        createdAt: new Date(),
         isActive: values.isActive,
-        lastRun: null,
-        lastSent: null,
         name: values.name,
-        nextRun: null,
         strategy: {
-          filters: {
-            provider: 'google',
-            query: values.strategyText,
-          },
+          provider: 'kagi',
+          query: values.query,
         },
-        updatedAt: new Date(),
         waitSettings: {
           timeSettings: {
             sendAt: '09:00',
@@ -122,7 +115,7 @@ export const CreateNewsForm = () => {
 
         <FormField
           control={form.control}
-          name='strategyText'
+          name='query'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Search Query</FormLabel>

@@ -3,7 +3,6 @@ import { createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
 
 export const strategySchema = z.object({
-  filters: z.record(z.any()).optional(),
   provider: z.string(),
   query: z.string(),
 })

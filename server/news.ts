@@ -10,10 +10,8 @@ const createNewsSchema = z.object({
   isActive: z.boolean(),
   name: z.string(),
   strategy: z.object({
-    filters: z.object({
-      provider: z.string(),
-      query: z.string(),
-    }),
+    provider: z.string(),
+    query: z.string(),
   }),
   waitSettings: z.object({
     timeSettings: z.object({
@@ -59,18 +57,14 @@ export const newsHono = new Hono()
     try {
       const data = c.req.valid('json')
       const now = new Date()
-
       const content = {
+        ...data,
         createdAt: now,
         id: nanoid(),
-        isActive: data.isActive,
-        lastRun: null,
-        lastSent: null,
-        name: data.name,
-        nextRun: null,
-        strategy: data.strategy,
+        lastRun: new Date(0),
+        lastSent: new Date(0),
+        nextRun: new Date(0),
         updatedAt: now,
-        waitSettings: data.waitSettings,
       }
 
       await db.insert(news).values(content)
@@ -104,11 +98,8 @@ export const newsHono = new Hono()
       }
 
       const updatedContent = {
-        isActive: data.isActive,
-        name: data.name,
-        strategy: data.strategy,
+        ...data,
         updatedAt: new Date(),
-        waitSettings: data.waitSettings,
       }
 
       await db.update(news).set(updatedContent).where(eq(news.id, id))

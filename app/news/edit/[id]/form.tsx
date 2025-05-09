@@ -50,10 +50,8 @@ export const EditNewsForm = ({ news }: EditNewsFormProps) => {
           isActive: values.isActive,
           name: values.name,
           strategy: {
-            filters: {
-              provider: values?.strategy?.provider ?? '',
-              query: values?.strategy?.query ?? '',
-            },
+            provider: values?.strategy?.provider ?? '',
+            query: values?.strategy?.query ?? '',
           },
           waitSettings: {
             timeSettings: {
