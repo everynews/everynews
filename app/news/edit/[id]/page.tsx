@@ -1,4 +1,4 @@
-import { api } from '@everynews/app/api'
+import { api } from '@everynews/server/api'
 import { EditNewsForm } from '@everynews/app/news/edit/[id]/form'
 import { News, newsReadSchema } from '@everynews/drizzle/types'
 import { toastNetworkError } from '@everynews/lib/error'

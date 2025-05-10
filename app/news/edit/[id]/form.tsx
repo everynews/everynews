@@ -1,6 +1,6 @@
 'use client'
 
-import { api } from '@everynews/app/api'
+import { api } from '@everynews/server/api'
 import { Button } from '@everynews/components/ui/button'
 import {
   Form,

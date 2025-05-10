@@ -1,4 +1,4 @@
-import { api } from '@everynews/app/api'
+import { api } from '@everynews/server/api'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import {
