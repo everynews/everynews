@@ -59,11 +59,13 @@ export const CreateNewsForm = () => {
         id: '',
         name: values.name,
         next: now,
+        public: false, // Default to private
         strategy: {
           provider: 'kagi',
           query: values.query,
         },
         updatedAt: now,
+        userId: '', // Will be set by server
         wait: {
           count: null,
           cron: null,

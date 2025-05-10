@@ -30,6 +30,7 @@ export const EditNewsForm = ({ news }: { news: News }) => {
   const formSchema = z.object({
     active: z.boolean(),
     name: z.string().min(1, 'Name is required'),
+    public: z.boolean(),
     strategy: z.object({
       provider: z.string(),
       query: z.string().optional(),
@@ -44,6 +45,7 @@ export const EditNewsForm = ({ news }: { news: News }) => {
     defaultValues: {
       active: news.active,
       name: news.name,
+      public: news.public || false,
       strategy: {
         provider: news.strategy.provider,
         query: news.strategy.query,
@@ -63,6 +65,7 @@ export const EditNewsForm = ({ news }: { news: News }) => {
         json: {
           active: values.active,
           name: values.name,
+          public: values.public,
           strategy: values.strategy,
           wait: {
             count: values.wait.count,
@@ -140,6 +143,28 @@ export const EditNewsForm = ({ news }: { news: News }) => {
               </FormControl>
               <FormDescription>
                 Enter keywords or phrases to search for
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name='public'
+          render={({ field }) => (
+            <FormItem className="flex items-center gap-2">
+              <FormLabel>Public</FormLabel>
+              <FormControl>
+                <input
+                  type="checkbox"
+                  checked={field.value}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                  className="h-4 w-4"
+                />
+              </FormControl>
+              <FormDescription>
+                Make this news item visible to everyone
               </FormDescription>
               <FormMessage />
             </FormItem>
