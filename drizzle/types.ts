@@ -19,7 +19,7 @@ export const waitSettingsSchema = z
     count: z.number().nullable(),
     cron: z.string().nullable(),
   })
-  .refine((data) => Object.keys(data).length > 0, {
+  .refine((data) => data.count !== null || data.cron !== null, {
     message: 'At least one wait setting must be provided',
   })
 
@@ -45,9 +45,12 @@ export const channelConfigSchema = z
       })
       .nullable(),
   })
-  .refine((data) => Object.keys(data).length > 0, {
-    message: 'At least one channel configuration must be provided',
-  })
+  .refine(
+    (data) => data.email !== null || data.slack !== null || data.text !== null,
+    {
+      message: 'At least one channel configuration must be provided',
+    },
+  )
 
 export const newsReadSchema = createSelectSchema(schema.news, {
   strategy: strategySchema,
@@ -97,4 +100,3 @@ export type NewsArray = z.infer<typeof newsArraySchema>
 export type Channel = z.infer<typeof channelsReadSchema>
 
 export type Story = z.infer<typeof storiesReadSchema>
-

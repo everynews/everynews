@@ -1,9 +1,9 @@
 import { api } from '@everynews/app/api'
 import { EditNewsForm } from '@everynews/app/news/edit/[id]/form'
 import { News, newsReadSchema } from '@everynews/drizzle/types'
-import { Suspense } from 'react'
-import { notFound } from 'next/navigation'
 import { toastNetworkError } from '@everynews/lib/error'
+import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 
 export default async function EditNewsPage({
   params,

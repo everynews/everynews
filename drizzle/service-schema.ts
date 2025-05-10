@@ -9,9 +9,8 @@ const common = {
 export const news = pgTable('news', {
   ...common,
   active: boolean('active').notNull().default(true),
-  name: text('name').notNull(),
   lastRun: timestamp('last_run'),
-  lastSent: timestamp('last_sent'),
+  name: text('name').notNull(),
   nextRun: timestamp('next_run'),
   strategy: json('strategy').notNull(),
   wait: json('wait').notNull(),

@@ -15,6 +15,7 @@ import { Loader2, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
+
 interface DeleteButtonProps {
   id: string
 }
@@ -48,7 +49,7 @@ export const DeleteButton = ({ id }: DeleteButtonProps) => {
           size='sm'
           variant='outline'
           className='text-destructive'
-          aria-label="Delete news item"
+          aria-label='Delete news item'
         >
           <Trash2 className='h-4 w-4' />
         </Button>

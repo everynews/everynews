@@ -33,38 +33,38 @@ export default async function NewsPage() {
   const news = data
 
   return (
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Actions</TableHead>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Name</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {news.map((item) => (
+          <TableRow key={item.id}>
+            <TableCell className='font-medium'>{item.name}</TableCell>
+            <TableCell>
+              <div className='flex items-center space-x-2'>
+                <Badge variant={item.active ? 'default' : 'outline'}>
+                  {item.active ? 'Active' : 'Inactive'}
+                </Badge>
+              </div>
+            </TableCell>
+            <TableCell className='text-right'>
+              <div className='flex justify-end gap-2'>
+                <Link href={`/news/edit/${item.id}`}>
+                  <Button size='sm' variant='outline'>
+                    <Edit className='h-4 w-4' />
+                  </Button>
+                </Link>
+                <DeleteButton id={item.id} />
+              </div>
+            </TableCell>
           </TableRow>
-        </TableHeader>
-        <TableBody>
-          {news.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell className='font-medium'>{item.name}</TableCell>
-              <TableCell>
-                <div className='flex items-center space-x-2'>
-                  <Badge variant={item.active ? 'default' : 'outline'}>
-                    {item.active ? 'Active' : 'Inactive'}
-                  </Badge>
-                </div>
-              </TableCell>
-              <TableCell className='text-right'>
-                <div className='flex justify-end gap-2'>
-                  <Link href={`/news/edit/${item.id}`}>
-                    <Button size='sm' variant='outline'>
-                      <Edit className='h-4 w-4' />
-                    </Button>
-                  </Link>
-                  <DeleteButton id={item.id} />
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+        ))}
+      </TableBody>
+    </Table>
   )
 }

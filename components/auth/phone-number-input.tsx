@@ -3,13 +3,15 @@
 import { Input } from '@everynews/components/ui/input'
 import { cn } from '@everynews/lib/utils'
 import { ChevronDownIcon, PhoneIcon } from 'lucide-react'
-import React, { useId, useState } from 'react'
+import React, { useId } from 'react'
 import * as RPNInput from 'react-phone-number-input'
 import flags from 'react-phone-number-input/flags'
 
-export const PhoneNumberInput = () => {
+export const PhoneNumberInput: React.FC<{
+  value: string
+  onChange: (value: string) => void
+}> = ({ value, onChange }) => {
   const id = useId()
-  const [value, setValue] = useState('')
   return (
     <RPNInput.default
       className='flex rounded-md shadow-xs'
@@ -18,9 +20,9 @@ export const PhoneNumberInput = () => {
       countrySelectComponent={CountrySelect}
       inputComponent={PhoneInput}
       id={id}
-      placeholder='Enter phone number'
+      placeholder='Enter Phone Number'
       value={value}
-      onChange={(newValue) => setValue(newValue ?? '')}
+      onChange={(newValue) => onChange(newValue ?? '')}
       defaultCountry='US'
     />
   )

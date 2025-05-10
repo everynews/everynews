@@ -64,7 +64,12 @@ export const SignIn = () => {
               .
             </DialogDescription>
           </DialogHeader>
-          <Tabs defaultValue={isMobile ? 'phone' : 'email'} className='py-6' value={method} onValueChange={(value) => setMethod(value as 'email' | 'phone')}>
+          <Tabs
+            defaultValue={isMobile ? 'phone' : 'email'}
+            className='py-6'
+            value={method}
+            onValueChange={(value) => setMethod(value as 'email' | 'phone')}
+          >
             <TabsList className='grid w-full grid-cols-2'>
               <TabsTrigger value='email'>Email</TabsTrigger>
               <TabsTrigger value='phone'>Phone</TabsTrigger>
@@ -80,7 +85,10 @@ export const SignIn = () => {
               />
             </TabsContent>
             <TabsContent value='phone'>
-              <PhoneNumberInput />
+              <PhoneNumberInput
+                value={contact}
+                onChange={(value) => setContact(value)}
+              />
             </TabsContent>
           </Tabs>
           <DialogFooter>
