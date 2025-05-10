@@ -10,17 +10,11 @@ export const news = pgTable('news', {
   ...common,
   active: boolean('active').notNull().default(true),
   name: text('name').notNull(),
-  next: timestamp('next').notNull(),
+  lastRun: timestamp('last_run'),
+  lastSent: timestamp('last_sent'),
+  nextRun: timestamp('next_run'),
   strategy: json('strategy').notNull(),
   wait: json('wait').notNull(),
-})
-
-export const schedules = pgTable('schedules', {
-  ...common,
-  cronExpr: text('cron_expr').notNull(),
-  newsId: text('news_id')
-    .notNull()
-    .references(() => news.id, { onDelete: 'cascade' }),
 })
 
 export const stories = pgTable('stories', {

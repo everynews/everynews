@@ -1,5 +1,4 @@
 'use client'
-
 import { api } from '@everynews/app/api'
 import { Button } from '@everynews/components/ui/button'
 import {
@@ -15,35 +14,42 @@ import { Loader2, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
-
 interface DeleteButtonProps {
   id: string
 }
-
 export const DeleteButton = ({ id }: DeleteButtonProps) => {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
-
   const handleDelete = async () => {
     startTransition(async () => {
-      const res = await api.news[':id'].$delete({
-        param: { id },
-      })
-      const { error } = await res.json()
-      if (error) {
-        toast.error(error)
-        return
+      try {
+        const res = await api.news[':id'].$delete({
+          param: { id },
+        })
+        const { error } = await res.json()
+        if (error) {
+          toast.error(error)
+          return
+        }
+        setOpen(false)
+        router.refresh()
+        toast.success('News item deleted successfully')
+      } catch (err) {
+        toast.error('Network error. Please try again.')
+        console.error('Error deleting news item:', err)
       }
-      setOpen(false)
-      router.refresh()
     })
   }
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size='sm' variant='outline' className='text-destructive'>
+        <Button
+          size='sm'
+          variant='outline'
+          className='text-destructive'
+          aria-label="Delete news item"
+        >
           <Trash2 className='h-4 w-4' />
         </Button>
       </DialogTrigger>
@@ -63,6 +69,7 @@ export const DeleteButton = ({ id }: DeleteButtonProps) => {
             variant='destructive'
             onClick={handleDelete}
             disabled={isPending}
+            aria-busy={isPending}
           >
             {isPending ? (
               <>

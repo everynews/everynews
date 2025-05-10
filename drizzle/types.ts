@@ -84,12 +84,6 @@ export const storiesCreateSchema = createInsertSchema(schema.stories)
 
 export const storiesUpdateSchema = createUpdateSchema(schema.stories)
 
-export const schedulesSchema = createSelectSchema(schema.schedules)
-
-export const schedulesInsertSchema = createInsertSchema(schema.schedules)
-
-export const schedulesUpdateSchema = createUpdateSchema(schema.schedules)
-
 export type strategy = z.infer<typeof strategySchema>
 
 export type WaitSettings = z.infer<typeof waitSettingsSchema>
@@ -104,4 +98,3 @@ export type Channel = z.infer<typeof channelsReadSchema>
 
 export type Story = z.infer<typeof storiesReadSchema>
 
-export type Schedule = z.infer<typeof schedulesSchema>
