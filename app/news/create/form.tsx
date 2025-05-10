@@ -14,6 +14,7 @@ import {
 import { Input } from '@everynews/components/ui/input'
 import { toast } from '@everynews/components/ui/sonner'
 import { Textarea } from '@everynews/components/ui/textarea'
+import { redactError, toastNetworkError } from '@everynews/lib/error'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save } from 'lucide-react'
 import Link from 'next/link'
@@ -72,23 +73,16 @@ export const CreateNewsForm = () => {
       const res = await api.news.$post({
         json: apiData,
       })
-
-      if (res.ok) {
-        toast.success('Created', {
-          description: 'News item created successfully.',
-        })
+      const { data, message, error } = await res.json()
+      if (data) {
+        toast.success(message)
         router.push('/news')
         router.refresh()
       } else {
-        const { error } = await res.json()
-        toast.error('Error', {
-          description: error || 'Failed to create news item',
-        })
+        toast.error(error.message)
       }
-    } catch (error) {
-      toast.error('Error', {
-        description: 'An error occurred while creating the news item',
-      })
+    } catch (e) {
+      toastNetworkError(e as Error)
     } finally {
       setIsSubmitting(false)
     }

@@ -2,6 +2,7 @@ import { db } from '@everynews/drizzle'
 import { news } from '@everynews/drizzle/service-schema'
 import { newsCreateSchema, newsUpdateSchema } from '@everynews/drizzle/types'
 import { nanoid } from '@everynews/lib/id'
+import { redactError } from '@everynews/lib/error'
 import { zValidator } from '@hono/zod-validator'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -14,7 +15,14 @@ export const newsHono = new Hono()
       })
       return c.json({ data: contents, error: null }, 200)
     } catch (error) {
-      return c.json({ data: null, error: error }, 500)
+      return c.json(
+        {
+          data: null,
+          error: redactError({ error: error as Error, safeAlternateString : 'Internal Server Error' }),
+          message: 'News Read Failed',
+        },
+        500,
+      )
     }
   })
 
@@ -26,12 +34,19 @@ export const newsHono = new Hono()
       })
 
       if (!content) {
-        return c.json({ data: null, error: 'News item not found' }, 404)
+        return c.json({ data: null, error: redactError({ error: new Error('News Not Found'), safeAlternateString: 'News Not Found' }), message: 'News Not Found' }, 404)
       }
 
-      return c.json({ data: content, error: null }, 200)
+      return c.json({ data: content, error: null, message: 'News Retrieved' }, 200)
     } catch (error) {
-      return c.json({ data: null, error: error }, 500)
+      return c.json(
+        {
+          data: null,
+          error: redactError({ error: error as Error, safeAlternateString: 'Internal Server Error' }),
+          message: 'News Read Failed',
+        },
+        500,
+      )
     }
   })
 
@@ -54,13 +69,17 @@ export const newsHono = new Hono()
         {
           data: content,
           error: null,
-          message: 'News item created successfully',
+          message: 'News Created',
         },
         201,
       )
     } catch (error) {
       return c.json(
-        { data: null, error, message: 'Failed to create news item' },
+        {
+          data: null,
+          error: redactError({ error: error as Error, safeAlternateString: 'Internal Server Error' }),
+          message: 'News Create Failed',
+        },
         500,
       )
     }
@@ -76,7 +95,7 @@ export const newsHono = new Hono()
       })
 
       if (!existingContent) {
-        return c.json({ error: 'News item not found' }, 404)
+        return c.json({ data: null, error: redactError({ error: new Error('News Not Found'), safeAlternateString: 'News Not Found' }), message: 'News Not Found' }, 404)
       }
 
       const updatedContent = {
@@ -90,13 +109,17 @@ export const newsHono = new Hono()
         {
           data: updatedContent,
           error: null,
-          message: 'News item updated successfully',
+          message: 'News Updated',
         },
         200,
       )
     } catch (error) {
       return c.json(
-        { data: null, error, message: 'Failed to update news item' },
+        {
+          data: null,
+          error: redactError({ error: error as Error, safeAlternateString: 'Internal Server Error' }),
+          message: 'News Update Failed',
+        },
         500,
       )
     }
@@ -109,19 +132,34 @@ export const newsHono = new Hono()
         where: eq(news.id, id),
       })
       if (!existingNews) {
-        return c.json({ error: 'News item not found' }, 404)
+        return c.json(
+          {
+            data: null,
+            error: redactError({ error: new Error('News to Delete Not Found'), safeAlternateString: 'News to Delete Not Found' }),
+            message: 'News to Delete Not Found',
+          },
+          404,
+        )
       }
 
       await db.delete(news).where(eq(news.id, id))
       return c.json(
         {
+          data: null,
           error: null,
-          message: 'News item deleted successfully',
+          message: 'News Deleted',
         },
         200,
       )
     } catch (error) {
-      return c.json({ error, message: 'Failed to delete news item' }, 500)
+      return c.json(
+        {
+          data: null,
+          error: redactError({ error: error as Error, safeAlternateString: 'Internal Server Error' }),
+          message: 'News Delete Failed',
+        },
+        500,
+      )
     }
   })
 

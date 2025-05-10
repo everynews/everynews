@@ -20,23 +20,28 @@ import {
   TabsTrigger,
 } from '@everynews/components/ui/tabs'
 import { useIsMobile } from '@everynews/hooks/use-mobile'
+import { toastNetworkError } from '@everynews/lib/error'
 import Link from 'next/link'
 import { useState } from 'react'
 
 export const SignIn = () => {
-  const [email, setEmail] = useState('')
+  const [contact, setContact] = useState('')
+  const [method, setMethod] = useState<'email' | 'phone'>('email')
   const [isLoading, setIsLoading] = useState(false)
   const isMobile = useIsMobile()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email) return
-
+    if (!contact) return
     try {
       setIsLoading(true)
-      await auth.signIn.magicLink({ email })
-    } catch (error) {
-      console.error('Login error:', error)
+      if (method === 'email') {
+        await auth.signIn.magicLink({ email: contact })
+      } else {
+        await auth.phoneNumber.sendOtp({ phoneNumber: contact })
+      }
+    } catch (e) {
+      toastNetworkError(e as Error)
     } finally {
       setIsLoading(false)
     }
@@ -59,7 +64,7 @@ export const SignIn = () => {
               .
             </DialogDescription>
           </DialogHeader>
-          <Tabs defaultValue={isMobile ? 'phone' : 'email'} className='py-6'>
+          <Tabs defaultValue={isMobile ? 'phone' : 'email'} className='py-6' value={method} onValueChange={(value) => setMethod(value as 'email' | 'phone')}>
             <TabsList className='grid w-full grid-cols-2'>
               <TabsTrigger value='email'>Email</TabsTrigger>
               <TabsTrigger value='phone'>Phone</TabsTrigger>
@@ -69,8 +74,8 @@ export const SignIn = () => {
                 id='email'
                 type='email'
                 placeholder='elon@twitter.com'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={contact}
+                onChange={(e) => setContact(e.target.value)}
                 required
               />
             </TabsContent>

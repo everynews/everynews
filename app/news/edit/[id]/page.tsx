@@ -3,6 +3,7 @@ import { EditNewsForm } from '@everynews/app/news/edit/[id]/form'
 import { News, newsReadSchema } from '@everynews/drizzle/types'
 import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
+import { toastNetworkError } from '@everynews/lib/error'
 
 export default async function EditNewsPage({
   params,
@@ -30,8 +31,7 @@ export default async function EditNewsPage({
         <EditNewsForm news={newsItems} />
       </Suspense>
     )
-  } catch (error) {
-    console.error('Error fetching news item:', error)
-    throw error
+  } catch (e) {
+    toastNetworkError(e as Error)
   }
 }

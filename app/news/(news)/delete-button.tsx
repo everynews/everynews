@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@everynews/components/ui/dialog'
+import { toastNetworkError } from '@everynews/lib/error'
 import { Loader2, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
@@ -27,17 +28,16 @@ export const DeleteButton = ({ id }: DeleteButtonProps) => {
         const res = await api.news[':id'].$delete({
           param: { id },
         })
-        const { error } = await res.json()
+        const { message, error } = await res.json()
         if (error) {
-          toast.error(error)
+          toast.error(error.message)
           return
         }
         setOpen(false)
         router.refresh()
-        toast.success('News item deleted successfully')
-      } catch (err) {
-        toast.error('Network error. Please try again.')
-        console.error('Error deleting news item:', err)
+        toast.success(message)
+      } catch (e) {
+        toastNetworkError(e as Error)
       }
     })
   }

@@ -13,6 +13,7 @@ import {
 } from '@everynews/components/ui/form'
 import { Input } from '@everynews/components/ui/input'
 import { News } from '@everynews/drizzle/types'
+import { toastNetworkError } from '@everynews/lib/error'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save } from 'lucide-react'
 import Link from 'next/link'
@@ -71,16 +72,17 @@ export const EditNewsForm = ({ news }: { news: News }) => {
         param: { id: news.id },
       })
 
-      if (res.ok) {
-        toast.success('News item updated successfully.')
+      const { data, error, message } = await res.json()
+
+      if (data) {
+        toast.success(message)
         router.push('/news')
         router.refresh()
       } else {
-        const { error } = await res.json()
-        toast.error(error || 'Failed to update news item')
+        toast.error(error.message)
       }
-    } catch (error) {
-      toast.error('An error occurred while updating the news item')
+    } catch (e) {
+      toastNetworkError(e as Error)
     } finally {
       setIsSubmitting(false)
     }
