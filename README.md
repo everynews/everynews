@@ -27,4 +27,3 @@ Who'd use it?
 - **Research teams** follow academic papers, monitor patents, etc
 - **Business teams** monitoring the market, competitor, brand sentiment, etc
 - **PR and Communications** assessing brand mentions, campaign performance, media coverage, etc
-

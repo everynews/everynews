@@ -1,5 +1,5 @@
 {
-  "$schema": "../node_modules/@biomejs/biome/configuration_schema.json",
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 
   "assist": {
     "actions": {
@@ -75,6 +75,9 @@
     "rules": {
       "complexity": {
         "useArrowFunction": "error"
+      },
+      "correctness": {
+        "noUnusedImports": "error"
       },
       "recommended": true
     }
