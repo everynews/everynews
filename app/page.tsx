@@ -9,7 +9,7 @@ const Page = () => (
     </p>
     <div>
       <Link href='/news'>
-        <Button variant='ghost'>Browse News</Button>
+        <Button>Browse News</Button>
       </Link>
     </div>
   </div>
