@@ -3,7 +3,8 @@
 import { Input } from '@everynews/components/ui/input'
 import { cn } from '@everynews/lib/utils'
 import { ChevronDownIcon, PhoneIcon } from 'lucide-react'
-import React, { useId } from 'react'
+import type React from 'react'
+import { useId } from 'react'
 import * as RPNInput from 'react-phone-number-input'
 import flags from 'react-phone-number-input/flags'
 

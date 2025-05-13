@@ -1,6 +1,5 @@
 'use client'
 
-import { api } from '@everynews/server/api'
 import { Button } from '@everynews/components/ui/button'
 import {
   Form,
@@ -15,6 +14,7 @@ import { Input } from '@everynews/components/ui/input'
 import { toast } from '@everynews/components/ui/sonner'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
+import { api } from '@everynews/server/api'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save } from 'lucide-react'
 import Link from 'next/link'
@@ -67,9 +67,9 @@ export const CreateNewsForm = () => {
         updatedAt: now,
         userId: '', // Will be set by server
         wait: {
-          count: null,
+          count: 10,
           cron: null,
-        }, // TODO: Update newsInsertSchema to not require server-generated fields
+        },
       }
       const res = await api.news.$post({
         json: apiData,
@@ -80,7 +80,9 @@ export const CreateNewsForm = () => {
         router.push('/news')
         router.refresh()
       } else {
-        toast.error(error.message)
+        toast.error(error.message, {
+          description: JSON.stringify(error, null, 2),
+        })
       }
     } catch (e) {
       toastNetworkError(e as Error)

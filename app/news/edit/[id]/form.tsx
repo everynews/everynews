@@ -1,6 +1,5 @@
 'use client'
 
-import { api } from '@everynews/server/api'
 import { Button } from '@everynews/components/ui/button'
 import {
   Form,
@@ -12,8 +11,9 @@ import {
   FormMessage,
 } from '@everynews/components/ui/form'
 import { Input } from '@everynews/components/ui/input'
-import { News } from '@everynews/drizzle/types'
+import type { News } from '@everynews/drizzle/types'
 import { toastNetworkError } from '@everynews/lib/error'
+import { api } from '@everynews/server/api'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save } from 'lucide-react'
 import Link from 'next/link'
@@ -153,14 +153,14 @@ export const EditNewsForm = ({ news }: { news: News }) => {
           control={form.control}
           name='public'
           render={({ field }) => (
-            <FormItem className="flex items-center gap-2">
+            <FormItem className='flex items-center gap-2'>
               <FormLabel>Public</FormLabel>
               <FormControl>
                 <input
-                  type="checkbox"
+                  type='checkbox'
                   checked={field.value}
                   onChange={(e) => field.onChange(e.target.checked)}
-                  className="h-4 w-4"
+                  className='h-4 w-4'
                 />
               </FormControl>
               <FormDescription>
