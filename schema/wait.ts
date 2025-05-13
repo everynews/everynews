@@ -1,4 +1,5 @@
-import { z } from '@hono/zod-openapi'
+import { z } from 'zod'
+import 'zod-openapi/extend'
 
 export const waitSchema = z
   .object({
@@ -8,4 +9,4 @@ export const waitSchema = z
   .refine((data) => data.count !== null || data.cron !== null, {
     message: 'At least one wait setting must be provided',
   })
-  .openapi('Wait')
+  .openapi({ ref: 'Wait' })

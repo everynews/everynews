@@ -1,7 +1,7 @@
 import { api } from '@everynews/app/api'
 import { EditNewsForm } from '@everynews/app/news/edit/[id]/form'
-import { type News, newsReadSchema } from '@everynews/drizzle/types'
 import { toastNetworkError } from '@everynews/lib/error'
+import { type News, NewsSchema } from '@everynews/schema/news'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 
@@ -21,14 +21,14 @@ export default async function EditNewsPage({
       }
       throw new Error(`Failed to fetch news: ${res.statusText}`)
     }
-    const { data } = await res.json()
-    if (!data) {
+    const newsItems = await res.json()
+    if (!newsItems) {
       notFound()
     }
-    const newsItems: News = newsReadSchema.parse(data)
+    const news: News = NewsSchema.parse(newsItems)
     return (
       <Suspense fallback={<div>Loading...</div>}>
-        <EditNewsForm news={newsItems} />
+        <EditNewsForm news={news} />
       </Suspense>
     )
   } catch (e) {

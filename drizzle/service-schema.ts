@@ -10,10 +10,10 @@ const common = {
 export const news = pgTable('news', {
   ...common,
   active: boolean('active').notNull().default(true),
+  isPublic: boolean('is_public').notNull().default(true),
   lastRun: timestamp('last_run').defaultNow(),
   name: text('name').notNull(),
   nextRun: timestamp('next_run').defaultNow(),
-  public: boolean('public').notNull().default(true),
   strategy: json('strategy').notNull(),
   userId: text('user_id')
     .notNull()

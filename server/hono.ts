@@ -1,42 +1,42 @@
 import { auth } from '@everynews/auth'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
-import { newsRouter } from '@everynews/server/news'
-import { OpenAPIHono } from '@hono/zod-openapi'
 import { Scalar } from '@scalar/hono-api-reference'
+import { Hono } from 'hono'
+import { openAPISpecs } from 'hono-openapi'
+import { newsHono } from './news'
 
-const app = new OpenAPIHono<WithAuth>()
-
-app.basePath('/api')
-
-app.use('*', authMiddleware)
-
-app.on(['POST', 'GET'], '/api/auth/**', (c) => auth.handler(c.req.raw))
-
-app.route('/api/news', newsRouter)
-
-app.doc31('/api/doc', {
-  info: {
-    title: 'Everynews API',
-    version: '0.1.0',
-  },
-  openapi: '3.1.1',
-})
-
-app.get('/api/auth/doc', async (c) => {
-  return c.json(await auth.api.generateOpenAPISchema())
-})
+const app = new Hono<WithAuth>()
+  .basePath('/api')
+  .use('*', authMiddleware)
+  .on(['POST', 'GET'], '/api/auth/**', (c) => auth.handler(c.req.raw))
+  .route('/news', newsHono)
 
 app.get(
   '/api',
   Scalar({
     sources: [
-      { title: 'Everynews', url: '/api/doc' },
-      { title: 'Everynews Auth', url: '/api/auth/doc' },
+      {
+        content: openAPISpecs(app, {
+          documentation: {
+            info: {
+              description: 'API for greeting users',
+              title: 'Everynews API',
+              version: '0.1.0',
+            },
+          },
+        }),
+        title: 'Everynews',
+      },
+      {
+        content: await auth.api.generateOpenAPISchema(),
+        title: 'Everynews Auth',
+      },
     ],
-    theme: 'default',
+    theme: 'saturn',
   }),
 )
 
-export { app }
 export type AppType = typeof app
+
+export { app }

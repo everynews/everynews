@@ -15,6 +15,7 @@ import { Input } from '@everynews/components/ui/input'
 import { toast } from '@everynews/components/ui/sonner'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
+import type { NewsDto } from '@everynews/schema/news'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save } from 'lucide-react'
 import Link from 'next/link'
@@ -49,20 +50,14 @@ export const CreateNewsForm = () => {
   const onSubmit = async (values: CreateFormValues) => {
     setIsSubmitting(true)
     try {
-      const now = new Date()
-      const apiData = {
+      const apiData: NewsDto = {
         active: values.active,
-        createdAt: now,
-        id: '',
+        isPublic: false,
         name: values.name,
-        next: now,
-        public: false,
         strategy: {
           provider: 'kagi',
           query: values.query,
         },
-        updatedAt: now,
-        userId: '',
         wait: {
           count: 10,
           cron: null,
@@ -71,14 +66,13 @@ export const CreateNewsForm = () => {
       const res = await api.news.$post({
         json: apiData,
       })
-      const { data, message, error } = await res.json()
-      if (data) {
-        toast.success(message)
-        router.push('/news')
-        router.refresh()
-      } else {
-        toast.error(error?.message)
+      if (!res.ok) {
+        toast.error('Failed to create news')
+        return
       }
+      toast.success('News Created Successfully')
+      router.push('/news')
+      router.refresh()
     } catch (e) {
       toastNetworkError(e as Error)
     } finally {

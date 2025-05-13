@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@everynews/components/ui/table'
+import { NewsSchema } from '@everynews/schema/news'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,14 +21,11 @@ export const dynamic = 'force-dynamic'
  */
 export default async function NewsPage() {
   const res = await api.news.$get()
-  const { data, error } = await res.json()
-
-  if (error) {
-    return <div>Error: {JSON.stringify(error)}</div>
+  if (!res.ok) {
+    const data: { error: string } = await res.json()
+    throw new Error(data.error)
   }
-
-  const news = data
-
+  const news = NewsSchema.array().parse(await res.json())
   return (
     <Table>
       <TableHeader>

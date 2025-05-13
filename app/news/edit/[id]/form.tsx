@@ -12,12 +12,9 @@ import {
   FormMessage,
 } from '@everynews/components/ui/form'
 import { Input } from '@everynews/components/ui/input'
-import type { News } from '@everynews/drizzle/types'
-import {
-  type UpdateNewsDto,
-  updateNewsDtoSchema,
-} from '@everynews/dto/news/update'
 import { toastNetworkError } from '@everynews/lib/error'
+import type { News } from '@everynews/schema/news'
+import { type NewsDto, NewsDtoSchema } from '@everynews/schema/news'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save } from 'lucide-react'
 import Link from 'next/link'
@@ -33,8 +30,8 @@ export const EditNewsForm = ({ news }: { news: News }) => {
   const form = useForm({
     defaultValues: {
       active: news.active,
+      isPublic: news.isPublic,
       name: news.name,
-      public: news.public || false,
       strategy: {
         provider: news.strategy.provider,
         query: news.strategy.query,
@@ -44,17 +41,17 @@ export const EditNewsForm = ({ news }: { news: News }) => {
         cron: news.wait.cron,
       },
     },
-    resolver: zodResolver(updateNewsDtoSchema),
+    resolver: zodResolver(NewsDtoSchema),
   })
 
-  const onSubmit = async (values: UpdateNewsDto) => {
+  const onSubmit = async (values: NewsDto) => {
     setIsSubmitting(true)
     try {
       const res = await api.news[':id'].$put({
         json: {
           active: values.active,
+          isPublic: values.isPublic,
           name: values.name,
-          public: values.public,
           strategy: values.strategy,
           wait: {
             count: values.wait.count,
@@ -63,16 +60,13 @@ export const EditNewsForm = ({ news }: { news: News }) => {
         },
         param: { id: news.id },
       })
-
-      const { data, error, message } = await res.json()
-
-      if (data) {
-        toast.success(message)
-        router.push('/news')
-        router.refresh()
-      } else {
-        toast.error(error?.message)
+      if (!res.ok) {
+        toast.error('Failed to update news')
+        return
       }
+      toast.success('News Updated Successfully')
+      router.push('/news')
+      router.refresh()
     } catch (e) {
       toastNetworkError(e as Error)
     } finally {
@@ -140,10 +134,10 @@ export const EditNewsForm = ({ news }: { news: News }) => {
 
         <FormField
           control={form.control}
-          name='public'
+          name='isPublic'
           render={({ field }) => (
             <FormItem className='flex items-center gap-2'>
-              <FormLabel>Public</FormLabel>
+              <FormLabel>isPublic</FormLabel>
               <FormControl>
                 <input
                   type='checkbox'
