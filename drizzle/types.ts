@@ -53,10 +53,10 @@ export const channelConfigSchema = z
   )
 
 const canOmitWhenUpserting = {
-	id: true,
-	userId: true,
   createdAt: true,
+  id: true,
   updatedAt: true,
+  userId: true,
 } as const
 
 export const newsReadSchema = createSelectSchema(schema.news, {

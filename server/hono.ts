@@ -1,8 +1,7 @@
-import { auth } from '@everynews/auth'
+import { type AuthType, auth } from '@everynews/auth'
+import { authMiddleware } from '@everynews/server/middleware/auth'
 import { newsHono } from '@everynews/server/routes/news'
 import { Hono } from 'hono'
-import { AuthType } from '@everynews/auth'
-import { authMiddleware } from '@everynews/server/middleware/auth'
 
 const server = new Hono<{ Bindings: AuthType }>()
   .basePath('/api')

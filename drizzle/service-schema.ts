@@ -2,8 +2,8 @@ import { boolean, json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { users } from './auth-schema'
 
 const common = {
-  id: text('id').primaryKey(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
+  id: text('id').primaryKey(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 }
 

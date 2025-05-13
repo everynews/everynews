@@ -77,9 +77,7 @@ export const CreateNewsForm = () => {
         router.push('/news')
         router.refresh()
       } else {
-        toast.error(error.message, {
-          description: JSON.stringify(error, null, 2),
-        })
+        toast.error(error?.message)
       }
     } catch (e) {
       toastNetworkError(e as Error)

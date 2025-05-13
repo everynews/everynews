@@ -28,7 +28,6 @@ export const auth = betterAuth({
   secret: process.env.AUTH_SECRET,
 })
 
-
 export type AuthType = {
   Variables: {
     user: typeof auth.$Infer.Session.user | null

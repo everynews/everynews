@@ -5,7 +5,7 @@ import { redactError } from '@everynews/lib/error'
 import { nanoid } from '@everynews/lib/id'
 import { zValidator } from '@hono/zod-validator'
 import { eq } from 'drizzle-orm'
-import { Hono } from 'hono'
+import { type Context, Hono } from 'hono'
 
 export const newsHono = new Hono()
   .get('/', async (c) => {
@@ -69,18 +69,16 @@ export const newsHono = new Hono()
     }
   })
 
-  .post('/', zValidator('json', newsCreateSchema), async (c) => {
+  .post('/', zValidator('json', newsCreateSchema), async (c: Context) => {
     try {
-      const data = c.req.valid('json')
+      const data = c.get('json')
+      const user = c.get('user')
       const now = new Date()
       const content = {
         ...data,
         createdAt: now,
         id: nanoid(),
-        lastRun: null,
-        lastSent: null,
-        nextRun: null,
-        updatedAt: now,
+        userId: user.id,
       }
 
       await db.insert(news).values(content)
@@ -107,10 +105,10 @@ export const newsHono = new Hono()
     }
   })
 
-  .put('/:id', zValidator('json', newsUpdateSchema), async (c) => {
+  .put('/:id', zValidator('json', newsUpdateSchema), async (c: Context) => {
     try {
       const id = c.req.param('id')
-      const data = c.req.valid('json')
+      const data = c.get('json')
 
       const existingContent = await db.query.news.findFirst({
         where: eq(news.id, id),
