@@ -52,6 +52,13 @@ export const channelConfigSchema = z
     },
   )
 
+const canOmitWhenUpserting = {
+	id: true,
+	userId: true,
+  createdAt: true,
+  updatedAt: true,
+} as const
+
 export const newsReadSchema = createSelectSchema(schema.news, {
   strategy: strategySchema,
   wait: waitSettingsSchema,
@@ -62,12 +69,12 @@ export const newsArraySchema = z.array(newsReadSchema)
 export const newsCreateSchema = createInsertSchema(schema.news, {
   strategy: strategySchema,
   wait: waitSettingsSchema,
-})
+}).omit(canOmitWhenUpserting)
 
 export const newsUpdateSchema = createUpdateSchema(schema.news, {
   strategy: strategySchema,
   wait: waitSettingsSchema,
-})
+}).omit(canOmitWhenUpserting)
 
 export const channelsReadSchema = createSelectSchema(schema.channels, {
   config: channelConfigSchema,
@@ -75,11 +82,11 @@ export const channelsReadSchema = createSelectSchema(schema.channels, {
 
 export const channelsCreateSchema = createInsertSchema(schema.channels, {
   config: channelConfigSchema,
-})
+}).omit(canOmitWhenUpserting)
 
 export const channelsUpdateSchema = createUpdateSchema(schema.channels, {
   config: channelConfigSchema,
-})
+}).omit(canOmitWhenUpserting)
 
 export const storiesReadSchema = createSelectSchema(schema.stories)
 

@@ -12,6 +12,7 @@ export const DropdownSignOut = () => {
           fetchOptions: {
             onSuccess: () => {
               router.push('/')
+              router.refresh()
             },
           },
         })
