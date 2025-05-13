@@ -1,13 +1,15 @@
 import { db } from '@everynews/drizzle'
 import { news } from '@everynews/drizzle/service-schema'
-import { newsCreateSchema, newsUpdateSchema } from '@everynews/drizzle/types'
+import { newsCreateSchema } from '@everynews/drizzle/types'
+import { updateNewsFormSchema } from '@everynews/dto/news/update'
 import { redactError } from '@everynews/lib/error'
 import { nanoid } from '@everynews/lib/id'
 import { zValidator } from '@hono/zod-validator'
 import { eq } from 'drizzle-orm'
-import { type Context, Hono } from 'hono'
+import { Hono } from 'hono'
+import type { WithAuth } from '../bindings/auth'
 
-export const newsHono = new Hono()
+export const newsHono = new Hono<WithAuth>()
   .get('/', async (c) => {
     try {
       const contents = await db.query.news.findMany({
@@ -69,16 +71,16 @@ export const newsHono = new Hono()
     }
   })
 
-  .post('/', zValidator('json', newsCreateSchema), async (c: Context) => {
+  .post('/', zValidator('json', newsCreateSchema), async (c) => {
     try {
-      const data = c.get('json')
+      const data = await c.req.json()
       const user = c.get('user')
       const now = new Date()
       const content = {
         ...data,
         createdAt: now,
         id: nanoid(),
-        userId: user.id,
+        userId: user?.id,
       }
 
       await db.insert(news).values(content)
@@ -105,10 +107,10 @@ export const newsHono = new Hono()
     }
   })
 
-  .put('/:id', zValidator('json', newsUpdateSchema), async (c: Context) => {
+  .put('/:id', zValidator('json', updateNewsFormSchema), async (c) => {
     try {
       const id = c.req.param('id')
-      const data = c.get('json')
+      const data = await c.req.json()
 
       const existingContent = await db.query.news.findFirst({
         where: eq(news.id, id),

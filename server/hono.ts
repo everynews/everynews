@@ -1,16 +1,12 @@
-import { type AuthType, auth } from '@everynews/auth'
+import { auth } from '@everynews/auth'
+import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { newsHono } from '@everynews/server/routes/news'
 import { Hono } from 'hono'
 
-const server = new Hono<{ Bindings: AuthType }>()
+const server = new Hono<WithAuth>()
   .basePath('/api')
-  .get('/hello', (c) =>
-    c.json({
-      message: 'Hello from Hono on Vercel!',
-    }),
-  )
-  .use(authMiddleware)
+  .use('*', authMiddleware)
   .on(['POST', 'GET'], '/auth/*', (c) => auth.handler(c.req.raw))
   .route('/news', newsHono)
 
