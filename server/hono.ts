@@ -1,5 +1,5 @@
 import { auth } from '@everynews/auth'
-import { newsHono } from '@everynews/server/news'
+import { newsHono } from '@everynews/server/routes/news'
 import { Hono } from 'hono'
 
 const server = new Hono()

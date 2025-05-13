@@ -67,9 +67,9 @@ export const CreateNewsForm = () => {
         updatedAt: now,
         userId: '', // Will be set by server
         wait: {
-          count: null,
+          count: 10,
           cron: null,
-        }, // TODO: Update newsInsertSchema to not require server-generated fields
+        },
       }
       const res = await api.news.$post({
         json: apiData,
@@ -80,7 +80,9 @@ export const CreateNewsForm = () => {
         router.push('/news')
         router.refresh()
       } else {
-        toast.error(error.message)
+        toast.error(error.message, {
+          description: JSON.stringify(error, null, 2),
+        })
       }
     } catch (e) {
       toastNetworkError(e as Error)
