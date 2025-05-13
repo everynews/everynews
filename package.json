@@ -51,6 +51,7 @@
     "db:generate": "drizzle-kit generate --config drizzle/drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config drizzle/drizzle.config.ts",
     "db:push": "drizzle-kit push --config drizzle/drizzle.config.ts",
+    "db:studio": "drizzle-kit studio --config drizzle/drizzle.config.ts",
     "dev": "next dev --turbopack",
     "start": "next start",
     "style:check": "bunx biome check --write .",
