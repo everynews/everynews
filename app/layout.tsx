@@ -1,6 +1,7 @@
 import '@everynews/app/globals.css'
 import { siteConfig } from '@everynews/app/site-config'
 import { AppNavbar } from '@everynews/components/app-navbar'
+import { ThemeProvider } from '@everynews/components/theme/provider'
 import { Toaster } from '@everynews/components/ui/sonner'
 import type { Metadata } from 'next'
 
@@ -39,9 +40,16 @@ export const metadata: Metadata = {
 const Layout = ({ children }: { children: React.ReactNode }) => (
   <html lang='en' suppressHydrationWarning>
     <body className='bg-background h-screen flex flex-col'>
-      <AppNavbar />
-      <main className='container mx-auto flex-1'>{children}</main>
-      <Toaster richColors position='top-center' />
+      <ThemeProvider
+        attribute='class'
+        defaultTheme='system'
+        enableSystem
+        disableTransitionOnChange
+      >
+        <AppNavbar />
+        <main className='container mx-auto flex-1'>{children}</main>
+        <Toaster richColors position='top-center' />
+      </ThemeProvider>
     </body>
   </html>
 )
