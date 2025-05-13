@@ -1,4 +1,4 @@
-'use client'
+import { DropdownSignOut } from '@everynews/components/auth/sign-out'
 import {
   Avatar,
   AvatarFallback,
@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@everynews/components/ui/dropdown-menu'
 import type { User } from 'better-auth'
-import { BadgeCheck, Bell, CreditCard, LogOut, UserIcon } from 'lucide-react'
+import { BadgeCheck, Bell, CreditCard, UserIcon } from 'lucide-react'
 
 export const NavUser = ({ user }: { user: User }) => {
   return (
@@ -66,10 +66,7 @@ export const NavUser = ({ user }: { user: User }) => {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <LogOut className='mr-2 h-4 w-4' />
-          <span>Log out</span>
-        </DropdownMenuItem>
+        <DropdownSignOut />
       </DropdownMenuContent>
     </DropdownMenu>
   )
