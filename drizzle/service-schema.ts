@@ -9,10 +9,10 @@ const common = {
 export const news = pgTable('news', {
   ...common,
   active: boolean('active').notNull().default(true),
-  public: boolean('public').notNull().default(false), // Public flag, defaults to private
   lastRun: timestamp('last_run'),
   name: text('name').notNull(),
   nextRun: timestamp('next_run'),
+  public: boolean('public').notNull().default(true),
   strategy: json('strategy').notNull(),
   userId: text('user_id').notNull(), // Owner of the news item
   wait: json('wait').notNull(),

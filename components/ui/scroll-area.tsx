@@ -2,7 +2,7 @@
 
 import { cn } from '@everynews/lib/utils'
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area'
-import * as React from 'react'
+import type * as React from 'react'
 
 export const ScrollArea = ({
   className,

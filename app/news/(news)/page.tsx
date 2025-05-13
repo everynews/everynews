@@ -1,6 +1,4 @@
-import { api } from '@everynews/server/api'
 import { Badge } from '@everynews/components/ui/badge'
-import { Button } from '@everynews/components/ui/button'
 import {
   Table,
   TableBody,
@@ -9,9 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from '@everynews/components/ui/table'
-import { Edit } from 'lucide-react'
-import Link from 'next/link'
-import { DeleteButton } from './delete-button'
+import { api } from '@everynews/server/api'
 
 export const dynamic = 'force-dynamic'
 
@@ -45,9 +41,9 @@ export default async function NewsPage() {
           <TableRow key={item.id}>
             <TableCell className='font-medium'>{item.name}</TableCell>
             <TableCell>
-                <Badge variant={item.active ? 'default' : 'outline'}>
-                  {item.active ? 'Active' : 'Inactive'}
-                </Badge>
+              <Badge variant={item.active ? 'default' : 'outline'}>
+                {item.active ? 'Active' : 'Inactive'}
+              </Badge>
             </TableCell>
           </TableRow>
         ))}

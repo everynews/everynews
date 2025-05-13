@@ -2,7 +2,7 @@
 
 import { cn } from '@everynews/lib/utils'
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
-import * as React from 'react'
+import type * as React from 'react'
 
 export const TooltipProvider = ({
   delayDuration = 0,

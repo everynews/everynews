@@ -2,7 +2,7 @@
 
 import { cn } from '@everynews/lib/utils'
 import * as TabsPrimitive from '@radix-ui/react-tabs'
-import * as React from 'react'
+import type * as React from 'react'
 
 export const Tabs = ({
   className,

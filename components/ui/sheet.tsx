@@ -3,7 +3,7 @@
 import { cn } from '@everynews/lib/utils'
 import * as SheetPrimitive from '@radix-ui/react-dialog'
 import { XIcon } from 'lucide-react'
-import { ComponentProps } from 'react'
+import type { ComponentProps } from 'react'
 
 export const Sheet = ({
   ...props
