@@ -12,6 +12,10 @@ import {
 } from '@everynews/components/ui/form'
 import { Input } from '@everynews/components/ui/input'
 import type { News } from '@everynews/drizzle/types'
+import {
+  type UpdateNewsForm,
+  updateNewsFormSchema,
+} from '@everynews/dto/news/update'
 import { toastNetworkError } from '@everynews/lib/error'
 import { api } from '@everynews/server/api'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -21,25 +25,10 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
 
 export const EditNewsForm = ({ news }: { news: News }) => {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const formSchema = z.object({
-    active: z.boolean(),
-    name: z.string().min(1, 'Name is required'),
-    public: z.boolean(),
-    strategy: z.object({
-      provider: z.string(),
-      query: z.string().optional(),
-    }),
-    wait: z.object({
-      count: z.number().nullable(),
-      cron: z.string().nullable(),
-    }),
-  })
 
   const form = useForm({
     defaultValues: {
@@ -55,10 +44,10 @@ export const EditNewsForm = ({ news }: { news: News }) => {
         cron: news.wait.cron,
       },
     },
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(updateNewsFormSchema),
   })
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: UpdateNewsForm) => {
     setIsSubmitting(true)
     try {
       const res = await api.news[':id'].$put({
@@ -82,7 +71,7 @@ export const EditNewsForm = ({ news }: { news: News }) => {
         router.push('/news')
         router.refresh()
       } else {
-        toast.error(error.message)
+        toast.error(error?.message)
       }
     } catch (e) {
       toastNetworkError(e as Error)
