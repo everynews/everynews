@@ -1,4 +1,5 @@
 import { boolean, json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { users } from './auth-schema'
 
 const common = {
   createdAt: timestamp('created_at').notNull(),
@@ -14,7 +15,9 @@ export const news = pgTable('news', {
   nextRun: timestamp('next_run'),
   public: boolean('public').notNull().default(true),
   strategy: json('strategy').notNull(),
-  userId: text('user_id').notNull(), // Owner of the news item
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
   wait: json('wait').notNull(),
 })
 
@@ -22,9 +25,9 @@ export const stories = pgTable('stories', {
   ...common,
   newsId: text('news_id')
     .notNull()
-    .references(() => news.id, { onDelete: 'cascade' }), // For deduplication
+    .references(() => news.id, { onDelete: 'cascade' }),
   snippet: text('snippet'),
-  title: text('title').notNull(), // Queued for delivery
+  title: text('title').notNull(),
   url: text('url').notNull().unique(),
 })
 

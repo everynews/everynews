@@ -23,7 +23,6 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-// Simplified form schema for create form
 const createFormSchema = z.object({
   active: z.boolean(),
   name: z.string().min(1, 'Name is required'),
@@ -36,14 +35,12 @@ export const CreateNewsForm = () => {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Default values for new news item
   const defaultValues: CreateFormValues = {
     active: true,
     name: '',
     query: '',
   }
 
-  // Set up form with simplified schema
   const form = useForm<CreateFormValues>({
     defaultValues,
     resolver: zodResolver(createFormSchema),
@@ -59,13 +56,13 @@ export const CreateNewsForm = () => {
         id: '',
         name: values.name,
         next: now,
-        public: false, // Default to private
+        public: false,
         strategy: {
           provider: 'kagi',
           query: values.query,
         },
         updatedAt: now,
-        userId: '', // Will be set by server
+        userId: '',
         wait: {
           count: 10,
           cron: null,
