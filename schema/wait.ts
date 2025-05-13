@@ -1,0 +1,11 @@
+import { z } from '@hono/zod-openapi'
+
+export const waitSchema = z
+  .object({
+    count: z.number().nullable().openapi({ example: 10 }),
+    cron: z.string().nullable().openapi({ example: '0 0 * * *' }),
+  })
+  .refine((data) => data.count !== null || data.cron !== null, {
+    message: 'At least one wait setting must be provided',
+  })
+  .openapi('Wait')

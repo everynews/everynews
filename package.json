@@ -14,6 +14,7 @@
     "@radix-ui/react-switch": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.6",
+    "@scalar/hono-api-reference": "^0.8.9",
     "@tanstack/react-query": "^5.76.0",
     "better-auth": "^1.2.7",
     "class-variance-authority": "^0.7.1",

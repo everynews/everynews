@@ -1,5 +1,6 @@
 'use client'
 
+import { api } from '@everynews/app/api'
 import { Button } from '@everynews/components/ui/button'
 import {
   Form,
@@ -17,7 +18,6 @@ import {
   updateNewsDtoSchema,
 } from '@everynews/dto/news/update'
 import { toastNetworkError } from '@everynews/lib/error'
-import { api } from '@everynews/app/api'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save } from 'lucide-react'
 import Link from 'next/link'

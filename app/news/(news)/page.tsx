@@ -1,3 +1,4 @@
+import { api } from '@everynews/app/api'
 import { Badge } from '@everynews/components/ui/badge'
 import {
   Table,
@@ -7,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from '@everynews/components/ui/table'
-import { api } from '@everynews/app/api'
 
 export const dynamic = 'force-dynamic'
 
