@@ -1,7 +1,7 @@
 import { db } from '@everynews/drizzle'
 import { news } from '@everynews/drizzle/service-schema'
 import { newsCreateSchema } from '@everynews/drizzle/types'
-import { updateNewsFormSchema } from '@everynews/dto/news/update'
+import { updateNewsDtoSchema } from '@everynews/dto/news/update'
 import { redactError } from '@everynews/lib/error'
 import { nanoid } from '@everynews/lib/id'
 import { zValidator } from '@hono/zod-validator'
@@ -107,7 +107,7 @@ export const newsHono = new Hono<WithAuth>()
     }
   })
 
-  .put('/:id', zValidator('json', updateNewsFormSchema), async (c) => {
+  .put('/:id', zValidator('json', updateNewsDtoSchema), async (c) => {
     try {
       const id = c.req.param('id')
       const data = await c.req.json()

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const updateNewsFormSchema = z.object({
+export const updateNewsDtoSchema = z.object({
   active: z.boolean(),
   name: z.string().min(1, 'Name is required'),
   public: z.boolean(),
@@ -14,4 +14,4 @@ export const updateNewsFormSchema = z.object({
   }),
 })
 
-export type UpdateNewsForm = z.infer<typeof updateNewsFormSchema>
+export type UpdateNewsDto = z.infer<typeof updateNewsDtoSchema>

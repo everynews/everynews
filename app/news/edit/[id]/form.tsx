@@ -13,8 +13,8 @@ import {
 import { Input } from '@everynews/components/ui/input'
 import type { News } from '@everynews/drizzle/types'
 import {
-  type UpdateNewsForm,
-  updateNewsFormSchema,
+  type UpdateNewsDto,
+  updateNewsDtoSchema,
 } from '@everynews/dto/news/update'
 import { toastNetworkError } from '@everynews/lib/error'
 import { api } from '@everynews/server/api'
@@ -44,10 +44,10 @@ export const EditNewsForm = ({ news }: { news: News }) => {
         cron: news.wait.cron,
       },
     },
-    resolver: zodResolver(updateNewsFormSchema),
+    resolver: zodResolver(updateNewsDtoSchema),
   })
 
-  const onSubmit = async (values: UpdateNewsForm) => {
+  const onSubmit = async (values: UpdateNewsDto) => {
     setIsSubmitting(true)
     try {
       const res = await api.news[':id'].$put({
