@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from '@everynews/components/ui/table'
-import { api } from '@everynews/server/api'
+import { api } from '@everynews/app/api'
 
 export const dynamic = 'force-dynamic'
 
