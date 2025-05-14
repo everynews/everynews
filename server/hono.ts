@@ -13,7 +13,7 @@ const app = new Hono<WithAuth>()
   .route('/news', newsHono)
 
 app.get(
-  '/api',
+  '/',
   Scalar({
     sources: [
       {
