@@ -1,9 +1,13 @@
 import { z } from 'zod'
 import 'zod-openapi/extend'
-
 export const strategySchema = z
-  .object({
-    provider: z.string().openapi({ example: 'kagi' }),
-    query: z.string().optional().openapi({ example: 'News' }),
-  })
+  .discriminatedUnion('provider', [
+    z.object({
+      provider: z.literal('hnbest').openapi({ example: 'hnbest' }),
+    }),
+    z.object({
+      provider: z.literal('kagi').openapi({ example: 'kagi' }),
+      query: z.string().openapi({ example: 'News' }),
+    }),
+  ])
   .openapi({ ref: 'Strategy' })
