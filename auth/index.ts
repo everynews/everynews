@@ -21,7 +21,9 @@ export const auth = betterAuth({
       sendMagicLink,
     }),
     nextCookies(),
-    openAPI({ disableDefaultReference: true }),
+    openAPI({
+      disableDefaultReference: true,
+    }),
   ],
   secret: process.env.AUTH_SECRET,
 })
