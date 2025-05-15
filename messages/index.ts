@@ -10,16 +10,3 @@ export const sendMagicLink = async (
     resolve()
   })
 }
-
-export const sendOTP = (
-  { phoneNumber, code }: { phoneNumber: string; code: string },
-  request?: Request | undefined,
-): Promise<void> => {
-  console.log(`Request: ${request}`)
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log(`Sending OTP to ${phoneNumber} with code: ${code}`)
-    }, 1000)
-    resolve()
-  })
-}
