@@ -3,7 +3,7 @@ import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { Scalar } from '@scalar/hono-api-reference'
 import { Hono } from 'hono'
-import { openAPISpecs } from 'hono-openapi'
+import { generateSpecs } from 'hono-openapi'
 import { newsHono } from './news'
 
 const app = new Hono<WithAuth>()
@@ -17,10 +17,10 @@ app.get(
   Scalar({
     sources: [
       {
-        content: openAPISpecs(app, {
+        content: await generateSpecs(app, {
           documentation: {
             info: {
-              description: 'API for greeting users',
+              description: 'API for Everynews',
               title: 'Everynews API',
               version: '0.1.0',
             },
