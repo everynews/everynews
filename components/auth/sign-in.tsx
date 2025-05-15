@@ -12,12 +12,6 @@ import {
   DialogTrigger,
 } from '@everynews/components/ui/dialog'
 import { Input } from '@everynews/components/ui/input'
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@everynews/components/ui/tabs'
 import { toastNetworkError } from '@everynews/lib/error'
 import Link from 'next/link'
 import { useState } from 'react'
