@@ -26,12 +26,12 @@ export const newsHono = new Hono<WithAuth>()
         },
       },
     }),
-    (c) => {
+    async (c) => {
       const user = c.get('user')
       if (!user) {
         return c.json({ error: 'Unauthorized' }, 401)
       }
-      return c.json(db.select().from(news).where(eq(news.userId, user.id)), 200)
+      return c.json(await db.select().from(news).execute())
     },
   )
   .get(
@@ -51,7 +51,7 @@ export const newsHono = new Hono<WithAuth>()
     }),
     (c) => {
       const { id } = c.req.param()
-      return c.json(db.select().from(news).where(eq(news.id, id)))
+      return c.json(db.select().from(news).where(eq(news.id, id)).execute())
     },
   )
   .post(

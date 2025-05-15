@@ -3,8 +3,8 @@ import 'zod-openapi/extend'
 
 export const waitSchema = z
   .object({
-    count: z.number().nullable().openapi({ example: 10 }),
-    cron: z.string().nullable().openapi({ example: '0 0 * * *' }),
+    count: z.coerce.number().nullable().openapi({ example: 10 }),
+    cron: z.coerce.string().nullable().openapi({ example: '0 0 * * *' }),
   })
   .refine((data) => data.count !== null || data.cron !== null, {
     message: 'At least one wait setting must be provided',
