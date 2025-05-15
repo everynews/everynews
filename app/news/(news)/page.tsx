@@ -1,4 +1,4 @@
-import { api } from '@everynews/app/api'
+import { serverApi } from '@everynews/app/api/server'
 import { Badge } from '@everynews/components/ui/badge'
 import {
   Table,
@@ -12,14 +12,8 @@ import { NewsSchema } from '@everynews/schema/news'
 
 export const dynamic = 'force-dynamic'
 
-/**
- * Displays a table of news items fetched from the API, allowing users to view, edit, or delete each item.
- *
- * Fetches news data asynchronously and renders it in a table with columns for name, status, and actions. Shows an error message if the API request fails.
- *
- * @returns A React element displaying the news list or an error message.
- */
 export default async function NewsPage() {
+  const api = await serverApi()
   const res = await api.news.$get()
   if (!res.ok) {
     const data: { error: string } = await res.json()

@@ -14,7 +14,10 @@ export const NewsSchema = z
       .date()
       .nullable()
       .openapi({ example: '2025-05-14T12:15:28.123Z' }),
-    name: z.coerce.string().min(1, 'Name is required').openapi({ example: 'News' }),
+    name: z.coerce
+      .string()
+      .min(1, 'Name is required')
+      .openapi({ example: 'News' }),
     nextRun: z.coerce
       .date()
       .nullable()
