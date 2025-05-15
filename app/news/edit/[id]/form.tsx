@@ -34,7 +34,7 @@ export const EditNewsForm = ({ news }: { news: News }) => {
       name: news.name,
       strategy: {
         provider: news.strategy.provider,
-        query: news.strategy.query,
+        query: 'query' in news.strategy ? news.strategy.query : undefined,
       },
       wait: {
         count: news.wait.count,
