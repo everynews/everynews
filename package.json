@@ -47,21 +47,21 @@
   },
   "name": "everynews",
   "scripts": {
-    "auth:update": "bunx @better-auth/cli generate --config auth/index.ts --output db/auth-schema.ts && bun style:check",
+    "auth:update": "bunx --bun @better-auth/cli generate --config auth/index.ts --output db/auth-schema.ts && bun  style:check",
     "build": "next build",
-    "db:check": "drizzle-kit check --config ./drizzle.config.ts",
-    "db:generate": "drizzle-kit generate --config ./drizzle.config.ts",
-    "db:migrate": "drizzle-kit migrate --config ./drizzle.config.ts",
-    "db:push": "drizzle-kit push --config ./drizzle.config.ts",
-    "db:studio": "drizzle-kit studio --config ./drizzle.config.ts",
+    "db:check": "drizzle-kit check --config ./drizzle/drizzle.config.ts",
+    "db:generate": "drizzle-kit generate --config ./drizzle/drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate --config ./drizzle/drizzle.config.ts",
+    "db:push": "drizzle-kit push --config ./drizzle/drizzle.config.ts",
+    "db:studio": "drizzle-kit studio --config ./drizzle/drizzle.config.ts",
     "dev": "next dev --turbopack",
     "start": "next start",
-    "style:check": "bunx biome check --write .",
+    "style:check": "bunx biome check --write . --config-path ./tools/biome.json",
     "tidy": "bun style:check && bun db:check && bun run build"
   },
-  "type": "module",
-  "version": "0.1.0",
   "trustedDependencies": [
     "@tailwindcss/oxide"
-  ]
+  ],
+  "type": "module",
+  "version": "0.1.0"
 }
