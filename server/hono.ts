@@ -5,13 +5,17 @@ import { authMiddleware } from '@everynews/server/middleware/auth'
 import { Scalar } from '@scalar/hono-api-reference'
 import { Hono } from 'hono'
 import { generateSpecs } from 'hono-openapi'
-import { newsHono } from './news'
+import { ChannelRouter } from './channels'
+import { NewsRouter } from './news'
+import { SubscriptionRouter } from './subscriptions'
 
 const app = new Hono<WithAuth>()
   .basePath('/api')
   .use('*', authMiddleware)
   .on(['POST', 'GET'], '/auth/*', (c) => auth.handler(c.req.raw))
-  .route('/news', newsHono)
+  .route('/news', NewsRouter)
+  .route('/channels', ChannelRouter)
+  .route('/subscriptions', SubscriptionRouter)
 
 app.get(
   '/',

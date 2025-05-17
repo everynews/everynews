@@ -7,6 +7,13 @@
       "tag": "0000_military_cobalt_man",
       "version": "7",
       "when": 1746840020208
+    },
+    {
+      "breakpoints": true,
+      "idx": 1,
+      "tag": "0001_striped_baron_strucker",
+      "version": "7",
+      "when": 1747447524753
     }
   ],
   "version": "7"

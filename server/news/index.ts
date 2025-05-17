@@ -9,7 +9,7 @@ import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
 import type { WithAuth } from '../bindings/auth'
 
-export const newsHono = new Hono<WithAuth>()
+export const NewsRouter = new Hono<WithAuth>()
   .use(authMiddleware)
   .get(
     '/',
