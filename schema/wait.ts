@@ -8,7 +8,7 @@ export const WaitSchema = z
       value: z.coerce.number().openapi({ example: 10 }),
     }),
     z.object({
-      type: z.literal('cron'),
+      type: z.literal('schedule'),
       value: z.coerce.string().openapi({ example: '0 0 * * *' }),
     }),
   ])

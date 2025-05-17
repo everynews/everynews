@@ -56,7 +56,7 @@ export const EditNewsForm = ({ news }: { news: News }) => {
           wait:
             values.wait.type === 'count'
               ? { type: 'count', value: Number(values.wait.value) }
-              : { type: 'cron', value: String(values.wait.value) },
+              : { type: 'schedule', value: String(values.wait.value) },
         },
         param: { id: news.id },
       })
