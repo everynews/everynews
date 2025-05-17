@@ -1,5 +1,5 @@
 import { db } from '@everynews/drizzle'
-import { news, subscriptions } from '@everynews/drizzle/service-schema'
+import { news, subscriptions } from '@everynews/schema'
 import {
   SubscriptionDtoSchema,
   SubscriptionSchema,

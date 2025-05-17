@@ -1,8 +1,26 @@
 import { z } from 'zod'
 import 'zod-openapi/extend'
-
+import { nanoid } from '@everynews/lib/id'
+import { boolean, json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { strategySchema } from './strategy'
+import { users } from './user'
 import { waitSchema } from './wait'
+
+export const news = pgTable('news', {
+  active: boolean('active').notNull().default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  id: text('id').primaryKey().$defaultFn(nanoid),
+  isPublic: boolean('is_public').notNull().default(true),
+  lastRun: timestamp('last_run').defaultNow(),
+  name: text('name').notNull(),
+  nextRun: timestamp('next_run').defaultNow(),
+  strategy: json('strategy').notNull(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  wait: json('wait').notNull(),
+})
 
 export const NewsSchema = z
   .object({

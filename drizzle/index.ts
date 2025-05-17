@@ -1,4 +1,4 @@
-import * as schema from '@everynews/drizzle/schema'
+import * as schema from '@everynews/schema'
 import { neon } from '@neondatabase/serverless'
 import { drizzle } from 'drizzle-orm/neon-http'
 

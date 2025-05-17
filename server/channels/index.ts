@@ -1,5 +1,5 @@
 import { db } from '@everynews/drizzle'
-import { channels } from '@everynews/drizzle/service-schema'
+import { channels } from '@everynews/schema'
 import { ChannelDtoSchema, ChannelSchema } from '@everynews/schema/channel'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { and, eq } from 'drizzle-orm'

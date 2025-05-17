@@ -1,6 +1,6 @@
 import { db } from '@everynews/drizzle'
-import { news } from '@everynews/drizzle/service-schema'
 import { nanoid } from '@everynews/lib/id'
+import { news } from '@everynews/schema'
 import { NewsDtoSchema, NewsSchema } from '@everynews/schema/news'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { eq } from 'drizzle-orm'

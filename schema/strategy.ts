@@ -1,5 +1,7 @@
 import { z } from 'zod'
 import 'zod-openapi/extend'
+
+// Strategy is a JSON field in the news table, so there is no pgTable definition
 export const strategySchema = z
   .discriminatedUnion('provider', [
     z.object({

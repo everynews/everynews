@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import 'zod-openapi/extend'
 
+// Wait is a JSON field in the news table, so there is no pgTable definition
 export const waitSchema = z
   .object({
     count: z.coerce.number().nullable().openapi({ example: 10 }),
