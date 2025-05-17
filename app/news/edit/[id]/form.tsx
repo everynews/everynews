@@ -37,8 +37,8 @@ export const EditNewsForm = ({ news }: { news: News }) => {
         query: 'query' in news.strategy ? news.strategy.query : undefined,
       },
       wait: {
-        count: news.wait.count,
-        cron: news.wait.cron,
+        type: 'count',
+        value: Number(news.wait.value),
       },
     },
     resolver: zodResolver(NewsDtoSchema),
@@ -53,10 +53,10 @@ export const EditNewsForm = ({ news }: { news: News }) => {
           isPublic: values.isPublic,
           name: values.name,
           strategy: values.strategy,
-          wait: {
-            count: values.wait.count,
-            cron: values.wait.cron,
-          },
+          wait:
+            values.wait.type === 'count'
+              ? { type: 'count', value: Number(values.wait.value) }
+              : { type: 'cron', value: String(values.wait.value) },
         },
         param: { id: news.id },
       })

@@ -59,8 +59,8 @@ export const CreateNewsForm = () => {
           query: values.query,
         },
         wait: {
-          count: 10,
-          cron: null,
+          type: 'count',
+          value: 10,
         },
       }
       const res = await api.news.$post({

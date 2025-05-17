@@ -4,7 +4,7 @@ import { nanoid } from '@everynews/lib/id'
 import { boolean, json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { strategySchema } from './strategy'
 import { users } from './user'
-import { waitSchema } from './wait'
+import { WaitSchema } from './wait'
 
 export const news = pgTable('news', {
   active: boolean('active').notNull().default(true),
@@ -25,25 +25,19 @@ export const news = pgTable('news', {
 export const NewsSchema = z
   .object({
     active: z.coerce.boolean().openapi({ example: true }),
-    createdAt: z.coerce.date().openapi({ example: '2025-05-14T12:15:28.123Z' }),
+    createdAt: z.coerce.date().openapi({ example: new Date() }),
     id: z.coerce.string().openapi({ example: '123' }),
     isPublic: z.coerce.boolean().openapi({ example: true }),
-    lastRun: z.coerce
-      .date()
-      .nullable()
-      .openapi({ example: '2025-05-14T12:15:28.123Z' }),
+    lastRun: z.coerce.date().nullable().openapi({ example: new Date() }),
     name: z.coerce
       .string()
       .min(1, 'Name is required')
       .openapi({ example: 'News' }),
-    nextRun: z.coerce
-      .date()
-      .nullable()
-      .openapi({ example: '2025-05-14T12:15:28.123Z' }),
+    nextRun: z.coerce.date().nullable().openapi({ example: new Date() }),
     strategy: strategySchema,
-    updatedAt: z.coerce.date().openapi({ example: '2025-05-14T12:15:28.123Z' }),
+    updatedAt: z.coerce.date().openapi({ example: new Date() }),
     userId: z.coerce.string().openapi({ example: '123' }),
-    wait: waitSchema,
+    wait: WaitSchema,
   })
   .openapi({ ref: 'News' })
 

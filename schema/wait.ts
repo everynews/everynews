@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import 'zod-openapi/extend'
 
-export const waitSchema = z
+export const WaitSchema = z
   .discriminatedUnion('type', [
     z.object({
       type: z.literal('count'),
@@ -12,4 +12,4 @@ export const waitSchema = z
       value: z.coerce.string().openapi({ example: '0 0 * * *' }),
     }),
   ])
-  .openapi({ ref: 'Wait' })
+  .openapi({ ref: 'WaitSchema' })

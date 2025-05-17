@@ -12,4 +12,4 @@ export const strategySchema = z
       query: z.string().openapi({ example: 'News' }),
     }),
   ])
-  .openapi({ ref: 'Strategy' })
+  .openapi({ ref: 'StrategySchema' })

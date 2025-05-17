@@ -16,20 +16,22 @@ export const channels = pgTable('channels', {
     .references(() => users.id, { onDelete: 'cascade' }),
 })
 
-const BaseChannel = z.object({
-  createdAt: z.coerce.date(),
-  id: z.coerce.string(),
-  name: z.coerce.string(),
-  updatedAt: z.coerce.date(),
-  userId: z.coerce.string(),
-})
+const BaseChannel = z
+  .object({
+    createdAt: z.coerce.date(),
+    id: z.coerce.string(),
+    name: z.coerce.string(),
+    updatedAt: z.coerce.date(),
+    userId: z.coerce.string(),
+  })
+  .openapi({ ref: 'BaseChannel' })
 
 const EmailChannelSchema = BaseChannel.extend({
   config: z.object({
     destination: z.string().email().openapi({ example: 'email@example.com' }),
   }),
   type: z.literal('email').openapi({ example: 'email' }),
-})
+}).openapi({ ref: 'EmailChannelSchema' })
 
 const SlackChannelSchema = BaseChannel.extend({
   config: z.object({
@@ -39,26 +41,24 @@ const SlackChannelSchema = BaseChannel.extend({
     }),
   }),
   type: z.literal('slack').openapi({ example: 'slack' }),
-})
+}).openapi({ ref: 'SlackChannelSchema' })
 
-export const ChannelSchema = z.discriminatedUnion('type', [
-  EmailChannelSchema,
-  SlackChannelSchema,
-])
+export const ChannelSchema = z
+  .discriminatedUnion('type', [EmailChannelSchema, SlackChannelSchema])
+  .openapi({ ref: 'ChannelSchema' })
 
-const EmailDtoSchema = EmailChannelSchema.omit({
+const EmailChannelDtoSchema = EmailChannelSchema.omit({
   createdAt: true,
   updatedAt: true,
   userId: true,
-})
+}).openapi({ ref: 'EmailChannelDtoSchema' })
 
-const SlackDtoSchema = SlackChannelSchema.omit({
+const SlackChannelDtoSchema = SlackChannelSchema.omit({
   createdAt: true,
   updatedAt: true,
   userId: true,
-})
+}).openapi({ ref: 'SlackChannelDtoSchema' })
 
-export const ChannelDtoSchema = z.discriminatedUnion('type', [
-  EmailDtoSchema,
-  SlackDtoSchema,
-])
+export const ChannelDtoSchema = z
+  .discriminatedUnion('type', [EmailChannelDtoSchema, SlackChannelDtoSchema])
+  .openapi({ ref: 'ChannelDtoSchema' })

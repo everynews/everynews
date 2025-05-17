@@ -14,14 +14,16 @@ export const users = pgTable('users', {
   updatedAt: timestamp('updated_at').notNull(),
 })
 
-export const UserSchema = z.object({
-  createdAt: z.coerce.date(),
-  email: z.string().email(),
-  emailVerified: z.boolean(),
-  id: z.string(),
-  image: z.string().nullable(),
-  name: z.string(),
-  phoneNumber: z.string().nullable(),
-  phoneNumberVerified: z.boolean().nullable(),
-  updatedAt: z.coerce.date(),
-})
+export const UserSchema = z
+  .object({
+    createdAt: z.coerce.date(),
+    email: z.string().email(),
+    emailVerified: z.boolean(),
+    id: z.string(),
+    image: z.string().nullable(),
+    name: z.string(),
+    phoneNumber: z.string().nullable(),
+    phoneNumberVerified: z.boolean().nullable(),
+    updatedAt: z.coerce.date(),
+  })
+  .openapi({ ref: 'UserSchema' })
