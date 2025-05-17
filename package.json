@@ -21,7 +21,6 @@
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.43.1",
     "drizzle-zod": "^0.7.1",
-    "everynews": ".",
     "hono": "^4.7.9",
     "hono-openapi": "^0.4.8",
     "lucide-react": "^0.510.0",
@@ -50,16 +49,19 @@
   "scripts": {
     "auth:update": "bunx @better-auth/cli generate --config auth/index.ts --output db/auth-schema.ts && bun style:check",
     "build": "next build",
-    "db:check": "drizzle-kit check",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
+    "db:check": "drizzle-kit check --config ./drizzle.config.ts",
+    "db:generate": "drizzle-kit generate --config ./drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate --config ./drizzle.config.ts",
+    "db:push": "drizzle-kit push --config ./drizzle.config.ts",
+    "db:studio": "drizzle-kit studio --config ./drizzle.config.ts",
     "dev": "next dev --turbopack",
     "start": "next start",
     "style:check": "bunx biome check --write .",
-    "tidy": "bun style:check && bun run build"
+    "tidy": "bun style:check && bun db:check && bun run build"
   },
   "type": "module",
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "trustedDependencies": [
+    "@tailwindcss/oxide"
+  ]
 }
