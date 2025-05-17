@@ -49,9 +49,11 @@ export const NewsRouter = new Hono<WithAuth>()
         },
       },
     }),
-    (c) => {
+    async (c) => {
       const { id } = c.req.param()
-      return c.json(db.select().from(news).where(eq(news.id, id)).execute())
+      return c.json(
+        await db.select().from(news).where(eq(news.id, id)).execute(),
+      )
     },
   )
   .post(
@@ -76,14 +78,17 @@ export const NewsRouter = new Hono<WithAuth>()
       if (!user) {
         return c.json({ error: 'Unauthorized' }, 401)
       }
-      const inserted = await db.insert(news).values({
-        id: nanoid(),
-        isPublic,
-        name,
-        strategy,
-        userId: user.id,
-        wait,
-      })
+      const inserted = await db
+        .insert(news)
+        .values({
+          id: nanoid(),
+          isPublic,
+          name,
+          strategy,
+          userId: user.id,
+          wait,
+        })
+        .execute()
       return c.json(inserted)
     },
   )
@@ -103,9 +108,9 @@ export const NewsRouter = new Hono<WithAuth>()
       },
     }),
     validator('json', NewsDtoSchema),
-    (c) => {
+    async (c) => {
       const { id } = c.req.param()
-      return c.json(db.delete(news).where(eq(news.id, id)))
+      return c.json(await db.delete(news).where(eq(news.id, id)).execute())
     },
   )
   .put(
@@ -128,10 +133,11 @@ export const NewsRouter = new Hono<WithAuth>()
       const { id } = c.req.param()
       const request = await c.req.json()
       return c.json(
-        db
+        await db
           .update(news)
           .set({ ...request })
-          .where(eq(news.id, id)),
+          .where(eq(news.id, id))
+          .execute(),
       )
     },
   )

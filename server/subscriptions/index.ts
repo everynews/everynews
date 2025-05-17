@@ -21,41 +21,41 @@ export const SubscriptionRouter = new Hono<WithAuth>()
       responses: {
         200: {
           content: {
-          'application/json': {
-            schema: resolver(SubscriptionSchema),
+            'application/json': {
+              schema: resolver(SubscriptionSchema),
+            },
           },
+          description: 'Subscribe to News',
         },
-        description: 'Subscribe to News',
       },
-    },
-  }),
-  
-  validator('json', SubscriptionDtoSchema),
+    }),
 
-  async (c) => {
-    const { newsId, channelId } = await c.req.json()
-    const user = c.get('user')
-    if (!user?.id) {
-      return c.json({ error: 'User not authenticated' }, 401)
-    }
-    if (!newsId || !channelId) {
-      return c.json({ error: 'Missing newsId or channelId' }, 400)
-    }
-    const found = await db.query.news.findFirst({
-      where: eq(news.id, newsId),
-    })
-    if (!found || (!found.isPublic && found.userId !== user.id)) {
-      return c.json({ error: 'Forbidden' }, 403)
-    }
-    return c.json(
-      db
-        .insert(subscriptions)
-        .values({
-          newsId,
-          channelId,
-          userId: user.id,
-        })
-        .execute(),
-    )
-  },
-) 
+    validator('json', SubscriptionDtoSchema),
+
+    async (c) => {
+      const { newsId, channelId } = await c.req.json()
+      const user = c.get('user')
+      if (!user?.id) {
+        return c.json({ error: 'User not authenticated' }, 401)
+      }
+      if (!newsId || !channelId) {
+        return c.json({ error: 'Missing newsId or channelId' }, 400)
+      }
+      const found = await db.query.news.findFirst({
+        where: eq(news.id, newsId),
+      })
+      if (!found || (!found.isPublic && found.userId !== user.id)) {
+        return c.json({ error: 'Forbidden' }, 403)
+      }
+      return c.json(
+        db
+          .insert(subscriptions)
+          .values({
+            channelId,
+            newsId,
+            userId: user.id,
+          })
+          .execute(),
+      )
+    },
+  )

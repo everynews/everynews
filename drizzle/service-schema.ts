@@ -34,12 +34,12 @@ export const stories = pgTable('stories', {
 
 export const subscriptions = pgTable('subscriptions', {
   ...common,
-  newsId: text('news_id')
-    .notNull()
-    .references(() => news.id, { onDelete: 'cascade' }),
   channelId: text('channel_id')
     .notNull()
     .references(() => channels.id, { onDelete: 'cascade' }),
+  newsId: text('news_id')
+    .notNull()
+    .references(() => news.id, { onDelete: 'cascade' }),
   userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
