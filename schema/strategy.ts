@@ -6,7 +6,7 @@ export const strategySchema = z
       provider: z.literal('hnbest').openapi({ example: 'hnbest' }),
     }),
     z.object({
-      provider: z.literal('kagi').openapi({ example: 'kagi' }),
+      provider: z.literal('exa').openapi({ example: 'exa' }),
       query: z.string().openapi({ example: 'News' }),
     }),
   ])

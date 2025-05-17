@@ -55,7 +55,7 @@ export const CreateNewsForm = () => {
         isPublic: false,
         name: values.name,
         strategy: {
-          provider: 'kagi',
+          provider: 'exa',
           query: values.query,
         },
         wait: {
