@@ -85,5 +85,5 @@
 
   "overrides": [{ "includes": ["*.ts", "*.tsx"] }],
 
-  "plugins": ["./plugins/no-fn-decl.grit", "./plugins/no-fn-expr.grit"]
+  "plugins": ["./dev/no-fn-decl.grit", "./dev/no-fn-expr.grit"]
 }
