@@ -1,20 +1,13 @@
 {
+  "version": "7",
   "dialect": "postgresql",
   "entries": [
     {
-      "breakpoints": true,
       "idx": 0,
-      "tag": "0000_military_cobalt_man",
       "version": "7",
-      "when": 1746840020208
-    },
-    {
-      "breakpoints": true,
-      "idx": 1,
-      "tag": "0001_striped_baron_strucker",
-      "version": "7",
-      "when": 1747447524753
+      "when": 1747457995617,
+      "tag": "0000_slippery_captain_cross",
+      "breakpoints": true
     }
-  ],
-  "version": "7"
+  ]
 }

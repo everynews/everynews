@@ -37,7 +37,7 @@ export const subscriptions = pgTable('subscriptions', {
   newsId: text('news_id')
     .notNull()
     .references(() => news.id, { onDelete: 'cascade' }),
-  notificationChannelId: text('notification_channel_id')
+  channelId: text('channel_id')
     .notNull()
     .references(() => channels.id, { onDelete: 'cascade' }),
   userId: text('user_id')

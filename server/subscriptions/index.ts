@@ -11,12 +11,16 @@ import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
 import type { WithAuth } from '../bindings/auth'
 
-export const SubscriptionRouter = new Hono<WithAuth>().use(authMiddleware).post(
-  describeRoute({
-    description: 'Subscribe to News',
-    responses: {
-      200: {
-        content: {
+export const SubscriptionRouter = new Hono<WithAuth>()
+  .use(authMiddleware)
+
+  .post(
+    '/',
+    describeRoute({
+      description: 'Subscribe to News',
+      responses: {
+        200: {
+          content: {
           'application/json': {
             schema: resolver(SubscriptionSchema),
           },
@@ -25,15 +29,17 @@ export const SubscriptionRouter = new Hono<WithAuth>().use(authMiddleware).post(
       },
     },
   }),
+  
   validator('json', SubscriptionDtoSchema),
+
   async (c) => {
-    const { newsId, notificationChannelId } = await c.req.json()
+    const { newsId, channelId } = await c.req.json()
     const user = c.get('user')
     if (!user?.id) {
       return c.json({ error: 'User not authenticated' }, 401)
     }
-    if (!newsId || !notificationChannelId) {
-      return c.json({ error: 'Missing newsId or notificationChannelId' }, 400)
+    if (!newsId || !channelId) {
+      return c.json({ error: 'Missing newsId or channelId' }, 400)
     }
     const found = await db.query.news.findFirst({
       where: eq(news.id, newsId),
@@ -46,10 +52,10 @@ export const SubscriptionRouter = new Hono<WithAuth>().use(authMiddleware).post(
         .insert(subscriptions)
         .values({
           newsId,
-          notificationChannelId,
+          channelId,
           userId: user.id,
         })
         .execute(),
     )
   },
-)
+) 
