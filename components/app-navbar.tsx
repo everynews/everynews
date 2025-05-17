@@ -1,7 +1,7 @@
 import { whoami } from '@everynews/auth/session'
 import { NavUser } from '@everynews/components/auth/nav-user'
 import { SignIn } from '@everynews/components/auth/sign-in'
-import { Logo } from '@everynews/logo'
+import { Logo } from '@everynews/public/logo'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { ThemeToggle } from './theme/toggle'
