@@ -1,5 +1,5 @@
 import { auth } from '@everynews/auth'
-import { url } from '@everynews/config/url'
+import { url } from '@everynews/lib/url'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { Scalar } from '@scalar/hono-api-reference'
