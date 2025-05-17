@@ -8,6 +8,7 @@ import { generateSpecs } from 'hono-openapi'
 import { ChannelRouter } from './channels'
 import { NewsRouter } from './news'
 import { SubscriptionRouter } from './subscriptions'
+import { WorkerRouter } from './worker'
 
 const app = new Hono<WithAuth>()
   .basePath('/api')
@@ -16,6 +17,7 @@ const app = new Hono<WithAuth>()
   .route('/news', NewsRouter)
   .route('/channels', ChannelRouter)
   .route('/subscriptions', SubscriptionRouter)
+  .route('/worker', WorkerRouter)
 
 app.get(
   '/',
