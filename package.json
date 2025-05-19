@@ -21,6 +21,7 @@
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.43.1",
     "drizzle-zod": "^0.7.1",
+    "exa-js": "^1.7.2",
     "hono": "^4.7.9",
     "hono-openapi": "^0.4.8",
     "lucide-react": "^0.510.0",

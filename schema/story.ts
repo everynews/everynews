@@ -33,4 +33,9 @@ export const StoryDtoSchema = StorySchema.omit({
   createdAt: true,
   id: true,
   updatedAt: true,
+  newsId: true,
 }).openapi({ ref: 'StoryDtoSchema' })
+
+export type Story = z.infer<typeof StorySchema>
+
+export type StoryDto = z.infer<typeof StoryDtoSchema>

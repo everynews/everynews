@@ -13,3 +13,5 @@ export const strategySchema = z
     }),
   ])
   .openapi({ ref: 'StrategySchema' })
+
+export type Strategy = z.infer<typeof strategySchema>
