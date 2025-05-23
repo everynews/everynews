@@ -8,6 +8,7 @@ import { resolver } from 'hono-openapi/zod'
 import type { WithAuth } from '../bindings/auth'
 import { runStrategy } from '@everynews/worker'
 
+
 export const WorkerRouter = new Hono<WithAuth>().post(
   '/',
   describeRoute({
