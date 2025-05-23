@@ -49,16 +49,16 @@ export const ChannelSchema = z
 
 const EmailChannelDtoSchema = EmailChannelSchema.omit({
   createdAt: true,
+  id: true,
   updatedAt: true,
   userId: true,
-  id: true,
 }).openapi({ ref: 'EmailChannelDtoSchema' })
 
 const SlackChannelDtoSchema = SlackChannelSchema.omit({
   createdAt: true,
+  id: true,
   updatedAt: true,
   userId: true,
-  id: true,
 }).openapi({ ref: 'SlackChannelDtoSchema' })
 
 export const ChannelDtoSchema = z

@@ -1,13 +1,12 @@
 import { db } from '@everynews/drizzle'
-import { news, stories, Strategy } from '@everynews/schema'
+import { news, type Strategy } from '@everynews/schema'
 import { WorkerStatusSchema } from '@everynews/schema/worker-status'
+import { runStrategy } from '@everynews/worker'
 import { and, eq, lt } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver } from 'hono-openapi/zod'
 import type { WithAuth } from '../bindings/auth'
-import { runStrategy } from '@everynews/worker'
-
 
 export const WorkerRouter = new Hono<WithAuth>().post(
   '/',
@@ -30,14 +29,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
     })
     for (const news of found) {
       const parsedItems = await runStrategy(news.strategy as Strategy)
-      await db.insert(stories).values(
-        parsedItems.map((item) => ({
-          newsId: news.id,
-          title: item.title,
-          url: item.url,
-          snippet: item.snippet,
-        }))
-      )
+      // Do something
     }
     return c.json({ ok: true })
   },

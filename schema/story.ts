@@ -4,8 +4,12 @@ import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { z } from 'zod'
 import { news } from './news'
 import 'zod-openapi/extend'
+import { contents } from './content'
 
 export const stories = pgTable('stories', {
+  contentId: text('content_id')
+    .notNull()
+    .references(() => contents.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   id: text('id').primaryKey().$defaultFn(nanoid),
   newsId: text('news_id')
@@ -19,6 +23,7 @@ export const stories = pgTable('stories', {
 
 export const StorySchema = z
   .object({
+    contentId: z.coerce.string().openapi({ example: 'content123' }),
     createdAt: z.coerce.date().openapi({ example: new Date() }),
     id: z.coerce.string().openapi({ example: '123' }),
     newsId: z.coerce.string().openapi({ example: 'news123' }),
@@ -30,10 +35,11 @@ export const StorySchema = z
   .openapi({ ref: 'StorySchema' })
 
 export const StoryDtoSchema = StorySchema.omit({
+  contentId: true,
   createdAt: true,
   id: true,
-  updatedAt: true,
   newsId: true,
+  updatedAt: true,
 }).openapi({ ref: 'StoryDtoSchema' })
 
 export type Story = z.infer<typeof StorySchema>

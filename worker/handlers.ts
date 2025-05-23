@@ -1,13 +1,13 @@
-import { Strategy } from "@everynews/schema";
-import { Worker } from "@everynews/worker/type";
-import { hnbest } from "./hnbest";
-import { exa } from "./exa";
+import type { Strategy } from '@everynews/schema'
+import type { Worker } from '@everynews/worker/type'
+import { exa } from './exa'
+import { hnbest } from './hnbest'
 
 export const handlers = {
-  hnbest: async (s: Extract<Strategy, { provider: 'hnbest' }>) => {
-    return hnbest.run(s)
-  },
   exa: async (s: Extract<Strategy, { provider: 'exa' }>) => {
     return exa.run(s)
   },
-} satisfies { [K in Strategy['provider']]: Worker<K> };
+  hnbest: async (s: Extract<Strategy, { provider: 'hnbest' }>) => {
+    return hnbest.run(s)
+  },
+} satisfies { [K in Strategy['provider']]: Worker<K> }
