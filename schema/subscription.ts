@@ -39,3 +39,5 @@ export const SubscriptionDtoSchema = SubscriptionSchema.omit({
 }).openapi({ ref: 'SubscriptionDtoSchema' })
 
 export type Subscription = z.infer<typeof SubscriptionSchema>
+
+export type SubscriptionDto = z.infer<typeof SubscriptionDtoSchema>

@@ -42,3 +42,5 @@ next-env.d.ts
 **/.claude/settings.local.json
 
 llms.txt
+
+.trigger
