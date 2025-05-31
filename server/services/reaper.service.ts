@@ -68,35 +68,37 @@ export class ReaperService {
     console.log('Scraping', normalizedUrl)
 
     try {
-      const raw = await ReaperService.get().scraper.scrapeUrl(normalizedUrl, { formats: ['markdown', 'html'] })
+      const raw = await ReaperService.get().scraper.scrapeUrl(normalizedUrl, {
+        formats: ['markdown', 'html'],
+      })
       const response = FirecrawlResponseSchema.parse(raw)
       if (!response.success) {
         throw new Error('Failed to scrape')
       }
-    
-    // Upload the content to Blob
-    const { url: markdownBlobUrl } = await put(
-      `${normalizedUrl}.md`,
-      response.data.markdown || '',
-      { access: 'public' },
-    )
-    const { url: htmlBlobUrl } = await put(
-      `${normalizedUrl}.html`,
-      response.data.html || '',
-      { access: 'public' },
-    )
 
-    // Return the content
-    return {
-      htmlBlobUrl,
-      markdownBlobUrl,
-      ...response.data.metadata,
-      url: normalizedUrl,
+      // Upload the content to Blob
+      const { url: markdownBlobUrl } = await put(
+        `${normalizedUrl}.md`,
+        response.data.markdown || '',
+        { access: 'public' },
+      )
+      const { url: htmlBlobUrl } = await put(
+        `${normalizedUrl}.html`,
+        response.data.html || '',
+        { access: 'public' },
+      )
+
+      // Return the content
+      return {
+        htmlBlobUrl,
+        markdownBlobUrl,
+        ...response.data.metadata,
+        url: normalizedUrl,
+      }
+    } catch (error) {
+      console.error(`Failed to scrape ${normalizedUrl}`, error)
+      throw error
     }
-  } catch (error) {
-    console.error(`Failed to scrape ${normalizedUrl}`, error)
-    throw error
-  }
   }
 
   async run(urls: string[]): Promise<ContentDto[]> {
