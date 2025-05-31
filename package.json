@@ -59,7 +59,7 @@
     "db:migrate": "drizzle-kit migrate --config ./.config/drizzle.config.ts",
     "db:push": "drizzle-kit push --config ./.config/drizzle.config.ts",
     "db:studio": "drizzle-kit studio --config ./.config/drizzle.config.ts",
-    "dev": "concurrently --kill-others --names 'next,db' --prefix-colors 'blue,yellow' 'bun run next:dev' 'bun run db:studio'",
+    "dev": "concurrently --kill-others --names 'FE,DB' --prefix-colors 'blue,yellow' 'bun run next:dev' 'bun run db:studio'",
     "next:dev": "next dev --turbopack",
     "next:start": "next start",
     "style:check": "bunx biome check --write . --config-path .config/biome.json",

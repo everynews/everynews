@@ -17,7 +17,7 @@ export const FirecrawlResponseSchema = z.object({
       language: z.string(),
       ogDescription: z.string(),
       ogImage: z.string(),
-      ogLocaleAlternate: z.array(z.string()),
+      ogLocaleAlternate: z.string(),
       ogSiteName: z.string(),
       ogTitle: z.string(),
       ogUrl: z.string(),
@@ -47,7 +47,7 @@ export class ReaperService {
     return ReaperService.instance
   }
 
-  async checkDuplicate(url: string): Promise<ContentDto | null> {
+  static async checkDuplicate(url: string): Promise<ContentDto | null> {
     const found = await db.query.contents.findFirst({
       where: eq(contents.url, url),
     })
@@ -59,19 +59,21 @@ export class ReaperService {
     const normalizedUrl = normalizeUrl(url)
 
     // Check if the content already exists
-    const found = await this.checkDuplicate(normalizedUrl)
+    const found = await ReaperService.checkDuplicate(normalizedUrl)
     if (found) {
       return found
     }
 
     // If not, scrape the content
-    const response = await FirecrawlResponseSchema.parse(
-      this.scraper.scrapeUrl(normalizedUrl, { formats: ['markdown', 'html'] }),
-    )
-    if (!response.success) {
-      throw new Error('Failed to scrape')
-    }
+    console.log('Scraping', normalizedUrl)
 
+    try {
+      const raw = await ReaperService.get().scraper.scrapeUrl(normalizedUrl, { formats: ['markdown', 'html'] })
+      const response = FirecrawlResponseSchema.parse(raw)
+      if (!response.success) {
+        throw new Error('Failed to scrape')
+      }
+    
     // Upload the content to Blob
     const { url: markdownBlobUrl } = await put(
       `${normalizedUrl}.md`,
@@ -91,6 +93,10 @@ export class ReaperService {
       ...response.data.metadata,
       url: normalizedUrl,
     }
+  } catch (error) {
+    console.error(`Failed to scrape ${normalizedUrl}`, error)
+    throw error
+  }
   }
 
   async run(urls: string[]): Promise<ContentDto[]> {

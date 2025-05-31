@@ -26,7 +26,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
   }),
   async (c) => {
     const found = await NewsDtoSchema.array().parse(
-      db.query.news.findMany({
+      await db.query.news.findMany({
         where: and(eq(news.active, true), lt(news.nextRun, new Date())),
       }),
     )

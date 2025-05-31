@@ -14,7 +14,7 @@ export const contents = pgTable('contents', {
   markdownBlobUrl: text('markdown_blob_url'),
   ogDescription: text('og_description'),
   ogImage: text('og_image'),
-  ogLocaleAlternate: text('og_locale_alternate').array(),
+  ogLocaleAlternate: text('og_locale_alternate'),
   ogSiteName: text('og_site_name'),
   ogTitle: text('og_title'),
   ogUrl: text('og_url'),
@@ -35,11 +35,7 @@ export const ContentSchema = z
     markdownBlobUrl: z.string().openapi({ example: 'articles/example.com.md' }),
     ogDescription: z.string().nullable().openapi({ example: 'og_description' }),
     ogImage: z.string().nullable().openapi({ example: 'og_image' }),
-    ogLocaleAlternate: z
-      .string()
-      .array()
-      .nullable()
-      .openapi({ example: ['og_locale_alternate'] }),
+    ogLocaleAlternate: z.string().nullable().openapi({ example: 'en-US,fr-FR' }),
     ogSiteName: z.string().nullable().openapi({ example: 'og_site_name' }),
     ogTitle: z.string().nullable().openapi({ example: 'og_title' }),
     ogUrl: z.string().nullable().openapi({ example: 'og_url' }),
