@@ -7,9 +7,11 @@ import 'zod-openapi/extend'
 export const contents = pgTable('contents', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   description: text('description'),
+  htmlBlobUrl: text('html_blob_url'),
   id: text('id').primaryKey().$defaultFn(nanoid),
   keywords: text('keywords'),
   language: text('language'),
+  markdownBlobUrl: text('markdown_blob_url'),
   ogDescription: text('og_description'),
   ogImage: text('og_image'),
   ogLocaleAlternate: text('og_locale_alternate').array(),
@@ -26,9 +28,11 @@ export const ContentSchema = z
   .object({
     createdAt: z.coerce.date().openapi({ example: new Date() }),
     description: z.string().nullable().openapi({ example: 'Description' }),
+    htmlBlobUrl: z.string().openapi({ example: 'articles/example.com.html' }),
     id: z.coerce.string().openapi({ example: '123' }),
     keywords: z.string().nullable().openapi({ example: 'keywords' }),
     language: z.string().nullable().openapi({ example: 'en' }),
+    markdownBlobUrl: z.string().openapi({ example: 'articles/example.com.md' }),
     ogDescription: z.string().nullable().openapi({ example: 'og_description' }),
     ogImage: z.string().nullable().openapi({ example: 'og_image' }),
     ogLocaleAlternate: z
