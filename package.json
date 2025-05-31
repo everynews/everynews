@@ -44,6 +44,7 @@
     "@tailwindcss/postcss": "^4.1.7",
     "@types/node": "^22.15.21",
     "@types/react": "19.0.4",
+    "concurrently": "^9.1.2",
     "drizzle-kit": "^0.31.1",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.7",
