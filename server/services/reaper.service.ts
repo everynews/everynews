@@ -49,15 +49,18 @@ export class ReaperService {
   private static instance: ReaperService
   private readonly apiKey: string
 
-  // Queue functionality
   private readonly pending: ReapingJob[] = []
-  private running = 0
-  private readonly concurrency = 4
-  private lastProcessTime = 0
-  private readonly rateLimit = 10000 // 10 seconds between operations
+  private running = false
+  /** Minimum interval (ms) between Firecrawl requests */
+  private readonly rateLimit = 10_000
+  /** Timestamp when the next request may start */
+  private nextAllowed = Date.now()
 
   private constructor() {
-    this.apiKey = process.env.FIRECRAWL_API_KEY || ''
+    if (!process.env.FIRECRAWL_API_KEY) {
+      throw new Error('FIRECRAWL_API_KEY is not defined')
+    }
+    this.apiKey = process.env.FIRECRAWL_API_KEY
   }
 
   public static get(): ReaperService {
@@ -67,32 +70,33 @@ export class ReaperService {
     return ReaperService.instance
   }
 
-  /** Add URLs to the processing queue */
   async enqueue(urls: string[], newsId: string): Promise<void> {
     this.pending.push({ newsId, urls })
     this.schedule()
   }
 
-  /** Try to keep the processing pipeline full */
-  private schedule(): void {
-    if (this.running < this.concurrency && this.pending.length) {
-      const now = Date.now()
-      const timeSinceLastProcess = now - this.lastProcessTime
+  /** Dispatcher: pulls the next job when not running and the rate-limit window has passed */
+  private schedule = (): void => {
+    if (this.running || this.pending.length === 0) return
 
-      if (timeSinceLastProcess >= this.rateLimit) {
-        const job = this.pending.shift() as ReapingJob
-        this.running++
-        this.lastProcessTime = now
-        void this.processJob(job)
-      } else {
-        // Schedule next check after rate limit expires
-        const delay = this.rateLimit - timeSinceLastProcess
-        setTimeout(() => this.schedule(), delay)
-      }
+    const now = Date.now()
+    const wait = this.nextAllowed - now
+
+    if (wait > 0) {
+      setTimeout(this.schedule, wait)
+      return
     }
+
+    const job = this.pending.shift() as ReapingJob
+    this.running = true
+    this.nextAllowed = now + this.rateLimit
+
+    void this.processJob(job).finally(() => {
+      this.running = false
+      this.schedule() // immediately try next item
+    })
   }
 
-  /** Process a reaping job with error handling and persistence */
   private async processJob(job: ReapingJob): Promise<void> {
     try {
       const content: ContentDto[] = await this.run(job.urls)
@@ -102,7 +106,6 @@ export class ReaperService {
         .returning({ id: contents.id })
         .execute()
 
-      // Forward to SageService for story creation
       for (let i = 0; i < insertResult.length; i++) {
         const contentId = insertResult[i].id
         const contentDto = content[i]
@@ -111,9 +114,7 @@ export class ReaperService {
     } catch (err) {
       console.error('ReaperService job failed', err)
     } finally {
-      this.running--
-      // Schedule next job after rate limit delay
-      setTimeout(() => this.schedule(), this.rateLimit)
+      // Job done – dispatcher will decide when the next one starts
     }
   }
 
@@ -125,30 +126,52 @@ export class ReaperService {
   }
 
   async reap(url: string): Promise<ContentDto> {
-    // Normalize the URL
     const normalizedUrl = normalizeUrl(url)
 
-    // Check if the content already exists
     const found = await ReaperService.checkDuplicate(normalizedUrl)
     if (found) {
       return found
     }
 
-    // If not, scrape the content
     console.log('Scraping', normalizedUrl)
 
     try {
-      const response = await fetch('https://api.firecrawl.dev/v1/scrape', {
-        body: JSON.stringify({
-          formats: ['markdown', 'html'],
-          url: normalizedUrl,
-        }),
-        headers: {
-          Authorization: `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-      })
+      let response: Response | null = null
+      let attempt = 0
+      const maxRetries = 3
+
+      while (attempt < maxRetries) {
+        response = await fetch('https://api.firecrawl.dev/v1/scrape', {
+          body: JSON.stringify({
+            formats: ['markdown', 'html'],
+            url: normalizedUrl,
+          }),
+          headers: {
+            Authorization: `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+        })
+
+        if (response.status !== 429) {
+          break
+        }
+
+        attempt++
+        const retryAfterHeader = response.headers.get('Retry-After')
+        const retryAfter =
+          retryAfterHeader !== null
+            ? Number(retryAfterHeader) * 1000
+            : this.rateLimit
+        console.warn(
+          `Firecrawl rate limit hit for ${normalizedUrl}. Retrying in ${retryAfter}ms (attempt ${attempt}/${maxRetries})`,
+        )
+        await this.sleep(retryAfter)
+      }
+
+      if (!response || response.status === 429) {
+        throw new Error('Firecrawl API error: 429 Too Many Requests')
+      }
 
       if (!response.ok) {
         throw new Error(
@@ -163,7 +186,6 @@ export class ReaperService {
         throw new Error('Failed to scrape - API returned unsuccessful result')
       }
 
-      // Upload the content to Blob
       const { url: markdownBlobUrl } = await put(
         `${normalizedUrl}.md`,
         parsed.data.markdown || '',
@@ -175,7 +197,6 @@ export class ReaperService {
         { access: 'public' },
       )
 
-      // Return the content
       return {
         description: parsed.data.metadata?.description || null,
         htmlBlobUrl,
@@ -199,6 +220,22 @@ export class ReaperService {
   }
 
   async run(urls: string[]): Promise<ContentDto[]> {
-    return Promise.all(urls.map(this.reap))
+    const results: ContentDto[] = []
+    const interDelay = 500 // slight breathing room inside a batch
+
+    for (const url of urls) {
+      try {
+        const content = await this.reap(url)
+        results.push(content)
+        await this.sleep(interDelay)
+      } catch (err) {
+        console.error('ReaperService failed for URL', url, err)
+      }
+    }
+    return results
+  }
+
+  private sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms))
   }
 }

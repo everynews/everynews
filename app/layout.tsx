@@ -5,8 +5,6 @@ import { ThemeProvider } from '@everynews/components/theme/provider'
 import { Toaster } from '@everynews/components/ui/sonner'
 import type { Metadata } from 'next'
 
-export const experimental_ppr = true
-
 export const metadata: Metadata = {
   authors: [
     {
