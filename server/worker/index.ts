@@ -1,5 +1,5 @@
 import { db } from '@everynews/drizzle'
-import { type ContentDto, NewsSchema, news } from '@everynews/schema'
+import { type ContentDto, NewsSchema, StoryDto, contents, news } from '@everynews/schema'
 import { WorkerStatusSchema } from '@everynews/schema/worker-status'
 import { and, eq, lt } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -31,13 +31,13 @@ export const WorkerRouter = new Hono<WithAuth>().post(
         where: and(eq(news.active, true), lt(news.nextRun, new Date())),
       }),
     )
-    const contents: ContentDto[] = []
+    const stories: StoryDto[] = []
     for (const newsItem of found) {
       const urls = await curator(newsItem)
       const content: ContentDto[] = await reaper(urls)
       const stories = await sage(content)
-      contents.push(...content)
+      stories.push(...stories)
     }
-    return c.json({ contents })
+    return c.json({ stories })
   },
 )

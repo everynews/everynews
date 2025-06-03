@@ -10,53 +10,46 @@ import {
   Section,
   Tailwind,
   Text,
-} from '@react-email/components';
+} from '@react-email/components'
 
-export const MagicLinkEmail = ({
-  loginLink,
-}: {
-  loginLink: string;
-}) => { 
+export const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
   return (
     <Html>
       <Head />
       <Tailwind>
-        <Body className="mx-auto my-auto bg-white px-2 font-sans text-center">
+        <Body className='mx-auto my-auto bg-white px-2 font-sans text-center'>
           <Preview>Sign in with magic link</Preview>
-          <Container className="mx-auto my-10 max-w-md rounded border border-gray-200 p-5">
-            <Section className="mt-8">
+          <Container className='mx-auto my-10 max-w-md rounded border border-gray-200 p-5'>
+            <Section className='mt-8'>
               <Img
-                src="https://every.news/logo.png"
-                width="40"
-                height="40"
-                alt="Everynews Logo"
-                className="mx-auto"
+                src='https://every.news/logo.png'
+                width='40'
+                height='40'
+                alt='Everynews Logo'
+                className='mx-auto'
               />
             </Section>
-              <Link
+            <Link href={loginLink} className='text-blue-600 no-underline'>
+              <Button
+                className='rounded bg-black px-4 py-2 text-lg font-semibold text-white'
                 href={loginLink}
-                className="text-blue-600 no-underline"
               >
-                <Button
-                  className="rounded bg-black px-4 py-2 text-lg font-semibold text-white"
-                  href={loginLink}
-                >
-                  Sign in to Everynews
-                </Button>
-              </Link>
+                Sign in to Everynews
+              </Button>
+            </Link>
 
-              <Text className="text-sm text-black">
-                If you did not request this, please ignore this email.
-              </Text>
+            <Text className='text-sm text-black'>
+              If you did not request this, please ignore this email.
+            </Text>
           </Container>
         </Body>
       </Tailwind>
     </Html>
-  );
-};
+  )
+}
 
 MagicLinkEmail.PreviewProps = {
   loginLink: 'https://every.news/sign-in',
-};
+}
 
-export default MagicLinkEmail;
+export default MagicLinkEmail
