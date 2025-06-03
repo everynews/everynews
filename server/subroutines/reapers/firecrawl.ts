@@ -129,6 +129,8 @@ export const firecrawl = async (source: string): Promise<Content> => {
       icon: '✅',
       tags: {
         content_id: content.id,
+        htmlBlobUrl,
+        markdownBlobUrl,
         source,
         title: content.title,
         type: 'info',

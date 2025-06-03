@@ -6,7 +6,7 @@
   },
   "dialect": "postgresql",
   "enums": {},
-  "id": "044507e3-051e-4c4b-9730-9daab9ce334e",
+  "id": "50195a7d-7f04-4f81-96da-ac491bd556fc",
   "policies": {},
   "prevId": "00000000-0000-0000-0000-000000000000",
   "roles": {},
@@ -444,17 +444,17 @@
           "primaryKey": true,
           "type": "text"
         },
+        "key_findings": {
+          "name": "key_findings",
+          "notNull": false,
+          "primaryKey": false,
+          "type": "json"
+        },
         "news_id": {
           "name": "news_id",
           "notNull": true,
           "primaryKey": false,
           "type": "text"
-        },
-        "snippet": {
-          "name": "snippet",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "json"
         },
         "title": {
           "name": "title",

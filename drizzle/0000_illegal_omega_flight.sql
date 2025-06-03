@@ -67,7 +67,7 @@ CREATE TABLE "stories" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"id" text PRIMARY KEY NOT NULL,
 	"news_id" text NOT NULL,
-	"snippet" json,
+	"key_findings" json,
 	"title" text NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"url" text NOT NULL,

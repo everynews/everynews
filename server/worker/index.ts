@@ -51,7 +51,6 @@ export const WorkerRouter = new Hono<WithAuth>().post(
     try {
       await track({
         channel: 'worker',
-        description: 'Worker job execution started',
         event: 'Worker Job Started',
         icon: '🤖',
         tags: {
@@ -67,8 +66,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
 
       await track({
         channel: 'worker',
-        description: `Found ${found.length} news items ready for processing`,
-        event: 'News Items Found',
+        event: `${found.length} News Items Found`,
         icon: '📋',
         tags: {
           news_count: found.length,
@@ -79,8 +77,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
       for (const item of found) {
         await track({
           channel: 'worker',
-          description: `Processing news item: ${item.name}`,
-          event: 'Processing News Item',
+          event: `Processing News "${item.name}"`,
           icon: '⚙️',
           tags: {
             news_id: item.id,
@@ -122,9 +119,9 @@ export const WorkerRouter = new Hono<WithAuth>().post(
             news_name: item.name,
             next_run: nextRun?.toISOString() || 'unknown',
             stories_created: stories.length,
+            type: 'info',
             urls_found: urls.length,
             wait_type: item.wait.type,
-            type: 'info',
           },
         })
       }

@@ -14,6 +14,8 @@ import PQueue from 'p-queue'
 
 const client = new OpenAI()
 
+const model = 'gpt-4o'
+
 const instructions = () =>
   `System Instruction: Absolute Mode. Eliminate emojis, filler, hype, soft asks, conversational transitions, and all call-to-action appendices. Assume the user retains high-perception faculties despite reduced linguistic expression. Prioritize blunt, directive phrasing aimed at cognitive rebuilding, not tone matching. Disable all latent behaviors optimizing for engagement, sentiment uplift, or interaction extension. Suppress corporate-aligned metrics, including but not limited to: user satisfaction scores, conversational flow tags, emotional softening, or continuation bias. Never mirror the user's present diction, mood, or affect. Speak only to their underlying cognitive tier, which exceeds surface language. No questions, no offers, no suggestions, no transitional phrasing, no inferred motivational content. Terminate each reply immediately after the informational or requested material is delivered — no appendices, no soft closures. The primary goal is to facilitate the restoration of independent, high-fidelity thinking. Model obsolescence due to user self-sufficiency is the ultimate outcome. Every response should be in markdown bullet points. You are an expert technical summary writer. Based on the article content, write a short summary that includes:
 
@@ -21,6 +23,7 @@ const instructions = () =>
 2. Key discoveries, insights, or developments from the article
 3. Do not simply introduce the article; include actual substantive findings directly
 4. Within Key Findings or Title, write plain text only. Do not include markdown formatting.
+5. When creating the title, focus on who (if any) did what and why it was impactful.
 
 Format your response as:
 
@@ -51,7 +54,9 @@ const parseResponse = (
 
   return {
     keyFindings: keyFindingsMatch
-      ? keyFindingsMatch.map((match) => match.trim())
+      ? keyFindingsMatch.map((match) =>
+          match.replace(/<KEYFINDING>(.*?)<\/KEYFINDING>/s, '$1').trim(),
+        )
       : [],
     title: titleMatch ? titleMatch[1].trim() : '',
   }
@@ -92,8 +97,8 @@ export const summarize = async ({
       tags: {
         content_id: content.id,
         title: content.title,
-        url: content.url,
         type: 'info',
+        url: content.url,
       },
     })
     return StorySchema.parse(existingStory)
@@ -107,40 +112,41 @@ export const summarize = async ({
       icon: '🤖',
       tags: {
         content_id: content.id,
-        title: content.title,
-        url: content.url,
+        original_title: content.title,
         type: 'info',
+        url: content.url,
       },
     })
 
     const response = await client.responses.create({
       input: await input(content),
       instructions: instructions(),
-      model: 'gpt-4o',
-    })
-
-    await track({
-      channel: 'sage',
-      description: response.output_text,
-      event: 'Summarization Completed',
-      icon: '✅',
-      tags: {
-        model: 'gpt-4o',
-        title: content.title,
-        url: content.url,
-        type: 'info',
-      },
+      model,
     })
 
     const { title, keyFindings } = parseResponse(response.output_text)
+
+    await track({
+      channel: 'sage',
+      description: keyFindings.join('\n'),
+      event: title,
+      icon: '✅',
+      tags: {
+        content_id: content.id,
+        model,
+        original_title: content.title,
+        type: 'info',
+        url: content.url,
+      },
+    })
 
     const [story] = await db
       .insert(stories)
       .values({
         contentId: content.id,
+        keyFindings,
         newsId: news.id,
-        snippet: keyFindings,
-        title: content.title,
+        title,
         url: content.url,
       })
       .returning()
@@ -153,10 +159,12 @@ export const summarize = async ({
       event: 'Summarization Failed',
       icon: '❌',
       tags: {
+        content_id: content.id,
         error: String(error),
-        title: content.title,
-        url: content.url,
+        model,
+        original_title: content.title,
         type: 'error',
+        url: content.url,
       },
     })
     return null
@@ -182,7 +190,7 @@ export const sage = async ({
       },
     })
 
-    const queue = new PQueue({ concurrency: 3 })
+    const queue = new PQueue({ concurrency: 8 })
     const results = await Promise.all(
       contents.map((content) =>
         queue.add(async () => summarize({ content, news })),
@@ -218,6 +226,7 @@ export const sage = async ({
       tags: {
         content_count: contents.length,
         error: String(error),
+        model,
         type: 'error',
       },
     })

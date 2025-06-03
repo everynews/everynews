@@ -13,8 +13,7 @@ export const curator = async (news: News): Promise<string[]> => {
   try {
     await track({
       channel: 'curator',
-      description: `Curation with ${news.strategy.provider} for ${news.name}`,
-      event: 'Curation Started',
+      event: `Curating "${news.name}"`,
       icon: '🎯',
       tags: {
         news_id: news.id,
@@ -29,15 +28,14 @@ export const curator = async (news: News): Promise<string[]> => {
 
     await track({
       channel: 'curator',
-      description: `Found ${urls.length} URLs for ${news.name}`,
-      event: 'Curation Completed',
+      event: `Curated "${news.name}", Found ${urls.length} URLs`,
       icon: '✅',
       tags: {
         news_id: news.id,
         news_name: news.name,
         provider: news.strategy.provider,
-        urls_found: urls.length,
         type: 'info',
+        urls_found: urls.length,
       },
     })
 
@@ -45,8 +43,7 @@ export const curator = async (news: News): Promise<string[]> => {
   } catch (error) {
     await track({
       channel: 'curator',
-      description: `Curation failed for ${news.name}`,
-      event: 'Curation Failed',
+      event: `Curating "${news.name}" Failed`,
       icon: '❌',
       tags: {
         error: String(error),

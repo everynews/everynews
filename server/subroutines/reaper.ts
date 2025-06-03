@@ -16,7 +16,7 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
       },
     })
 
-    const queue = new PQueue({ concurrency: 3 })
+    const queue = new PQueue({ concurrency: 8 })
     const results = await Promise.all(
       urls.map(async (url) => {
         try {
@@ -50,9 +50,9 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
       icon: '✅',
       tags: {
         success_rate: Math.round((filteredResults.length / urls.length) * 100),
+        type: 'info',
         urls_attempted: urls.length,
         urls_successful: filteredResults.length,
-        type: 'info',
       },
     })
 
@@ -65,8 +65,8 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
       icon: '💥',
       tags: {
         error: String(error),
-          url_count: urls.length,
         type: 'error',
+        url_count: urls.length,
       },
     })
     throw error

@@ -17,9 +17,9 @@ const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
     <Html>
       <Head />
       <Tailwind>
-        <Body className='mx-auto my-auto bg-white px-2 font-sans'>
+        <Body className='my-auto bg-white px-2 font-sans'>
           <Preview>Sign in with magic link</Preview>
-          <Container className='mx-auto my-10 max-w-md rounded border border-gray-200 p-5'>
+          <Container className='my-10 max-w-md rounded border border-gray-200 p-5'>
             <Link href={loginLink} className='text-blue-600 no-underline'>
               <Section className='my-8'>
                 <Img
@@ -27,7 +27,6 @@ const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
                   width='128'
                   height='128'
                   alt='every.news Logo'
-                  className='mx-auto'
                 />
               </Section>
               <Button

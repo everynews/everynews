@@ -77,8 +77,8 @@ export const SubscriptionRouter = new Hono<WithAuth>()
             news_exists: String(!!found),
             news_id: newsId,
             news_is_public: String(found?.isPublic || false),
-            user_owns_news: String(found?.userId === user.id),
             type: 'error',
+            user_owns_news: String(found?.userId === user.id),
           },
           user_id: user.id,
         })

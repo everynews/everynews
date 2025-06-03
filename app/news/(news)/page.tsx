@@ -1,4 +1,5 @@
 import { serverApi } from '@everynews/app/api/server'
+import { whoami } from '@everynews/auth/session'
 import { Badge } from '@everynews/components/ui/badge'
 import {
   Table,
@@ -9,10 +10,17 @@ import {
   TableRow,
 } from '@everynews/components/ui/table'
 import { NewsSchema } from '@everynews/schema/news'
+import { unauthorized } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
 export default async function NewsPage() {
+  const user = await whoami()
+
+  if (!user) {
+    return unauthorized()
+  }
+
   const api = await serverApi()
   const res = await api.news.$get()
   if (!res.ok) {

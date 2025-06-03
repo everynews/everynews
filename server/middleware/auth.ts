@@ -9,14 +9,14 @@ export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
     if (!session) {
       await track({
         channel: 'auth',
-        description: `Unauthenticated request to ${c.req.method} ${c.req.path}`,
+        description: `${c.req.method} ${c.req.path}`,
         event: 'Unauthenticated Request',
         icon: '🔒',
         tags: {
           method: c.req.method,
           path: c.req.path,
-          user_agent: c.req.header('user-agent') || 'unknown',
           type: 'error',
+          user_agent: c.req.header('user-agent') || 'unknown',
         },
       })
       c.set('user', null)
@@ -26,14 +26,14 @@ export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
 
     await track({
       channel: 'auth',
-      description: `Authenticated request to ${c.req.method} ${c.req.path}`,
+      description: `${c.req.method} ${c.req.path}`,
       event: 'Authenticated Request',
       icon: '✅',
       tags: {
         method: c.req.method,
         path: c.req.path,
-        user_email: session.user.email,
         type: 'info',
+        user_email: session.user.email,
       },
       user_id: session.user.id,
     })

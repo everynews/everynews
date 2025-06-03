@@ -21,7 +21,7 @@ export const HnBestCurator: Curator = async (
   news: NewsDto,
 ): Promise<string[]> => {
   const queue = new PQueue({
-    concurrency: 3,
+    concurrency: 8,
   })
   if (news.strategy.provider !== 'hnbest') {
     throw new Error(
