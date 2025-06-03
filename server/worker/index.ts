@@ -15,6 +15,27 @@ import { curator } from '../subroutines/curator'
 import { reaper } from '../subroutines/reaper'
 import { sage } from '../subroutines/sage'
 
+const findNextRunDateBasedOnSchedule = (schedule: string) => {
+  const { days, hours } = typeof schedule === 'string' ? JSON.parse(schedule) : schedule
+  const sortedHours = [...hours].sort((a, b) => a - b)
+  const now = new Date()
+
+  for (let offset = 0; offset < 7; offset++) {
+    const candidate = new Date(now)
+    candidate.setDate(now.getDate() + offset)
+    const dayName = candidate.toLocaleString('en-us', { weekday: 'long' })
+    if (!days.includes(dayName)) continue
+
+    for (const h of sortedHours) {
+      candidate.setHours(h, 0, 0, 0)
+      if (candidate > now) return candidate
+    }
+  }
+
+  return null // no future run within one week
+}
+
+
 export const WorkerRouter = new Hono<WithAuth>().post(
   '/',
   describeRoute({
@@ -36,13 +57,25 @@ export const WorkerRouter = new Hono<WithAuth>().post(
         where: and(eq(news.active, true), lt(news.nextRun, new Date())),
       }),
     )
-    const stories: StoryDto[] = []
-    for (const newsItem of found) {
-      const urls = await curator(newsItem)
+    for (const item of found) {
+      const urls = await curator(item)
       const content: ContentDto[] = await reaper(urls)
       const stories = await sage(content)
-      stories.push(...stories)
+      if (item.wait.type === 'count') {
+        await db
+          .update(news)
+          .set({ nextRun: new Date(Date.now() + 60 * 60 * 1000) })
+          .where(eq(news.id, item.id))
+          .execute()
+      }
+      if (item.wait.type === 'schedule') {
+        await db
+          .update(news)
+          .set({ nextRun: findNextRunDateBasedOnSchedule(item.wait.value) })
+          .where(eq(news.id, item.id))
+          .execute()
+      }
     }
-    return c.json({ stories })
+    return c.json({ ok: true })
   },
 )

@@ -11,18 +11,7 @@ export const FirecrawlResponseSchema = z.object({
     markdown: z.string().optional(),
     metadata: z
       .object({
-        description: z.string().optional(),
-        keywords: z.string().optional(),
-        language: z.union([z.string(), z.array(z.string())]).optional(),
-        ogDescription: z.string().optional(),
-        ogImage: z.string().optional(),
-        ogLocaleAlternate: z.string().optional(),
-        ogSiteName: z.string().optional(),
         ogTitle: z.string().optional(),
-        ogUrl: z.string().optional(),
-        robots: z.union([z.string(), z.array(z.string())]).optional(),
-        sourceURL: z.string().optional(),
-        statusCode: z.number().optional(),
         title: z.string().optional(),
       })
       .optional(),
@@ -77,15 +66,8 @@ export const firecrawl = async (source: string): Promise<ContentDto> => {
     ])
 
     const content = ContentDtoSchema.parse({
-      ...fcResponse.data.metadata,
       htmlBlobUrl,
-      language: Array.isArray(fcResponse.data.metadata?.language)
-        ? fcResponse.data.metadata?.language
-        : [fcResponse.data.metadata?.language || 'en'],
       markdownBlobUrl,
-      robots: Array.isArray(fcResponse.data.metadata?.robots)
-        ? fcResponse.data.metadata?.robots
-        : [fcResponse.data.metadata?.robots || 'en'],
       title:
         fcResponse.data.metadata?.title ||
         fcResponse.data.metadata?.ogTitle ||

@@ -41,11 +41,11 @@ export const HnBestCurator: Curator = async (
       )
       const item = await HackerNewsStorySchema.parse(await response.json())
       return (
-        String(item.url) ||
+        item.url ||
         `https://news.ycombinator.com/item?id=${String(item.id)}`
       )
     }),
   )
 
-  return items
+  return items.filter((item): item is string => Boolean(item))
 }

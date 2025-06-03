@@ -9,7 +9,6 @@ export const contents = pgTable('contents', {
   description: text('description'),
   htmlBlobUrl: text('html_blob_url').notNull(),
   id: text('id').primaryKey().$defaultFn(nanoid),
-  language: json('language'),
   markdownBlobUrl: text('markdown_blob_url').notNull(),
   title: text('title').notNull(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),

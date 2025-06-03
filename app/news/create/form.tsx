@@ -60,7 +60,7 @@ export const CreateNewsForm = () => {
 
   const defaultValues: CreateFormValues = {
     active: true,
-    isPublic: false,
+    isPublic: true,
     name: '',
     strategy: { provider: 'hnbest' },
     wait: { type: 'count', value: 10 },
@@ -111,10 +111,7 @@ export const CreateNewsForm = () => {
           render={({ field }) => (
             <FormItem className='md:flex md:items-center md:justify-between'>
               <div className='md:w-1/2'>
-                <FormLabel className='text-lg'>Name</FormLabel>
-                <FormDescription>
-                  How should we call this news source?
-                </FormDescription>
+                <FormLabel className='text-lg'>How should we call this news?</FormLabel>
               </div>
               <div className='md:w-1/2'>
                 <FormControl>
@@ -134,15 +131,12 @@ export const CreateNewsForm = () => {
           render={({ field }) => (
             <FormItem className='md:flex md:items-start md:justify-between'>
               <div className='md:w-1/2'>
-                <FormLabel className='text-lg'>Source</FormLabel>
-                <FormDescription>
-                  Where should we collect news from?
-                </FormDescription>
+                <FormLabel className='text-lg'>Where should we collect news from?</FormLabel>
               </div>
               <div className='md:w-1/2'>
                 <FormControl>
                   <RadioGroup
-                    className='gap-2'
+                    className='gap-2 xl:grid xl:grid-cols-2'
                     defaultValue={field.value}
                     onValueChange={field.onChange}
                   >
@@ -215,10 +209,7 @@ export const CreateNewsForm = () => {
               render={({ field }) => (
                 <FormItem className='md:flex md:items-start md:justify-between'>
                   <div className='md:w-1/2'>
-                    <FormLabel className='text-lg'>Search Query</FormLabel>
-                    <FormDescription>
-                      Enter keywords or phrases to search for
-                    </FormDescription>
+                    <FormLabel className='text-lg'>What query should we monitor?</FormLabel>
                   </div>
                   <div className='md:w-1/2'>
                     <FormControl>
@@ -243,10 +234,7 @@ export const CreateNewsForm = () => {
           render={({ field }) => (
             <FormItem className='md:flex md:items-start md:justify-between'>
               <div className='md:w-1/2'>
-                <FormLabel className='text-lg'>Frequency</FormLabel>
-                <FormDescription>
-                  How often should we send you updates?
-                </FormDescription>
+                <FormLabel className='text-lg'>How often should we send you updates?</FormLabel>
               </div>
               <div className='md:w-1/2'>
                 <FormControl>
@@ -301,10 +289,7 @@ export const CreateNewsForm = () => {
               render={({ field }) => (
                 <FormItem className='md:flex md:items-start md:justify-between'>
                   <div className='md:w-1/2'>
-                    <FormLabel className='text-lg'>Count Value</FormLabel>
-                    <FormDescription>
-                      Select the count threshold
-                    </FormDescription>
+                    <FormLabel className='text-lg'>How many articles do you want in one news?</FormLabel>
                   </div>
                   <div className='md:w-1/2'>
                     <FormControl>
@@ -343,10 +328,7 @@ export const CreateNewsForm = () => {
               render={({ field }) => (
                 <FormItem className='md:flex md:items-start md:justify-between'>
                   <div className='md:w-1/2'>
-                    <FormLabel className='text-lg'>Schedule</FormLabel>
-                    <FormDescription>
-                      Select days of week and hours (2-hour intervals)
-                    </FormDescription>
+                    <FormLabel className='text-lg'>On what schedule should we send you updates?</FormLabel>
                   </div>
                   <div className='md:w-1/2'>
                     <div className='flex flex-wrap gap-8'>
@@ -418,10 +400,7 @@ export const CreateNewsForm = () => {
 
         <FormItem className='md:flex md:items-start md:justify-between'>
           <div className='md:w-1/2'>
-            <FormLabel className='text-lg'>Extra Settings</FormLabel>
-            <FormDescription>
-              Configure additional options for this news source
-            </FormDescription>
+            <FormLabel className='text-lg'>Are there anything else you want to configure? </FormLabel>
           </div>
           <div className='md:w-1/2'>
             <FormControl>
