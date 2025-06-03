@@ -28,7 +28,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "drizzle-orm": "^0.44.1",
+    "drizzle-orm": "^0.44.2",
     "drizzle-zod": "^0.8.2",
     "exa-js": "^1.8.2",
     "hono": "^4.7.11",
@@ -47,7 +47,7 @@
     "resend": "^4.5.1",
     "sonner": "^2.0.5",
     "tailwind-merge": "^3.3.0",
-    "zod": "^3.25.50",
+    "zod": "^3.25.51",
     "zod-openapi": "^4.2.4"
   },
   "devDependencies": {
