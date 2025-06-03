@@ -1,13 +1,13 @@
 {
-  "version": "7",
   "dialect": "postgresql",
   "entries": [
     {
+      "breakpoints": true,
       "idx": 0,
-      "version": "7",
-      "when": 1749023914690,
       "tag": "0000_narrow_harpoon",
-      "breakpoints": true
+      "version": "7",
+      "when": 1749023914690
     }
-  ]
+  ],
+  "version": "7"
 }
