@@ -44,3 +44,4 @@ next-env.d.ts
 llms.txt
 
 .trigger
+.react-email
