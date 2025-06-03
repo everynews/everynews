@@ -33,7 +33,7 @@ export const SignIn = () => {
         ...(isGmail && {
           action: {
             label: 'Open Gmail',
-            onClick: () => window.open('https://mail.google.com', '_blank')
+            onClick: () => window.open('https://mail.google.com', '_blank'),
           },
         }),
       })
