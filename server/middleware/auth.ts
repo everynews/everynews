@@ -1,5 +1,5 @@
 import { auth } from '@everynews/auth'
-import { trackEvent } from '@everynews/server/lib/logsnag'
+import { track } from '@everynews/logs'
 import type { Context } from 'hono'
 
 export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
@@ -7,7 +7,7 @@ export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
     const session = await auth.api.getSession({ headers: c.req.raw.headers })
 
     if (!session) {
-      await trackEvent({
+      await track({
         channel: 'auth',
         description: `Unauthenticated request to ${c.req.method} ${c.req.path}`,
         event: 'Unauthenticated Request',
@@ -23,7 +23,7 @@ export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
       return next()
     }
 
-    await trackEvent({
+    await track({
       channel: 'auth',
       description: `Authenticated request to ${c.req.method} ${c.req.path}`,
       event: 'Authenticated Request',
@@ -40,7 +40,7 @@ export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
     c.set('session', session.session)
     return next()
   } catch (error) {
-    await trackEvent({
+    await track({
       channel: 'auth',
       description: `Auth middleware failed: ${String(error)}`,
       event: 'Auth Middleware Error',

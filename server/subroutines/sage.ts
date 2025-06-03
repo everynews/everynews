@@ -6,7 +6,7 @@ import {
   StorySchema,
   stories,
 } from '@everynews/schema'
-import { trackEvent } from '@everynews/server/lib/logsnag'
+import { track } from '@everynews/logs'
 import { eq } from 'drizzle-orm'
 import normalizeUrl from 'normalize-url'
 import OpenAI from 'openai'
@@ -84,7 +84,7 @@ export const summarize = async ({
   })
 
   if (existingStory) {
-    await trackEvent({
+    await track({
       channel: 'sage',
       description: `Found existing summary for: ${content.title}`,
       event: 'Story Cache Hit',
@@ -99,7 +99,7 @@ export const summarize = async ({
   }
 
   try {
-    await trackEvent({
+    await track({
       channel: 'sage',
       description: `Starting AI summarization for: ${content.title}`,
       event: 'Summarization Started',
@@ -117,7 +117,7 @@ export const summarize = async ({
       model: 'gpt-4o',
     })
 
-    await trackEvent({
+    await track({
       channel: 'sage',
       description: response.output_text,
       event: 'Summarization Completed',
@@ -144,7 +144,7 @@ export const summarize = async ({
 
     return StorySchema.parse(story)
   } catch (error) {
-    await trackEvent({
+    await track({
       channel: 'sage',
       description: `AI summarization failed for: ${content.title}`,
       event: 'Summarization Failed',
@@ -167,7 +167,7 @@ export const sage = async ({
   news: News
 }): Promise<Story[]> => {
   try {
-    await trackEvent({
+    await track({
       channel: 'sage',
       description: `Starting to process ${contents.length} content items for summarization`,
       event: 'Sage Processing Started',
@@ -188,7 +188,7 @@ export const sage = async ({
       (result): result is Story => result !== null,
     )
 
-    await trackEvent({
+    await track({
       channel: 'sage',
       description: `Processed ${filteredResults.length}/${contents.length} content items`,
       event: 'Sage Processing Completed',
@@ -204,7 +204,7 @@ export const sage = async ({
 
     return filteredResults
   } catch (error) {
-    await trackEvent({
+    await track({
       channel: 'sage',
       description: `Sage processing failed: ${String(error)}`,
       event: 'Sage Processing Failed',

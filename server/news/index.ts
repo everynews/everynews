@@ -2,7 +2,7 @@ import { db } from '@everynews/drizzle'
 import { nanoid } from '@everynews/lib/id'
 import { news } from '@everynews/schema'
 import { NewsDtoSchema, NewsSchema } from '@everynews/schema/news'
-import { trackEvent } from '@everynews/server/lib/logsnag'
+import { track } from '@everynews/logs'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -30,7 +30,7 @@ export const NewsRouter = new Hono<WithAuth>()
     async (c) => {
       const user = c.get('user')
       if (!user) {
-        await trackEvent({
+        await track({
           channel: 'news',
           description: 'User tried to access news without authentication',
           event: 'Unauthorized Access',
@@ -41,7 +41,7 @@ export const NewsRouter = new Hono<WithAuth>()
 
       const result = await db.select().from(news).execute()
 
-      await trackEvent({
+      await track({
         channel: 'news',
         description: `Retrieved ${result.length} news items`,
         event: 'News List Retrieved',
@@ -79,7 +79,7 @@ export const NewsRouter = new Hono<WithAuth>()
         .where(eq(news.id, id))
         .execute()
 
-      await trackEvent({
+      await track({
         channel: 'news',
         description: `Retrieved news item: ${id}`,
         event: 'News Item Retrieved',
@@ -113,7 +113,7 @@ export const NewsRouter = new Hono<WithAuth>()
       const { name, strategy, wait, isPublic } = await c.req.json()
       const user = c.get('user')
       if (!user) {
-        await trackEvent({
+        await track({
           channel: 'news',
           description: 'User tried to create news without authentication',
           event: 'Unauthorized News Creation',
@@ -135,7 +135,7 @@ export const NewsRouter = new Hono<WithAuth>()
         })
         .execute()
 
-      await trackEvent({
+      await track({
         channel: 'news',
         description: `Created news: ${name}`,
         event: 'News Created',
@@ -173,7 +173,7 @@ export const NewsRouter = new Hono<WithAuth>()
 
       const result = await db.delete(news).where(eq(news.id, id)).execute()
 
-      await trackEvent({
+      await track({
         channel: 'news',
         description: `Deleted news item: ${id}`,
         event: 'News Deleted',
@@ -212,7 +212,7 @@ export const NewsRouter = new Hono<WithAuth>()
         .where(eq(news.id, id))
         .execute()
 
-      await trackEvent({
+      await track({
         channel: 'news',
         description: `Updated news item: ${id}`,
         event: 'News Updated',

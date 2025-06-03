@@ -1,5 +1,5 @@
 import type { News } from '@everynews/schema'
-import { trackEvent } from '@everynews/server/lib/logsnag'
+import { track } from '@everynews/logs'
 import { ExaCurator } from './curators/exa'
 import { HnBestCurator } from './curators/hnbest'
 import type { Curator } from './curators/type'
@@ -11,7 +11,7 @@ const curators = {
 
 export const curator = async (news: News): Promise<string[]> => {
   try {
-    await trackEvent({
+    await track({
       channel: 'curator',
       description: `Starting curation with ${news.strategy.provider} for: ${news.name}`,
       event: 'Curation Started',
@@ -26,7 +26,7 @@ export const curator = async (news: News): Promise<string[]> => {
     const curator: Curator = curators[news.strategy.provider]
     const urls = await curator(news)
 
-    await trackEvent({
+    await track({
       channel: 'curator',
       description: `Found ${urls.length} URLs for: ${news.name}`,
       event: 'Curation Completed',
@@ -41,7 +41,7 @@ export const curator = async (news: News): Promise<string[]> => {
 
     return urls
   } catch (error) {
-    await trackEvent({
+    await track({
       channel: 'curator',
       description: `Curation failed for: ${news.name} - ${String(error)}`,
       event: 'Curation Failed',

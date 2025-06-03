@@ -1,11 +1,11 @@
 import type { Content } from '@everynews/schema'
-import { trackEvent } from '@everynews/server/lib/logsnag'
+import { track } from '@everynews/logs'
 import PQueue from 'p-queue'
 import { firecrawl } from './reapers/firecrawl'
 
 export const reaper = async (urls: string[]): Promise<Content[]> => {
   try {
-    await trackEvent({
+    await track({
       channel: 'reaper',
       description: `Starting to crawl ${urls.length} URLs`,
       event: 'Reaping Started',
@@ -22,7 +22,7 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
           return await queue.add(() => firecrawl(url))
         } catch (error) {
           console.error(`Failed to process URL: ${url}`, error)
-          await trackEvent({
+          await track({
             channel: 'reaper',
             description: `Failed to crawl: ${url}`,
             event: 'URL Crawl Failed',
@@ -42,7 +42,7 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
         result !== null,
     )
 
-    await trackEvent({
+    await track({
       channel: 'reaper',
       description: `Successfully crawled ${filteredResults.length}/${urls.length} URLs`,
       event: 'Reaping Completed',
@@ -56,7 +56,7 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
 
     return filteredResults
   } catch (error) {
-    await trackEvent({
+    await track({
       channel: 'reaper',
       description: `Reaping process failed: ${String(error)}`,
       event: 'Reaping Failed',

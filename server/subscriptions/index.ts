@@ -4,7 +4,7 @@ import {
   SubscriptionDtoSchema,
   SubscriptionSchema,
 } from '@everynews/schema/subscription'
-import { trackEvent } from '@everynews/server/lib/logsnag'
+import { track } from '@everynews/logs'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -37,7 +37,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
       const { newsId, channelId } = await c.req.json()
       const user = c.get('user')
       if (!user?.id) {
-        await trackEvent({
+        await track({
           channel: 'subscriptions',
           description: 'User tried to subscribe without authentication',
           event: 'Unauthorized Subscription',
@@ -46,7 +46,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         return c.json({ error: 'User not authenticated' }, 401)
       }
       if (!newsId || !channelId) {
-        await trackEvent({
+        await track({
           channel: 'subscriptions',
           description: 'Missing newsId or channelId in subscription request',
           event: 'Invalid Subscription Request',
@@ -63,7 +63,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         where: eq(news.id, newsId),
       })
       if (!found || (!found.isPublic && found.userId !== user.id)) {
-        await trackEvent({
+        await track({
           channel: 'subscriptions',
           description: `User tried to subscribe to inaccessible news: ${newsId}`,
           event: 'Forbidden Subscription',
@@ -89,7 +89,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         })
         .execute()
 
-      await trackEvent({
+      await track({
         channel: 'subscriptions',
         description: `User subscribed to news: ${found.name}`,
         event: 'Subscription Created',

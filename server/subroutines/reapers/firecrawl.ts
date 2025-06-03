@@ -5,7 +5,7 @@ import {
   ContentSchema,
   contents,
 } from '@everynews/schema'
-import { trackEvent } from '@everynews/server/lib/logsnag'
+import { track } from '@everynews/logs'
 import { put } from '@vercel/blob'
 import { eq } from 'drizzle-orm'
 import normalizeUrl from 'normalize-url'
@@ -39,7 +39,7 @@ export const firecrawl = async (source: string): Promise<Content> => {
     })
 
     if (found) {
-      await trackEvent({
+      await track({
         channel: 'firecrawl',
         description: `Found cached content for: ${url}`,
         event: 'Content Cache Hit',
@@ -52,7 +52,7 @@ export const firecrawl = async (source: string): Promise<Content> => {
       return ContentSchema.parse(found)
     }
 
-    await trackEvent({
+    await track({
       channel: 'firecrawl',
       description: `Starting Firecrawl for: ${url}`,
       event: 'Crawl Started',
@@ -83,7 +83,7 @@ export const firecrawl = async (source: string): Promise<Content> => {
     const data = await response.json()
     const fcResponse = FirecrawlResponseSchema.parse(data)
 
-    await trackEvent({
+    await track({
       channel: 'firecrawl',
       description: `Successfully scraped content from: ${url}`,
       event: 'Content Scraped',
@@ -119,7 +119,7 @@ export const firecrawl = async (source: string): Promise<Content> => {
 
     const [content] = await db.insert(contents).values(toInsert).returning()
 
-    await trackEvent({
+    await track({
       channel: 'firecrawl',
       description: `Stored content and blobs for: ${url}`,
       event: 'Content Stored',
@@ -134,7 +134,7 @@ export const firecrawl = async (source: string): Promise<Content> => {
 
     return content
   } catch (error) {
-    await trackEvent({
+    await track({
       channel: 'firecrawl',
       description: `Firecrawl failed for: ${source}`,
       event: 'Crawl Failed',

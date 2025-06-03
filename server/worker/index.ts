@@ -1,7 +1,7 @@
 import { db } from '@everynews/drizzle'
 import { type Content, NewsSchema, news } from '@everynews/schema'
 import { WorkerStatusSchema } from '@everynews/schema/worker-status'
-import { trackEvent } from '@everynews/server/lib/logsnag'
+import { track } from '@everynews/logs'
 import { and, eq, lt } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
@@ -49,7 +49,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
   }),
   async (c) => {
     try {
-      await trackEvent({
+      await track({
         channel: 'worker',
         description: 'Worker job execution started',
         event: 'Worker Job Started',
@@ -62,7 +62,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
         }),
       )
 
-      await trackEvent({
+      await track({
         channel: 'worker',
         description: `Found ${found.length} news items ready for processing`,
         event: 'News Items Found',
@@ -73,7 +73,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
       })
 
       for (const item of found) {
-        await trackEvent({
+        await track({
           channel: 'worker',
           description: `Processing news item: ${item.name}`,
           event: 'Processing News Item',
@@ -107,7 +107,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
             .execute()
         }
 
-        await trackEvent({
+        await track({
           channel: 'worker',
           description: `Completed processing: ${item.name} - Found ${stories.length} stories`,
           event: 'News Item Processed',
@@ -123,7 +123,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
         })
       }
 
-      await trackEvent({
+      await track({
         channel: 'worker',
         description: `Worker job completed successfully - processed ${found.length} news items`,
         event: 'Worker Job Completed',
@@ -135,7 +135,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
 
       return c.json({ ok: true })
     } catch (error) {
-      await trackEvent({
+      await track({
         channel: 'worker',
         description: `Worker job failed: ${String(error)}`,
         event: 'Worker Job Failed',

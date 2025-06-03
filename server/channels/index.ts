@@ -1,7 +1,7 @@
 import { db } from '@everynews/drizzle'
 import { channels } from '@everynews/schema'
 import { ChannelDtoSchema, ChannelSchema } from '@everynews/schema/channel'
-import { trackEvent } from '@everynews/server/lib/logsnag'
+import { track } from '@everynews/logs'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { and, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -29,7 +29,7 @@ export const ChannelRouter = new Hono<WithAuth>()
     async (c) => {
       const user = c.get('user')
       if (!user) {
-        await trackEvent({
+        await track({
           channel: 'channels',
           description: 'User tried to access channels without authentication',
           event: 'Unauthorized Access',
@@ -44,7 +44,7 @@ export const ChannelRouter = new Hono<WithAuth>()
         .where(eq(channels.userId, user.id))
         .execute()
 
-      await trackEvent({
+      await track({
         channel: 'channels',
         description: `Retrieved ${result.length} channels for user`,
         event: 'Channels Retrieved',
@@ -78,7 +78,7 @@ export const ChannelRouter = new Hono<WithAuth>()
       const { name, type, config } = await c.req.json()
       const user = c.get('user')
       if (!user) {
-        await trackEvent({
+        await track({
           channel: 'channels',
           description: 'User tried to create channel without authentication',
           event: 'Unauthorized Channel Creation',
@@ -97,7 +97,7 @@ export const ChannelRouter = new Hono<WithAuth>()
         })
         .execute()
 
-      await trackEvent({
+      await track({
         channel: 'channels',
         description: `Created new ${type} channel: ${name}`,
         event: 'Channel Created',
@@ -131,7 +131,7 @@ export const ChannelRouter = new Hono<WithAuth>()
       const { id } = c.req.param()
       const user = c.get('user')
       if (!user) {
-        await trackEvent({
+        await track({
           channel: 'channels',
           description: 'User tried to delete channel without authentication',
           event: 'Unauthorized Channel Deletion',
@@ -145,7 +145,7 @@ export const ChannelRouter = new Hono<WithAuth>()
         .where(and(eq(channels.id, id), eq(channels.userId, user.id)))
         .execute()
 
-      await trackEvent({
+      await track({
         channel: 'channels',
         description: `Deleted channel: ${id}`,
         event: 'Channel Deleted',

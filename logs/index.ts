@@ -23,10 +23,10 @@ type LogEventOptions = {
   notify?: boolean
 }
 
-export const trackEvent = async (options: LogEventOptions) => {
+export const track = async (options: LogEventOptions) => {
   try {
     const isDev = process.env.NODE_ENV === 'development'
-    const channel = isDev ? `dev-${options.channel}` : options.channel
+    const channel = isDev ? `dev-${options.channel}` : `prod-${options.channel}`
 
     await logsnag.track({
       ...options,
