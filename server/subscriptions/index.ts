@@ -4,8 +4,8 @@ import {
   SubscriptionDtoSchema,
   SubscriptionSchema,
 } from '@everynews/schema/subscription'
-import { authMiddleware } from '@everynews/server/middleware/auth'
 import { trackEvent } from '@everynews/server/lib/logsnag'
+import { authMiddleware } from '@everynews/server/middleware/auth'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
@@ -39,8 +39,8 @@ export const SubscriptionRouter = new Hono<WithAuth>()
       if (!user?.id) {
         await trackEvent({
           channel: 'subscriptions',
-          event: 'Unauthorized Subscription',
           description: 'User tried to subscribe without authentication',
+          event: 'Unauthorized Subscription',
           icon: '🚫',
         })
         return c.json({ error: 'User not authenticated' }, 401)
@@ -48,14 +48,14 @@ export const SubscriptionRouter = new Hono<WithAuth>()
       if (!newsId || !channelId) {
         await trackEvent({
           channel: 'subscriptions',
-          event: 'Invalid Subscription Request',
           description: 'Missing newsId or channelId in subscription request',
+          event: 'Invalid Subscription Request',
           icon: '⚠️',
-          user_id: user.id,
           tags: {
-            has_news_id: String(!!newsId),
             has_channel_id: String(!!channelId),
+            has_news_id: String(!!newsId),
           },
+          user_id: user.id,
         })
         return c.json({ error: 'Missing newsId or channelId' }, 400)
       }
@@ -65,17 +65,17 @@ export const SubscriptionRouter = new Hono<WithAuth>()
       if (!found || (!found.isPublic && found.userId !== user.id)) {
         await trackEvent({
           channel: 'subscriptions',
-          event: 'Forbidden Subscription',
           description: `User tried to subscribe to inaccessible news: ${newsId}`,
+          event: 'Forbidden Subscription',
           icon: '🔒',
-          user_id: user.id,
           tags: {
-            news_id: newsId,
             channel_id: channelId,
             news_exists: String(!!found),
+            news_id: newsId,
             news_is_public: String(found?.isPublic || false),
             user_owns_news: String(found?.userId === user.id),
           },
+          user_id: user.id,
         })
         return c.json({ error: 'Forbidden' }, 403)
       }
@@ -91,15 +91,15 @@ export const SubscriptionRouter = new Hono<WithAuth>()
 
       await trackEvent({
         channel: 'subscriptions',
-        event: 'Subscription Created',
         description: `User subscribed to news: ${found.name}`,
+        event: 'Subscription Created',
         icon: '✅',
-        user_id: user.id,
         tags: {
+          channel_id: channelId,
           news_id: newsId,
           news_name: found.name,
-          channel_id: channelId,
         },
+        user_id: user.id,
       })
 
       return c.json(result)

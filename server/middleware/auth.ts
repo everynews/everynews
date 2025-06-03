@@ -9,8 +9,8 @@ export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
     if (!session) {
       await trackEvent({
         channel: 'auth',
-        event: 'Unauthenticated Request',
         description: `Unauthenticated request to ${c.req.method} ${c.req.path}`,
+        event: 'Unauthenticated Request',
         icon: '🔒',
         tags: {
           method: c.req.method,
@@ -25,15 +25,15 @@ export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
 
     await trackEvent({
       channel: 'auth',
-      event: 'Authenticated Request',
       description: `Authenticated request to ${c.req.method} ${c.req.path}`,
+      event: 'Authenticated Request',
       icon: '✅',
-      user_id: session.user.id,
       tags: {
         method: c.req.method,
         path: c.req.path,
         user_email: session.user.email,
       },
+      user_id: session.user.id,
     })
 
     c.set('user', session.user)
@@ -42,13 +42,13 @@ export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
   } catch (error) {
     await trackEvent({
       channel: 'auth',
-      event: 'Auth Middleware Error',
       description: `Auth middleware failed: ${String(error)}`,
+      event: 'Auth Middleware Error',
       icon: '❌',
       tags: {
+        error: String(error),
         method: c.req.method,
         path: c.req.path,
-        error: String(error),
       },
     })
     throw error

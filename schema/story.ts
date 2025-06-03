@@ -1,6 +1,6 @@
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
-import { pgTable, json, text, timestamp } from 'drizzle-orm/pg-core'
+import { json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { z } from 'zod'
 import { news } from './news'
 import 'zod-openapi/extend'
@@ -27,7 +27,12 @@ export const StorySchema = z
     createdAt: z.coerce.date().openapi({ example: new Date() }),
     id: z.coerce.string().openapi({ example: '123' }),
     newsId: z.coerce.string().openapi({ example: 'news123' }),
-    snippet: z.array(z.string()).nullable().openapi({ example: ['Key finding 1', 'Key finding 2', 'Key finding 3'] }),
+    snippet: z
+      .array(z.string())
+      .nullable()
+      .openapi({
+        example: ['Key finding 1', 'Key finding 2', 'Key finding 3'],
+      }),
     title: z.string().openapi({ example: 'Title' }),
     updatedAt: z.coerce.date().openapi({ example: new Date() }),
     url: z.string().openapi({ example: 'https://example.com' }),

@@ -51,8 +51,8 @@ export const WorkerRouter = new Hono<WithAuth>().post(
     try {
       await trackEvent({
         channel: 'worker',
-        event: 'Worker Job Started',
         description: 'Worker job execution started',
+        event: 'Worker Job Started',
         icon: '🤖',
       })
 
@@ -64,8 +64,8 @@ export const WorkerRouter = new Hono<WithAuth>().post(
 
       await trackEvent({
         channel: 'worker',
-        event: 'News Items Found',
         description: `Found ${found.length} news items ready for processing`,
+        event: 'News Items Found',
         icon: '📋',
         tags: {
           news_count: found.length,
@@ -75,8 +75,8 @@ export const WorkerRouter = new Hono<WithAuth>().post(
       for (const item of found) {
         await trackEvent({
           channel: 'worker',
-          event: 'Processing News Item',
           description: `Processing news item: ${item.name}`,
+          event: 'Processing News Item',
           icon: '⚙️',
           tags: {
             news_id: item.id,
@@ -87,7 +87,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
 
         const urls = await curator(item)
         const contents: Content[] = await reaper(urls)
-        const stories = await sage({contents, news: item})
+        const stories = await sage({ contents, news: item })
 
         let nextRun: Date | null = null
         if (item.wait.type === 'count') {
@@ -109,15 +109,15 @@ export const WorkerRouter = new Hono<WithAuth>().post(
 
         await trackEvent({
           channel: 'worker',
-          event: 'News Item Processed',
           description: `Completed processing: ${item.name} - Found ${stories.length} stories`,
+          event: 'News Item Processed',
           icon: '✅',
           tags: {
             news_id: item.id,
             news_name: item.name,
-            urls_found: urls.length,
-            stories_created: stories.length,
             next_run: nextRun?.toISOString() || 'unknown',
+            stories_created: stories.length,
+            urls_found: urls.length,
             wait_type: item.wait.type,
           },
         })
@@ -125,8 +125,8 @@ export const WorkerRouter = new Hono<WithAuth>().post(
 
       await trackEvent({
         channel: 'worker',
-        event: 'Worker Job Completed',
         description: `Worker job completed successfully - processed ${found.length} news items`,
+        event: 'Worker Job Completed',
         icon: '🎉',
         tags: {
           news_processed: found.length,
@@ -137,8 +137,8 @@ export const WorkerRouter = new Hono<WithAuth>().post(
     } catch (error) {
       await trackEvent({
         channel: 'worker',
-        event: 'Worker Job Failed',
         description: `Worker job failed: ${String(error)}`,
+        event: 'Worker Job Failed',
         icon: '💥',
         tags: {
           error: String(error),

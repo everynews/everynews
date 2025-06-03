@@ -2,8 +2,8 @@ import { db } from '@everynews/drizzle'
 import { nanoid } from '@everynews/lib/id'
 import { news } from '@everynews/schema'
 import { NewsDtoSchema, NewsSchema } from '@everynews/schema/news'
-import { authMiddleware } from '@everynews/server/middleware/auth'
 import { trackEvent } from '@everynews/server/lib/logsnag'
+import { authMiddleware } from '@everynews/server/middleware/auth'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
@@ -32,26 +32,26 @@ export const NewsRouter = new Hono<WithAuth>()
       if (!user) {
         await trackEvent({
           channel: 'news',
-          event: 'Unauthorized Access',
           description: 'User tried to access news without authentication',
+          event: 'Unauthorized Access',
           icon: '🚫',
         })
         return c.json({ error: 'Unauthorized' }, 401)
       }
-      
+
       const result = await db.select().from(news).execute()
-      
+
       await trackEvent({
         channel: 'news',
-        event: 'News List Retrieved',
         description: `Retrieved ${result.length} news items`,
+        event: 'News List Retrieved',
         icon: '📰',
-        user_id: user.id,
         tags: {
           count: result.length,
         },
+        user_id: user.id,
       })
-      
+
       return c.json(result)
     },
   )
@@ -72,20 +72,24 @@ export const NewsRouter = new Hono<WithAuth>()
     }),
     async (c) => {
       const { id } = c.req.param()
-      
-      const result = await db.select().from(news).where(eq(news.id, id)).execute()
-      
+
+      const result = await db
+        .select()
+        .from(news)
+        .where(eq(news.id, id))
+        .execute()
+
       await trackEvent({
         channel: 'news',
-        event: 'News Item Retrieved',
         description: `Retrieved news item: ${id}`,
+        event: 'News Item Retrieved',
         icon: '📰',
         tags: {
-          news_id: id,
           found: String(result.length > 0),
+          news_id: id,
         },
       })
-      
+
       return c.json(result)
     },
   )
@@ -111,13 +115,13 @@ export const NewsRouter = new Hono<WithAuth>()
       if (!user) {
         await trackEvent({
           channel: 'news',
-          event: 'Unauthorized News Creation',
           description: 'User tried to create news without authentication',
+          event: 'Unauthorized News Creation',
           icon: '🚫',
         })
         return c.json({ error: 'Unauthorized' }, 401)
       }
-      
+
       const newsId = nanoid()
       const inserted = await db
         .insert(news)
@@ -130,21 +134,21 @@ export const NewsRouter = new Hono<WithAuth>()
           wait,
         })
         .execute()
-      
+
       await trackEvent({
         channel: 'news',
-        event: 'News Created',
         description: `Created news: ${name}`,
+        event: 'News Created',
         icon: '✅',
-        user_id: user.id,
         tags: {
+          is_public: isPublic,
           news_id: newsId,
           news_name: name,
           strategy_provider: strategy.provider,
-          is_public: isPublic,
         },
+        user_id: user.id,
       })
-      
+
       return c.json(inserted)
     },
   )
@@ -166,19 +170,19 @@ export const NewsRouter = new Hono<WithAuth>()
     validator('json', NewsDtoSchema),
     async (c) => {
       const { id } = c.req.param()
-      
+
       const result = await db.delete(news).where(eq(news.id, id)).execute()
-      
+
       await trackEvent({
         channel: 'news',
-        event: 'News Deleted',
         description: `Deleted news item: ${id}`,
+        event: 'News Deleted',
         icon: '🗑️',
         tags: {
           news_id: id,
         },
       })
-      
+
       return c.json(result)
     },
   )
@@ -201,24 +205,24 @@ export const NewsRouter = new Hono<WithAuth>()
     async (c) => {
       const { id } = c.req.param()
       const request = await c.req.json()
-      
+
       const result = await db
         .update(news)
         .set({ ...request })
         .where(eq(news.id, id))
         .execute()
-      
+
       await trackEvent({
         channel: 'news',
-        event: 'News Updated',
         description: `Updated news item: ${id}`,
+        event: 'News Updated',
         icon: '✏️',
         tags: {
-          news_id: id,
           fields_updated: Object.keys(request).join(', '),
+          news_id: id,
         },
       })
-      
+
       return c.json(result)
     },
   )

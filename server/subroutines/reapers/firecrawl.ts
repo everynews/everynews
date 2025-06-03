@@ -1,5 +1,10 @@
 import { db } from '@everynews/drizzle'
-import { type Content, ContentDtoSchema, ContentSchema, contents } from '@everynews/schema'
+import {
+  type Content,
+  ContentDtoSchema,
+  ContentSchema,
+  contents,
+} from '@everynews/schema'
 import { trackEvent } from '@everynews/server/lib/logsnag'
 import { put } from '@vercel/blob'
 import { eq } from 'drizzle-orm'
@@ -36,12 +41,12 @@ export const firecrawl = async (source: string): Promise<Content> => {
     if (found) {
       await trackEvent({
         channel: 'firecrawl',
-        event: 'Content Cache Hit',
         description: `Found cached content for: ${url}`,
+        event: 'Content Cache Hit',
         icon: '💾',
         tags: {
-          url,
           source,
+          url,
         },
       })
       return ContentSchema.parse(found)
@@ -49,12 +54,12 @@ export const firecrawl = async (source: string): Promise<Content> => {
 
     await trackEvent({
       channel: 'firecrawl',
-      event: 'Crawl Started',
       description: `Starting Firecrawl for: ${url}`,
+      event: 'Crawl Started',
       icon: '🔥',
       tags: {
-        url,
         source,
+        url,
       },
     })
 
@@ -80,14 +85,14 @@ export const firecrawl = async (source: string): Promise<Content> => {
 
     await trackEvent({
       channel: 'firecrawl',
-      event: 'Content Scraped',
       description: `Successfully scraped content from: ${url}`,
+      event: 'Content Scraped',
       icon: '📄',
       tags: {
-        url,
-        source,
-        has_markdown: String(!!fcResponse.data.markdown),
         has_html: String(!!fcResponse.data.html),
+        has_markdown: String(!!fcResponse.data.markdown),
+        source,
+        url,
       },
     })
 
@@ -112,32 +117,31 @@ export const firecrawl = async (source: string): Promise<Content> => {
       url,
     })
 
-    const [content] = await db.insert(contents).values(toInsert).returning();
+    const [content] = await db.insert(contents).values(toInsert).returning()
 
     await trackEvent({
       channel: 'firecrawl',
-      event: 'Content Stored',
       description: `Stored content and blobs for: ${url}`,
+      event: 'Content Stored',
       icon: '✅',
       tags: {
-        url,
-        source,
         content_id: content.id,
+        source,
         title: content.title,
+        url,
       },
     })
 
     return content
-      
   } catch (error) {
     await trackEvent({
       channel: 'firecrawl',
-      event: 'Crawl Failed',
       description: `Firecrawl failed for: ${source}`,
+      event: 'Crawl Failed',
       icon: '❌',
       tags: {
-        url: source,
         error: String(error),
+        url: source,
       },
     })
     console.error(`Error in firecrawl for URL ${source}:`, error)

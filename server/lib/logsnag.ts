@@ -9,8 +9,8 @@ if (!process.env.LOGSNAG_PROJECT_ID) {
 }
 
 export const logsnag = new LogSnag({
-  token: process.env.LOGSNAG_PROJECT_TOKEN,
   project: process.env.LOGSNAG_PROJECT_ID,
+  token: process.env.LOGSNAG_PROJECT_TOKEN,
 })
 
 type LogEventOptions = {
@@ -27,7 +27,7 @@ export const trackEvent = async (options: LogEventOptions) => {
   try {
     const isDev = process.env.NODE_ENV === 'development'
     const channel = isDev ? `dev-${options.channel}` : options.channel
-    
+
     await logsnag.track({
       ...options,
       channel,

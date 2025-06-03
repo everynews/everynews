@@ -1,5 +1,11 @@
 import { db } from '@everynews/drizzle'
-import { Content, News, Story, StorySchema, stories } from '@everynews/schema'
+import {
+  type Content,
+  type News,
+  type Story,
+  StorySchema,
+  stories,
+} from '@everynews/schema'
 import { trackEvent } from '@everynews/server/lib/logsnag'
 import { eq } from 'drizzle-orm'
 import normalizeUrl from 'normalize-url'
@@ -37,13 +43,17 @@ Key finding 3
 And so on.
 `
 
-const parseResponse = (response: string): { title: string; keyFindings: string[] } => {
+const parseResponse = (
+  response: string,
+): { title: string; keyFindings: string[] } => {
   const titleMatch = response.match(/<TITLE>(.*?)<\/TITLE>/s)
   const keyFindingsMatch = response.match(/<KEYFINDING>(.*?)<\/KEYFINDING>/gs)
 
   return {
+    keyFindings: keyFindingsMatch
+      ? keyFindingsMatch.map((match) => match.trim())
+      : [],
     title: titleMatch ? titleMatch[1].trim() : '',
-    keyFindings: keyFindingsMatch ? keyFindingsMatch.map((match) => match.trim()) : [],
   }
 }
 
@@ -57,7 +67,13 @@ const input = async (content: Content): Promise<string> => {
   return `# [${content.title}](${content.url})\n\n${content.description}\n\n${markdownBody || htmlBody}`
 }
 
-export const summarize = async ({content, news}: {content: Content, news: News}): Promise<Story | null> => {
+export const summarize = async ({
+  content,
+  news,
+}: {
+  content: Content
+  news: News
+}): Promise<Story | null> => {
   const url = normalizeUrl(content.url, {
     stripProtocol: true,
     stripWWW: true,
@@ -70,13 +86,13 @@ export const summarize = async ({content, news}: {content: Content, news: News})
   if (existingStory) {
     await trackEvent({
       channel: 'sage',
-      event: 'Story Cache Hit',
       description: `Found existing summary for: ${content.title}`,
+      event: 'Story Cache Hit',
       icon: '💾',
       tags: {
-        url: content.url,
-        title: content.title,
         content_id: content.id,
+        title: content.title,
+        url: content.url,
       },
     })
     return StorySchema.parse(existingStory)
@@ -85,13 +101,13 @@ export const summarize = async ({content, news}: {content: Content, news: News})
   try {
     await trackEvent({
       channel: 'sage',
-      event: 'Summarization Started',
       description: `Starting AI summarization for: ${content.title}`,
+      event: 'Summarization Started',
       icon: '🤖',
       tags: {
-        url: content.url,
-        title: content.title,
         content_id: content.id,
+        title: content.title,
+        url: content.url,
       },
     })
 
@@ -103,50 +119,58 @@ export const summarize = async ({content, news}: {content: Content, news: News})
 
     await trackEvent({
       channel: 'sage',
-      event: 'Summarization Completed',
       description: response.output_text,
+      event: 'Summarization Completed',
       icon: '✅',
       tags: {
-        url: content.url,
-        title: content.title,
         model: 'gpt-4o',
+        title: content.title,
+        url: content.url,
       },
     })
 
     const { title, keyFindings } = parseResponse(response.output_text)
 
-    const [story] = await db.insert(stories).values({
-      contentId: content.id,
-      url: content.url,
-      newsId: news.id,
-      title: content.title,
-      snippet: keyFindings,
-    }).returning()
+    const [story] = await db
+      .insert(stories)
+      .values({
+        contentId: content.id,
+        newsId: news.id,
+        snippet: keyFindings,
+        title: content.title,
+        url: content.url,
+      })
+      .returning()
 
     return StorySchema.parse(story)
-
   } catch (error) {
     await trackEvent({
       channel: 'sage',
-      event: 'Summarization Failed',
       description: `AI summarization failed for: ${content.title}`,
+      event: 'Summarization Failed',
       icon: '❌',
       tags: {
-        url: content.url,
-        title: content.title,
         error: String(error),
+        title: content.title,
+        url: content.url,
       },
     })
     return null
   }
 }
 
-export const sage = async ({contents, news}: {contents: Content[], news: News}): Promise<Story[]> => {
+export const sage = async ({
+  contents,
+  news,
+}: {
+  contents: Content[]
+  news: News
+}): Promise<Story[]> => {
   try {
     await trackEvent({
       channel: 'sage',
-      event: 'Sage Processing Started',
       description: `Starting to process ${contents.length} content items for summarization`,
+      event: 'Sage Processing Started',
       icon: '🧙‍♂️',
       tags: {
         content_count: contents.length,
@@ -155,20 +179,26 @@ export const sage = async ({contents, news}: {contents: Content[], news: News}):
 
     const queue = new PQueue({ concurrency: 3 })
     const results = await Promise.all(
-      contents.map((content) => queue.add(async () => summarize({content, news}))),
+      contents.map((content) =>
+        queue.add(async () => summarize({ content, news })),
+      ),
     )
-    
-    const filteredResults = results.filter((result): result is Story => result !== null)
+
+    const filteredResults = results.filter(
+      (result): result is Story => result !== null,
+    )
 
     await trackEvent({
       channel: 'sage',
-      event: 'Sage Processing Completed',
       description: `Processed ${filteredResults.length}/${contents.length} content items`,
+      event: 'Sage Processing Completed',
       icon: '✅',
       tags: {
         content_attempted: contents.length,
         stories_created: filteredResults.length,
-        success_rate: Math.round((filteredResults.length / contents.length) * 100),
+        success_rate: Math.round(
+          (filteredResults.length / contents.length) * 100,
+        ),
       },
     })
 
@@ -176,8 +206,8 @@ export const sage = async ({contents, news}: {contents: Content[], news: News}):
   } catch (error) {
     await trackEvent({
       channel: 'sage',
-      event: 'Sage Processing Failed',
       description: `Sage processing failed: ${String(error)}`,
+      event: 'Sage Processing Failed',
       icon: '💥',
       tags: {
         content_count: contents.length,
