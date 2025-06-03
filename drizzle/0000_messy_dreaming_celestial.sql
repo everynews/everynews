@@ -27,11 +27,11 @@ CREATE TABLE "channels" (
 CREATE TABLE "contents" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"description" text,
-	"html_blob_url" text,
+	"html_blob_url" text NOT NULL,
 	"id" text PRIMARY KEY NOT NULL,
 	"keywords" text,
 	"language" text,
-	"markdown_blob_url" text,
+	"markdown_blob_url" text NOT NULL,
 	"og_description" text,
 	"og_image" text,
 	"og_locale_alternate" text,
@@ -39,7 +39,7 @@ CREATE TABLE "contents" (
 	"og_title" text,
 	"og_url" text,
 	"robots" text,
-	"title" text,
+	"title" text NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"url" text NOT NULL,
 	CONSTRAINT "contents_url_unique" UNIQUE("url")
