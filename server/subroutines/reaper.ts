@@ -1,5 +1,5 @@
-import type { Content } from '@everynews/schema'
 import { track } from '@everynews/logs'
+import type { Content } from '@everynews/schema'
 import PQueue from 'p-queue'
 import { firecrawl } from './reapers/firecrawl'
 
@@ -11,6 +11,7 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
       event: 'Reaping Started',
       icon: '🕷️',
       tags: {
+        type: 'info',
         url_count: urls.length,
       },
     })
@@ -24,12 +25,12 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
           console.error(`Failed to process URL: ${url}`, error)
           await track({
             channel: 'reaper',
-            description: `Failed to crawl: ${url}`,
+            description: url,
             event: 'URL Crawl Failed',
             icon: '❌',
             tags: {
               error: String(error),
-              url,
+              type: 'error',
             },
           })
           return null
@@ -44,13 +45,14 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
 
     await track({
       channel: 'reaper',
-      description: `Successfully crawled ${filteredResults.length}/${urls.length} URLs`,
+      description: `Crawled ${filteredResults.length}/${urls.length} URLs`,
       event: 'Reaping Completed',
       icon: '✅',
       tags: {
         success_rate: Math.round((filteredResults.length / urls.length) * 100),
         urls_attempted: urls.length,
         urls_successful: filteredResults.length,
+        type: 'info',
       },
     })
 
@@ -63,7 +65,8 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
       icon: '💥',
       tags: {
         error: String(error),
-        url_count: urls.length,
+          url_count: urls.length,
+        type: 'error',
       },
     })
     throw error

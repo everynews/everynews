@@ -1,5 +1,5 @@
-import type { News } from '@everynews/schema'
 import { track } from '@everynews/logs'
+import type { News } from '@everynews/schema'
 import { ExaCurator } from './curators/exa'
 import { HnBestCurator } from './curators/hnbest'
 import type { Curator } from './curators/type'
@@ -13,13 +13,14 @@ export const curator = async (news: News): Promise<string[]> => {
   try {
     await track({
       channel: 'curator',
-      description: `Starting curation with ${news.strategy.provider} for: ${news.name}`,
+      description: `Curation with ${news.strategy.provider} for ${news.name}`,
       event: 'Curation Started',
       icon: '🎯',
       tags: {
         news_id: news.id,
         news_name: news.name,
         provider: news.strategy.provider,
+        type: 'info',
       },
     })
 
@@ -28,7 +29,7 @@ export const curator = async (news: News): Promise<string[]> => {
 
     await track({
       channel: 'curator',
-      description: `Found ${urls.length} URLs for: ${news.name}`,
+      description: `Found ${urls.length} URLs for ${news.name}`,
       event: 'Curation Completed',
       icon: '✅',
       tags: {
@@ -36,6 +37,7 @@ export const curator = async (news: News): Promise<string[]> => {
         news_name: news.name,
         provider: news.strategy.provider,
         urls_found: urls.length,
+        type: 'info',
       },
     })
 
@@ -43,7 +45,7 @@ export const curator = async (news: News): Promise<string[]> => {
   } catch (error) {
     await track({
       channel: 'curator',
-      description: `Curation failed for: ${news.name} - ${String(error)}`,
+      description: `Curation failed for ${news.name}`,
       event: 'Curation Failed',
       icon: '❌',
       tags: {
@@ -51,6 +53,7 @@ export const curator = async (news: News): Promise<string[]> => {
         news_id: news.id,
         news_name: news.name,
         provider: news.strategy.provider,
+        type: 'error',
       },
     })
     throw error

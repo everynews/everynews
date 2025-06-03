@@ -1,10 +1,10 @@
 import { db } from '@everynews/drizzle'
+import { track } from '@everynews/logs'
 import { news, subscriptions } from '@everynews/schema'
 import {
   SubscriptionDtoSchema,
   SubscriptionSchema,
 } from '@everynews/schema/subscription'
-import { track } from '@everynews/logs'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -42,6 +42,9 @@ export const SubscriptionRouter = new Hono<WithAuth>()
           description: 'User tried to subscribe without authentication',
           event: 'Unauthorized Subscription',
           icon: '🚫',
+          tags: {
+            type: 'error',
+          },
         })
         return c.json({ error: 'User not authenticated' }, 401)
       }
@@ -54,6 +57,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
           tags: {
             has_channel_id: String(!!channelId),
             has_news_id: String(!!newsId),
+            type: 'error',
           },
           user_id: user.id,
         })
@@ -74,6 +78,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
             news_id: newsId,
             news_is_public: String(found?.isPublic || false),
             user_owns_news: String(found?.userId === user.id),
+            type: 'error',
           },
           user_id: user.id,
         })
@@ -98,6 +103,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
           channel_id: channelId,
           news_id: newsId,
           news_name: found.name,
+          type: 'info',
         },
         user_id: user.id,
       })

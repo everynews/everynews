@@ -16,6 +16,7 @@ export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
           method: c.req.method,
           path: c.req.path,
           user_agent: c.req.header('user-agent') || 'unknown',
+          type: 'error',
         },
       })
       c.set('user', null)
@@ -32,6 +33,7 @@ export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
         method: c.req.method,
         path: c.req.path,
         user_email: session.user.email,
+        type: 'info',
       },
       user_id: session.user.id,
     })
@@ -49,6 +51,7 @@ export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
         error: String(error),
         method: c.req.method,
         path: c.req.path,
+        type: 'error',
       },
     })
     throw error

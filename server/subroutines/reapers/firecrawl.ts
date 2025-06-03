@@ -1,11 +1,11 @@
 import { db } from '@everynews/drizzle'
+import { track } from '@everynews/logs'
 import {
   type Content,
   ContentDtoSchema,
   ContentSchema,
   contents,
 } from '@everynews/schema'
-import { track } from '@everynews/logs'
 import { put } from '@vercel/blob'
 import { eq } from 'drizzle-orm'
 import normalizeUrl from 'normalize-url'
@@ -41,11 +41,12 @@ export const firecrawl = async (source: string): Promise<Content> => {
     if (found) {
       await track({
         channel: 'firecrawl',
-        description: `Found cached content for: ${url}`,
+        description: url,
         event: 'Content Cache Hit',
         icon: '💾',
         tags: {
           source,
+          type: 'info',
           url,
         },
       })
@@ -54,11 +55,12 @@ export const firecrawl = async (source: string): Promise<Content> => {
 
     await track({
       channel: 'firecrawl',
-      description: `Starting Firecrawl for: ${url}`,
+      description: url,
       event: 'Crawl Started',
       icon: '🔥',
       tags: {
         source,
+        type: 'info',
         url,
       },
     })
@@ -85,13 +87,14 @@ export const firecrawl = async (source: string): Promise<Content> => {
 
     await track({
       channel: 'firecrawl',
-      description: `Successfully scraped content from: ${url}`,
+      description: url,
       event: 'Content Scraped',
       icon: '📄',
       tags: {
         has_html: String(!!fcResponse.data.html),
         has_markdown: String(!!fcResponse.data.markdown),
         source,
+        type: 'info',
         url,
       },
     })
@@ -121,13 +124,14 @@ export const firecrawl = async (source: string): Promise<Content> => {
 
     await track({
       channel: 'firecrawl',
-      description: `Stored content and blobs for: ${url}`,
+      description: url,
       event: 'Content Stored',
       icon: '✅',
       tags: {
         content_id: content.id,
         source,
         title: content.title,
+        type: 'info',
         url,
       },
     })
@@ -136,12 +140,13 @@ export const firecrawl = async (source: string): Promise<Content> => {
   } catch (error) {
     await track({
       channel: 'firecrawl',
-      description: `Firecrawl failed for: ${source}`,
+      description: source,
       event: 'Crawl Failed',
       icon: '❌',
       tags: {
         error: String(error),
-        url: source,
+        source,
+        type: 'error',
       },
     })
     console.error(`Error in firecrawl for URL ${source}:`, error)

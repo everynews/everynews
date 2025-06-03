@@ -1,7 +1,7 @@
 import { db } from '@everynews/drizzle'
+import { track } from '@everynews/logs'
 import { type Content, NewsSchema, news } from '@everynews/schema'
 import { WorkerStatusSchema } from '@everynews/schema/worker-status'
-import { track } from '@everynews/logs'
 import { and, eq, lt } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
@@ -54,6 +54,9 @@ export const WorkerRouter = new Hono<WithAuth>().post(
         description: 'Worker job execution started',
         event: 'Worker Job Started',
         icon: '🤖',
+        tags: {
+          type: 'info',
+        },
       })
 
       const found = await NewsSchema.array().parse(
@@ -69,6 +72,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
         icon: '📋',
         tags: {
           news_count: found.length,
+          type: 'info',
         },
       })
 
@@ -82,6 +86,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
             news_id: item.id,
             news_name: item.name,
             strategy_provider: item.strategy.provider,
+            type: 'info',
           },
         })
 
@@ -119,6 +124,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
             stories_created: stories.length,
             urls_found: urls.length,
             wait_type: item.wait.type,
+            type: 'info',
           },
         })
       }
@@ -130,6 +136,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
         icon: '🎉',
         tags: {
           news_processed: found.length,
+          type: 'info',
         },
       })
 
@@ -142,6 +149,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
         icon: '💥',
         tags: {
           error: String(error),
+          type: 'error',
         },
       })
       throw error

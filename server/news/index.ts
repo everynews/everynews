@@ -1,8 +1,8 @@
 import { db } from '@everynews/drizzle'
 import { nanoid } from '@everynews/lib/id'
+import { track } from '@everynews/logs'
 import { news } from '@everynews/schema'
 import { NewsDtoSchema, NewsSchema } from '@everynews/schema/news'
-import { track } from '@everynews/logs'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -35,6 +35,9 @@ export const NewsRouter = new Hono<WithAuth>()
           description: 'User tried to access news without authentication',
           event: 'Unauthorized Access',
           icon: '🚫',
+          tags: {
+            type: 'error',
+          },
         })
         return c.json({ error: 'Unauthorized' }, 401)
       }
@@ -48,6 +51,7 @@ export const NewsRouter = new Hono<WithAuth>()
         icon: '📰',
         tags: {
           count: result.length,
+          type: 'info',
         },
         user_id: user.id,
       })
@@ -87,6 +91,7 @@ export const NewsRouter = new Hono<WithAuth>()
         tags: {
           found: String(result.length > 0),
           news_id: id,
+          type: 'info',
         },
       })
 
@@ -145,6 +150,7 @@ export const NewsRouter = new Hono<WithAuth>()
           news_id: newsId,
           news_name: name,
           strategy_provider: strategy.provider,
+          type: 'info',
         },
         user_id: user.id,
       })
@@ -180,6 +186,7 @@ export const NewsRouter = new Hono<WithAuth>()
         icon: '🗑️',
         tags: {
           news_id: id,
+          type: 'info',
         },
       })
 
@@ -220,6 +227,7 @@ export const NewsRouter = new Hono<WithAuth>()
         tags: {
           fields_updated: Object.keys(request).join(', '),
           news_id: id,
+          type: 'info',
         },
       })
 

@@ -1,4 +1,5 @@
 import { db } from '@everynews/drizzle'
+import { track } from '@everynews/logs'
 import {
   type Content,
   type News,
@@ -6,7 +7,6 @@ import {
   StorySchema,
   stories,
 } from '@everynews/schema'
-import { track } from '@everynews/logs'
 import { eq } from 'drizzle-orm'
 import normalizeUrl from 'normalize-url'
 import OpenAI from 'openai'
@@ -93,6 +93,7 @@ export const summarize = async ({
         content_id: content.id,
         title: content.title,
         url: content.url,
+        type: 'info',
       },
     })
     return StorySchema.parse(existingStory)
@@ -108,6 +109,7 @@ export const summarize = async ({
         content_id: content.id,
         title: content.title,
         url: content.url,
+        type: 'info',
       },
     })
 
@@ -126,6 +128,7 @@ export const summarize = async ({
         model: 'gpt-4o',
         title: content.title,
         url: content.url,
+        type: 'info',
       },
     })
 
@@ -153,6 +156,7 @@ export const summarize = async ({
         error: String(error),
         title: content.title,
         url: content.url,
+        type: 'error',
       },
     })
     return null
@@ -174,6 +178,7 @@ export const sage = async ({
       icon: '🧙‍♂️',
       tags: {
         content_count: contents.length,
+        type: 'info',
       },
     })
 
@@ -199,6 +204,7 @@ export const sage = async ({
         success_rate: Math.round(
           (filteredResults.length / contents.length) * 100,
         ),
+        type: 'info',
       },
     })
 
@@ -212,6 +218,7 @@ export const sage = async ({
       tags: {
         content_count: contents.length,
         error: String(error),
+        type: 'error',
       },
     })
     throw error

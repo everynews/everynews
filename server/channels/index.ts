@@ -1,7 +1,7 @@
 import { db } from '@everynews/drizzle'
+import { track } from '@everynews/logs'
 import { channels } from '@everynews/schema'
 import { ChannelDtoSchema, ChannelSchema } from '@everynews/schema/channel'
-import { track } from '@everynews/logs'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { and, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -34,6 +34,9 @@ export const ChannelRouter = new Hono<WithAuth>()
           description: 'User tried to access channels without authentication',
           event: 'Unauthorized Access',
           icon: '🚫',
+          tags: {
+            type: 'error',
+          },
         })
         return c.json({ error: 'Unauthorized' }, 401)
       }
@@ -83,6 +86,9 @@ export const ChannelRouter = new Hono<WithAuth>()
           description: 'User tried to create channel without authentication',
           event: 'Unauthorized Channel Creation',
           icon: '🚫',
+          tags: {
+            type: 'error',
+          },
         })
         return c.json({ error: 'Unauthorized' }, 401)
       }
@@ -136,6 +142,9 @@ export const ChannelRouter = new Hono<WithAuth>()
           description: 'User tried to delete channel without authentication',
           event: 'Unauthorized Channel Deletion',
           icon: '🚫',
+          tags: {
+            type: 'error',
+          },
         })
         return c.json({ error: 'Unauthorized' }, 401)
       }
@@ -152,6 +161,7 @@ export const ChannelRouter = new Hono<WithAuth>()
         icon: '🗑️',
         tags: {
           channel_id: id,
+          type: 'info',
         },
         user_id: user.id,
       })
