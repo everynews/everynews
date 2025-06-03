@@ -2,11 +2,11 @@ import type { NewsDto } from '@everynews/schema'
 import Exa from 'exa-js'
 import type { Curator } from './type'
 
-if (!process.env.EXA_API_KEY) {
-  throw new Error('EXA_API_KEY is not set')
+if (!process.env.EXASEARCH_API_KEY) {
+  throw new Error('EXASEARCH_API_KEY is not set')
 }
 
-const exa = new Exa(process.env.EXA_API_KEY)
+const exa = new Exa(process.env.EXASEARCH_API_KEY)
 
 export const ExaCurator: Curator = async (news: NewsDto): Promise<string[]> => {
   if (news.strategy.provider !== 'exa') {
