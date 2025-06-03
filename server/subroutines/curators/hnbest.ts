@@ -29,16 +29,17 @@ export const HnBestCurator: Curator = async (
     )
   }
 
-  const ids = await fetch(
+  const response = await fetch(
     'https://hacker-news.firebaseio.com/v0/beststories.json',
-  ).then((res) => HackerNewsStoriesSchema.parse(res.json()))
+  )
+  const ids = await HackerNewsStoriesSchema.parse(await response.json())
 
   const items: string[] = await queue.addAll(
     ids.map((id: number) => async () => {
       const response = await fetch(
         `https://hacker-news.firebaseio.com/v0/item/${id}.json`,
       )
-      const item = await HackerNewsStorySchema.parse(response.json())
+      const item = await HackerNewsStorySchema.parse(await response.json())
       return (
         String(item.url) ||
         `https://news.ycombinator.com/item?id=${String(item.id)}`

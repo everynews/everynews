@@ -8,6 +8,7 @@ import { resolver } from 'hono-openapi/zod'
 import type { WithAuth } from '../bindings/auth'
 import { curator } from '../subroutines/curator'
 import { reaper } from '../subroutines/reaper'
+import { sage } from '../subroutines/sage'
 
 export const WorkerRouter = new Hono<WithAuth>().post(
   '/',
@@ -34,6 +35,7 @@ export const WorkerRouter = new Hono<WithAuth>().post(
     for (const newsItem of found) {
       const urls = await curator(newsItem)
       const content: ContentDto[] = await reaper(urls)
+      const stories = await sage(content)
       contents.push(...content)
     }
     return c.json({ contents })

@@ -1,5 +1,5 @@
 import { db } from '@everynews/drizzle'
-import { type ContentDto, contents } from '@everynews/schema'
+import { type ContentDto, ContentDtoSchema, contents } from '@everynews/schema'
 import { put } from '@vercel/blob'
 import { eq } from 'drizzle-orm'
 import normalizeUrl from 'normalize-url'
@@ -13,14 +13,14 @@ export const FirecrawlResponseSchema = z.object({
       .object({
         description: z.string().optional(),
         keywords: z.string().optional(),
-        language: z.string().optional(),
+        language: z.union([z.string(), z.array(z.string())]).optional(),
         ogDescription: z.string().optional(),
         ogImage: z.string().optional(),
         ogLocaleAlternate: z.string().optional(),
         ogSiteName: z.string().optional(),
         ogTitle: z.string().optional(),
         ogUrl: z.string().optional(),
-        robots: z.string().optional(),
+        robots: z.union([z.string(), z.array(z.string())]).optional(),
         sourceURL: z.string().optional(),
         statusCode: z.number().optional(),
         title: z.string().optional(),
@@ -43,7 +43,7 @@ export const firecrawl = async (source: string): Promise<ContentDto> => {
       where: eq(contents.url, url),
     })
 
-    if (found) return found
+    if (found) return ContentDtoSchema.parse(found)
 
     const options = {
       body: JSON.stringify({
@@ -76,7 +76,8 @@ export const firecrawl = async (source: string): Promise<ContentDto> => {
       }),
     ])
 
-    const content: ContentDto = {
+    const content = ContentDtoSchema.parse({
+      ...fcResponse.data.metadata,
       htmlBlobUrl,
       markdownBlobUrl,
       title:
@@ -84,8 +85,13 @@ export const firecrawl = async (source: string): Promise<ContentDto> => {
         fcResponse.data.metadata?.ogTitle ||
         url,
       url,
-      ...fcResponse.data.metadata,
-    }
+      language: Array.isArray(fcResponse.data.metadata?.language)
+        ? fcResponse.data.metadata?.language
+        : [fcResponse.data.metadata?.language || 'en'],
+      robots: Array.isArray(fcResponse.data.metadata?.robots)
+        ? fcResponse.data.metadata?.robots
+        : [fcResponse.data.metadata?.robots || 'en'],
+    })
 
     await db.insert(contents).values(content).execute()
 
