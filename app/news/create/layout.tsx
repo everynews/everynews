@@ -2,7 +2,7 @@ import { PageHeader } from '@everynews/components/ui/page-header'
 
 const CreateNewsLayout = ({ children }: { children: React.ReactNode }) => (
   <>
-    <PageHeader title='Create' />
+    <PageHeader title='Create News' />
     <main className='p-4'>{children}</main>
   </>
 )

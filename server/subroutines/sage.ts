@@ -45,7 +45,7 @@ export const summarize = async (content: ContentDto): Promise<StoryDto> => {
       title: content.title,
       url: content.url,
     }
-  } catch (error) {
+  } catch {
     return {
       snippet: null,
       title: content.title,

@@ -14,7 +14,7 @@ export const sendMagicLink = async ({
   email: string
   url: string
 }): Promise<void> => {
-  const { data, error } = await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: 'Everynews <no-reply@app.every.news>',
     react: MagicLinkEmail({ loginLink: url }),
     subject: 'Sign in to Everynews',
