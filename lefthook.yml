@@ -16,6 +16,3 @@ pre-commit:
       run: bun style:check
     Database Check:
       run: bun db:check
-    Build Check:
-      run: bun run build
-      

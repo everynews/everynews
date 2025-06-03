@@ -65,16 +65,16 @@ export const firecrawl = async (source: string): Promise<ContentDto> => {
     const data = await response.json()
     const fcResponse = FirecrawlResponseSchema.parse(data)
 
-    const { url: markdownBlobUrl } = await put(
-      `${url}.md`,
-      fcResponse.data.markdown || '',
-      { access: 'public', allowOverwrite: true },
-    )
-    const { url: htmlBlobUrl } = await put(
-      `${url}.html`,
-      fcResponse.data.html || '',
-      { access: 'public', allowOverwrite: true },
-    )
+    const [{ url: markdownBlobUrl }, { url: htmlBlobUrl }] = await Promise.all([
+      put(`${url}.md`, fcResponse.data.markdown || '', {
+        access: 'public',
+        allowOverwrite: true,
+      }),
+      put(`${url}.html`, fcResponse.data.html || '', {
+        access: 'public',
+        allowOverwrite: true,
+      }),
+    ])
 
     const content: ContentDto = {
       htmlBlobUrl,
