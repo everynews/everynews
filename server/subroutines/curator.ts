@@ -10,8 +10,6 @@ const curators = {
 }
 
 export const curator = async (news: NewsDto): Promise<string[]> => {
-  const queue = new PQueue({ concurrency: 3 })
   const curator: Curator = curators[news.strategy.provider]
-  const urls = await queue.add(() => curator(news))
-  return urls || []
+  return await curator(news)
 }
