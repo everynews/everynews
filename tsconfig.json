@@ -20,7 +20,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ES2017"
+    "target": "es2018"
   },
   "exclude": ["node_modules", ".react-email"],
   "include": [

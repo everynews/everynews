@@ -1,5 +1,6 @@
 import { db } from '@everynews/drizzle'
-import { type ContentDto, ContentDtoSchema, contents } from '@everynews/schema'
+import { type Content, ContentDtoSchema, ContentSchema, contents } from '@everynews/schema'
+import { trackEvent } from '@everynews/server/lib/logsnag'
 import { put } from '@vercel/blob'
 import { eq } from 'drizzle-orm'
 import normalizeUrl from 'normalize-url'
@@ -21,7 +22,7 @@ export const FirecrawlResponseSchema = z.object({
 
 export type FirecrawlResponse = z.infer<typeof FirecrawlResponseSchema>
 
-export const firecrawl = async (source: string): Promise<ContentDto> => {
+export const firecrawl = async (source: string): Promise<Content> => {
   try {
     const url = normalizeUrl(source, {
       stripProtocol: true,
@@ -32,7 +33,30 @@ export const firecrawl = async (source: string): Promise<ContentDto> => {
       where: eq(contents.url, url),
     })
 
-    if (found) return ContentDtoSchema.parse(found)
+    if (found) {
+      await trackEvent({
+        channel: 'firecrawl',
+        event: 'Content Cache Hit',
+        description: `Found cached content for: ${url}`,
+        icon: '💾',
+        tags: {
+          url,
+          source,
+        },
+      })
+      return ContentSchema.parse(found)
+    }
+
+    await trackEvent({
+      channel: 'firecrawl',
+      event: 'Crawl Started',
+      description: `Starting Firecrawl for: ${url}`,
+      icon: '🔥',
+      tags: {
+        url,
+        source,
+      },
+    })
 
     const options = {
       body: JSON.stringify({
@@ -54,6 +78,19 @@ export const firecrawl = async (source: string): Promise<ContentDto> => {
     const data = await response.json()
     const fcResponse = FirecrawlResponseSchema.parse(data)
 
+    await trackEvent({
+      channel: 'firecrawl',
+      event: 'Content Scraped',
+      description: `Successfully scraped content from: ${url}`,
+      icon: '📄',
+      tags: {
+        url,
+        source,
+        has_markdown: String(!!fcResponse.data.markdown),
+        has_html: String(!!fcResponse.data.html),
+      },
+    })
+
     const [{ url: markdownBlobUrl }, { url: htmlBlobUrl }] = await Promise.all([
       put(`${url}.md`, fcResponse.data.markdown || '', {
         access: 'public',
@@ -65,7 +102,7 @@ export const firecrawl = async (source: string): Promise<ContentDto> => {
       }),
     ])
 
-    const content = ContentDtoSchema.parse({
+    const toInsert = ContentDtoSchema.parse({
       htmlBlobUrl,
       markdownBlobUrl,
       title:
@@ -75,10 +112,34 @@ export const firecrawl = async (source: string): Promise<ContentDto> => {
       url,
     })
 
-    await db.insert(contents).values(content).execute()
+    const [content] = await db.insert(contents).values(toInsert).returning();
+
+    await trackEvent({
+      channel: 'firecrawl',
+      event: 'Content Stored',
+      description: `Stored content and blobs for: ${url}`,
+      icon: '✅',
+      tags: {
+        url,
+        source,
+        content_id: content.id,
+        title: content.title,
+      },
+    })
 
     return content
+      
   } catch (error) {
+    await trackEvent({
+      channel: 'firecrawl',
+      event: 'Crawl Failed',
+      description: `Firecrawl failed for: ${source}`,
+      icon: '❌',
+      tags: {
+        url: source,
+        error: String(error),
+      },
+    })
     console.error(`Error in firecrawl for URL ${source}:`, error)
     throw new Error(`Failed to crawl ${source}: ${String(error)}`)
   }
