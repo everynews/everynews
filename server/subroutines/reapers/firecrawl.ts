@@ -79,18 +79,18 @@ export const firecrawl = async (source: string): Promise<ContentDto> => {
     const content = ContentDtoSchema.parse({
       ...fcResponse.data.metadata,
       htmlBlobUrl,
+      language: Array.isArray(fcResponse.data.metadata?.language)
+        ? fcResponse.data.metadata?.language
+        : [fcResponse.data.metadata?.language || 'en'],
       markdownBlobUrl,
+      robots: Array.isArray(fcResponse.data.metadata?.robots)
+        ? fcResponse.data.metadata?.robots
+        : [fcResponse.data.metadata?.robots || 'en'],
       title:
         fcResponse.data.metadata?.title ||
         fcResponse.data.metadata?.ogTitle ||
         url,
       url,
-      language: Array.isArray(fcResponse.data.metadata?.language)
-        ? fcResponse.data.metadata?.language
-        : [fcResponse.data.metadata?.language || 'en'],
-      robots: Array.isArray(fcResponse.data.metadata?.robots)
-        ? fcResponse.data.metadata?.robots
-        : [fcResponse.data.metadata?.robots || 'en'],
     })
 
     await db.insert(contents).values(content).execute()
