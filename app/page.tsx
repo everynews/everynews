@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 const Page = () => (
   <div className='container mx-auto flex h-full flex-col items-center justify-center gap-6 p-4'>
-    <h1 className='text-4xl font-bold'>Everynews</h1>
+    <h1 className='text-4xl font-bold'>every.news</h1>
     <p className='text-muted-foreground'>
       Your daily source for news and updates
     </p>

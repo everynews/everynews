@@ -53,7 +53,7 @@ export const SignIn = () => {
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Welcome to Everynews</DialogTitle>
+            <DialogTitle>Welcome to every.news</DialogTitle>
             <DialogDescription>
               By logging in, you agree to our{' '}
               <Link href='/terms' className='text-blue-500'>

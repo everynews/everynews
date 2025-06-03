@@ -26,7 +26,7 @@ const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
                   src='https://every.news/logo.png'
                   width='128'
                   height='128'
-                  alt='Everynews Logo'
+                  alt='every.news Logo'
                   className='mx-auto'
                 />
               </Section>
@@ -34,7 +34,7 @@ const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
                 className='rounded bg-black px-4 py-2 text-lg font-semibold text-white'
                 href={loginLink}
               >
-                Sign in to Everynews
+                Sign in to every.news
               </Button>
             </Link>
 

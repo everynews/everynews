@@ -6,7 +6,7 @@ const Logo = () => (
   <Image
     priority
     src={favicon}
-    alt='Everynews'
+    alt='every.news'
     width={24}
     height={24}
     className={cn('h-6 w-6')}
