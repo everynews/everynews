@@ -6,7 +6,8 @@ import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver } from 'hono-openapi/zod'
 import type { WithAuth } from '../bindings/auth'
-import { CuratorService } from '../services/curator.service'
+import { curator } from '../subroutines/curator'
+import { reaper } from '../subroutines/reaper'
 
 export const WorkerRouter = new Hono<WithAuth>().post(
   '/',
@@ -30,7 +31,9 @@ export const WorkerRouter = new Hono<WithAuth>().post(
       }),
     )
     for (const newsItem of found) {
-      await CuratorService.get().enqueue(newsItem)
+      const urls = await curator(newsItem)
+      const content = await reaper(urls)
+      console.log({ content, urls })
     }
     return c.json({ ok: true })
   },
