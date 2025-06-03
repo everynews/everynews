@@ -3,7 +3,6 @@ import {
   Button,
   Container,
   Head,
-  Heading,
   Html,
   Img,
   Link,
@@ -12,10 +11,6 @@ import {
   Tailwind,
   Text,
 } from '@react-email/components';
-
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : '';
 
 export const MagicLinkEmail = ({
   loginLink,
@@ -31,9 +26,9 @@ export const MagicLinkEmail = ({
           <Container className="mx-auto my-10 max-w-md rounded border border-gray-200 p-5">
             <Section className="mt-8">
               <Img
-                src={`${baseUrl}/logo.png`}
+                src="https://every.news/logo.png"
                 width="40"
-                height="37"
+                height="40"
                 alt="Everynews Logo"
                 className="mx-auto"
               />
