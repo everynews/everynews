@@ -15,17 +15,29 @@ import { Input } from '@everynews/components/ui/input'
 import { toastNetworkError } from '@everynews/lib/error'
 import Link from 'next/link'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 export const SignIn = () => {
   const [contact, setContact] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    const isGmail = contact.toLowerCase().endsWith('gmail.com')
     if (!contact) return
     try {
       setIsLoading(true)
       await auth.signIn.magicLink({ email: contact })
+      toast.success('Check Your Email', {
+        ...(isGmail && {
+          action: {
+            label: 'Open Gmail',
+            onClick: () => window.open('https://mail.google.com', '_blank')
+          },
+        }),
+      })
+      setIsOpen(false)
     } catch (e) {
       toastNetworkError(e as Error)
     } finally {
@@ -34,9 +46,9 @@ export const SignIn = () => {
   }
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Sign In</Button>
+        <Button onClick={() => setIsOpen(true)}>Sign In</Button>
       </DialogTrigger>
       <DialogContent>
         <form onSubmit={handleSubmit}>
