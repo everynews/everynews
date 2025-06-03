@@ -1,10 +1,5 @@
 import { db } from '@everynews/drizzle'
-import {
-  type ContentDto,
-  NewsSchema,
-  news,
-  type StoryDto,
-} from '@everynews/schema'
+import { type ContentDto, NewsSchema, news } from '@everynews/schema'
 import { WorkerStatusSchema } from '@everynews/schema/worker-status'
 import { and, eq, lt } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -16,7 +11,8 @@ import { reaper } from '../subroutines/reaper'
 import { sage } from '../subroutines/sage'
 
 const findNextRunDateBasedOnSchedule = (schedule: string) => {
-  const { days, hours } = typeof schedule === 'string' ? JSON.parse(schedule) : schedule
+  const { days, hours } =
+    typeof schedule === 'string' ? JSON.parse(schedule) : schedule
   const sortedHours = [...hours].sort((a, b) => a - b)
   const now = new Date()
 
@@ -34,7 +30,6 @@ const findNextRunDateBasedOnSchedule = (schedule: string) => {
 
   return null // no future run within one week
 }
-
 
 export const WorkerRouter = new Hono<WithAuth>().post(
   '/',

@@ -6,7 +6,6 @@ import { Checkbox } from '@everynews/components/ui/checkbox'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -111,7 +110,9 @@ export const CreateNewsForm = () => {
           render={({ field }) => (
             <FormItem className='md:flex md:items-center md:justify-between'>
               <div className='md:w-1/2'>
-                <FormLabel className='text-lg'>How should we call this news?</FormLabel>
+                <FormLabel className='text-lg'>
+                  How should we call this news?
+                </FormLabel>
               </div>
               <div className='md:w-1/2'>
                 <FormControl>
@@ -131,7 +132,9 @@ export const CreateNewsForm = () => {
           render={({ field }) => (
             <FormItem className='md:flex md:items-start md:justify-between'>
               <div className='md:w-1/2'>
-                <FormLabel className='text-lg'>Where should we collect news from?</FormLabel>
+                <FormLabel className='text-lg'>
+                  Where should we collect news from?
+                </FormLabel>
               </div>
               <div className='md:w-1/2'>
                 <FormControl>
@@ -209,7 +212,9 @@ export const CreateNewsForm = () => {
               render={({ field }) => (
                 <FormItem className='md:flex md:items-start md:justify-between'>
                   <div className='md:w-1/2'>
-                    <FormLabel className='text-lg'>What query should we monitor?</FormLabel>
+                    <FormLabel className='text-lg'>
+                      What query should we monitor?
+                    </FormLabel>
                   </div>
                   <div className='md:w-1/2'>
                     <FormControl>
@@ -234,7 +239,9 @@ export const CreateNewsForm = () => {
           render={({ field }) => (
             <FormItem className='md:flex md:items-start md:justify-between'>
               <div className='md:w-1/2'>
-                <FormLabel className='text-lg'>How often should we send you updates?</FormLabel>
+                <FormLabel className='text-lg'>
+                  How often should we send you updates?
+                </FormLabel>
               </div>
               <div className='md:w-1/2'>
                 <FormControl>
@@ -289,7 +296,9 @@ export const CreateNewsForm = () => {
               render={({ field }) => (
                 <FormItem className='md:flex md:items-start md:justify-between'>
                   <div className='md:w-1/2'>
-                    <FormLabel className='text-lg'>How many articles do you want in one news?</FormLabel>
+                    <FormLabel className='text-lg'>
+                      How many articles do you want in one news?
+                    </FormLabel>
                   </div>
                   <div className='md:w-1/2'>
                     <FormControl>
@@ -328,7 +337,9 @@ export const CreateNewsForm = () => {
               render={({ field }) => (
                 <FormItem className='md:flex md:items-start md:justify-between'>
                   <div className='md:w-1/2'>
-                    <FormLabel className='text-lg'>On what schedule should we send you updates?</FormLabel>
+                    <FormLabel className='text-lg'>
+                      On what schedule should we send you updates?
+                    </FormLabel>
                   </div>
                   <div className='md:w-1/2'>
                     <div className='flex flex-wrap gap-8'>
@@ -400,7 +411,9 @@ export const CreateNewsForm = () => {
 
         <FormItem className='md:flex md:items-start md:justify-between'>
           <div className='md:w-1/2'>
-            <FormLabel className='text-lg'>Are there anything else you want to configure? </FormLabel>
+            <FormLabel className='text-lg'>
+              Are there anything else you want to configure?{' '}
+            </FormLabel>
           </div>
           <div className='md:w-1/2'>
             <FormControl>

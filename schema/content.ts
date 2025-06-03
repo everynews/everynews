@@ -1,6 +1,6 @@
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
-import { json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { z } from 'zod'
 import 'zod-openapi/extend'
 

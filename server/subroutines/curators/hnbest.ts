@@ -41,8 +41,7 @@ export const HnBestCurator: Curator = async (
       )
       const item = await HackerNewsStorySchema.parse(await response.json())
       return (
-        item.url ||
-        `https://news.ycombinator.com/item?id=${String(item.id)}`
+        item.url || `https://news.ycombinator.com/item?id=${String(item.id)}`
       )
     }),
   )
