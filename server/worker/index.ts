@@ -1,5 +1,10 @@
 import { db } from '@everynews/drizzle'
-import { type ContentDto, NewsSchema, StoryDto, contents, news } from '@everynews/schema'
+import {
+  type ContentDto,
+  NewsSchema,
+  news,
+  type StoryDto,
+} from '@everynews/schema'
 import { WorkerStatusSchema } from '@everynews/schema/worker-status'
 import { and, eq, lt } from 'drizzle-orm'
 import { Hono } from 'hono'
