@@ -125,10 +125,10 @@ export const CreateNewsForm = () => {
               Cancel
             </Button>
           </Link>
-          <Button type='submit' disabled={isSubmitting}>
-            {isSubmitting && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-            <Save className='mr-2 h-4 w-4' />
-            Create News Item
+          <Button type='submit' disabled={isSubmitting} className='flex gap-1'>
+            {isSubmitting && <Loader2 className='size-4 animate-spin' />}
+            <Save className='size-4' />
+            Create
           </Button>
         </div>
       </form>

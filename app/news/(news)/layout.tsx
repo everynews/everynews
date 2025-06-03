@@ -9,9 +9,9 @@ const NewsLayout = ({ children }: { children: React.ReactNode }) => (
       title='News'
       actions={
         <Link href='/news/create'>
-          <Button>
-            <PlusCircle className='mr-2 h-4 w-4' />
-            Create News Item
+          <Button className='flex gap-1'>
+            <PlusCircle className='size-4' />
+            Create
           </Button>
         </Link>
       }

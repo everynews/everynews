@@ -13,7 +13,7 @@ export const PageHeader = ({ title, className, actions }: PageHeaderProps) => {
   return (
     <div
       className={cn(
-        'flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 border-b',
+        'flex justify-between gap-4 p-4 border-b',
         className,
       )}
     >
