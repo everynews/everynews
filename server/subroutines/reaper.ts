@@ -1,7 +1,8 @@
+import type { ContentDto } from '@everynews/schema'
 import PQueue from 'p-queue'
 import { firecrawl } from './reapers/firecrawl'
 
-export const reaper = async (urls: string[]) => {
+export const reaper = async (urls: string[]): Promise<ContentDto[]> => {
   const queue = new PQueue({ concurrency: 3 })
   const results = await Promise.all(
     urls.map(async (url) => {
