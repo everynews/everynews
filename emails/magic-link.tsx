@@ -12,7 +12,7 @@ import {
   Text,
 } from '@react-email/components'
 
-export const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
+const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
   return (
     <Html>
       <Head />
