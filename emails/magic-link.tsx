@@ -17,7 +17,7 @@ const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
     <Html>
       <Head />
       <Tailwind>
-        <Body className='mx-auto my-auto bg-white px-2 font-sans text-center'>
+        <Body className='mx-auto my-auto bg-white px-2 font-sans'>
           <Preview>Sign in with magic link</Preview>
           <Container className='mx-auto my-10 max-w-md rounded border border-gray-200 p-5'>
             <Link href={loginLink} className='text-blue-600 no-underline'>
