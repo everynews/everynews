@@ -14,6 +14,8 @@
     "@radix-ui/react-switch": "^1.2.5",
     "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/react-tooltip": "^1.2.7",
+    "@react-email/components": "0.0.41",
+    "@react-email/tailwind": "1.0.5",
     "@scalar/hono-api-reference": "^0.9.1",
     "@tanstack/react-query": "^5.79.2",
     "@vercel/blob": "^1.1.1",
@@ -32,8 +34,8 @@
     "normalize-url": "^8.0.1",
     "openai": "^5.0.2",
     "p-queue": "^8.1.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "react-hook-form": "^7.57.0",
     "sonner": "^2.0.5",
     "tailwind-merge": "^3.3.0",
@@ -49,6 +51,7 @@
     "concurrently": "^9.1.2",
     "drizzle-kit": "^0.31.1",
     "postcss": "^8.5.4",
+    "react-email": "^3",
     "tailwindcss": "^4.1.8",
     "tw-animate-css": "^1.3.3"
   },
@@ -62,14 +65,17 @@
     "db:nuke": "drizzle-kit nuke --config ./.config/drizzle.config.ts",
     "db:push": "drizzle-kit push --config ./.config/drizzle.config.ts",
     "db:studio": "drizzle-kit studio --config ./.config/drizzle.config.ts",
-    "dev": "concurrently --kill-others --names 'FE,DB' --prefix-colors 'blue,yellow' 'bun run next:dev' 'bun run db:studio'",
+    "dev": "concurrently --kill-others --names 'FE,DB,EM' --prefix-colors 'blue,yellow,green' 'bun run next:dev' 'bun run db:studio' 'bun run email:dev'",
+    "email:dev": "email dev --port 5678",
     "next:dev": "next dev --turbopack",
     "next:start": "next start",
     "style:check": "bunx biome check --write . --config-path .config/biome.json",
     "tidy": "concurrently --names 'FORMAT,SCHEMA,NEXTJS' --prefix-colors 'blue,yellow,green' 'bun run style:check' 'bun run db:check' 'bun run build'"
   },
   "trustedDependencies": [
-    "@tailwindcss/oxide"
+    "@tailwindcss/oxide",
+    "esbuild",
+    "sharp"
   ],
   "type": "module",
   "version": "0.1.0"
