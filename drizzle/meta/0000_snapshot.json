@@ -6,7 +6,7 @@
   },
   "dialect": "postgresql",
   "enums": {},
-  "id": "3c3e1930-1723-4c7d-9f82-fd1d113e98ba",
+  "id": "4a5b3f90-440b-4cad-ac5e-d01a3e112f4b",
   "policies": {},
   "prevId": "00000000-0000-0000-0000-000000000000",
   "roles": {},
@@ -180,6 +180,81 @@
       "policies": {},
       "schema": "",
       "uniqueConstraints": {}
+    },
+    "public.contents": {
+      "checkConstraints": {},
+      "columns": {
+        "created_at": {
+          "default": "now()",
+          "name": "created_at",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
+        "description": {
+          "name": "description",
+          "notNull": false,
+          "primaryKey": false,
+          "type": "text"
+        },
+        "html_blob_url": {
+          "name": "html_blob_url",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "text"
+        },
+        "id": {
+          "name": "id",
+          "notNull": true,
+          "primaryKey": true,
+          "type": "text"
+        },
+        "language": {
+          "name": "language",
+          "notNull": false,
+          "primaryKey": false,
+          "type": "json"
+        },
+        "markdown_blob_url": {
+          "name": "markdown_blob_url",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "text"
+        },
+        "title": {
+          "name": "title",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "text"
+        },
+        "updated_at": {
+          "default": "now()",
+          "name": "updated_at",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
+        "url": {
+          "name": "url",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "text"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "foreignKeys": {},
+      "indexes": {},
+      "isRLSEnabled": false,
+      "name": "contents",
+      "policies": {},
+      "schema": "",
+      "uniqueConstraints": {
+        "contents_url_unique": {
+          "columns": ["url"],
+          "name": "contents_url_unique",
+          "nullsNotDistinct": false
+        }
+      }
     },
     "public.news": {
       "checkConstraints": {},
@@ -356,6 +431,12 @@
     "public.stories": {
       "checkConstraints": {},
       "columns": {
+        "content_id": {
+          "name": "content_id",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "text"
+        },
         "created_at": {
           "default": "now()",
           "name": "created_at",
@@ -403,6 +484,15 @@
       },
       "compositePrimaryKeys": {},
       "foreignKeys": {
+        "stories_content_id_contents_id_fk": {
+          "columnsFrom": ["content_id"],
+          "columnsTo": ["id"],
+          "name": "stories_content_id_contents_id_fk",
+          "onDelete": "cascade",
+          "onUpdate": "no action",
+          "tableFrom": "stories",
+          "tableTo": "contents"
+        },
         "stories_news_id_news_id_fk": {
           "columnsFrom": ["news_id"],
           "columnsTo": ["id"],
@@ -429,6 +519,12 @@
     "public.subscriptions": {
       "checkConstraints": {},
       "columns": {
+        "channel_id": {
+          "name": "channel_id",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "text"
+        },
         "created_at": {
           "default": "now()",
           "name": "created_at",
@@ -444,12 +540,6 @@
         },
         "news_id": {
           "name": "news_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "text"
-        },
-        "notification_channel_id": {
-          "name": "notification_channel_id",
           "notNull": true,
           "primaryKey": false,
           "type": "text"
@@ -470,6 +560,15 @@
       },
       "compositePrimaryKeys": {},
       "foreignKeys": {
+        "subscriptions_channel_id_channels_id_fk": {
+          "columnsFrom": ["channel_id"],
+          "columnsTo": ["id"],
+          "name": "subscriptions_channel_id_channels_id_fk",
+          "onDelete": "cascade",
+          "onUpdate": "no action",
+          "tableFrom": "subscriptions",
+          "tableTo": "channels"
+        },
         "subscriptions_news_id_news_id_fk": {
           "columnsFrom": ["news_id"],
           "columnsTo": ["id"],
@@ -478,15 +577,6 @@
           "onUpdate": "no action",
           "tableFrom": "subscriptions",
           "tableTo": "news"
-        },
-        "subscriptions_notification_channel_id_channels_id_fk": {
-          "columnsFrom": ["notification_channel_id"],
-          "columnsTo": ["id"],
-          "name": "subscriptions_notification_channel_id_channels_id_fk",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "subscriptions",
-          "tableTo": "channels"
         },
         "subscriptions_user_id_users_id_fk": {
           "columnsFrom": ["user_id"],

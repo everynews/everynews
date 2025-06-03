@@ -52,9 +52,8 @@ export const SignIn = () => {
           </DialogHeader>
           <div className='py-6'>
             <Input
-              id='email'
               type='email'
-              placeholder='elon@twitter.com'
+              placeholder='elon@x.com'
               value={contact}
               onChange={(e) => setContact(e.target.value)}
               required

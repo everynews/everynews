@@ -1,12 +1,14 @@
 import { db } from '@everynews/drizzle'
-import { news, type Strategy } from '@everynews/schema'
+import { type ContentDto, NewsSchema, news } from '@everynews/schema'
 import { WorkerStatusSchema } from '@everynews/schema/worker-status'
-import { runStrategy } from '@everynews/worker'
 import { and, eq, lt } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver } from 'hono-openapi/zod'
 import type { WithAuth } from '../bindings/auth'
+import { curator } from '../subroutines/curator'
+import { reaper } from '../subroutines/reaper'
+import { sage } from '../subroutines/sage'
 
 export const WorkerRouter = new Hono<WithAuth>().post(
   '/',
@@ -24,13 +26,18 @@ export const WorkerRouter = new Hono<WithAuth>().post(
     },
   }),
   async (c) => {
-    const found = await db.query.news.findMany({
-      where: and(eq(news.active, true), lt(news.nextRun, new Date())),
-    })
-    for (const news of found) {
-      const parsedItems = await runStrategy(news.strategy as Strategy)
-      // Do something
+    const found = await NewsSchema.array().parse(
+      await db.query.news.findMany({
+        where: and(eq(news.active, true), lt(news.nextRun, new Date())),
+      }),
+    )
+    const contents: ContentDto[] = []
+    for (const newsItem of found) {
+      const urls = await curator(newsItem)
+      const content: ContentDto[] = await reaper(urls)
+      const stories = await sage(content)
+      contents.push(...content)
     }
-    return c.json({ ok: true })
+    return c.json({ contents })
   },
 )
