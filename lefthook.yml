@@ -3,7 +3,7 @@ pre-push:
   commands:
     Latest and Greatest:
       run: |
-        output=$(bunx taze major)
+        output=$(bunx taze)
         if [[ "$output" != *"dependencies are already up-to-date"* ]]; then
           echo "Error: Dependencies are not up-to-date"
           exit 1

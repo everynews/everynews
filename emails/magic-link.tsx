@@ -20,16 +20,16 @@ const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
         <Body className='mx-auto my-auto bg-white px-2 font-sans text-center'>
           <Preview>Sign in with magic link</Preview>
           <Container className='mx-auto my-10 max-w-md rounded border border-gray-200 p-5'>
-            <Section className='mt-8'>
+            <Link href={loginLink} className='text-blue-600 no-underline'>
+            <Section className='my-8'>
               <Img
                 src='https://every.news/logo.png'
-                width='40'
-                height='40'
+                width='128'
+                height='128'
                 alt='Everynews Logo'
                 className='mx-auto'
               />
             </Section>
-            <Link href={loginLink} className='text-blue-600 no-underline'>
               <Button
                 className='rounded bg-black px-4 py-2 text-lg font-semibold text-white'
                 href={loginLink}
@@ -38,7 +38,7 @@ const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
               </Button>
             </Link>
 
-            <Text className='text-sm text-black'>
+            <Text className='text-sm'>
               If you did not request this, please ignore this email.
             </Text>
           </Container>

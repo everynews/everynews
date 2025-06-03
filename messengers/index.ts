@@ -1,12 +1,27 @@
-export const sendMagicLink = async (
-  data: { email: string; url: string; token: string },
-  request?: Request | undefined,
-): Promise<void> => {
-  console.log(`Request: ${request}`)
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log(`Sending magic link to ${data.email} with URL: ${data.url}`)
-    }, 1000)
-    resolve()
+import { Resend } from 'resend'
+import MagicLinkEmail from '../emails/magic-link'
+
+if (!process.env.RESEND_API_KEY) {
+  throw new Error('RESEND_API_KEY is not defined')
+}
+
+const resend = new Resend(process.env.RESEND_API_KEY)
+
+export const sendMagicLink = async ({
+  email,
+  url,
+}: {
+  email: string
+  url: string
+}): Promise<void> => {
+  const { data, error } = await resend.emails.send({
+    from: 'Everynews <no-reply@app.every.news>',
+    to: [email],
+    subject: 'Sign in to Everynews',
+    react: MagicLinkEmail({ loginLink: url }),
   })
+
+  if (error) {
+    throw new Error(`Failed to send magic link: ${error.message}`)
+  }
 }
