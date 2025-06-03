@@ -1,6 +1,21 @@
 import type { NewsDto } from '@everynews/schema'
 import PQueue from 'p-queue'
+import z from 'zod'
 import type { Curator } from './type'
+
+const HackerNewsStoriesSchema = z.array(z.number())
+
+const HackerNewsStorySchema = z.object({
+  by: z.string(),
+  descendants: z.number(),
+  id: z.number(),
+  kids: z.array(z.number()),
+  score: z.number(),
+  time: z.number(),
+  title: z.string(),
+  type: z.string(),
+  url: z.string().optional(),
+})
 
 export const HnBestCurator: Curator = async (
   news: NewsDto,
@@ -14,20 +29,16 @@ export const HnBestCurator: Curator = async (
     )
   }
 
-  // 2. Fetch the best stories from HackerNews
-  const ids: string[] = await fetch(
+  const ids = await fetch(
     'https://hacker-news.firebaseio.com/v0/beststories.json',
-  ).then((res) => res.json())
+  ).then((res) => HackerNewsStoriesSchema.parse(res.json()))
 
-  // 3. Fetch individual URLs
   const items: string[] = await queue.addAll(
-    ids.map((id: string) => async () => {
-      console.log(`[HnBestCurator] Fetching ${id}`)
+    ids.map((id: number) => async () => {
       const response = await fetch(
         `https://hacker-news.firebaseio.com/v0/item/${id}.json`,
       )
-      const item = await response.json()
-      console.log(`[HnBestCurator] Fetched ${id}`)
+      const item = await HackerNewsStorySchema.parse(response.json())
       return (
         String(item.url) ||
         `https://news.ycombinator.com/item?id=${String(item.id)}`
@@ -35,8 +46,5 @@ export const HnBestCurator: Curator = async (
     }),
   )
 
-  console.log(`Fetched ${ids.length} URLs`)
-
-  // 4. Return the first 3 URLs
-  return items.slice(0, 3)
+  return items
 }
