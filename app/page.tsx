@@ -8,7 +8,7 @@ const Page = () => (
       Your daily source for news and updates
     </p>
     <div>
-      <Link href='/news'>
+      <Link href='/newsletters'>
         <Button>Browse News</Button>
       </Link>
     </div>

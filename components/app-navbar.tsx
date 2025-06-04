@@ -18,10 +18,10 @@ export const AppNavbar = async () => {
         </Link>
         <nav className='flex gap-6'>
           <Link
-            href='/news'
+            href='/newsletters'
             className='flex items-center text-sm font-medium text-muted-foreground'
           >
-            News
+            Newsletters
           </Link>
         </nav>
       </div>

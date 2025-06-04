@@ -21,18 +21,18 @@ import { Switch } from '@everynews/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
-import { cn } from '@everynews/lib/utils'
 import {
   type NewsletterDto,
   NewsletterDtoSchema,
 } from '@everynews/schema/newsletter'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Save } from 'lucide-react'
+import { Save } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { ScalingLoader } from './scaling-loader'
 import { PageHeader } from './ui/page-header'
 
 const STRATEGY_WITH_QUERY = ['exa']
@@ -90,7 +90,7 @@ export const NewsForm = ({
             : { provider: 'hnbest' },
         wait: values.wait,
       }
-      const res = await api.news.$post({ json: apiData })
+      const res = await api.newsletters.$post({ json: apiData })
       if (!res.ok) {
         toast.error('Failed to create news')
         return
@@ -100,7 +100,7 @@ export const NewsForm = ({
           ? `News "${form.watch('name')}" Created.`
           : `News "${form.watch('name')}" Updated.`,
       )
-      router.push('/news')
+      router.push('/newsletters')
       router.refresh()
     } catch (e) {
       toastNetworkError(e as Error)
@@ -483,24 +483,15 @@ export const NewsForm = ({
           </FormItem>
 
           <div className='flex justify-end'>
-            <Link href='/news'>
+            <Link href='/newsletters'>
               <Button type='button' variant='outline' className='mr-2'>
                 Cancel
               </Button>
             </Link>
-            <Button
-              type='submit'
-              disabled={isSubmitting}
-              className='flex gap-1'
-            >
+            <Button type='submit' disabled={isSubmitting} className='flex'>
               <Save className='size-4' />
               {mode === 'create' ? 'Create' : 'Update'}
-              <Loader2
-                className={cn(
-                  'size-4 animate-spin size-0 transition-all',
-                  isSubmitting && 'size-4',
-                )}
-              />
+              <ScalingLoader loading={isSubmitting} />
             </Button>
           </div>
         </form>

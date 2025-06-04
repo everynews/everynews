@@ -8,7 +8,7 @@ const NewsLayout = ({ children }: { children: React.ReactNode }) => (
     <PageHeader
       title='News'
       actions={
-        <Link href='/news/create'>
+        <Link href='/newsletters/create'>
           <Button className='flex gap-1'>
             <PlusCircle className='size-4' />
             Create

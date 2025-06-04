@@ -69,10 +69,10 @@ export const WorkerRouter = new Hono<WithAuth>().post(
 
       await track({
         channel: 'worker',
-        event: `${found.length} News Items Found`,
+        event: `${found.length} Newsletters Found`,
         icon: '📋',
         tags: {
-          news_count: found.length,
+          newsletters_count: found.length,
           type: 'info',
         },
       })
@@ -80,11 +80,11 @@ export const WorkerRouter = new Hono<WithAuth>().post(
       for (const item of found) {
         await track({
           channel: 'worker',
-          event: `Processing News "${item.name}"`,
+          event: `Processing Newsletter "${item.name}"`,
           icon: '⚙️',
           tags: {
-            news_id: item.id,
-            news_name: item.name,
+            newsletter_id: item.id,
+            newsletter_name: item.name,
             strategy_provider: item.strategy.provider,
             type: 'info',
           },
@@ -113,11 +113,11 @@ export const WorkerRouter = new Hono<WithAuth>().post(
         await track({
           channel: 'worker',
           description: `Completed processing: ${item.name} - Found ${stories.length} stories`,
-          event: 'News Item Processed',
+          event: 'Newsletter Processed',
           icon: '✅',
           tags: {
-            news_id: item.id,
-            news_name: item.name,
+            newsletter_id: item.id,
+            newsletter_name: item.name,
             next_run: nextRun?.toISOString() || 'unknown',
             stories_created: stories.length,
             type: 'info',
@@ -129,11 +129,11 @@ export const WorkerRouter = new Hono<WithAuth>().post(
 
       await track({
         channel: 'worker',
-        description: `Worker job completed successfully - processed ${found.length} news items`,
+        description: `Worker job completed successfully - processed ${found.length} newsletters`,
         event: 'Worker Job Completed',
         icon: '🎉',
         tags: {
-          news_processed: found.length,
+          newsletters_processed: found.length,
           type: 'info',
         },
       })

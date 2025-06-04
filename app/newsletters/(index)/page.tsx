@@ -1,5 +1,7 @@
 import { whoami } from '@everynews/auth/session'
+import { DeleteNewsletterPopover } from '@everynews/components/delete-newsletter-popover'
 import { Badge } from '@everynews/components/ui/badge'
+import { Button } from '@everynews/components/ui/button'
 import {
   Table,
   TableBody,
@@ -30,6 +32,7 @@ export default async function NewsPage() {
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead>Status</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -41,8 +44,13 @@ export default async function NewsPage() {
                 {item.active ? 'Active' : 'Inactive'}
               </Badge>
             </TableCell>
-            <TableCell>
-              <Link href={`/news/${item.id}`}>Edit</Link>
+            <TableCell className='flex gap-2'>
+              <Link href={`/news/${item.id}`}>
+                <Button variant='outline' size='sm'>
+                  Edit
+                </Button>
+              </Link>
+              <DeleteNewsletterPopover newsletter={item} />
             </TableCell>
           </TableRow>
         ))}

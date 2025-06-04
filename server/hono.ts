@@ -6,7 +6,7 @@ import { Scalar } from '@scalar/hono-api-reference'
 import { Hono } from 'hono'
 import { generateSpecs } from 'hono-openapi'
 import { ChannelRouter } from './channels'
-import { NewsRouter } from './news'
+import { NewsletterRouter } from './newsletters'
 import { SubscriptionRouter } from './subscriptions'
 import { WorkerRouter } from './worker'
 
@@ -14,7 +14,7 @@ const app = new Hono<WithAuth>()
   .basePath('/api')
   .use('*', authMiddleware)
   .on(['POST', 'GET'], '/auth/*', (c) => auth.handler(c.req.raw))
-  .route('/news', NewsRouter)
+  .route('/newsletters', NewsletterRouter)
   .route('/channels', ChannelRouter)
   .route('/subscriptions', SubscriptionRouter)
   .route('/worker', WorkerRouter)
