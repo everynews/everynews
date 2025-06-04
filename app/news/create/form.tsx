@@ -160,7 +160,9 @@ export const CreateNewsForm = () => {
                             id={`${id}-hnbest-description`}
                             className='text-muted-foreground text-sm'
                           >
-                            Automatically collect popular tech news online. Everynews uses Hacker News Best Stories as the source.
+                            Automatically collect popular tech news online.
+                            Everynews uses Hacker News Best Stories as the
+                            source.
                           </p>
                         </div>
                       </div>
@@ -183,8 +185,8 @@ export const CreateNewsForm = () => {
                             id={`${id}-exa-description`}
                             className='text-muted-foreground text-sm'
                           >
-                            Search on a specific query. Everynews uses Exa AI
-                            to search the web.
+                            Search on a specific query. Everynews uses Exa AI to
+                            search the web.
                           </p>
                         </div>
                       </div>
@@ -312,7 +314,9 @@ export const CreateNewsForm = () => {
                               onClick={() => field.onChange(count)}
                               className='flex-1'
                             >
-                              {count === 1 ? 'Immediately' : `Every ${count} articles`}
+                              {count === 1
+                                ? 'Immediately'
+                                : `Every ${count} articles`}
                             </TabsTrigger>
                           ))}
                         </TabsList>
@@ -408,62 +412,61 @@ export const CreateNewsForm = () => {
               Are there anything else you want to configure?{' '}
             </FormLabel>
           </div>
-          
-            <FormControl>
-            <div className='grid lg:grid-cols-2 gap-4'>
-                <FormField
-                  control={form.control}
-                  name='active'
-                  render={({ field }) => (
-                    <div className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'>
-                      <Switch
-                        id={switchActiveId}
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        className='order-1 h-4 w-6 after:absolute after:inset-0 [&_span]:size-3 data-[state=checked]:[&_span]:translate-x-2 data-[state=checked]:[&_span]:rtl:-translate-x-2'
-                        aria-describedby={`${switchActiveId}-description`}
-                      />
-                      <div className='grid grow gap-2'>
-                        <label htmlFor={switchActiveId}>Active</label>
-                        <p
-                          id={`${switchActiveId}-description`}
-                          className='text-muted-foreground text-sm'
-                        >
-                          We will only gather & send news when the news is
-                          marked active.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                />
 
-                <FormField
-                  control={form.control}
-                  name='isPublic'
-                  render={({ field }) => (
-                    <div className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'>
-                      <Switch
-                        id={switchPublicId}
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        className='order-1 h-4 w-6 after:absolute after:inset-0 [&_span]:size-3 data-[state=checked]:[&_span]:translate-x-2 data-[state=checked]:[&_span]:rtl:-translate-x-2'
-                        aria-describedby={`${switchPublicId}-description`}
-                      />
-                      <div className='grid grow gap-2'>
-                        <label htmlFor={switchPublicId}>Public</label>
-                        <p
-                          id={`${switchPublicId}-description`}
-                          className='text-muted-foreground text-sm'
-                        >
-                          Should others be able to subscribe to this news?
-                        </p>
-                      </div>
+          <FormControl>
+            <div className='grid lg:grid-cols-2 gap-4'>
+              <FormField
+                control={form.control}
+                name='active'
+                render={({ field }) => (
+                  <div className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'>
+                    <Switch
+                      id={switchActiveId}
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className='order-1 h-4 w-6 after:absolute after:inset-0 [&_span]:size-3 data-[state=checked]:[&_span]:translate-x-2 data-[state=checked]:[&_span]:rtl:-translate-x-2'
+                      aria-describedby={`${switchActiveId}-description`}
+                    />
+                    <div className='grid grow gap-2'>
+                      <label htmlFor={switchActiveId}>Active</label>
+                      <p
+                        id={`${switchActiveId}-description`}
+                        className='text-muted-foreground text-sm'
+                      >
+                        We will only gather & send news when the news is marked
+                        active.
+                      </p>
                     </div>
-                  )}
-                />
-              </div>
-            </FormControl>
-          
+                  </div>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='isPublic'
+                render={({ field }) => (
+                  <div className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'>
+                    <Switch
+                      id={switchPublicId}
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className='order-1 h-4 w-6 after:absolute after:inset-0 [&_span]:size-3 data-[state=checked]:[&_span]:translate-x-2 data-[state=checked]:[&_span]:rtl:-translate-x-2'
+                      aria-describedby={`${switchPublicId}-description`}
+                    />
+                    <div className='grid grow gap-2'>
+                      <label htmlFor={switchPublicId}>Public</label>
+                      <p
+                        id={`${switchPublicId}-description`}
+                        className='text-muted-foreground text-sm'
+                      >
+                        Should others be able to subscribe to this news?
+                      </p>
+                    </div>
+                  </div>
+                )}
+              />
+            </div>
+          </FormControl>
         </FormItem>
 
         <div className='flex justify-end'>
