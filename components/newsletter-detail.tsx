@@ -33,6 +33,7 @@ import { useRouter } from 'next/navigation'
 import { useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { PageHeader } from './ui/page-header'
 
 const STRATEGY_WITH_QUERY = ['exa']
 
@@ -47,7 +48,7 @@ const DAYS_OF_WEEK = [
 ] as const
 const HOURS_2_INTERVAL = Array.from({ length: 12 }, (_, i) => i * 2) // 0-22
 
-export const CreateNewsForm = () => {
+export const NewsForm = ({mode, original}: {mode: 'create' | 'edit', original?: NewsletterDto}) => {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const id = useId()
@@ -57,7 +58,7 @@ export const CreateNewsForm = () => {
   const [scheduleDays, setScheduleDays] = useState<string[]>([])
   const [scheduleHours, setScheduleHours] = useState<number[]>([])
 
-  const defaultValues: NewsletterDto = {
+  const createValues: NewsletterDto = {
     active: true,
     isPublic: true,
     name: '',
@@ -66,7 +67,7 @@ export const CreateNewsForm = () => {
   }
 
   const form = useForm<NewsletterDto>({
-    defaultValues,
+    defaultValues: mode === 'create' ? createValues : original,
     resolver: zodResolver(NewsletterDtoSchema),
   })
 
@@ -88,7 +89,7 @@ export const CreateNewsForm = () => {
         toast.error('Failed to create news')
         return
       }
-      toast.success('News Created Successfully')
+      toast.success(mode === 'create' ? `News "${form.watch('name')}" Created.` : `News "${form.watch('name')}" Updated.`)
       router.push('/news')
       router.refresh()
     } catch (e) {
@@ -102,8 +103,10 @@ export const CreateNewsForm = () => {
   const waitType = form.watch('wait.type')
 
   return (
+    <>
+    <PageHeader title={form.watch('name')} />
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 p-4'>
         <FormField
           control={form.control}
           name='name'
@@ -477,10 +480,10 @@ export const CreateNewsForm = () => {
           </Link>
           <Button type='submit' disabled={isSubmitting} className='flex gap-1'>
             <Save className='size-4' />
-            Create
+            {mode === 'create' ? 'Create' : 'Update'}
             <Loader2
               className={cn(
-                'size-4 animate-spin size-0 tr',
+                'size-4 animate-spin size-0 transition-all',
                 isSubmitting && 'size-4',
               )}
             />
@@ -488,5 +491,6 @@ export const CreateNewsForm = () => {
         </div>
       </form>
     </Form>
+    </>
   )
 }

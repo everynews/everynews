@@ -11,6 +11,7 @@ import {
 import { db } from '@everynews/drizzle'
 import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
 import { eq } from 'drizzle-orm'
+import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -39,6 +40,9 @@ export default async function NewsPage() {
               <Badge variant={item.active ? 'default' : 'outline'}>
                 {item.active ? 'Active' : 'Inactive'}
               </Badge>
+            </TableCell>
+            <TableCell>
+              <Link href={`/news/${item.id}`}>Edit</Link>
             </TableCell>
           </TableRow>
         ))}

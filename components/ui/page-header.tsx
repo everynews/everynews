@@ -11,7 +11,7 @@ interface PageHeaderProps {
 
 export const PageHeader = ({ title, className, actions }: PageHeaderProps) => {
   return (
-    <div className={cn('flex justify-between gap-4 p-4 border-b', className)}>
+    <div className={cn('flex justify-between gap-4 my-6 px-4', className)}>
       <div className='space-y-1.5'>
         <h1 className='text-2xl font-bold tracking-tight'>{title}</h1>
       </div>

@@ -1,5 +1,5 @@
-import { CreateNewsForm } from '@everynews/app/news/create/form'
+import { NewsForm } from '@everynews/components/newsletter-detail'
 
-const CreateNewsPage = () => <CreateNewsForm />
+const CreateNewsPage = () => <NewsForm mode="create" />
 
 export default CreateNewsPage
