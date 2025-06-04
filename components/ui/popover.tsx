@@ -6,11 +6,15 @@ import type * as React from 'react'
 
 const Popover = ({
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Root>) => <PopoverPrimitive.Root data-slot='popover' {...props} />
+}: React.ComponentProps<typeof PopoverPrimitive.Root>) => (
+  <PopoverPrimitive.Root data-slot='popover' {...props} />
+)
 
 const PopoverTrigger = ({
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Trigger>) => <PopoverPrimitive.Trigger data-slot='popover-trigger' {...props} />
+}: React.ComponentProps<typeof PopoverPrimitive.Trigger>) => (
+  <PopoverPrimitive.Trigger data-slot='popover-trigger' {...props} />
+)
 
 const PopoverContent = ({
   className,
@@ -36,6 +40,8 @@ const PopoverContent = ({
 
 const PopoverAnchor = ({
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Anchor>) => <PopoverPrimitive.Anchor data-slot='popover-anchor' {...props} />
+}: React.ComponentProps<typeof PopoverPrimitive.Anchor>) => (
+  <PopoverPrimitive.Anchor data-slot='popover-anchor' {...props} />
+)
 
 export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor }
