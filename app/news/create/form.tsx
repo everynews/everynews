@@ -155,16 +155,12 @@ export const CreateNewsForm = () => {
                       />
                       <div className='flex grow items-center gap-3'>
                         <div className='grid grow gap-2'>
-                          <span className='font-medium'>
-                            Hacker News Best Stories
-                          </span>
+                          <span>Popular Tech</span>
                           <p
                             id={`${id}-hnbest-description`}
                             className='text-muted-foreground text-sm'
                           >
-                            Hacker News is a social board where users submit and
-                            vote on technical articles. Best Stories are the top
-                            articles based on user votes.
+                            Automatically collect popular tech news online. Everynews uses Hacker News Best Stories as the source.
                           </p>
                         </div>
                       </div>
@@ -182,13 +178,13 @@ export const CreateNewsForm = () => {
                       />
                       <div className='flex grow items-start gap-3'>
                         <div className='grid grow gap-2'>
-                          <span className='font-medium'>Search Exa AI</span>
+                          <span>Online Search</span>
                           <p
                             id={`${id}-exa-description`}
                             className='text-muted-foreground text-sm'
                           >
-                            Exa is a neural search engine similar to Google's
-                            Search Engine Result Page.
+                            Search on a specific query. Everynews uses Exa AI
+                            to search the web.
                           </p>
                         </div>
                       </div>
@@ -244,7 +240,7 @@ export const CreateNewsForm = () => {
               <div className='md:w-1/2'>
                 <FormControl>
                   <RadioGroup
-                    className='gap-2'
+                    className='gap-2 lg:grid lg:grid-cols-2'
                     defaultValue={field.value}
                     onValueChange={field.onChange}
                   >
@@ -299,7 +295,7 @@ export const CreateNewsForm = () => {
                 <FormItem className='md:flex md:items-start md:justify-between'>
                   <div className='md:w-1/2'>
                     <FormLabel className='text-lg'>
-                      How many articles do you want in one news?
+                      How often do you want to receive updates?
                     </FormLabel>
                   </div>
                   <div className='md:w-1/2'>
@@ -316,7 +312,7 @@ export const CreateNewsForm = () => {
                               onClick={() => field.onChange(count)}
                               className='flex-1'
                             >
-                              {count === 1 ? 'Immediately' : count}
+                              {count === 1 ? 'Immediately' : `Every ${count} articles`}
                             </TabsTrigger>
                           ))}
                         </TabsList>
@@ -406,16 +402,15 @@ export const CreateNewsForm = () => {
         )}
 
         <Separator />
-
-        <FormItem className='md:flex md:items-start md:justify-between'>
-          <div className='md:w-1/2'>
+        <FormItem className='grid lg:grid-cols-2 lg:gap-4'>
+          <div>
             <FormLabel className='text-lg'>
               Are there anything else you want to configure?{' '}
             </FormLabel>
           </div>
-          <div className='md:w-1/2'>
+          
             <FormControl>
-              <div className='space-y-4'>
+            <div className='grid lg:grid-cols-2 gap-4'>
                 <FormField
                   control={form.control}
                   name='active'
@@ -468,7 +463,7 @@ export const CreateNewsForm = () => {
                 />
               </div>
             </FormControl>
-          </div>
+          
         </FormItem>
 
         <div className='flex justify-end'>
