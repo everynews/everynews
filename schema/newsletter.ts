@@ -6,7 +6,7 @@ import { strategySchema } from './strategy'
 import { users } from './user'
 import { WaitSchema } from './wait'
 
-export const newsletter = pgTable('news', {
+export const newsletter = pgTable('newsletter', {
   active: boolean('active').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   id: text('id').primaryKey().$defaultFn(nanoid),
@@ -39,7 +39,7 @@ export const NewsletterSchema = z
     userId: z.coerce.string().openapi({ example: '123' }),
     wait: WaitSchema,
   })
-  .openapi({ ref: 'News' })
+  .openapi({ ref: 'Newsletter' })
 
 export const NewsletterDtoSchema = NewsletterSchema.omit({
   createdAt: true,

@@ -1,5 +1,5 @@
 import { track } from '@everynews/logs'
-import type { News } from '@everynews/schema'
+import type { Newsletter } from '@everynews/schema'
 import { ExaCurator } from './curators/exa'
 import { HnBestCurator } from './curators/hnbest'
 import type { Curator } from './curators/type'
@@ -9,31 +9,31 @@ const curators = {
   hnbest: HnBestCurator,
 }
 
-export const curator = async (news: News): Promise<string[]> => {
+export const curator = async (newsletter: Newsletter): Promise<string[]> => {
   try {
     await track({
       channel: 'curator',
-      event: `Curating "${news.name}"`,
+      event: `Curating "${newsletter.name}"`,
       icon: '🎯',
       tags: {
-        news_id: news.id,
-        news_name: news.name,
-        provider: news.strategy.provider,
+        newsletter_id: newsletter.id,
+        newsletter_name: newsletter.name,
+        provider: newsletter.strategy.provider,
         type: 'info',
       },
     })
 
-    const curator: Curator = curators[news.strategy.provider]
-    const urls = await curator(news)
+    const curator: Curator = curators[newsletter.strategy.provider]
+    const urls = await curator(newsletter)
 
     await track({
       channel: 'curator',
-      event: `Curated "${news.name}", Found ${urls.length} URLs`,
+      event: `Curated "${newsletter.name}", Found ${urls.length} URLs`,
       icon: '✅',
       tags: {
-        news_id: news.id,
-        news_name: news.name,
-        provider: news.strategy.provider,
+        newsletter_id: newsletter.id,
+        newsletter_name: newsletter.name,
+        provider: newsletter.strategy.provider,
         type: 'info',
         urls_found: urls.length,
       },
@@ -43,13 +43,13 @@ export const curator = async (news: News): Promise<string[]> => {
   } catch (error) {
     await track({
       channel: 'curator',
-      event: `Curating "${news.name}" Failed`,
+      event: `Curating "${newsletter.name}" Failed`,
       icon: '❌',
       tags: {
         error: String(error),
-        news_id: news.id,
-        news_name: news.name,
-        provider: news.strategy.provider,
+        newsletter_id: newsletter.id,
+        newsletter_name: newsletter.name,
+        provider: newsletter.strategy.provider,
         type: 'error',
       },
     })
