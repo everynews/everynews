@@ -12,17 +12,16 @@ import {
   FormMessage,
 } from '@everynews/components/ui/form'
 import { Input } from '@everynews/components/ui/input'
-import { Label } from '@everynews/components/ui/label'
 import {
   RadioGroup,
   RadioGroupItem,
 } from '@everynews/components/ui/radio-group'
 import { Separator } from '@everynews/components/ui/separator'
-import { toast } from '@everynews/components/ui/sonner'
 import { Switch } from '@everynews/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
+import { cn } from '@everynews/lib/utils'
 import {
   type NewsletterDto,
   NewsletterDtoSchema,
@@ -33,6 +32,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 const STRATEGY_WITH_QUERY = ['exa']
 
@@ -143,16 +143,15 @@ export const CreateNewsForm = () => {
                     defaultValue={field.value}
                     onValueChange={field.onChange}
                   >
-                    {/* Hacker News */}
                     <label
                       htmlFor={`${id}-hnbest`}
-                      className='cursor-pointer border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'
+                      className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'
                     >
                       <RadioGroupItem
                         value='hnbest'
                         id={`${id}-hnbest`}
                         aria-describedby={`${id}-hnbest-description`}
-                        className='order-1 after:absolute after:inset-0'
+                        className='order-1 after:absolute after:inset-0 cursor-pointer'
                       />
                       <div className='flex grow items-center gap-3'>
                         <div className='grid grow gap-2'>
@@ -171,16 +170,15 @@ export const CreateNewsForm = () => {
                       </div>
                     </label>
 
-                    {/* Exa */}
                     <label
                       htmlFor={`${id}-exa`}
-                      className='cursor-pointer border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'
+                      className=' border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'
                     >
                       <RadioGroupItem
                         value='exa'
                         id={`${id}-exa`}
                         aria-describedby={`${id}-exa-description`}
-                        className='order-1 after:absolute after:inset-0'
+                        className='order-1 after:absolute after:inset-0 cursor-pointer'
                       />
                       <div className='flex grow items-start gap-3'>
                         <div className='grid grow gap-2'>
@@ -250,9 +248,12 @@ export const CreateNewsForm = () => {
                     defaultValue={field.value}
                     onValueChange={field.onChange}
                   >
-                    <div className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'>
+                    <label
+                      htmlFor={`${id}-count`}
+                      className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none cursor-pointer'
+                    >
                       <div className='grid grow gap-2'>
-                        <Label htmlFor={`${id}-count`}>Based on Count</Label>
+                        <span>Based on Count</span>
                         <p className='text-muted-foreground text-sm'>
                           Send me updates only when there are enough news
                           collected
@@ -261,14 +262,15 @@ export const CreateNewsForm = () => {
                       <RadioGroupItem
                         value='count'
                         id={`${id}-count`}
-                        className='order-1'
+                        className='order-1 cursor-pointer'
                       />
-                    </div>
-                    <div className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'>
+                    </label>
+                    <label
+                      htmlFor={`${id}-schedule`}
+                      className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none cursor-pointer'
+                    >
                       <div className='grid grow gap-2'>
-                        <Label htmlFor={`${id}-schedule`}>
-                          Based on Schedule
-                        </Label>
+                        <span>Based on Schedule</span>
                         <p className='text-muted-foreground text-sm'>
                           Send me updates based on periodic schedule
                         </p>
@@ -276,9 +278,9 @@ export const CreateNewsForm = () => {
                       <RadioGroupItem
                         value='schedule'
                         id={`${id}-schedule`}
-                        className='order-1'
+                        className='order-1 cursor-pointer'
                       />
-                    </div>
+                    </label>
                   </RadioGroup>
                 </FormControl>
                 <FormMessage />
@@ -307,14 +309,14 @@ export const CreateNewsForm = () => {
                         className='w-full'
                       >
                         <TabsList className='flex w-full'>
-                          {[10, 20, 30].map((count) => (
+                          {[1, 10, 20].map((count) => (
                             <TabsTrigger
                               key={count}
                               value={count.toString()}
                               onClick={() => field.onChange(count)}
                               className='flex-1'
                             >
-                              {count}
+                              {count === 1 ? 'Immediately' : count}
                             </TabsTrigger>
                           ))}
                         </TabsList>
@@ -342,10 +344,8 @@ export const CreateNewsForm = () => {
                     </FormLabel>
                   </div>
                   <div className='md:w-1/2'>
-                    <div className='flex flex-wrap gap-8'>
-                      {/* Days */}
-                      <div className='space-y-2'>
-                        <Label className='font-medium'>Days</Label>
+                    <div className='grid grid-cols-2 gap-8'>
+                      <div className='flex flex-col gap-2'>
                         {DAYS_OF_WEEK.map((day) => (
                           <div key={day} className='flex items-center gap-2'>
                             <Checkbox
@@ -364,14 +364,12 @@ export const CreateNewsForm = () => {
                                 )
                               }}
                             />
-                            <Label htmlFor={`${id}-day-${day}`}>{day}</Label>
+                            <label htmlFor={`${id}-day-${day}`}>{day}</label>
                           </div>
                         ))}
                       </div>
 
-                      {/* Hours */}
-                      <div className='space-y-2'>
-                        <Label className='font-medium'>Hours</Label>
+                      <div className='flex flex-col gap-2'>
                         <div className='grid grid-cols-2 gap-2'>
                           {HOURS_2_INTERVAL.map((h) => (
                             <div key={h} className='flex items-center gap-2'>
@@ -391,9 +389,9 @@ export const CreateNewsForm = () => {
                                   )
                                 }}
                               />
-                              <Label
+                              <label
                                 htmlFor={`${id}-hour-${h}`}
-                              >{`${h.toString().padStart(2, '0')}:00`}</Label>
+                              >{`${h % 12 === 0 ? 12 : h % 12} ${h < 12 ? 'AM' : 'PM'}`}</label>
                             </div>
                           ))}
                         </div>
@@ -431,7 +429,7 @@ export const CreateNewsForm = () => {
                         aria-describedby={`${switchActiveId}-description`}
                       />
                       <div className='grid grow gap-2'>
-                        <Label htmlFor={switchActiveId}>Active</Label>
+                        <label htmlFor={switchActiveId}>Active</label>
                         <p
                           id={`${switchActiveId}-description`}
                           className='text-muted-foreground text-sm'
@@ -457,7 +455,7 @@ export const CreateNewsForm = () => {
                         aria-describedby={`${switchPublicId}-description`}
                       />
                       <div className='grid grow gap-2'>
-                        <Label htmlFor={switchPublicId}>Public</Label>
+                        <label htmlFor={switchPublicId}>Public</label>
                         <p
                           id={`${switchPublicId}-description`}
                           className='text-muted-foreground text-sm'
@@ -480,9 +478,14 @@ export const CreateNewsForm = () => {
             </Button>
           </Link>
           <Button type='submit' disabled={isSubmitting} className='flex gap-1'>
-            {isSubmitting && <Loader2 className='size-4 animate-spin' />}
             <Save className='size-4' />
             Create
+            <Loader2
+              className={cn(
+                'size-4 animate-spin size-0 tr',
+                isSubmitting && 'size-4',
+              )}
+            />
           </Button>
         </div>
       </form>

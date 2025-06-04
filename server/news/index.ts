@@ -103,7 +103,7 @@ export const NewsRouter = new Hono<WithAuth>()
   .post(
     '/',
     describeRoute({
-      description: 'Create News',
+      description: 'Create Newsletter',
       responses: {
         200: {
           content: {
@@ -111,7 +111,7 @@ export const NewsRouter = new Hono<WithAuth>()
               schema: resolver(NewsletterSchema),
             },
           },
-          description: 'Create News',
+          description: 'Create Newsletter',
         },
       },
     }),
