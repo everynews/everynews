@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@everynews/components/ui/table'
-import { NewsSchema } from '@everynews/schema/news'
+import { NewsletterSchema } from '@everynews/schema/newsletter'
 import { unauthorized } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -27,7 +27,7 @@ export default async function NewsPage() {
     const data: { error: string } = await res.json()
     throw new Error(data.error)
   }
-  const news = NewsSchema.array().parse(await res.json())
+  const news = NewsletterSchema.array().parse(await res.json())
   return (
     <Table>
       <TableHeader>

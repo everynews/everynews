@@ -1,7 +1,7 @@
 import { api } from '@everynews/app/api'
 import { EditNewsForm } from '@everynews/app/news/edit/[id]/form'
 import { toastNetworkError } from '@everynews/lib/error'
-import { type News, NewsSchema } from '@everynews/schema/news'
+import { NewsletterSchema } from '@everynews/schema/newsletter'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 
@@ -25,7 +25,7 @@ export default async function EditNewsPage({
     if (!newsItems) {
       notFound()
     }
-    const news: News = NewsSchema.parse(newsItems)
+    const news = NewsletterSchema.parse(newsItems)
     return (
       <Suspense fallback={<div>Loading...</div>}>
         <EditNewsForm news={news} />

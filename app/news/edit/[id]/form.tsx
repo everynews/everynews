@@ -13,8 +13,11 @@ import {
 } from '@everynews/components/ui/form'
 import { Input } from '@everynews/components/ui/input'
 import { toastNetworkError } from '@everynews/lib/error'
-import type { News } from '@everynews/schema/news'
-import { type NewsDto, NewsDtoSchema } from '@everynews/schema/news'
+import {
+  type Newsletter,
+  type NewsletterDto,
+  NewsletterDtoSchema,
+} from '@everynews/schema/newsletter'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save } from 'lucide-react'
 import Link from 'next/link'
@@ -23,7 +26,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-export const EditNewsForm = ({ news }: { news: News }) => {
+export const EditNewsForm = ({ news }: { news: Newsletter }) => {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -41,10 +44,10 @@ export const EditNewsForm = ({ news }: { news: News }) => {
         value: Number(news.wait.value),
       },
     },
-    resolver: zodResolver(NewsDtoSchema),
+    resolver: zodResolver(NewsletterDtoSchema),
   })
 
-  const onSubmit = async (values: NewsDto) => {
+  const onSubmit = async (values: NewsletterDto) => {
     setIsSubmitting(true)
     try {
       const res = await api.news[':id'].$put({

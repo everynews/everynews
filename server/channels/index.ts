@@ -45,7 +45,6 @@ export const ChannelRouter = new Hono<WithAuth>()
         .select()
         .from(channels)
         .where(eq(channels.userId, user.id))
-        .execute()
 
       await track({
         channel: 'channels',
@@ -101,7 +100,7 @@ export const ChannelRouter = new Hono<WithAuth>()
           type,
           userId: user.id,
         })
-        .execute()
+        .returning()
 
       await track({
         channel: 'channels',
@@ -152,7 +151,7 @@ export const ChannelRouter = new Hono<WithAuth>()
       const result = await db
         .delete(channels)
         .where(and(eq(channels.id, id), eq(channels.userId, user.id)))
-        .execute()
+        .returning()
 
       await track({
         channel: 'channels',

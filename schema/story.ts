@@ -2,7 +2,7 @@ import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
 import { json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { z } from 'zod'
-import { news } from './news'
+import { newsletter } from './newsletter'
 import 'zod-openapi/extend'
 import { contents } from './content'
 
@@ -15,7 +15,7 @@ export const stories = pgTable('stories', {
   keyFindings: json('key_findings'),
   newsId: text('news_id')
     .notNull()
-    .references(() => news.id, { onDelete: 'cascade' }),
+    .references(() => newsletter.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   url: text('url').notNull().unique(),

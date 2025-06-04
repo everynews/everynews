@@ -1,8 +1,11 @@
 import { db } from '@everynews/drizzle'
 import { nanoid } from '@everynews/lib/id'
 import { track } from '@everynews/logs'
-import { news } from '@everynews/schema'
-import { NewsDtoSchema, NewsSchema } from '@everynews/schema/news'
+import { newsletter } from '@everynews/schema'
+import {
+  NewsletterDtoSchema,
+  NewsletterSchema,
+} from '@everynews/schema/newsletter'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -20,7 +23,7 @@ export const NewsRouter = new Hono<WithAuth>()
         200: {
           content: {
             'application/json': {
-              schema: resolver(NewsSchema.array()),
+              schema: resolver(NewsletterSchema.array()),
             },
           },
           description: 'Get All News',
@@ -42,7 +45,7 @@ export const NewsRouter = new Hono<WithAuth>()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const result = await db.select().from(news).execute()
+      const result = await db.select().from(newsletter)
 
       await track({
         channel: 'news',
@@ -67,7 +70,7 @@ export const NewsRouter = new Hono<WithAuth>()
         200: {
           content: {
             'application/json': {
-              schema: resolver(NewsSchema),
+              schema: resolver(NewsletterSchema),
             },
           },
           description: 'Get News by ID',
@@ -79,9 +82,8 @@ export const NewsRouter = new Hono<WithAuth>()
 
       const result = await db
         .select()
-        .from(news)
-        .where(eq(news.id, id))
-        .execute()
+        .from(newsletter)
+        .where(eq(newsletter.id, id))
 
       await track({
         channel: 'news',
@@ -106,14 +108,14 @@ export const NewsRouter = new Hono<WithAuth>()
         200: {
           content: {
             'application/json': {
-              schema: resolver(NewsSchema),
+              schema: resolver(NewsletterSchema),
             },
           },
           description: 'Create News',
         },
       },
     }),
-    validator('json', NewsDtoSchema),
+    validator('json', NewsletterDtoSchema),
     async (c) => {
       const { name, strategy, wait, isPublic } = await c.req.json()
       const user = c.get('user')
@@ -129,7 +131,7 @@ export const NewsRouter = new Hono<WithAuth>()
 
       const newsId = nanoid()
       const inserted = await db
-        .insert(news)
+        .insert(newsletter)
         .values({
           id: newsId,
           isPublic,
@@ -138,7 +140,7 @@ export const NewsRouter = new Hono<WithAuth>()
           userId: user.id,
           wait,
         })
-        .execute()
+        .returning()
 
       await track({
         channel: 'news',
@@ -166,18 +168,21 @@ export const NewsRouter = new Hono<WithAuth>()
         200: {
           content: {
             'application/json': {
-              schema: resolver(NewsSchema),
+              schema: resolver(NewsletterSchema),
             },
           },
           description: 'Delete News by ID',
         },
       },
     }),
-    validator('json', NewsDtoSchema),
+    validator('json', NewsletterDtoSchema),
     async (c) => {
       const { id } = c.req.param()
 
-      const result = await db.delete(news).where(eq(news.id, id)).execute()
+      const result = await db
+        .delete(newsletter)
+        .where(eq(newsletter.id, id))
+        .returning()
 
       await track({
         channel: 'news',
@@ -201,23 +206,23 @@ export const NewsRouter = new Hono<WithAuth>()
         200: {
           content: {
             'application/json': {
-              schema: resolver(NewsSchema),
+              schema: resolver(NewsletterSchema),
             },
           },
           description: 'Update News by ID',
         },
       },
     }),
-    validator('json', NewsDtoSchema),
+    validator('json', NewsletterDtoSchema),
     async (c) => {
       const { id } = c.req.param()
       const request = await c.req.json()
 
       const result = await db
-        .update(news)
+        .update(newsletter)
         .set({ ...request })
-        .where(eq(news.id, id))
-        .execute()
+        .where(eq(newsletter.id, id))
+        .returning()
 
       await track({
         channel: 'news',

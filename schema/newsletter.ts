@@ -6,7 +6,7 @@ import { strategySchema } from './strategy'
 import { users } from './user'
 import { WaitSchema } from './wait'
 
-export const news = pgTable('news', {
+export const newsletter = pgTable('news', {
   active: boolean('active').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   id: text('id').primaryKey().$defaultFn(nanoid),
@@ -22,7 +22,7 @@ export const news = pgTable('news', {
   wait: json('wait').notNull(),
 })
 
-export const NewsSchema = z
+export const NewsletterSchema = z
   .object({
     active: z.coerce.boolean().openapi({ example: true }),
     createdAt: z.coerce.date().openapi({ example: new Date() }),
@@ -41,7 +41,7 @@ export const NewsSchema = z
   })
   .openapi({ ref: 'News' })
 
-export const NewsDtoSchema = NewsSchema.omit({
+export const NewsletterDtoSchema = NewsletterSchema.omit({
   createdAt: true,
   id: true,
   lastRun: true,
@@ -50,5 +50,5 @@ export const NewsDtoSchema = NewsSchema.omit({
   userId: true,
 })
 
-export type News = z.infer<typeof NewsSchema>
-export type NewsDto = z.infer<typeof NewsDtoSchema>
+export type Newsletter = z.infer<typeof NewsletterSchema>
+export type NewsletterDto = z.infer<typeof NewsletterDtoSchema>

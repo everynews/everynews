@@ -1,6 +1,6 @@
 import { db } from '@everynews/drizzle'
 import { track } from '@everynews/logs'
-import { news, subscriptions } from '@everynews/schema'
+import { newsletter, subscriptions } from '@everynews/schema'
 import {
   SubscriptionDtoSchema,
   SubscriptionSchema,
@@ -63,8 +63,8 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         })
         return c.json({ error: 'Missing newsId or channelId' }, 400)
       }
-      const found = await db.query.news.findFirst({
-        where: eq(news.id, newsId),
+      const found = await db.query.newsletter.findFirst({
+        where: eq(newsletter.id, newsId),
       })
       if (!found || (!found.isPublic && found.userId !== user.id)) {
         await track({
@@ -92,7 +92,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
           newsId,
           userId: user.id,
         })
-        .execute()
+        .returning()
 
       await track({
         channel: 'subscriptions',

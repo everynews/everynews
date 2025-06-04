@@ -3,7 +3,7 @@ import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { channels } from './channel'
-import { news } from './news'
+import { newsletter } from './newsletter'
 import { users } from './user'
 
 export const subscriptions = pgTable('subscriptions', {
@@ -14,7 +14,7 @@ export const subscriptions = pgTable('subscriptions', {
   id: text('id').primaryKey().$defaultFn(nanoid),
   newsId: text('news_id')
     .notNull()
-    .references(() => news.id, { onDelete: 'cascade' }),
+    .references(() => newsletter.id, { onDelete: 'cascade' }),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   userId: text('user_id')
     .notNull()

@@ -1,6 +1,6 @@
 import { db } from '@everynews/drizzle'
 import { track } from '@everynews/logs'
-import { type Content, NewsSchema, news } from '@everynews/schema'
+import { type Content, NewsletterSchema, newsletter } from '@everynews/schema'
 import { WorkerStatusSchema } from '@everynews/schema/worker-status'
 import { and, eq, lt } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -58,9 +58,12 @@ export const WorkerRouter = new Hono<WithAuth>().post(
         },
       })
 
-      const found = await NewsSchema.array().parse(
-        await db.query.news.findMany({
-          where: and(eq(news.active, true), lt(news.nextRun, new Date())),
+      const found = NewsletterSchema.array().parse(
+        await db.query.newsletter.findMany({
+          where: and(
+            eq(newsletter.active, true),
+            lt(newsletter.nextRun, new Date()),
+          ),
         }),
       )
 
@@ -95,18 +98,16 @@ export const WorkerRouter = new Hono<WithAuth>().post(
         if (item.wait.type === 'count') {
           nextRun = new Date(Date.now() + 60 * 60 * 1000)
           await db
-            .update(news)
+            .update(newsletter)
             .set({ nextRun })
-            .where(eq(news.id, item.id))
-            .execute()
+            .where(eq(newsletter.id, item.id))
         }
         if (item.wait.type === 'schedule') {
           nextRun = findNextRunDateBasedOnSchedule(item.wait.value)
           await db
-            .update(news)
+            .update(newsletter)
             .set({ nextRun })
-            .where(eq(news.id, item.id))
-            .execute()
+            .where(eq(newsletter.id, item.id))
         }
 
         await track({

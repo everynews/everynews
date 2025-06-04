@@ -23,16 +23,16 @@ import { Switch } from '@everynews/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
-import { type NewsDto, NewsDtoSchema } from '@everynews/schema/news'
+import {
+  type NewsletterDto,
+  NewsletterDtoSchema,
+} from '@everynews/schema/newsletter'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, Save } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import type { z } from 'zod'
-
-type CreateFormValues = z.infer<typeof NewsDtoSchema>
 
 const STRATEGY_WITH_QUERY = ['exa']
 
@@ -57,7 +57,7 @@ export const CreateNewsForm = () => {
   const [scheduleDays, setScheduleDays] = useState<string[]>([])
   const [scheduleHours, setScheduleHours] = useState<number[]>([])
 
-  const defaultValues: CreateFormValues = {
+  const defaultValues: NewsletterDto = {
     active: true,
     isPublic: true,
     name: '',
@@ -65,15 +65,15 @@ export const CreateNewsForm = () => {
     wait: { type: 'count', value: 10 },
   }
 
-  const form = useForm<CreateFormValues>({
+  const form = useForm<NewsletterDto>({
     defaultValues,
-    resolver: zodResolver(NewsDtoSchema),
+    resolver: zodResolver(NewsletterDtoSchema),
   })
 
-  const onSubmit = async (values: CreateFormValues) => {
+  const onSubmit = async (values: NewsletterDto) => {
     setIsSubmitting(true)
     try {
-      const apiData: NewsDto = {
+      const apiData: NewsletterDto = {
         active: values.active,
         isPublic: values.isPublic,
         name: values.name,
