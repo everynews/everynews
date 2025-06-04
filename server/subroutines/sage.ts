@@ -2,7 +2,7 @@ import { db } from '@everynews/drizzle'
 import { track } from '@everynews/logs'
 import {
   type Content,
-  type News,
+  type Newsletter,
   type Story,
   StorySchema,
   stories,
@@ -42,8 +42,6 @@ Key finding 2
 <KEYFINDING>
 Key finding 3
 </KEYFINDING>
-
-And so on.
 `
 
 const parseResponse = (
@@ -77,7 +75,7 @@ export const summarize = async ({
   news,
 }: {
   content: Content
-  news: News
+  news: Newsletter
 }): Promise<Story | null> => {
   const url = normalizeUrl(content.url, {
     stripProtocol: true,
@@ -176,7 +174,7 @@ export const sage = async ({
   news,
 }: {
   contents: Content[]
-  news: News
+  news: Newsletter
 }): Promise<Story[]> => {
   try {
     await track({

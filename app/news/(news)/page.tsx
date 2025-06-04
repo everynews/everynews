@@ -1,4 +1,3 @@
-import { serverApi } from '@everynews/app/api/server'
 import { whoami } from '@everynews/auth/session'
 import { Badge } from '@everynews/components/ui/badge'
 import {
@@ -9,25 +8,21 @@ import {
   TableHeader,
   TableRow,
 } from '@everynews/components/ui/table'
-import { NewsletterSchema } from '@everynews/schema/newsletter'
+import { db } from '@everynews/drizzle'
+import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
+import { eq } from 'drizzle-orm'
 import { unauthorized } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
 export default async function NewsPage() {
   const user = await whoami()
-
-  if (!user) {
-    return unauthorized()
-  }
-
-  const api = await serverApi()
-  const res = await api.news.$get()
-  if (!res.ok) {
-    const data: { error: string } = await res.json()
-    throw new Error(data.error)
-  }
-  const news = NewsletterSchema.array().parse(await res.json())
+  if (!user) return unauthorized()
+  const res = await db
+    .select()
+    .from(newsletter)
+    .where(eq(newsletter.userId, user.id))
+  const news = NewsletterSchema.array().parse(res)
   return (
     <Table>
       <TableHeader>

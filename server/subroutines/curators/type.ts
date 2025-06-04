@@ -1,3 +1,3 @@
-import type { NewsDto } from '@everynews/schema'
+import type { Newsletter } from '@everynews/schema'
 
-export type Curator = (news: NewsDto) => Promise<string[]>
+export type Curator = (newsletter: Newsletter) => Promise<string[]>
