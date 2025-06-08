@@ -38,32 +38,7 @@ export const firecrawl = async (source: string): Promise<Content> => {
       where: eq(contents.url, url),
     })
 
-    if (found) {
-      await track({
-        channel: 'firecrawl',
-        description: url,
-        event: 'Content Cache Hit',
-        icon: '💾',
-        tags: {
-          source,
-          type: 'info',
-          url,
-        },
-      })
-      return ContentSchema.parse(found)
-    }
-
-    await track({
-      channel: 'firecrawl',
-      description: url,
-      event: 'Crawl Started',
-      icon: '🔥',
-      tags: {
-        source,
-        type: 'info',
-        url,
-      },
-    })
+    if (found) return ContentSchema.parse(found)
 
     const options = {
       body: JSON.stringify({
@@ -84,20 +59,6 @@ export const firecrawl = async (source: string): Promise<Content> => {
     }
     const data = await response.json()
     const fcResponse = FirecrawlResponseSchema.parse(data)
-
-    await track({
-      channel: 'firecrawl',
-      description: url,
-      event: 'Content Scraped',
-      icon: '📄',
-      tags: {
-        has_html: String(!!fcResponse.data.html),
-        has_markdown: String(!!fcResponse.data.markdown),
-        source,
-        type: 'info',
-        url,
-      },
-    })
 
     const [{ url: markdownBlobUrl }, { url: htmlBlobUrl }] = await Promise.all([
       put(`${url}.md`, fcResponse.data.markdown || '', {
@@ -125,7 +86,7 @@ export const firecrawl = async (source: string): Promise<Content> => {
     await track({
       channel: 'firecrawl',
       description: url,
-      event: 'Content Stored',
+      event: 'Firecrawled',
       icon: '✅',
       tags: {
         content_id: content.id,
@@ -137,13 +98,12 @@ export const firecrawl = async (source: string): Promise<Content> => {
         url,
       },
     })
-
     return content
   } catch (error) {
     await track({
       channel: 'firecrawl',
       description: source,
-      event: 'Crawl Failed',
+      event: 'Firecrawl Failed',
       icon: '❌',
       tags: {
         error: String(error),
