@@ -6,7 +6,6 @@ import 'zod-openapi/extend'
 
 export const contents = pgTable('contents', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  description: text('description'),
   htmlBlobUrl: text('html_blob_url').notNull(),
   id: text('id').primaryKey().$defaultFn(nanoid),
   markdownBlobUrl: text('markdown_blob_url').notNull(),
@@ -18,7 +17,6 @@ export const contents = pgTable('contents', {
 export const ContentSchema = z
   .object({
     createdAt: z.coerce.date().openapi({ example: new Date() }),
-    description: z.string().nullish().openapi({ example: 'Description' }),
     htmlBlobUrl: z.string().openapi({ example: 'articles/example.com.html' }),
     id: z.coerce.string().openapi({ example: '123' }),
     markdownBlobUrl: z.string().openapi({ example: 'articles/example.com.md' }),
