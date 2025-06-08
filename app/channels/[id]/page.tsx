@@ -1,6 +1,6 @@
 import { whoami } from '@everynews/auth/session'
 import { ChannelForm } from '@everynews/components/channel-detail'
-import { db } from '@everynews/drizzle'
+import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { eq } from 'drizzle-orm'
 import { notFound, unauthorized } from 'next/navigation'

@@ -11,7 +11,7 @@ import type { Channel } from '@everynews/schema/channel'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { ScalingLoader } from './scaling-loader'
+import { SubmitButton } from './submit-button'
 
 export const DeleteChannelPopover = ({ channel }: { channel: Channel }) => {
   const [open, setOpen] = useState(false)
@@ -51,15 +51,14 @@ export const DeleteChannelPopover = ({ channel }: { channel: Channel }) => {
           <Button variant='outline' size='sm' onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button
+          <SubmitButton
             variant='destructive'
             size='sm'
             onClick={handleDelete}
-            disabled={loading}
+            loading={loading}
           >
             Delete
-            <ScalingLoader loading={loading} />
-          </Button>
+          </SubmitButton>
         </footer>
       </PopoverContent>
     </Popover>

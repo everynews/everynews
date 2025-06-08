@@ -11,7 +11,7 @@ import type { Newsletter } from '@everynews/schema/newsletter'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { ScalingLoader } from './scaling-loader'
+import { SubmitButton } from './submit-button'
 
 export const DeleteNewsletterPopover = ({
   newsletter,
@@ -55,15 +55,15 @@ export const DeleteNewsletterPopover = ({
           <Button variant='outline' size='sm' onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button
+          <SubmitButton
             variant='destructive'
             size='sm'
             onClick={handleDelete}
             disabled={loading}
+            loading={loading}
           >
             Delete
-            <ScalingLoader loading={loading} />
-          </Button>
+          </SubmitButton>
         </footer>
       </PopoverContent>
     </Popover>

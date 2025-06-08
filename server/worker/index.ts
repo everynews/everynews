@@ -1,4 +1,4 @@
-import { db } from '@everynews/drizzle'
+import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
 import { type Content, NewsletterSchema, newsletter } from '@everynews/schema'
 import { WorkerStatusSchema } from '@everynews/schema/worker-status'

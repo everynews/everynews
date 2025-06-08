@@ -1,12 +1,14 @@
-import { db } from '@everynews/drizzle'
+import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
-import { channels } from '@everynews/schema'
+import { sendChannelVerification } from '@everynews/messengers'
+import { channels, channelVerifications } from '@everynews/schema'
 import { ChannelDtoSchema, ChannelSchema } from '@everynews/schema/channel'
 import { authMiddleware } from '@everynews/server/middleware/auth'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, gt } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
+import { z } from 'zod'
 import type { WithAuth } from '../bindings/auth'
 
 export const ChannelRouter = new Hono<WithAuth>()
@@ -150,20 +152,51 @@ export const ChannelRouter = new Hono<WithAuth>()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
+      // Get the existing channel to compare email addresses
+      const existingChannel = await db.query.channels.findFirst({
+        where: and(eq(channels.id, id), eq(channels.userId, user.id)),
+      })
+
+      if (!existingChannel) {
+        return c.json({ error: 'Channel not found' }, 404)
+      }
+
+      // Check if email address has changed
+      const emailChanged =
+        ChannelSchema.parse(existingChannel).config.destination !==
+        ChannelDtoSchema.parse(request).config.destination
+
+      // If email changed and channel was verified, mark as unverified
+      const updateData = {
+        ...request,
+        updatedAt: new Date(),
+        ...(emailChanged && existingChannel.verified
+          ? {
+              verified: false,
+              verifiedAt: null,
+            }
+          : {}),
+      }
+
       const result = await db
         .update(channels)
-        .set({ ...request, updatedAt: new Date() })
+        .set(updateData)
         .where(and(eq(channels.id, id), eq(channels.userId, user.id)))
         .returning()
 
       await track({
         channel: 'channels',
-        description: `Updated channel: ${id}`,
+        description:
+          emailChanged && existingChannel.verified
+            ? `Updated channel: ${id} (email changed, marked as unverified)`
+            : `Updated channel: ${id}`,
         event: 'Channel Updated',
         icon: '✏️',
         tags: {
           channel_id: id,
+          email_changed: String(emailChanged),
           fields_updated: Object.keys(request).join(', '),
+          verification_reset: String(emailChanged && existingChannel.verified),
         },
         user_id: user.id,
       })
@@ -220,5 +253,172 @@ export const ChannelRouter = new Hono<WithAuth>()
       })
 
       return c.json(result)
+    },
+  )
+  .post(
+    '/:id/send-verification',
+    describeRoute({
+      description: 'Send verification email for channel',
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: resolver(z.object({ success: z.boolean() })),
+            },
+          },
+          description: 'Verification email sent',
+        },
+      },
+    }),
+    async (c) => {
+      const { id } = c.req.param()
+      const user = c.get('user')
+      if (!user) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      // Get the channel and verify ownership
+      const channel = ChannelSchema.parse(
+        await db.query.channels.findFirst({
+          where: and(eq(channels.id, id), eq(channels.userId, user.id)),
+        }),
+      )
+
+      if (!channel) {
+        return c.json({ error: 'Channel not found' }, 404)
+      }
+
+      if (channel.verified) {
+        return c.json({ error: 'Channel already verified' }, 400)
+      }
+
+      const recentVerification = await db.query.channelVerifications.findFirst({
+        where: and(
+          eq(channelVerifications.channelId, id),
+          gt(
+            channelVerifications.createdAt,
+            new Date(Date.now() - 60 * 1000),
+          ), // 1 minute
+        ),
+      })
+
+      if (recentVerification) {
+        return c.json(
+          {
+            error:
+              'Please Request Verification After 1 min',
+          },
+          429,
+        )
+      }
+
+      const token = crypto.randomUUID()
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+
+      await db.insert(channelVerifications).values({
+        channelId: id,
+        expiresAt,
+        token,
+      })
+
+      const verificationLink = `${process.env.AUTH_URL}/channels/verify/${token}`
+
+      await sendChannelVerification({
+        channelName: channel.name,
+        email: channel.config.destination,
+        verificationLink,
+      })
+
+      await track({
+        channel: 'channels',
+        description: `Sent verification email for channel: ${channel.name}`,
+        event: 'Channel Verification Email Sent',
+        icon: '📧',
+        tags: {
+          channel_id: id,
+          channel_name: channel.name,
+        },
+        user_id: user.id,
+      })
+
+      return c.json({ success: true })
+    },
+  )
+  .get(
+    '/verify/:token',
+    describeRoute({
+      description: 'Verify channel with token',
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: resolver(
+                z.object({ channelName: z.string(), success: z.boolean() }),
+              ),
+            },
+          },
+          description: 'Channel verified successfully',
+        },
+      },
+    }),
+    async (c) => {
+      const { token } = c.req.param()
+
+      // Find valid verification token
+      const verification = await db.query.channelVerifications.findFirst({
+        where: and(
+          eq(channelVerifications.token, token),
+          eq(channelVerifications.used, false),
+          gt(channelVerifications.expiresAt, new Date()),
+        ),
+      })
+
+      if (!verification) {
+        return c.json({ error: 'Invalid or expired verification token' }, 400)
+      }
+
+      // Get the channel
+      const channel = ChannelSchema.parse(
+        await db.query.channels.findFirst({
+          where: eq(channels.id, verification.channelId),
+        }),
+      )
+
+      if (!channel) {
+        return c.json({ error: 'Channel not found' }, 404)
+      }
+
+      if (channel.verified) {
+        return c.json({ error: 'Channel already verified' }, 400)
+      }
+
+      // Update channel as verified
+      await db
+        .update(channels)
+        .set({
+          verified: true,
+          verifiedAt: new Date(),
+        })
+        .where(eq(channels.id, verification.channelId))
+
+      // Mark verification as used
+      await db
+        .update(channelVerifications)
+        .set({ used: true })
+        .where(eq(channelVerifications.id, verification.id))
+
+      await track({
+        channel: 'channels',
+        description: `Channel verified: ${channel.name}`,
+        event: 'Channel Verified',
+        icon: '✅',
+        tags: {
+          channel_id: channel.id,
+          channel_name: channel.name,
+        },
+        user_id: channel.userId,
+      })
+
+      return c.json({ channelName: channel.name, success: true })
     },
   )

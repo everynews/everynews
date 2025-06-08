@@ -19,13 +19,12 @@ import {
   ChannelDtoSchema,
 } from '@everynews/schema/channel'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Save } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { ScalingLoader } from './scaling-loader'
+import { SubmitButton } from './submit-button'
 import { PageHeader } from './ui/page-header'
 
 export const ChannelForm = ({
@@ -78,11 +77,53 @@ export const ChannelForm = ({
         return
       }
 
-      toast.success(
-        mode === 'create'
-          ? `Channel "${form.watch('name')}" Created.`
-          : `Channel "${form.watch('name')}" Updated.`,
-      )
+      if (mode === 'create') {
+        // Get the created channel from response
+        const createdChannel = await res.json()
+        const channelId = Array.isArray(createdChannel)
+          ? createdChannel[0]?.id
+          : createdChannel?.id
+
+        if (channelId) {
+          // Automatically send verification email for new channels
+          try {
+            await api.channels[':id']['send-verification'].$post({
+              param: { id: channelId },
+            })
+            toast.success(
+              `Channel "${form.watch('name')}" created! Verification email sent.`,
+            )
+          } catch (error) {
+            toast.success(
+              `Channel "${form.watch('name')}" created, but failed to send verification email.
+              Please send verification email manually.`,
+              {
+                description: JSON.stringify(error),
+              },
+            )
+          }
+        } else {
+          toast.success(`Channel "${form.watch('name')}" Created.`)
+        }
+      } else {
+        // Check if email was changed for update mode
+        const emailChanged =
+          original?.config.destination !== values.config.destination
+        const wasVerified = original?.verified
+
+        if (emailChanged && wasVerified) {
+          toast.success(
+            `Channel "${form.watch('name')}" Updated!`,
+            {
+              description:
+                'Please verify the new email address to receive newsletters.',
+            },
+          )
+        } else {
+          toast.success(`Channel "${form.watch('name')}" Updated.`)
+        }
+      }
+
       router.push('/channels')
       router.refresh()
     } catch (e) {
@@ -143,11 +184,12 @@ export const ChannelForm = ({
                 Cancel
               </Button>
             </Link>
-            <Button type='submit' disabled={isSubmitting} className='flex'>
-              <Save className='size-4' />
+            <SubmitButton
+              onClick={() => form.handleSubmit(onSubmit)}
+              loading={isSubmitting}
+            >
               {mode === 'create' ? 'Create' : 'Update'}
-              <ScalingLoader loading={isSubmitting} />
-            </Button>
+            </SubmitButton>
           </div>
         </form>
       </Form>

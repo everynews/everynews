@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@everynews/components/ui/table'
-import { db } from '@everynews/drizzle'
+import { db } from '@everynews/database'
 import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
 import { eq } from 'drizzle-orm'
 import Link from 'next/link'

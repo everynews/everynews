@@ -1,5 +1,6 @@
 import { whoami } from '@everynews/auth/session'
 import { DeleteChannelPopover } from '@everynews/components/delete-channel-popover'
+import { SendVerificationButton } from '@everynews/components/send-verification-button'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import {
@@ -10,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@everynews/components/ui/table'
-import { db } from '@everynews/drizzle'
+import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { eq } from 'drizzle-orm'
 import Link from 'next/link'
@@ -33,6 +34,7 @@ export default async function ChannelsPage() {
           <TableHead>Name</TableHead>
           <TableHead>Type</TableHead>
           <TableHead>Destination</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -48,12 +50,18 @@ export default async function ChannelsPage() {
             <TableCell className='text-sm text-muted-foreground'>
               {item.config.destination}
             </TableCell>
+            <TableCell>
+              <Badge variant={item.verified ? 'default' : 'destructive'}>
+                {item.verified ? 'Verified' : 'Pending'}
+              </Badge>
+            </TableCell>
             <TableCell className='flex gap-2'>
               <Link href={`/channels/${item.id}`}>
                 <Button variant='outline' size='sm'>
                   Edit
                 </Button>
               </Link>
+              {!item.verified && <SendVerificationButton channel={item} />}
               <DeleteChannelPopover channel={item} />
             </TableCell>
           </TableRow>

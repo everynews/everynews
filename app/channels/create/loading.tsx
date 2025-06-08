@@ -1,5 +1,3 @@
-import { ScalingLoader } from '@everynews/components/scaling-loader'
-
-const Loading = () => <ScalingLoader />
+const Loading = () => null
 
 export default Loading

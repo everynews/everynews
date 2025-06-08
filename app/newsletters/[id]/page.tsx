@@ -1,6 +1,6 @@
 import { whoami } from '@everynews/auth/session'
 import { NewsForm } from '@everynews/components/newsletter-detail'
-import { db } from '@everynews/drizzle'
+import { db } from '@everynews/database'
 import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
 import { eq } from 'drizzle-orm'
 import { notFound, unauthorized } from 'next/navigation'

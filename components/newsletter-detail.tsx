@@ -27,13 +27,12 @@ import {
   NewsletterDtoSchema,
 } from '@everynews/schema/newsletter'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Save } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { ScalingLoader } from './scaling-loader'
+import { SubmitButton } from './submit-button'
 import { PageHeader } from './ui/page-header'
 
 const STRATEGY_WITH_QUERY = ['exa']
@@ -511,11 +510,12 @@ export const NewsForm = ({
                 Cancel
               </Button>
             </Link>
-            <Button type='submit' disabled={isSubmitting} className='flex'>
-              <Save className='size-4' />
+            <SubmitButton
+              onClick={form.handleSubmit(onSubmit)}
+              loading={isSubmitting}
+            >
               {mode === 'create' ? 'Create' : 'Update'}
-              <ScalingLoader loading={isSubmitting} />
-            </Button>
+            </SubmitButton>
           </div>
         </form>
       </Form>

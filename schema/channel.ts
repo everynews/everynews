@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
-import { json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { users } from './user'
 
 export const channels = pgTable('channels', {
@@ -14,6 +14,8 @@ export const channels = pgTable('channels', {
   userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
+  verified: boolean('verified').notNull().default(false),
+  verifiedAt: timestamp('verified_at'),
 })
 
 const BaseChannel = z
@@ -23,6 +25,8 @@ const BaseChannel = z
     name: z.coerce.string(),
     updatedAt: z.coerce.date(),
     userId: z.coerce.string(),
+    verified: z.boolean(),
+    verifiedAt: z.coerce.date().nullable(),
   })
   .openapi({ ref: 'BaseChannel' })
 
@@ -50,6 +54,8 @@ const EmailChannelDtoSchema = EmailChannelSchema.omit({
   id: true,
   updatedAt: true,
   userId: true,
+  verified: true,
+  verifiedAt: true,
 }).openapi({ ref: 'EmailChannelDtoSchema' })
 
 // const SlackChannelDtoSchema = SlackChannelSchema.omit({
