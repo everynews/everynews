@@ -67,7 +67,7 @@ const input = async (content: Content): Promise<string> => {
   const htmlBody = !content.markdownBlobUrl
     ? await fetch(content.htmlBlobUrl).then((res) => res.text())
     : ''
-  return `# [${content.title}](${content.url})\n\n${content.description}\n\n${markdownBody || htmlBody}`
+  return `# [${content.title}](${content.url})\n\n${markdownBody || htmlBody}`
 }
 
 export const summarize = async ({
