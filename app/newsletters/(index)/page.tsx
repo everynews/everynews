@@ -45,7 +45,7 @@ export default async function NewsPage() {
               </Badge>
             </TableCell>
             <TableCell className='flex gap-2'>
-              <Link href={`/news/${item.id}`}>
+              <Link href={`/newsletters/${item.id}`}>
                 <Button variant='outline' size='sm'>
                   Edit
                 </Button>
