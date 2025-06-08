@@ -2,6 +2,7 @@
 
 import { api } from '@everynews/app/api'
 import { Button } from '@everynews/components/ui/button'
+import { useRouter } from 'next/navigation'
 import {
   Popover,
   PopoverContent,
@@ -11,6 +12,7 @@ import type { Newsletter } from '@everynews/schema/newsletter'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { ScalingLoader } from './scaling-loader'
+
 export const DeleteNewsletterPopover = ({
   newsletter,
 }: {
@@ -18,6 +20,7 @@ export const DeleteNewsletterPopover = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
   const handleDelete = async () => {
     try {
       setLoading(true)
@@ -26,6 +29,7 @@ export const DeleteNewsletterPopover = ({
           id: newsletter.id,
         },
       })
+      router.refresh()
       toast.success('Newsletter deleted successfully')
       setOpen(false)
     } catch (error) {
