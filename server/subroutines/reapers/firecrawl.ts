@@ -86,7 +86,7 @@ export const firecrawl = async (source: string): Promise<Content> => {
     await track({
       channel: 'firecrawl',
       description: url,
-      event: 'Firecrawled',
+      event: `Firecrawled ${url}`,
       icon: '✅',
       tags: {
         content_id: content.id,
@@ -103,7 +103,7 @@ export const firecrawl = async (source: string): Promise<Content> => {
     await track({
       channel: 'firecrawl',
       description: source,
-      event: 'Firecrawl Failed',
+      event: `Firecrawl Failed ${source}`,
       icon: '❌',
       tags: {
         error: String(error),

@@ -24,6 +24,7 @@ const instructions = () =>
 3. Do not simply introduce the article; include actual substantive findings directly
 4. Within Key Findings or Title, write plain text only. Do not include markdown formatting.
 5. When creating the title, focus on who (if any) did what and why it was impactful.
+6. Use simple lanugae. Keep things real; honest, and don't force friendliness. Avoid unnecessary adjectives and adverbs. Focus on clarity.
 
 Format your response as:
 
@@ -103,19 +104,6 @@ export const summarize = async ({
   }
 
   try {
-    await track({
-      channel: 'sage',
-      description: `Starting AI summarization for: ${content.title}`,
-      event: 'Summarization Started',
-      icon: '🤖',
-      tags: {
-        content_id: content.id,
-        original_title: content.title,
-        type: 'info',
-        url: content.url,
-      },
-    })
-
     const response = await client.responses.create({
       input: await input(content),
       instructions: instructions(),
