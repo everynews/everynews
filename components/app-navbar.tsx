@@ -23,6 +23,12 @@ export const AppNavbar = async () => {
           >
             Newsletters
           </Link>
+          <Link
+            href='/channels'
+            className='flex items-center text-sm font-medium text-muted-foreground'
+          >
+            Channels
+          </Link>
         </nav>
       </div>
       <div className='flex items-center gap-2'>

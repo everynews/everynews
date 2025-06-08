@@ -33,19 +33,17 @@ const EmailChannelSchema = BaseChannel.extend({
   type: z.literal('email').openapi({ example: 'email' }),
 }).openapi({ ref: 'EmailChannelSchema' })
 
-const SlackChannelSchema = BaseChannel.extend({
-  config: z.object({
-    destination: z.string().openapi({
-      example:
-        'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
-    }),
-  }),
-  type: z.literal('slack').openapi({ example: 'slack' }),
-}).openapi({ ref: 'SlackChannelSchema' })
+// const SlackChannelSchema = BaseChannel.extend({
+//   config: z.object({
+//     destination: z.string().openapi({
+//       example:
+//         'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
+//     }),
+//   }),
+//   type: z.literal('slack').openapi({ example: 'slack' }),
+// }).openapi({ ref: 'SlackChannelSchema' })
 
-export const ChannelSchema = z
-  .discriminatedUnion('type', [EmailChannelSchema, SlackChannelSchema])
-  .openapi({ ref: 'ChannelSchema' })
+export const ChannelSchema = EmailChannelSchema
 
 const EmailChannelDtoSchema = EmailChannelSchema.omit({
   createdAt: true,
@@ -54,13 +52,14 @@ const EmailChannelDtoSchema = EmailChannelSchema.omit({
   userId: true,
 }).openapi({ ref: 'EmailChannelDtoSchema' })
 
-const SlackChannelDtoSchema = SlackChannelSchema.omit({
-  createdAt: true,
-  id: true,
-  updatedAt: true,
-  userId: true,
-}).openapi({ ref: 'SlackChannelDtoSchema' })
+// const SlackChannelDtoSchema = SlackChannelSchema.omit({
+//   createdAt: true,
+//   id: true,
+//   updatedAt: true,
+//   userId: true,
+// }).openapi({ ref: 'SlackChannelDtoSchema' })
 
-export const ChannelDtoSchema = z
-  .discriminatedUnion('type', [EmailChannelDtoSchema, SlackChannelDtoSchema])
-  .openapi({ ref: 'ChannelDtoSchema' })
+export const ChannelDtoSchema = EmailChannelDtoSchema
+
+export type Channel = z.infer<typeof ChannelSchema>
+export type ChannelDto = z.infer<typeof ChannelDtoSchema>

@@ -117,6 +117,60 @@ export const ChannelRouter = new Hono<WithAuth>()
       return c.json(inserted)
     },
   )
+  .put(
+    '/:id',
+    describeRoute({
+      description: 'Update Channel by ID',
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: resolver(ChannelSchema),
+            },
+          },
+          description: 'Update Channel by ID',
+        },
+      },
+    }),
+    validator('json', ChannelDtoSchema),
+    async (c) => {
+      const { id } = c.req.param()
+      const request = await c.req.json()
+      const user = c.get('user')
+      if (!user) {
+        await track({
+          channel: 'channels',
+          description: 'User tried to update channel without authentication',
+          event: 'Unauthorized Channel Update',
+          icon: '🚫',
+          tags: {
+            type: 'error',
+          },
+        })
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      const result = await db
+        .update(channels)
+        .set({ ...request, updatedAt: new Date() })
+        .where(and(eq(channels.id, id), eq(channels.userId, user.id)))
+        .returning()
+
+      await track({
+        channel: 'channels',
+        description: `Updated channel: ${id}`,
+        event: 'Channel Updated',
+        icon: '✏️',
+        tags: {
+          channel_id: id,
+          fields_updated: Object.keys(request).join(', '),
+        },
+        user_id: user.id,
+      })
+
+      return c.json(result)
+    },
+  )
   .delete(
     '/:id',
     describeRoute({
