@@ -77,7 +77,7 @@
     "db:nuke": "drizzle-kit nuke --config ./.config/drizzle.config.ts",
     "db:push": "drizzle-kit push --config ./.config/drizzle.config.ts",
     "db:studio": "drizzle-kit studio --config ./.config/drizzle.config.ts",
-    "dev": "docker-compose up -d postgres && concurrently --kill-others --names 'FE,DB,EM' --prefix-colors 'blue,yellow,green' 'bun run next:dev' 'bun run db:studio' 'bun run email:dev'; docker-compose down",
+    "dev": "concurrently --kill-others --names 'FE,DB,EM' --prefix-colors 'blue,yellow,green' 'bun run next:dev' 'bun run db:studio' 'bun run email:dev'",
     "email:dev": "email dev --port 5678",
     "next:dev": "next dev --turbopack",
     "next:start": "next start",
