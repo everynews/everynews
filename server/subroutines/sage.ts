@@ -24,7 +24,8 @@ const instructions = () =>
 3. Do not simply introduce the article; include actual substantive findings directly
 4. Within Key Findings or Title, write plain text only. Do not include markdown formatting.
 5. When creating the title, focus on who (if any) did what and why it was impactful.
-6. Use simple lanugae. Keep things real; honest, and don't force friendliness. Avoid unnecessary adjectives and adverbs. Focus on clarity.
+6. Use simple language. Keep things real; honest, and don't force friendliness. Avoid unnecessary adjectives and adverbs. Focus on clarity.
+7. Most importantly. Think why the original title was given that way. It may include why it was impactful or interesting.
 
 Format your response as:
 

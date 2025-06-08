@@ -1,13 +1,13 @@
 {
-  "version": "7",
   "dialect": "postgresql",
   "entries": [
     {
+      "breakpoints": true,
       "idx": 0,
-      "version": "7",
-      "when": 1749385910686,
       "tag": "0000_legal_richard_fisk",
-      "breakpoints": true
+      "version": "7",
+      "when": 1749385910686
     }
-  ]
+  ],
+  "version": "7"
 }

@@ -2,13 +2,13 @@
 
 import { api } from '@everynews/app/api'
 import { Button } from '@everynews/components/ui/button'
-import { useRouter } from 'next/navigation'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@everynews/components/ui/popover'
 import type { Newsletter } from '@everynews/schema/newsletter'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { ScalingLoader } from './scaling-loader'
