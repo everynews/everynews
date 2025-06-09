@@ -136,7 +136,7 @@ export const NewsForm = ({
 
   return (
     <>
-      <PageHeader title={form.watch('name')} />
+      <PageHeader title={`Create Newsletter ${form.watch('name')}`} />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 p-4'>
           <FormField

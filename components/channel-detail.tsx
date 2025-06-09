@@ -132,7 +132,7 @@ export const ChannelForm = ({
 
   return (
     <>
-      <PageHeader title={form.watch('name') || 'New Channel'} />
+      <PageHeader title={`Create Channel ${form.watch('name')}`} />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 p-4'>
           <FormField
