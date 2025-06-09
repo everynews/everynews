@@ -66,7 +66,7 @@ CREATE TABLE "stories" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"id" text PRIMARY KEY NOT NULL,
 	"key_findings" json,
-	"news_id" text NOT NULL,
+	"newsletter_id" text NOT NULL,
 	"title" text NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"url" text NOT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE "subscriptions" (
 	"channel_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"id" text PRIMARY KEY NOT NULL,
-	"news_id" text NOT NULL,
+	"newsletter_id" text NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"user_id" text NOT NULL
 );
@@ -110,7 +110,7 @@ ALTER TABLE "channels" ADD CONSTRAINT "channels_user_id_users_id_fk" FOREIGN KEY
 ALTER TABLE "newsletter" ADD CONSTRAINT "newsletter_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "stories" ADD CONSTRAINT "stories_content_id_contents_id_fk" FOREIGN KEY ("content_id") REFERENCES "public"."contents"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "stories" ADD CONSTRAINT "stories_news_id_newsletter_id_fk" FOREIGN KEY ("news_id") REFERENCES "public"."newsletter"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "stories" ADD CONSTRAINT "stories_newsletter_id_newsletter_id_fk" FOREIGN KEY ("newsletter_id") REFERENCES "public"."newsletter"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_channel_id_channels_id_fk" FOREIGN KEY ("channel_id") REFERENCES "public"."channels"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_news_id_newsletter_id_fk" FOREIGN KEY ("news_id") REFERENCES "public"."newsletter"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_newsletter_id_newsletter_id_fk" FOREIGN KEY ("newsletter_id") REFERENCES "public"."newsletter"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;

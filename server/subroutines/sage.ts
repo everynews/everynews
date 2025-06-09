@@ -132,7 +132,7 @@ export const summarize = async ({
       .values({
         contentId: content.id,
         keyFindings,
-        newsId: news.id,
+        newsletterId: news.id,
         title,
         url: content.url,
       })

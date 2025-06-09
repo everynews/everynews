@@ -13,7 +13,7 @@ export const stories = pgTable('stories', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   id: text('id').primaryKey().$defaultFn(nanoid),
   keyFindings: json('key_findings'),
-  newsId: text('news_id')
+  newsletterId: text('newsletter_id')
     .notNull()
     .references(() => newsletter.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
@@ -32,7 +32,7 @@ export const StorySchema = z
       .openapi({
         example: ['Key finding 1', 'Key finding 2', 'Key finding 3'],
       }),
-    newsId: z.coerce.string().openapi({ example: 'news123' }),
+    newsletterId: z.coerce.string().openapi({ example: 'news123' }),
     title: z.string().openapi({ example: 'Title' }),
     updatedAt: z.coerce.date().openapi({ example: new Date() }),
     url: z.string().openapi({ example: 'https://example.com' }),
@@ -43,7 +43,7 @@ export const StoryDtoSchema = StorySchema.omit({
   contentId: true,
   createdAt: true,
   id: true,
-  newsId: true,
+  newsletterId: true,
   updatedAt: true,
 }).openapi({ ref: 'StoryDtoSchema' })
 

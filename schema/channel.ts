@@ -64,3 +64,6 @@ const SlackChannelDtoSchema = SlackChannelSchema.omit({
 export const ChannelDtoSchema = z
   .discriminatedUnion('type', [EmailChannelDtoSchema, SlackChannelDtoSchema])
   .openapi({ ref: 'ChannelDtoSchema' })
+
+export type Channel = z.infer<typeof ChannelSchema>
+export type ChannelDto = z.infer<typeof ChannelDtoSchema>
