@@ -146,8 +146,8 @@ export const NewsletterRouter = new Hono<WithAuth>()
         icon: '✅',
         tags: {
           is_public: isPublic,
-          newsletter_id: inserted.id,
           news_name: name,
+          newsletter_id: inserted.id,
           strategy_provider: strategy.provider,
           type: 'info',
         },

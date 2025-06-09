@@ -1,6 +1,11 @@
 import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
-import { type Content, NewsletterSchema, newsletter } from '@everynews/schema'
+import {
+  type Content,
+  NewsletterSchema,
+  newsletter,
+  subscriptions,
+} from '@everynews/schema'
 import { WorkerStatusSchema } from '@everynews/schema/worker-status'
 import { and, eq, lt } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -8,6 +13,7 @@ import { describeRoute } from 'hono-openapi'
 import { resolver } from 'hono-openapi/zod'
 import type { WithAuth } from '../bindings/auth'
 import { curator } from '../subroutines/curator'
+import { herald } from '../subroutines/herald'
 import { reaper } from '../subroutines/reaper'
 import { sage } from '../subroutines/sage'
 
@@ -108,6 +114,15 @@ export const WorkerRouter = new Hono<WithAuth>().post(
             .update(newsletter)
             .set({ nextRun })
             .where(eq(newsletter.id, item.id))
+        }
+
+        // Send email to the all subscribers of the newsletter
+        const subscribers = await db.query.subscriptions.findMany({
+          where: eq(subscriptions.newsletterId, item.id),
+        })
+
+        for (const subscriber of subscribers) {
+          await herald(subscriber.channelId, item.name, stories)
         }
 
         await track({

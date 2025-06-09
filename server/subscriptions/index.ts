@@ -51,7 +51,8 @@ export const SubscriptionRouter = new Hono<WithAuth>()
       if (!newsletterId || !channelId) {
         await track({
           channel: 'subscriptions',
-          description: 'Missing newsletterId or channelId in subscription request',
+          description:
+            'Missing newsletterId or channelId in subscription request',
           event: 'Invalid Subscription Request',
           icon: '⚠️',
           tags: {
@@ -75,8 +76,8 @@ export const SubscriptionRouter = new Hono<WithAuth>()
           tags: {
             channel_id: channelId,
             news_exists: String(!!found),
-            newsletter_id: newsletterId,
             news_is_public: String(found?.isPublic || false),
+            newsletter_id: newsletterId,
             type: 'error',
             user_owns_news: String(found?.userId === user.id),
           },
@@ -101,8 +102,8 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         icon: '✅',
         tags: {
           channel_id: channelId,
-          newsletter_id: newsletterId,
           news_name: found.name,
+          newsletter_id: newsletterId,
           type: 'info',
         },
         user_id: user.id,
