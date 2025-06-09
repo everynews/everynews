@@ -22,17 +22,17 @@ import { Tabs, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
 import {
+  type Newsletter,
   type NewsletterDto,
   NewsletterDtoSchema,
 } from '@everynews/schema/newsletter'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Save } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { ScalingLoader } from './scaling-loader'
+import { SubmitButton } from './submit-button'
 import { PageHeader } from './ui/page-header'
 
 const STRATEGY_WITH_QUERY = ['exa']
@@ -53,7 +53,7 @@ export const NewsForm = ({
   original,
 }: {
   mode: 'create' | 'edit'
-  original?: NewsletterDto
+  original?: Newsletter
 }) => {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -73,7 +73,16 @@ export const NewsForm = ({
   }
 
   const form = useForm<NewsletterDto>({
-    defaultValues: mode === 'create' ? createValues : original,
+    defaultValues:
+      mode === 'create'
+        ? createValues
+        : {
+            active: original?.active ?? true,
+            isPublic: original?.isPublic ?? true,
+            name: original?.name || '',
+            strategy: original?.strategy || { provider: 'hnbest' },
+            wait: original?.wait || { type: 'count', value: 10 },
+          },
     resolver: zodResolver(NewsletterDtoSchema),
   })
 
@@ -90,9 +99,22 @@ export const NewsForm = ({
             : { provider: 'hnbest' },
         wait: values.wait,
       }
-      const res = await api.newsletters.$post({ json: apiData })
+      let res: Response
+      if (mode === 'create') {
+        res = await api.newsletters.$post({ json: apiData })
+      } else {
+        if (!original?.id) {
+          toast.error('Missing newsletter ID for update')
+          return
+        }
+        res = await api.newsletters[':id'].$put({
+          json: apiData,
+          param: { id: original.id },
+        })
+      }
+
       if (!res.ok) {
-        toast.error('Failed to create news')
+        toast.error(`Failed to ${mode} newsletter`)
         return
       }
       toast.success(
@@ -488,11 +510,12 @@ export const NewsForm = ({
                 Cancel
               </Button>
             </Link>
-            <Button type='submit' disabled={isSubmitting} className='flex'>
-              <Save className='size-4' />
+            <SubmitButton
+              onClick={form.handleSubmit(onSubmit)}
+              loading={isSubmitting}
+            >
               {mode === 'create' ? 'Create' : 'Update'}
-              <ScalingLoader loading={isSubmitting} />
-            </Button>
+            </SubmitButton>
           </div>
         </form>
       </Form>

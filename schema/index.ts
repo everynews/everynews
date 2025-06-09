@@ -1,5 +1,6 @@
 export * from './account'
 export * from './channel'
+export * from './channel-verification'
 export * from './content'
 export * from './newsletter'
 export * from './session'

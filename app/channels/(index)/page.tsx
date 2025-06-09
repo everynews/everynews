@@ -1,5 +1,6 @@
 import { whoami } from '@everynews/auth/session'
-import { DeleteNewsletterPopover } from '@everynews/components/delete-newsletter-popover'
+import { DeleteChannelPopover } from '@everynews/components/delete-channel-popover'
+import { SendVerificationButton } from '@everynews/components/send-verification-button'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import {
@@ -11,46 +12,57 @@ import {
   TableRow,
 } from '@everynews/components/ui/table'
 import { db } from '@everynews/database'
-import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
+import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { eq } from 'drizzle-orm'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
-export default async function NewsPage() {
+export default async function ChannelsPage() {
   const user = await whoami()
   if (!user) return unauthorized()
   const res = await db
     .select()
-    .from(newsletter)
-    .where(eq(newsletter.userId, user.id))
-  const news = NewsletterSchema.array().parse(res)
+    .from(channels)
+    .where(eq(channels.userId, user.id))
+  const channelList = ChannelSchema.array().parse(res)
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
+          <TableHead>Type</TableHead>
+          <TableHead>Destination</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {news.map((item) => (
+        {channelList.map((item) => (
           <TableRow key={item.id}>
             <TableCell className='font-medium'>{item.name}</TableCell>
             <TableCell>
-              <Badge variant={item.active ? 'default' : 'outline'}>
-                {item.active ? 'Active' : 'Inactive'}
+              <Badge variant='outline' className='capitalize'>
+                {item.type}
+              </Badge>
+            </TableCell>
+            <TableCell className='text-sm text-muted-foreground'>
+              {item.config.destination}
+            </TableCell>
+            <TableCell>
+              <Badge variant={item.verified ? 'default' : 'destructive'}>
+                {item.verified ? 'Verified' : 'Pending'}
               </Badge>
             </TableCell>
             <TableCell className='flex gap-2'>
-              <Link href={`/newsletters/${item.id}`}>
+              <Link href={`/channels/${item.id}`}>
                 <Button variant='outline' size='sm'>
                   Edit
                 </Button>
               </Link>
-              <DeleteNewsletterPopover newsletter={item} />
+              {!item.verified && <SendVerificationButton channel={item} />}
+              <DeleteChannelPopover channel={item} />
             </TableCell>
           </TableRow>
         ))}

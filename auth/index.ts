@@ -1,4 +1,4 @@
-import { db } from '@everynews/drizzle'
+import { db } from '@everynews/database'
 import { sendMagicLink } from '@everynews/messengers'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'

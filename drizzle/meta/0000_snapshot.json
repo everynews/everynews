@@ -6,7 +6,7 @@
   },
   "dialect": "postgresql",
   "enums": {},
-  "id": "3fbcd6db-33d1-4a7b-9276-988b09562230",
+  "id": "845155b7-df64-40e4-9182-88dd75ff9acc",
   "policies": {},
   "prevId": "00000000-0000-0000-0000-000000000000",
   "roles": {},
@@ -114,6 +114,80 @@
       "schema": "",
       "uniqueConstraints": {}
     },
+    "public.channel_verifications": {
+      "checkConstraints": {},
+      "columns": {
+        "channel_id": {
+          "name": "channel_id",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "text"
+        },
+        "created_at": {
+          "default": "now()",
+          "name": "created_at",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
+        "id": {
+          "name": "id",
+          "notNull": true,
+          "primaryKey": true,
+          "type": "text"
+        },
+        "token": {
+          "name": "token",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "text"
+        },
+        "updated_at": {
+          "default": "now()",
+          "name": "updated_at",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
+        "used": {
+          "default": false,
+          "name": "used",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "boolean"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "foreignKeys": {
+        "channel_verifications_channel_id_channels_id_fk": {
+          "columnsFrom": ["channel_id"],
+          "columnsTo": ["id"],
+          "name": "channel_verifications_channel_id_channels_id_fk",
+          "onDelete": "cascade",
+          "onUpdate": "no action",
+          "tableFrom": "channel_verifications",
+          "tableTo": "channels"
+        }
+      },
+      "indexes": {},
+      "isRLSEnabled": false,
+      "name": "channel_verifications",
+      "policies": {},
+      "schema": "",
+      "uniqueConstraints": {
+        "channel_verifications_token_unique": {
+          "columns": ["token"],
+          "name": "channel_verifications_token_unique",
+          "nullsNotDistinct": false
+        }
+      }
+    },
     "public.channels": {
       "checkConstraints": {},
       "columns": {
@@ -160,6 +234,19 @@
           "notNull": true,
           "primaryKey": false,
           "type": "text"
+        },
+        "verified": {
+          "default": false,
+          "name": "verified",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "boolean"
+        },
+        "verified_at": {
+          "name": "verified_at",
+          "notNull": false,
+          "primaryKey": false,
+          "type": "timestamp"
         }
       },
       "compositePrimaryKeys": {},

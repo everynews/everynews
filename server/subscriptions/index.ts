@@ -1,4 +1,4 @@
-import { db } from '@everynews/drizzle'
+import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
 import { newsletter, subscriptions } from '@everynews/schema'
 import {
@@ -90,7 +90,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         .insert(subscriptions)
         .values({
           channelId,
-          newsletterId: newsletterId,
+          newsletterId,
           userId: user.id,
         })
         .returning()

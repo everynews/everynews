@@ -7,33 +7,29 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@everynews/components/ui/popover'
-import type { Newsletter } from '@everynews/schema/newsletter'
+import type { Channel } from '@everynews/schema/channel'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { SubmitButton } from './submit-button'
 
-export const DeleteNewsletterPopover = ({
-  newsletter,
-}: {
-  newsletter: Newsletter
-}) => {
+export const DeleteChannelPopover = ({ channel }: { channel: Channel }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const handleDelete = async () => {
     try {
       setLoading(true)
-      await api.newsletters[':id'].$delete({
+      await api.channels[':id'].$delete({
         param: {
-          id: newsletter.id,
+          id: channel.id,
         },
       })
       router.refresh()
-      toast.success('Newsletter deleted successfully')
+      toast.success('Channel deleted successfully')
       setOpen(false)
     } catch (error) {
-      toast.error('Failed to delete newsletter', {
+      toast.error('Failed to delete channel', {
         description: error instanceof Error ? error.message : 'Unknown error',
       })
     } finally {
@@ -48,7 +44,7 @@ export const DeleteNewsletterPopover = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent className='flex flex-col gap-2'>
-        <h2 className='font-semibold text-lg'>Delete "{newsletter.name}"?</h2>
+        <h2 className='font-semibold text-lg'>Delete "{channel.name}"?</h2>
         <p className='text-muted-foreground'>This action cannot be undone.</p>
 
         <footer className='flex justify-end gap-2'>
@@ -59,7 +55,6 @@ export const DeleteNewsletterPopover = ({
             variant='destructive'
             size='sm'
             onClick={handleDelete}
-            disabled={loading}
             loading={loading}
           >
             Delete
