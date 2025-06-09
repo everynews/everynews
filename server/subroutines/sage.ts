@@ -96,9 +96,9 @@ export const summarize = async ({
       icon: '💾',
       tags: {
         content_id: content.id,
-        title: content.title,
+        title: content.title.slice(0, 160),
         type: 'info',
-        url: content.url,
+        url: content.url.slice(0, 160),
       },
     })
     return StorySchema.parse(existingStory)
@@ -121,9 +121,9 @@ export const summarize = async ({
       tags: {
         content_id: content.id,
         model,
-        original_title: content.title,
+        original_title: content.title.slice(0, 160),
         type: 'info',
-        url: content.url,
+        url: content.url.slice(0, 160),
       },
     })
 
@@ -149,9 +149,9 @@ export const summarize = async ({
         content_id: content.id,
         error: String(error),
         model,
-        original_title: content.title,
+          original_title: content.title.slice(0, 160),
         type: 'error',
-        url: content.url,
+        url: content.url.slice(0, 160),
       },
     })
     return null
