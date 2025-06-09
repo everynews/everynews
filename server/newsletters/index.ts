@@ -91,7 +91,7 @@ export const NewsletterRouter = new Hono<WithAuth>()
         icon: '📰',
         tags: {
           found: String(result.length > 0),
-          news_id: id,
+          newsletter_id: id,
           type: 'info',
         },
       })
@@ -146,7 +146,7 @@ export const NewsletterRouter = new Hono<WithAuth>()
         icon: '✅',
         tags: {
           is_public: isPublic,
-          news_id: inserted.id,
+          newsletter_id: inserted.id,
           news_name: name,
           strategy_provider: strategy.provider,
           type: 'info',
@@ -190,7 +190,7 @@ export const NewsletterRouter = new Hono<WithAuth>()
         icon: '✏️',
         tags: {
           fields_updated: Object.keys(request).join(', '),
-          news_id: id,
+          newsletter_id: id,
           type: 'info',
         },
       })

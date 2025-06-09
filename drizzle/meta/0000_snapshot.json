@@ -531,8 +531,8 @@
           "primaryKey": false,
           "type": "json"
         },
-        "news_id": {
-          "name": "news_id",
+        "newsletter_id": {
+          "name": "newsletter_id",
           "notNull": true,
           "primaryKey": false,
           "type": "text"
@@ -568,10 +568,10 @@
           "tableFrom": "stories",
           "tableTo": "contents"
         },
-        "stories_news_id_newsletter_id_fk": {
-          "columnsFrom": ["news_id"],
+        "stories_newsletter_id_newsletter_id_fk": {
+          "columnsFrom": ["newsletter_id"],
           "columnsTo": ["id"],
-          "name": "stories_news_id_newsletter_id_fk",
+          "name": "stories_newsletter_id_newsletter_id_fk",
           "onDelete": "cascade",
           "onUpdate": "no action",
           "tableFrom": "stories",
@@ -613,8 +613,8 @@
           "primaryKey": true,
           "type": "text"
         },
-        "news_id": {
-          "name": "news_id",
+        "newsletter_id": {
+          "name": "newsletter_id",
           "notNull": true,
           "primaryKey": false,
           "type": "text"
@@ -644,10 +644,10 @@
           "tableFrom": "subscriptions",
           "tableTo": "channels"
         },
-        "subscriptions_news_id_newsletter_id_fk": {
-          "columnsFrom": ["news_id"],
+        "subscriptions_newsletter_id_newsletter_id_fk": {
+          "columnsFrom": ["newsletter_id"],
           "columnsTo": ["id"],
-          "name": "subscriptions_news_id_newsletter_id_fk",
+          "name": "subscriptions_newsletter_id_newsletter_id_fk",
           "onDelete": "cascade",
           "onUpdate": "no action",
           "tableFrom": "subscriptions",

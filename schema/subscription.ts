@@ -12,7 +12,7 @@ export const subscriptions = pgTable('subscriptions', {
     .references(() => channels.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   id: text('id').primaryKey().$defaultFn(nanoid),
-  newsId: text('news_id')
+  newsletterId: text('newsletter_id')
     .notNull()
     .references(() => newsletter.id, { onDelete: 'cascade' }),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
@@ -26,7 +26,7 @@ export const SubscriptionSchema = z
     channelId: z.string().openapi({ example: 'channel123' }),
     createdAt: z.coerce.date().openapi({ example: new Date() }),
     id: z.string().openapi({ example: '123' }),
-    newsId: z.string().openapi({ example: 'news123' }),
+    newsletterId: z.string().openapi({ example: 'news123' }),
     updatedAt: z.coerce.date().openapi({ example: new Date() }),
     userId: z.string().openapi({ example: 'user123' }),
   })

@@ -34,7 +34,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
     validator('json', SubscriptionDtoSchema),
 
     async (c) => {
-      const { newsId, channelId } = await c.req.json()
+      const { newsletterId, channelId } = await c.req.json()
       const user = c.get('user')
       if (!user?.id) {
         await track({
@@ -48,34 +48,34 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         })
         return c.json({ error: 'User not authenticated' }, 401)
       }
-      if (!newsId || !channelId) {
+      if (!newsletterId || !channelId) {
         await track({
           channel: 'subscriptions',
-          description: 'Missing newsId or channelId in subscription request',
+          description: 'Missing newsletterId or channelId in subscription request',
           event: 'Invalid Subscription Request',
           icon: '⚠️',
           tags: {
             has_channel_id: String(!!channelId),
-            has_news_id: String(!!newsId),
+            has_newsletter_id: String(!!newsletterId),
             type: 'error',
           },
           user_id: user.id,
         })
-        return c.json({ error: 'Missing newsId or channelId' }, 400)
+        return c.json({ error: 'Missing newsletterId or channelId' }, 400)
       }
       const found = await db.query.newsletter.findFirst({
-        where: eq(newsletter.id, newsId),
+        where: eq(newsletter.id, newsletterId),
       })
       if (!found || (!found.isPublic && found.userId !== user.id)) {
         await track({
           channel: 'subscriptions',
-          description: `User tried to subscribe to inaccessible news: ${newsId}`,
+          description: `User tried to subscribe to inaccessible news: ${newsletterId}`,
           event: 'Forbidden Subscription',
           icon: '🔒',
           tags: {
             channel_id: channelId,
             news_exists: String(!!found),
-            news_id: newsId,
+            newsletter_id: newsletterId,
             news_is_public: String(found?.isPublic || false),
             type: 'error',
             user_owns_news: String(found?.userId === user.id),
@@ -89,7 +89,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         .insert(subscriptions)
         .values({
           channelId,
-          newsId,
+          newsletterId,
           userId: user.id,
         })
         .returning()
@@ -101,7 +101,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         icon: '✅',
         tags: {
           channel_id: channelId,
-          news_id: newsId,
+          newsletter_id: newsletterId,
           news_name: found.name,
           type: 'info',
         },
