@@ -295,18 +295,14 @@ export const ChannelRouter = new Hono<WithAuth>()
       const recentVerification = await db.query.channelVerifications.findFirst({
         where: and(
           eq(channelVerifications.channelId, id),
-          gt(
-            channelVerifications.createdAt,
-            new Date(Date.now() - 60 * 1000),
-          ), // 1 minute
+          gt(channelVerifications.createdAt, new Date(Date.now() - 60 * 1000)), // 1 minute
         ),
       })
 
       if (recentVerification) {
         return c.json(
           {
-            error:
-              'Please Request Verification After 1 min',
+            error: 'Please Request Verification After 1 min',
           },
           429,
         )

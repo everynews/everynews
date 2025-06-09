@@ -26,10 +26,7 @@ export const SubmitButton = ({
     size={size}
     onClick={onClick}
     disabled={loading || disabled}
-    className={cn(
-      'gap-0',
-      className,
-    )}
+    className={cn('gap-0', className)}
   >
     {children}
     <Loader2
