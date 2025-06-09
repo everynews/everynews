@@ -31,19 +31,12 @@ const ChannelVerificationEmail = ({
                 alt='every.news Logo'
               />
             </Section>
-            <Text className='text-2xl font-bold text-gray-900 mb-4'>
-              Verify Your Channel
-            </Text>
-            <Text className='text-lg text-gray-700 mb-6'>
-              Please verify your email channel "{channelName}" to start
-              receiving newsletters.
-            </Text>
             <div className='flex justify-center'>
               <Button
                 className='mx-auto rounded bg-black px-6 py-3 text-lg font-semibold text-white'
                 href={verificationLink}
               >
-                Verify Email Channel
+                Verify "{channelName}"
               </Button>
             </div>
           </Link>
@@ -51,7 +44,7 @@ const ChannelVerificationEmail = ({
             If you did not create this channel, please ignore this email.
           </Text>
           <Text className='text-xs text-gray-400 mt-2'>
-            This verification link will expire in 24 hours.
+            This verification link will expire in 5 minutes.
           </Text>
         </Container>
       </Body>
@@ -60,7 +53,7 @@ const ChannelVerificationEmail = ({
 }
 
 ChannelVerificationEmail.PreviewProps = {
-  channelName: 'Daily Tech Updates',
+  channelName: '이메일',
   verificationLink: 'https://every.news/channels/verify/abc123',
 }
 

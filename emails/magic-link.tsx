@@ -13,33 +13,36 @@ import {
 const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
   return (
     <Tailwind>
-      <Body className='bg-white px-2 font-sans'>
-        <Preview>Sign in with magic link</Preview>
-        <Container className='my-10 mx-auto rounded border border-gray-200 p-5 text-center'>
-          <Link href={loginLink} className='text-blue-600 no-underline'>
-            <Section className='my-8 flex justify-center'>
-              <Img
-                src='https://every.news/logo.png'
-                width='128'
-                height='128'
-                alt='every.news Logo'
-              />
-            </Section>
-            <div className='flex justify-center'>
-              <Button
-                className='mx-auto rounded bg-black px-4 py-2 text-lg font-semibold text-white'
-                href={loginLink}
-              >
-                Sign in to every.news
-              </Button>
-            </div>
-          </Link>
-          <Text className='text-sm text-center'>
-            If you did not request this, please ignore this email.
-          </Text>
-        </Container>
-      </Body>
-    </Tailwind>
+    <Body className='bg-white px-2 font-sans'>
+      <Preview>Verify your notification channel</Preview>
+      <Container className='my-10 mx-auto rounded border border-gray-200 p-5 text-center'>
+        <Link href={loginLink} className='text-blue-600 no-underline'>
+          <Section className='my-8 flex justify-center'>
+            <Img
+              src='https://every.news/logo.png'
+              width='128'
+              height='128'
+              alt='every.news Logo'
+            />
+          </Section>
+          <div className='flex justify-center'>
+            <Button
+              className='mx-auto rounded bg-black px-6 py-3 text-lg font-semibold text-white'
+              href={loginLink}
+            >
+              Sign In
+            </Button>
+          </div>
+        </Link>
+        <Text className='text-sm text-gray-500 mt-6'>
+          If you did not request this sign in, please ignore this email.
+        </Text>
+        <Text className='text-xs text-gray-400 mt-2'>
+          This sign in link will expire in 5 minutes.
+        </Text>
+      </Container>
+    </Body>
+  </Tailwind>
   )
 }
 

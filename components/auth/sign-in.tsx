@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from '@everynews/components/ui/dialog'
 import { Input } from '@everynews/components/ui/input'
+import { SubmitButton } from '@everynews/components/submit-button'
 import { toastNetworkError } from '@everynews/lib/error'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -22,8 +23,7 @@ export const SignIn = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async () => {
     const isGmail = contact.toLowerCase().endsWith('gmail.com')
     if (!contact) return
     try {
@@ -72,9 +72,9 @@ export const SignIn = () => {
             />
           </div>
           <DialogFooter>
-            <Button type='submit' disabled={isLoading}>
-              {isLoading ? 'Signing In...' : 'Sign In'}
-            </Button>
+            <SubmitButton onClick={handleSubmit} loading={isLoading}>
+              Sign In
+            </SubmitButton>
           </DialogFooter>
         </form>
       </DialogContent>

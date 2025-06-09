@@ -309,7 +309,7 @@ export const ChannelRouter = new Hono<WithAuth>()
       }
 
       const token = crypto.randomUUID()
-      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+      const expiresAt = new Date(Date.now() + 5 * 60 * 1000) // 5 minutes
 
       await db.insert(channelVerifications).values({
         channelId: id,
@@ -370,7 +370,7 @@ export const ChannelRouter = new Hono<WithAuth>()
       })
 
       if (!verification) {
-        return c.json({ error: 'Invalid or expired verification token' }, 400)
+        return c.json({ error: 'Invalid or Expired Verification Token' }, 400)
       }
 
       // Get the channel
@@ -381,11 +381,11 @@ export const ChannelRouter = new Hono<WithAuth>()
       )
 
       if (!channel) {
-        return c.json({ error: 'Channel not found' }, 404)
+        return c.json({ error: 'Channel Not Found' }, 404)
       }
 
       if (channel.verified) {
-        return c.json({ error: 'Channel already verified' }, 400)
+        return c.json({ error: 'Channel Already Verified' }, 400)
       }
 
       // Update channel as verified
