@@ -85,16 +85,19 @@ export default async function MyNewslettersPage() {
                     <Link href={`/newsletters/${item.id}`}>{item.name}</Link>
                   </TableCell>
                   <TableCell>
+                    <div className='flex items-center gap-2'>
+
                     <Badge variant={item.active ? 'default' : 'outline'}>
                       {item.active ? 'Active' : 'Inactive'}
                     </Badge>
                     <Badge
                       variant={subscription?.channelId ? 'default' : 'outline'}
-                    >
+                      >
                       {subscription?.channelId
                         ? 'Subscribed'
                         : 'Not Subscribed'}
                     </Badge>
+                    </div>
                   </TableCell>
                   <TableCell className='flex gap-2 justify-end'>
                     <SubscribeNewsletterButton

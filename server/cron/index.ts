@@ -9,7 +9,7 @@ import {
 } from '@everynews/schema'
 import { WorkerStatusSchema } from '@everynews/schema/worker-status'
 import { and, eq, lt } from 'drizzle-orm'
-import { Context, Hono } from 'hono'
+import { type Context, Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver } from 'hono-openapi/zod'
 import type { WithAuth } from '../bindings/auth'
@@ -43,8 +43,9 @@ const cronAuthMiddleware = async (c: Context, next: () => Promise<void>) => {
   // Only allow requests from Vercel cron jobs - block all user access
   const authHeader = c.req.header('Authorization')
   const cronSecret = process.env.CRON_SECRET
+  const isDev = process.env.NODE_ENV === 'development'
 
-  if (!cronSecret) {
+  if (!cronSecret && !isDev) {
     await track({
       channel: 'cron',
       event: 'Cron Secret Not Configured',
@@ -57,7 +58,7 @@ const cronAuthMiddleware = async (c: Context, next: () => Promise<void>) => {
     return c.json({ error: 'Cron service not configured' }, 503)
   }
 
-  if (!authHeader) {
+  if (!authHeader && !isDev) {
     await track({
       channel: 'cron',
       event: 'Unauthorized Cron Access - Missing Authorization',
@@ -76,7 +77,7 @@ const cronAuthMiddleware = async (c: Context, next: () => Promise<void>) => {
   try {
     // Use timing-safe comparison to prevent timing attacks
     isValidCronJob = crypto.timingSafeEqual(
-      Buffer.from(authHeader, 'utf8'),
+      Buffer.from(authHeader || '', 'utf8'),
       Buffer.from(expectedHeader, 'utf8'),
     )
   } catch {
@@ -84,7 +85,7 @@ const cronAuthMiddleware = async (c: Context, next: () => Promise<void>) => {
     isValidCronJob = false
   }
 
-  if (!isValidCronJob) {
+  if (!isValidCronJob && !isDev) {
     await track({
       channel: 'cron',
       event: 'Unauthorized Cron Access - Invalid Secret',

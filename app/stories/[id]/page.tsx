@@ -1,7 +1,6 @@
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
-import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
-import { Separator } from '@everynews/components/ui/separator'
+import { Card, CardContent } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
 import { ContentSchema, contents } from '@everynews/schema/content'
 import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
@@ -10,7 +9,6 @@ import { eq } from 'drizzle-orm'
 import { ArrowLeft, Calendar, ExternalLink, Globe } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import ReactMarkdown from 'react-markdown'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,30 +19,29 @@ export default async function StoryPage({
 }) {
   const { id } = await params
 
-  
   // Get story with content and newsletter information
   const rawStoryData = await db
-  .select({
-    content: contents,
-    newsletter: newsletter,
-    story: stories,
-  })
-  .from(stories)
-  .innerJoin(contents, eq(stories.contentId, contents.id))
-  .innerJoin(newsletter, eq(stories.newsletterId, newsletter.id))
-  .where(eq(stories.id, id))
-  .limit(1)
-  
+    .select({
+      content: contents,
+      newsletter: newsletter,
+      story: stories,
+    })
+    .from(stories)
+    .innerJoin(contents, eq(stories.contentId, contents.id))
+    .innerJoin(newsletter, eq(stories.newsletterId, newsletter.id))
+    .where(eq(stories.id, id))
+    .limit(1)
+
   if (!rawStoryData.length) {
     notFound()
   }
-  
+
   const {
     story: rawStory,
     content: rawContent,
     newsletter: rawNewsletter,
   } = rawStoryData[0]
-  
+
   // Parse with Zod schemas
   const story = StorySchema.parse(rawStory)
   const content = ContentSchema.parse(rawContent)
@@ -83,10 +80,11 @@ export default async function StoryPage({
             </time>
           </div>
 
-          <h1 className='text-3xl font-bold leading-tight flex items-center gap-2 justify-between'>{story.title}
+          <h1 className='text-3xl font-bold leading-tight flex items-center gap-2 justify-between'>
+            {story.title}
             <Link href={content.url} target='_blank' rel='noopener noreferrer'>
               <Button variant='outline' size='icon'>
-                <ExternalLink/>
+                <ExternalLink />
                 <span className='sr-only'>View Original</span>
               </Button>
             </Link>
@@ -102,10 +100,7 @@ export default async function StoryPage({
                   key={`${story.id}-finding-${index}`}
                   className='flex items-center gap-2'
                 >
-                  <Badge
-                    variant='secondary'
-                    className='text-xs px-2 py-1'
-                  >
+                  <Badge variant='secondary' className='text-xs px-2 py-1'>
                     {index + 1}
                   </Badge>
                   <p className='flex-1 text-sm'>{finding}</p>
