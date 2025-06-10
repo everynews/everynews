@@ -38,7 +38,32 @@ const findNextRunDateBasedOnSchedule = (schedule: string) => {
   return null
 }
 
-export const WorkerRouter = new Hono<WithAuth>().post(
+const cronMiddleware = async (c: any, next: () => Promise<void>) => {
+  // Check if request comes from Vercel cron job
+  const authHeader = c.req.header('Authorization')
+  const cronSecret = process.env.CRON_SECRET
+  const isCronJob = cronSecret && authHeader === `Bearer ${cronSecret}`
+
+  if (isCronJob) {
+    await track({
+      channel: 'cron',
+      event: 'Cron Job Request Authenticated',
+      icon: '⏰',
+      tags: {
+        source: 'vercel-cron',
+        timestamp: new Date().toISOString(),
+        type: 'info',
+      },
+    })
+
+    c.set('user', { id: 'system-cron' })
+    c.set('session', null)
+  }
+
+  return next()
+}
+
+export const WorkerRouter = new Hono<WithAuth>().use('/', cronMiddleware).post(
   '/',
   describeRoute({
     description: 'Run Worker',
@@ -55,12 +80,31 @@ export const WorkerRouter = new Hono<WithAuth>().post(
   }),
   async (c) => {
     try {
+      const user = c.get('user')
+      const isCronJob = user?.id === 'system-cron'
+
+      // Check authentication for non-cron requests
+      if (!user) {
+        await track({
+          channel: 'worker',
+          event: 'Unauthorized Worker Access Attempt',
+          icon: '🚫',
+          tags: {
+            ip: c.req.header('x-forwarded-for') || 'unknown',
+            type: 'error',
+          },
+        })
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
       await track({
         channel: 'worker',
         event: 'Worker Job Started',
         icon: '🤖',
         tags: {
+          triggered_by: isCronJob ? 'cron' : 'user',
           type: 'info',
+          user_id: isCronJob ? 'system-cron' : user.id,
         },
       })
 
@@ -149,12 +193,22 @@ export const WorkerRouter = new Hono<WithAuth>().post(
         icon: '🎉',
         tags: {
           newsletters_processed: found.length,
+          triggered_by: isCronJob ? 'cron' : 'user',
           type: 'info',
+          user_id: isCronJob ? 'system-cron' : user.id,
         },
       })
 
-      return c.json({ ok: true })
+      return c.json({
+        newsletters_processed: found.length,
+        ok: true,
+        timestamp: new Date().toISOString(),
+        triggered_by: isCronJob ? 'cron' : 'user',
+      })
     } catch (error) {
+      const user = c.get('user')
+      const isCronJob = user?.id === 'system-cron'
+
       await track({
         channel: 'worker',
         description: `Worker job failed: ${String(error)}`,
@@ -162,7 +216,9 @@ export const WorkerRouter = new Hono<WithAuth>().post(
         icon: '💥',
         tags: {
           error: String(error),
+          triggered_by: isCronJob ? 'cron' : 'user',
           type: 'error',
+          user_id: isCronJob ? 'system-cron' : user?.id || 'unknown',
         },
       })
       throw error
