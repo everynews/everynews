@@ -3,6 +3,13 @@
 import { api } from '@everynews/app/api'
 import { Button } from '@everynews/components/ui/button'
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@everynews/components/ui/dialog'
+import {
   Form,
   FormControl,
   FormField,
@@ -19,23 +26,25 @@ import {
   ChannelDtoSchema,
 } from '@everynews/schema/channel'
 import { zodResolver } from '@hookform/resolvers/zod'
-import Link from 'next/link'
+import { PlusCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { SubmitButton } from './submit-button'
-import { PageHeader } from './ui/page-header'
 
-export const ChannelForm = ({
+export const ChannelDialog = ({
   mode,
   original,
+  trigger,
 }: {
   mode: 'create' | 'edit'
   original?: Channel
+  trigger?: React.ReactNode
 }) => {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [open, setOpen] = useState(false)
 
   const createValues: ChannelDto = {
     config: { destination: '' },
@@ -103,7 +112,7 @@ export const ChannelForm = ({
             )
           }
         } else {
-          toast.success(`Channel "${form.watch('name')}" Created.`)
+          toast.success(`Channel "${form.watch('name')}" created.`)
         }
       } else {
         // Check if email was changed for update mode
@@ -112,16 +121,17 @@ export const ChannelForm = ({
         const wasVerified = original?.verified
 
         if (emailChanged && wasVerified) {
-          toast.success(`Channel "${form.watch('name')}" Updated!`, {
+          toast.success(`Channel "${form.watch('name')}" updated!`, {
             description:
               'Please verify the new email address to receive newsletters.',
           })
         } else {
-          toast.success(`Channel "${form.watch('name')}" Updated.`)
+          toast.success(`Channel "${form.watch('name')}" updated.`)
         }
       }
 
-      router.push('/channels')
+      setOpen(false)
+      form.reset()
       router.refresh()
     } catch (e) {
       toastNetworkError(e as Error)
@@ -130,66 +140,82 @@ export const ChannelForm = ({
     }
   }
 
+  const defaultTrigger = (
+    <Button className='flex gap-1'>
+      <PlusCircle className='size-4' />
+      Create Channel
+    </Button>
+  )
+
   return (
-    <>
-      <PageHeader title={`Create Channel ${form.watch('name')}`} />
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 p-4'>
-          <FormField
-            control={form.control}
-            name='name'
-            render={({ field }) => (
-              <FormItem className='md:flex md:items-center md:justify-between'>
-                <div className='md:w-1/2'>
-                  <FormLabel className='text-lg'>
-                    What should we call this channel?
-                  </FormLabel>
-                </div>
-                <div className='md:w-1/2'>
-                  <FormControl>
-                    <Input placeholder='My Email Channel' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </div>
-              </FormItem>
-            )}
-          />
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
+      <DialogContent className='max-w-xl'>
+        <DialogHeader>
+          <DialogTitle>
+            {mode === 'create' ? 'Create Channel' : 'Edit Channel'}
+          </DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+            <FormField
+              control={form.control}
+              name='name'
+              render={({ field }) => (
+                <FormItem className='md:flex md:items-center md:justify-between'>
+                  <div className='md:w-1/2'>
+                    <FormLabel className='text-md'>
+                      What should we call this channel?
+                    </FormLabel>
+                  </div>
+                  <div className='md:w-1/2'>
+                    <FormControl>
+                      <Input placeholder='My Email Channel' {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
 
-          <Separator />
+            <Separator />
 
-          <FormField
-            control={form.control}
-            name='config.destination'
-            render={({ field }) => (
-              <FormItem className='md:flex md:items-center md:justify-between'>
-                <div className='md:w-1/2'>
-                  <FormLabel className='text-lg'>Email Address</FormLabel>
-                </div>
-                <div className='md:w-1/2'>
-                  <FormControl>
-                    <Input placeholder='you@example.com' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </div>
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name='config.destination'
+              render={({ field }) => (
+                <FormItem className='md:flex md:items-center md:justify-between'>
+                  <div className='md:w-1/2'>
+                    <FormLabel className='text-md'>Email Address</FormLabel>
+                  </div>
+                  <div className='md:w-1/2'>
+                    <FormControl>
+                      <Input placeholder='you@example.com' {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
 
-          <div className='flex justify-end'>
-            <Link href='/channels'>
-              <Button type='button' variant='outline' className='mr-2'>
+            <div className='flex justify-end gap-2'>
+              <Button
+                type='button'
+                variant='outline'
+                onClick={() => setOpen(false)}
+              >
                 Cancel
               </Button>
-            </Link>
-            <SubmitButton
-              onClick={() => form.handleSubmit(onSubmit)}
-              loading={isSubmitting}
-            >
-              {mode === 'create' ? 'Create' : 'Update'}
-            </SubmitButton>
-          </div>
-        </form>
-      </Form>
-    </>
+              <SubmitButton
+                onClick={form.handleSubmit(onSubmit)}
+                loading={isSubmitting}
+              >
+                {mode === 'create' ? 'Create' : 'Update'}
+              </SubmitButton>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   )
 }

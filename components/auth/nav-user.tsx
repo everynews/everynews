@@ -15,7 +15,8 @@ import {
   DropdownMenuTrigger,
 } from '@everynews/components/ui/dropdown-menu'
 import type { User } from 'better-auth'
-import { BadgeCheck, Bell, CreditCard, UserIcon } from 'lucide-react'
+import { Mail, Settings, UserIcon } from 'lucide-react'
+import Link from 'next/link'
 
 export const NavUser = ({ user }: { user: User }) => {
   return (
@@ -52,17 +53,17 @@ export const NavUser = ({ user }: { user: User }) => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <BadgeCheck className='mr-2 h-4 w-4' />
-            <span>Account</span>
+          <DropdownMenuItem asChild>
+            <Link href='/my/newsletters'>
+              <Mail className='mr-2 h-4 w-4' />
+              <span>My Newsletters</span>
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <CreditCard className='mr-2 h-4 w-4' />
-            <span>Billing</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Bell className='mr-2 h-4 w-4' />
-            <span>Notifications</span>
+          <DropdownMenuItem asChild>
+            <Link href='/my/channels'>
+              <Settings className='mr-2 h-4 w-4' />
+              <span>My Channels</span>
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

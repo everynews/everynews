@@ -144,7 +144,11 @@ export const SubscribeNewsletterDialog = ({
               >
                 Cancel
               </Button>
-              <SubmitButton onClick={form.handleSubmit(onSubmit)} loading={loading} disabled={loading}>
+              <SubmitButton
+                onClick={form.handleSubmit(onSubmit)}
+                loading={loading}
+                disabled={loading}
+              >
                 Subscribe
               </SubmitButton>
             </DialogFooter>

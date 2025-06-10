@@ -44,7 +44,7 @@ const ChannelVerificationEmail = ({
 
 ChannelVerificationEmail.PreviewProps = {
   channelName: '이메일',
-  verificationLink: 'https://every.news/channels/verify/abc123',
+  verificationLink: 'https://every.news/verify/channel/abc123',
 }
 
 export default ChannelVerificationEmail

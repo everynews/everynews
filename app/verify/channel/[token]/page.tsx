@@ -44,7 +44,7 @@ export default async function VerifyChannelPage({
               Your channel "{channelName}" has been verified and is now ready to
               receive newsletters.
             </p>
-            <Link href='/channels'>
+            <Link href='/my/channels'>
               <Button className='mt-4'>View Your Channels</Button>
             </Link>
           </>
@@ -58,7 +58,7 @@ export default async function VerifyChannelPage({
               You can resend the verification email from your channels page.
             </p>
             <div className='space-y-2'>
-              <Link href='/channels'>
+              <Link href='/my/channels'>
                 <Button variant='outline'>Go to Channels</Button>
               </Link>
             </div>

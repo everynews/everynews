@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { SubscribeNewsletterDialog } from './subscribe-newsletter-dialog'
+import { SubmitButton } from './submit-button'
 
 export const SubscribeNewsletterButton = ({
   newsletter,
@@ -48,14 +49,14 @@ export const SubscribeNewsletterButton = ({
 
   if (subscription) {
     return (
-      <Button
+      <SubmitButton
         variant='outline'
         size='sm'
         onClick={handleUnsubscribe}
-        disabled={loading}
+        loading={loading}
       >
-        {loading ? 'Unsubscribing...' : 'Unsubscribe'}
-      </Button>
+        Unsubscribe
+      </SubmitButton>
     )
   }
 

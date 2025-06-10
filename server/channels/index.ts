@@ -317,7 +317,7 @@ export const ChannelRouter = new Hono<WithAuth>()
         token,
       })
 
-      const verificationLink = `${process.env.AUTH_URL}/channels/verify/${token}`
+      const verificationLink = `${process.env.AUTH_URL}/verify/channel/${token}`
 
       await sendChannelVerification({
         channelName: channel.name,
