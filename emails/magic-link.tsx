@@ -17,14 +17,6 @@ const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
       <Preview>Verify your notification channel</Preview>
       <Container className='my-10 mx-auto rounded border border-gray-200 p-5 text-center'>
         <Link href={loginLink} className='text-blue-600 no-underline'>
-          <Section className='my-8 flex justify-center'>
-            <Img
-              src='https://every.news/logo.png'
-              width='128'
-              height='128'
-              alt='every.news Logo'
-            />
-          </Section>
           <div className='flex justify-center'>
             <Button
               className='mx-auto rounded bg-black px-6 py-3 text-lg font-semibold text-white'
