@@ -1,6 +1,7 @@
 'use client'
 
 import { auth } from '@everynews/auth/client'
+import { SubmitButton } from '@everynews/components/submit-button'
 import { Button } from '@everynews/components/ui/button'
 import {
   Dialog,
@@ -12,7 +13,6 @@ import {
   DialogTrigger,
 } from '@everynews/components/ui/dialog'
 import { Input } from '@everynews/components/ui/input'
-import { SubmitButton } from '@everynews/components/submit-button'
 import { toastNetworkError } from '@everynews/lib/error'
 import Link from 'next/link'
 import { useState } from 'react'

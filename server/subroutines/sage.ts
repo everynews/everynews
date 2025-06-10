@@ -149,7 +149,7 @@ export const summarize = async ({
         content_id: content.id,
         error: String(error),
         model,
-          original_title: content.title.slice(0, 160),
+        original_title: content.title.slice(0, 160),
         type: 'error',
         url: content.url.slice(0, 160),
       },

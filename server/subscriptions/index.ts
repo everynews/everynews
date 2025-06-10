@@ -10,6 +10,7 @@ import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
+import { z } from 'zod'
 import type { WithAuth } from '../bindings/auth'
 
 export const SubscriptionRouter = new Hono<WithAuth>()
@@ -110,5 +111,77 @@ export const SubscriptionRouter = new Hono<WithAuth>()
       })
 
       return c.json(result)
+    },
+  )
+
+  .delete(
+    '/:id',
+    describeRoute({
+      description: 'Unsubscribe from News',
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: resolver(z.object({ message: z.string() })),
+            },
+          },
+          description: 'Successfully unsubscribed',
+        },
+      },
+    }),
+
+    async (c) => {
+      const subscriptionId = c.req.param('id')
+      const user = c.get('user')
+
+      if (!user?.id) {
+        await track({
+          channel: 'subscriptions',
+          description: 'User tried to unsubscribe without authentication',
+          event: 'Unauthorized Unsubscription',
+          icon: '🚫',
+          tags: {
+            type: 'error',
+          },
+        })
+        return c.json({ error: 'User not authenticated' }, 401)
+      }
+
+      const subscription = await db.query.subscriptions.findFirst({
+        where: eq(subscriptions.id, subscriptionId),
+      })
+
+      if (!subscription || subscription.userId !== user.id) {
+        await track({
+          channel: 'subscriptions',
+          description: `User tried to delete inaccessible subscription: ${subscriptionId}`,
+          event: 'Forbidden Unsubscription',
+          icon: '🔒',
+          tags: {
+            subscription_exists: String(!!subscription),
+            subscription_id: subscriptionId,
+            type: 'error',
+            user_owns_subscription: String(subscription?.userId === user.id),
+          },
+          user_id: user.id,
+        })
+        return c.json({ error: 'Forbidden' }, 403)
+      }
+
+      await db.delete(subscriptions).where(eq(subscriptions.id, subscriptionId))
+
+      await track({
+        channel: 'subscriptions',
+        description: `User unsubscribed from subscription: ${subscriptionId}`,
+        event: 'Subscription Deleted',
+        icon: '❌',
+        tags: {
+          subscription_id: subscriptionId,
+          type: 'info',
+        },
+        user_id: user.id,
+      })
+
+      return c.json({ message: 'Successfully unsubscribed' })
     },
   )

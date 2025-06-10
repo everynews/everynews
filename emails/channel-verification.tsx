@@ -2,10 +2,8 @@ import {
   Body,
   Button,
   Container,
-  Img,
   Link,
   Preview,
-  Section,
   Tailwind,
   Text,
 } from '@react-email/components'
