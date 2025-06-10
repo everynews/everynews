@@ -31,6 +31,15 @@ export const track = async (options: LogEventOptions) => {
     await logsnag.track({
       ...options,
       channel,
+      tags: options.tags
+        ? Object.fromEntries(
+            Object.entries(options.tags).map(([key, value]) => [
+              // LogSnag has a limit of 160 characters for tags, we truncate to 150
+              key.slice(0, 150),
+              String(value).slice(0, 150),
+            ]),
+          )
+        : undefined,
     })
   } catch (error) {
     console.error('Failed to track event to LogSnag:', error)

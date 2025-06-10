@@ -9,8 +9,8 @@ import type { Subscription } from '@everynews/schema/subscription'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { SubscribeNewsletterDialog } from './subscribe-newsletter-dialog'
 import { SubmitButton } from './submit-button'
+import { SubscribeNewsletterDialog } from './subscribe-newsletter-dialog'
 
 export const SubscribeNewsletterButton = ({
   newsletter,

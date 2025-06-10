@@ -17,7 +17,12 @@ export const AppNavbar = async () => {
           <span className='inline-block font-bold'>every.news</span>
         </Link>
         <nav className='flex gap-6'>
-          {/* Navigation items can be added here if needed */}
+          <Link
+            href='/newsletters'
+            className='flex items-center text-sm font-medium text-muted-foreground hover:text-foreground'
+          >
+            Newsletters
+          </Link>
         </nav>
       </div>
       <div className='flex items-center gap-2'>

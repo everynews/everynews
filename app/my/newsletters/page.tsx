@@ -53,9 +53,7 @@ export default async function MyNewslettersPage() {
       <div className='flex justify-between items-center px-3'>
         <div>
           <h2 className='text-2xl font-bold'>My Newsletters</h2>
-          <p className='text-muted-foreground'>
-            What topics interest you?
-          </p>
+          <p className='text-muted-foreground'>What topics interest you?</p>
         </div>
         <NewsletterDialog mode='create' />
       </div>
@@ -90,8 +88,12 @@ export default async function MyNewslettersPage() {
                     <Badge variant={item.active ? 'default' : 'outline'}>
                       {item.active ? 'Active' : 'Inactive'}
                     </Badge>
-                    <Badge variant={subscription?.channelId ? 'default' : 'outline'}>
-                      {subscription?.channelId ? 'Subscribed' : 'Not Subscribed'}
+                    <Badge
+                      variant={subscription?.channelId ? 'default' : 'outline'}
+                    >
+                      {subscription?.channelId
+                        ? 'Subscribed'
+                        : 'Not Subscribed'}
                     </Badge>
                   </TableCell>
                   <TableCell className='flex gap-2 justify-end'>
