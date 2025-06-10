@@ -10,6 +10,7 @@ import { eq } from 'drizzle-orm'
 import { ArrowLeft, Calendar, ExternalLink, Globe } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import ReactMarkdown from 'react-markdown'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,34 +21,34 @@ export default async function StoryPage({
 }) {
   const { id } = await params
 
+  
   // Get story with content and newsletter information
   const rawStoryData = await db
-    .select({
-      content: contents,
-      newsletter: newsletter,
-      story: stories,
-    })
-    .from(stories)
-    .innerJoin(contents, eq(stories.contentId, contents.id))
-    .innerJoin(newsletter, eq(stories.newsletterId, newsletter.id))
-    .where(eq(stories.id, id))
-    .limit(1)
-
+  .select({
+    content: contents,
+    newsletter: newsletter,
+    story: stories,
+  })
+  .from(stories)
+  .innerJoin(contents, eq(stories.contentId, contents.id))
+  .innerJoin(newsletter, eq(stories.newsletterId, newsletter.id))
+  .where(eq(stories.id, id))
+  .limit(1)
+  
   if (!rawStoryData.length) {
     notFound()
   }
-
+  
   const {
     story: rawStory,
     content: rawContent,
     newsletter: rawNewsletter,
   } = rawStoryData[0]
-
+  
   // Parse with Zod schemas
   const story = StorySchema.parse(rawStory)
   const content = ContentSchema.parse(rawContent)
   const newsletterInfo = NewsletterSchema.parse(rawNewsletter)
-
   return (
     <div className='container mx-auto max-w-4xl p-4'>
       {/* Header */}
@@ -82,35 +83,28 @@ export default async function StoryPage({
             </time>
           </div>
 
-          <h1 className='text-3xl font-bold leading-tight'>{story.title}</h1>
-
-          <div className='flex gap-2'>
+          <h1 className='text-3xl font-bold leading-tight flex items-center gap-2 justify-between'>{story.title}
             <Link href={content.url} target='_blank' rel='noopener noreferrer'>
-              <Button variant='outline'>
-                <ExternalLink className='size-4 mr-2' />
-                View Original
+              <Button variant='outline' size='icon'>
+                <ExternalLink/>
+                <span className='sr-only'>View Original</span>
               </Button>
             </Link>
-          </div>
+          </h1>
         </div>
       </div>
-
-      {/* Key Findings */}
       {story.keyFindings && story.keyFindings.length > 0 && (
-        <Card className='mb-6'>
-          <CardHeader>
-            <h2 className='text-lg font-semibold'>Key Findings</h2>
-          </CardHeader>
-          <CardContent>
+        <Card>
+          <CardContent className='p-4'>
             <div className='space-y-2'>
               {story.keyFindings.map((finding, index) => (
                 <div
                   key={`${story.id}-finding-${index}`}
-                  className='flex items-start gap-2'
+                  className='flex items-center gap-2'
                 >
                   <Badge
                     variant='secondary'
-                    className='mt-0.5 text-xs px-2 py-1'
+                    className='text-xs px-2 py-1'
                   >
                     {index + 1}
                   </Badge>
@@ -121,43 +115,6 @@ export default async function StoryPage({
           </CardContent>
         </Card>
       )}
-
-      <Separator className='my-6' />
-
-      {/* Article Content */}
-      <Card>
-        <CardHeader>
-          <h2 className='text-lg font-semibold'>Article Content</h2>
-          <p className='text-sm text-muted-foreground'>
-            This content has been processed and formatted for better
-            readability.
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className='space-y-4'>
-            <div className='bg-muted/30 rounded-lg p-4'>
-              <p className='text-sm text-muted-foreground mb-2'>
-                📄 Content will be loaded from: {content.markdownBlobUrl}
-              </p>
-              <p className='text-sm text-muted-foreground'>
-                💡 Note: The actual article content would be fetched from the
-                blob storage and rendered here. This could include formatted
-                markdown or HTML content.
-              </p>
-            </div>
-
-            {/* Placeholder for actual content */}
-            <div className='prose prose-sm max-w-none'>
-              <p className='text-muted-foreground italic'>
-                [Article content would be dynamically loaded and rendered here
-                from the blob storage URL]
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Footer */}
       <div className='mt-8 pt-6 border-t'>
         <div className='flex justify-between items-center'>
           <Link

@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@everynews/components/ui/card'
-import { PageHeader } from '@everynews/components/ui/page-header'
 import { db } from '@everynews/database'
 import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
 import { stories } from '@everynews/schema/story'
@@ -38,9 +37,7 @@ export default async function NewslettersPage() {
 
   return (
     <>
-      <PageHeader title='Newsletters' />
-
-      <div className='container mx-auto max-w-6xl p-4'>
+      <div className='container mx-auto p-4'>
         {newslettersData.length === 0 ? (
           <div className='text-center py-12'>
             <p className='text-muted-foreground'>
@@ -98,24 +95,11 @@ export default async function NewslettersPage() {
                             {storyCount === 1 ? 'story' : 'stories'}
                           </span>
                         </div>
-
-                        <div className='text-sm'>
-                          <span className='font-medium'>Strategy: </span>
-                          <span className='text-muted-foreground capitalize'>
-                            {newsletterInfo.strategy.provider === 'hnbest'
-                              ? 'Popular Tech News'
-                              : 'Web Search'}
-                          </span>
-                        </div>
-
                         {newsletterInfo.strategy.provider === 'exa' &&
                           newsletterInfo.strategy.query && (
-                            <div className='text-sm'>
-                              <span className='font-medium'>Query: </span>
-                              <span className='text-muted-foreground'>
-                                "{newsletterInfo.strategy.query}"
-                              </span>
-                            </div>
+                            <Badge className='text-muted-foreground'>
+                              {newsletterInfo.strategy.query}
+                            </Badge>
                           )}
                       </div>
                     </CardContent>

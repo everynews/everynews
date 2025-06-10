@@ -114,11 +114,11 @@ export default async function NewsletterStoriesPage({
                                 .map((finding, index) => (
                                   <div
                                     key={`${story.id}-finding-${index}`}
-                                    className='flex items-start gap-2'
+                                    className='flex items-center gap-2'
                                   >
                                     <Badge
                                       variant='secondary'
-                                      className='mt-0.5 text-xs px-2 py-1 flex-shrink-0'
+                                      className='text-xs px-2 py-1 flex-shrink-0'
                                     >
                                       {index + 1}
                                     </Badge>

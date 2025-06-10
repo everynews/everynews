@@ -30,10 +30,10 @@ export default async function Page() {
       <div className='space-y-2 max-w-prose mx-auto grid gap-4'>
         {recentStories.map(({ story, newsletter: newsletterInfo }) => (
           <Link key={story.id} href={`/stories/${story.id}`}>
-            <Card className='hover:shadow-md transition-shadow cursor-pointer max-w-prose '>
+            <Card className='hover:shadow-md transition-shadow cursor-pointer max-w-prose break-words'>
               <CardHeader className='pb-3'>
                 <div className='flex-1'>
-                  <div className='flex items-center gap-2 mb-2 text-sm text-muted-foreground'>
+                  <div className='flex items-center gap-2 mb-2 text-sm text-muted-foreground flex-wrap'>
                     <Globe className='size-4' />
                     <span className='hover:underline'>
                       {newsletterInfo.name}
@@ -48,7 +48,7 @@ export default async function Page() {
                       })}
                     </time>
                   </div>
-                  <h2 className='text-xl font-semibold line-clamp-2'>
+                  <h2 className='text-xl font-semibold line-clamp-2 break-words'>
                     {story.title}
                   </h2>
                 </div>
@@ -58,9 +58,6 @@ export default async function Page() {
                 story.keyFindings.length > 0 && (
                   <CardContent className='pt-0'>
                     <div className='space-y-2'>
-                      <h3 className='text-sm font-medium text-muted-foreground'>
-                        Key Findings
-                      </h3>
                       <div className='space-y-2'>
                         {story.keyFindings.slice(0, 3).map((finding, index) => (
                           <div
@@ -69,11 +66,11 @@ export default async function Page() {
                           >
                             <Badge
                               variant='secondary'
-                              className='mt-0.5 text-xs px-2 py-1 flex-shrink-0'
+                              className='text-xs px-2 py-1 flex-shrink-0'
                             >
                               {index + 1}
                             </Badge>
-                            <p className='flex-1 text-sm text-muted-foreground'>
+                            <p className='flex-1 text-sm text-muted-foreground break-words'>
                               {finding}
                             </p>
                           </div>
