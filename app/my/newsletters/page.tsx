@@ -86,17 +86,18 @@ export default async function MyNewslettersPage() {
                   </TableCell>
                   <TableCell>
                     <div className='flex items-center gap-2'>
-
-                    <Badge variant={item.active ? 'default' : 'outline'}>
-                      {item.active ? 'Active' : 'Inactive'}
-                    </Badge>
-                    <Badge
-                      variant={subscription?.channelId ? 'default' : 'outline'}
+                      <Badge variant={item.active ? 'default' : 'outline'}>
+                        {item.active ? 'Active' : 'Inactive'}
+                      </Badge>
+                      <Badge
+                        variant={
+                          subscription?.channelId ? 'default' : 'outline'
+                        }
                       >
-                      {subscription?.channelId
-                        ? 'Subscribed'
-                        : 'Not Subscribed'}
-                    </Badge>
+                        {subscription?.channelId
+                          ? 'Subscribed'
+                          : 'Not Subscribed'}
+                      </Badge>
                     </div>
                   </TableCell>
                   <TableCell className='flex gap-2 justify-end'>

@@ -12,7 +12,6 @@ import { and, eq, lt } from 'drizzle-orm'
 import { type Context, Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver } from 'hono-openapi/zod'
-import type { WithAuth } from '../bindings/auth'
 import { curator } from '../subroutines/curator'
 import { herald } from '../subroutines/herald'
 import { reaper } from '../subroutines/reaper'
@@ -113,178 +112,218 @@ const validateCronJob = async (c: Context): Promise<boolean> => {
   return true
 }
 
-export const CronRouter = new Hono()
-  .post(
-    '/',
-    describeRoute({
-      description: 'Run Cron Job - Newsletter Processing',
-      responses: {
-        200: {
-          content: {
-            'application/json': {
-              schema: resolver(WorkerStatusSchema),
+export const CronRouter = new Hono().post(
+  '/',
+  describeRoute({
+    description: 'Run Cron Job - Newsletter Processing',
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: resolver(WorkerStatusSchema),
+          },
+        },
+        description: 'Cron Job Execution Result',
+      },
+      401: {
+        content: {
+          'application/json': {
+            schema: {
+              properties: {
+                error: { type: 'string' },
+              },
+              type: 'object',
             },
           },
-          description: 'Cron Job Execution Result',
         },
-        401: {
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  error: { type: 'string' }
-                }
-              }
-            }
-          },
-          description: 'Unauthorized'
-        },
-        503: {
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  error: { type: 'string' }
-                }
-              }
-            }
-          },
-          description: 'Service Unavailable'
-        }
+        description: 'Unauthorized',
       },
-    }),
-    async (c) => {
-      const isValid = await validateCronJob(c)
-      
-      if (!isValid) {
-        return c.json({ error: 'Unauthorized - Invalid cron job' }, 401)
-      }
-      try {
-        // At this point, we know it's a valid cron job (middleware verified)
+      503: {
+        content: {
+          'application/json': {
+            schema: {
+              properties: {
+                error: { type: 'string' },
+              },
+              type: 'object',
+            },
+          },
+        },
+        description: 'Service Unavailable',
+      },
+    },
+  }),
+  async (c) => {
+    const isValid = await validateCronJob(c)
+
+    if (!isValid) {
+      return c.json({ error: 'Unauthorized - Invalid cron job' }, 401)
+    }
+    try {
+      // At this point, we know it's a valid cron job (middleware verified)
+      await track({
+        channel: 'cron',
+        event: 'Newsletter Processing Started',
+        icon: '🤖',
+        tags: {
+          timestamp: new Date().toISOString(),
+          triggered_by: 'cron',
+          type: 'info',
+        },
+      })
+
+      const found = NewsletterSchema.array().parse(
+        await db.query.newsletter.findMany({
+          where: and(
+            eq(newsletter.active, true),
+            lt(newsletter.nextRun, new Date()),
+          ),
+        }),
+      )
+
+      await track({
+        channel: 'worker',
+        event: `${found.length} Newsletters Found`,
+        icon: '📋',
+        tags: {
+          newsletters_count: found.length,
+          type: 'info',
+        },
+      })
+
+      for (const item of found) {
         await track({
-          channel: 'cron',
-          event: 'Newsletter Processing Started',
-          icon: '🤖',
+          channel: 'worker',
+          event: `Processing Newsletter "${item.name}"`,
+          icon: '⚙️',
           tags: {
-            timestamp: new Date().toISOString(),
-            triggered_by: 'cron',
+            newsletter_id: item.id,
+            newsletter_name: item.name,
+            strategy_provider: item.strategy.provider,
             type: 'info',
           },
         })
 
-        const found = NewsletterSchema.array().parse(
-          await db.query.newsletter.findMany({
-            where: and(
-              eq(newsletter.active, true),
-              lt(newsletter.nextRun, new Date()),
-            ),
-          }),
-        )
+        const urls = await curator(item)
+        const contents: Content[] = await reaper(urls)
+        const stories = await sage({ contents, news: item })
+
+        // Filter stories to only include those created since lastRun
+        const filteredStories = stories.filter((story) => {
+          if (!item.lastRun) return true // If no lastRun, include all stories
+          return story.createdAt > item.lastRun
+        })
 
         await track({
           channel: 'worker',
-          event: `${found.length} Newsletters Found`,
-          icon: '📋',
+          description: `Filtered ${filteredStories.length}/${stories.length} stories created since last run`,
+          event: 'Stories Filtered by lastRun',
+          icon: '🔍',
           tags: {
-            newsletters_count: found.length,
+            last_run: item.lastRun?.toISOString() || 'null',
+            newsletter_id: item.id,
+            newsletter_name: item.name,
+            stories_filtered: filteredStories.length,
+            stories_total: stories.length,
             type: 'info',
           },
         })
 
-        for (const item of found) {
-          await track({
-            channel: 'worker',
-            event: `Processing Newsletter "${item.name}"`,
-            icon: '⚙️',
-            tags: {
-              newsletter_id: item.id,
-              newsletter_name: item.name,
-              strategy_provider: item.strategy.provider,
-              type: 'info',
-            },
-          })
+        // Update lastRun to current time before setting nextRun
+        const currentTime = new Date()
 
-          const urls = await curator(item)
-          const contents: Content[] = await reaper(urls)
-          const stories = await sage({ contents, news: item })
+        let nextRun: Date | null = null
+        if (item.wait.type === 'count') {
+          nextRun = new Date(Date.now() + 60 * 60 * 1000)
+          await db
+            .update(newsletter)
+            .set({ lastRun: currentTime, nextRun })
+            .where(eq(newsletter.id, item.id))
+        }
+        if (item.wait.type === 'schedule') {
+          nextRun = findNextRunDateBasedOnSchedule(item.wait.value)
+          await db
+            .update(newsletter)
+            .set({ lastRun: currentTime, nextRun })
+            .where(eq(newsletter.id, item.id))
+        }
 
-          let nextRun: Date | null = null
-          if (item.wait.type === 'count') {
-            nextRun = new Date(Date.now() + 60 * 60 * 1000)
-            await db
-              .update(newsletter)
-              .set({ nextRun })
-              .where(eq(newsletter.id, item.id))
-          }
-          if (item.wait.type === 'schedule') {
-            nextRun = findNextRunDateBasedOnSchedule(item.wait.value)
-            await db
-              .update(newsletter)
-              .set({ nextRun })
-              .where(eq(newsletter.id, item.id))
-          }
-
+        // Only send newsletter if there are new stories since lastRun
+        if (filteredStories.length > 0) {
           // Send email to the all subscribers of the newsletter
           const subscribers = await db.query.subscriptions.findMany({
             where: eq(subscriptions.newsletterId, item.id),
           })
 
           for (const subscriber of subscribers) {
-            await herald(subscriber.channelId, item.name, stories)
+            await herald(subscriber.channelId, item.name, filteredStories)
           }
-
+        } else {
           await track({
             channel: 'worker',
-            description: `Completed processing: ${item.name} - Found ${stories.length} stories`,
-            event: 'Newsletter Processed',
-            icon: '✅',
+            description: `No new stories since last run - skipping newsletter delivery`,
+            event: 'Newsletter Delivery Skipped',
+            icon: '⏭️',
             tags: {
+              last_run: item.lastRun?.toISOString() || 'null',
               newsletter_id: item.id,
               newsletter_name: item.name,
-              next_run: nextRun?.toISOString() || 'unknown',
-              stories_created: stories.length,
               type: 'info',
-              urls_found: urls.length,
-              wait_type: item.wait.type,
             },
           })
         }
 
         await track({
-          channel: 'cron',
-          description: `Newsletter processing completed successfully - processed ${found.length} newsletters`,
-          event: 'Newsletter Processing Completed',
-          icon: '🎉',
+          channel: 'worker',
+          description: `Completed processing: ${item.name} - Found ${stories.length} stories, sent ${filteredStories.length} new stories`,
+          event: 'Newsletter Processed',
+          icon: '✅',
           tags: {
-            newsletters_processed: found.length,
-            timestamp: new Date().toISOString(),
-            triggered_by: 'cron',
+            newsletter_id: item.id,
+            newsletter_name: item.name,
+            next_run: nextRun?.toISOString() || 'unknown',
+            stories_created: stories.length,
+            stories_sent: filteredStories.length,
             type: 'info',
+            urls_found: urls.length,
+            wait_type: item.wait.type,
           },
         })
+      }
 
-        return c.json({
+      await track({
+        channel: 'cron',
+        description: `Newsletter processing completed successfully - processed ${found.length} newsletters`,
+        event: 'Newsletter Processing Completed',
+        icon: '🎉',
+        tags: {
           newsletters_processed: found.length,
-          ok: true,
           timestamp: new Date().toISOString(),
           triggered_by: 'cron',
-        })
-      } catch (error) {
-        await track({
-          channel: 'cron',
-          description: `Newsletter processing failed: ${String(error)}`,
-          event: 'Newsletter Processing Failed',
-          icon: '💥',
-          tags: {
-            error: String(error),
-            timestamp: new Date().toISOString(),
-            triggered_by: 'cron',
-            type: 'error',
-          },
-        })
-        throw error
-      }
-    },
-  )
+          type: 'info',
+        },
+      })
+
+      return c.json({
+        newsletters_processed: found.length,
+        ok: true,
+        timestamp: new Date().toISOString(),
+        triggered_by: 'cron',
+      })
+    } catch (error) {
+      await track({
+        channel: 'cron',
+        description: `Newsletter processing failed: ${String(error)}`,
+        event: 'Newsletter Processing Failed',
+        icon: '💥',
+        tags: {
+          error: String(error),
+          timestamp: new Date().toISOString(),
+          triggered_by: 'cron',
+          type: 'error',
+        },
+      })
+      throw error
+    }
+  },
+)
