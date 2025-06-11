@@ -1,13 +1,23 @@
 import { whoami } from '@everynews/auth/session'
+import { SubscribeNewsletterButton } from '@everynews/components/subscribe-newsletter-button'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
+import {
+  type Channel,
+  ChannelSchema,
+  channels,
+} from '@everynews/schema/channel'
 import { contents } from '@everynews/schema/content'
-import { newsletter } from '@everynews/schema/newsletter'
+import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
 import { stories } from '@everynews/schema/story'
-import { desc, eq } from 'drizzle-orm'
-import { Calendar } from 'lucide-react'
+import {
+  type Subscription,
+  SubscriptionSchema,
+  subscriptions,
+} from '@everynews/schema/subscription'
+import { and, desc, eq } from 'drizzle-orm'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -50,6 +60,35 @@ export default async function NewsletterStoriesPage({
     notFound()
   }
 
+  // Get user's channels and subscription for this newsletter
+  let userChannels: Channel[] = []
+  let userSubscription: Subscription | null = null
+
+  if (user) {
+    // Get user's channels
+    const channelsRes = await db
+      .select()
+      .from(channels)
+      .where(eq(channels.userId, user.id))
+    userChannels = ChannelSchema.array().parse(channelsRes)
+
+    // Check if user is subscribed to this newsletter
+    const subscriptionRes = await db
+      .select()
+      .from(subscriptions)
+      .where(
+        and(
+          eq(subscriptions.userId, user.id),
+          eq(subscriptions.newsletterId, id),
+        ),
+      )
+      .limit(1)
+
+    userSubscription = subscriptionRes[0]
+      ? SubscriptionSchema.parse(subscriptionRes[0])
+      : null
+  }
+
   // Get stories for this newsletter with content joined
   const storiesData = await db
     .select({
@@ -76,7 +115,16 @@ export default async function NewsletterStoriesPage({
   return (
     <>
       <div className='text-center space-y-2 mb-6'>
-        <h1 className='text-2xl font-bold'>{newsletterInfo.name}</h1>
+        <div className='flex items-center justify-center gap-4'>
+          <h1 className='text-2xl font-bold'>{newsletterInfo.name}</h1>
+          {user && !isOwner && userChannels.length > 0 && (
+            <SubscribeNewsletterButton
+              newsletter={NewsletterSchema.parse(newsletterInfo)}
+              channels={userChannels}
+              subscription={userSubscription ?? undefined}
+            />
+          )}
+        </div>
         {newsletterInfo.description && (
           <p className='text-muted-foreground'>{newsletterInfo.description}</p>
         )}
@@ -100,39 +148,39 @@ export default async function NewsletterStoriesPage({
                 >
                   <Card>
                     <CardHeader className='text-xl font-semibold line-clamp-2'>
-                          {story.title}
+                      {story.title}
                     </CardHeader>
 
                     {Array.isArray(story.keyFindings) &&
                       story.keyFindings.length > 0 && (
                         <CardContent className='pt-0'>
-                            <div className='space-y-2'>
-                              {story.keyFindings
-                                .slice(0, 3)
-                                .map((finding, index) => (
-                                  <div
-                                    key={`${story.id}-finding-${index}`}
-                                    className='flex items-center gap-2'
+                          <div className='space-y-2'>
+                            {story.keyFindings
+                              .slice(0, 3)
+                              .map((finding, index) => (
+                                <div
+                                  key={`${story.id}-finding-${index}`}
+                                  className='flex items-center gap-2'
+                                >
+                                  <Badge
+                                    variant='secondary'
+                                    className='text-xs px-2 py-1 flex-shrink-0'
                                   >
-                                    <Badge
-                                      variant='secondary'
-                                      className='text-xs px-2 py-1 flex-shrink-0'
-                                    >
-                                      {index + 1}
-                                    </Badge>
-                                    <p className='flex-1 text-sm text-muted-foreground'>
-                                      {finding}
-                                    </p>
-                                  </div>
-                                ))}
-                              {story.keyFindings.length > 3 && (
-                                <div className='flex items-center gap-2'>
-                                  <span className='text-xs text-muted-foreground'>
-                                    +{story.keyFindings.length - 3} more findings
-                                  </span>
+                                    {index + 1}
+                                  </Badge>
+                                  <p className='flex-1 text-sm text-muted-foreground'>
+                                    {finding}
+                                  </p>
                                 </div>
-                              )}
-                            </div>
+                              ))}
+                            {story.keyFindings.length > 3 && (
+                              <div className='flex items-center gap-2'>
+                                <span className='text-xs text-muted-foreground'>
+                                  +{story.keyFindings.length - 3} more findings
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         </CardContent>
                       )}
                   </Card>

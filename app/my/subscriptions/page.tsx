@@ -1,4 +1,5 @@
 import { whoami } from '@everynews/auth/session'
+import { SubscribeNewsletterButton } from '@everynews/components/subscribe-newsletter-button'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import {
@@ -45,6 +46,13 @@ export default async function MySubscriptionsPage() {
     newsletter: NewsletterSchema.parse(row.newsletter),
     subscription: SubscriptionSchema.parse(row.subscription),
   }))
+
+  // Get user's channels for unsubscribe button
+  const userChannelsRes = await db
+    .select()
+    .from(channels)
+    .where(eq(channels.userId, user.id))
+  const userChannels = ChannelSchema.array().parse(userChannelsRes)
 
   return (
     <div className='space-y-6'>
@@ -113,11 +121,18 @@ export default async function MySubscriptionsPage() {
                   </span>
                 </TableCell>
                 <TableCell className='text-right'>
-                  <Link href={`/newsletters/${newsletter.id}`}>
-                    <Button variant='outline' size='sm'>
-                      View Stories
-                    </Button>
-                  </Link>
+                  <div className='flex gap-2 justify-end'>
+                    <Link href={`/newsletters/${newsletter.id}`}>
+                      <Button variant='outline' size='sm'>
+                        View Stories
+                      </Button>
+                    </Link>
+                    <SubscribeNewsletterButton
+                      newsletter={newsletter}
+                      channels={userChannels}
+                      subscription={subscription}
+                    />
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
