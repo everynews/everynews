@@ -1,3 +1,4 @@
+import { whoami } from '@everynews/auth/session'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
@@ -38,6 +39,16 @@ export default async function NewsletterStoriesPage({
   }
 
   const newsletterInfo = newsletterData[0]
+
+  // Check access permissions
+  const user = await whoami()
+  const isOwner = user?.id === newsletterInfo.userId
+  const isPublic = newsletterInfo.isPublic
+
+  // If newsletter is not public and user is not the owner, show 404
+  if (!isPublic && !isOwner) {
+    notFound()
+  }
 
   // Get stories for this newsletter with content joined
   const storiesData = await db
