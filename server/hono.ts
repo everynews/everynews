@@ -12,12 +12,12 @@ import { SubscriptionRouter } from './subscriptions'
 
 const app = new Hono<WithAuth>()
   .basePath('/api')
+  .route('/cron', CronRouter)
   .use('*', authMiddleware)
   .on(['POST', 'GET'], '/auth/*', (c) => auth.handler(c.req.raw))
   .route('/newsletters', NewsletterRouter)
   .route('/channels', ChannelRouter)
   .route('/subscriptions', SubscriptionRouter)
-  .route('/cron', CronRouter)
 
 app.get(
   '/',
