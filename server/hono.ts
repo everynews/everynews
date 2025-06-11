@@ -1,7 +1,6 @@
 import { auth } from '@everynews/auth'
 import { url } from '@everynews/lib/url'
 import type { WithAuth } from '@everynews/server/bindings/auth'
-import { authMiddleware } from '@everynews/server/middleware/auth'
 import { Scalar } from '@scalar/hono-api-reference'
 import { Hono } from 'hono'
 import { generateSpecs } from 'hono-openapi'
@@ -12,9 +11,8 @@ import { SubscriptionRouter } from './subscriptions'
 
 const app = new Hono<WithAuth>()
   .basePath('/api')
-  .route('/cron', CronRouter)
-  .use('*', authMiddleware)
   .on(['POST', 'GET'], '/auth/*', (c) => auth.handler(c.req.raw))
+  .route('/cron', CronRouter)
   .route('/newsletters', NewsletterRouter)
   .route('/channels', ChannelRouter)
   .route('/subscriptions', SubscriptionRouter)
