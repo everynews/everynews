@@ -121,18 +121,12 @@ export default async function MySubscriptionsPage() {
                   </span>
                 </TableCell>
                 <TableCell className='text-right'>
-                  <div className='flex gap-2 justify-end'>
-                    <Link href={`/newsletters/${newsletter.id}`}>
-                      <Button variant='outline' size='sm'>
-                        View Stories
-                      </Button>
-                    </Link>
+                  
                     <SubscribeNewsletterButton
                       newsletter={newsletter}
                       channels={userChannels}
                       subscription={subscription}
                     />
-                  </div>
                 </TableCell>
               </TableRow>
             ))}

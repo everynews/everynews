@@ -152,12 +152,7 @@ export default async function NewslettersPage() {
                           {newsletterInfo.strategy.query}
                         </Badge>
                       )}
-                    <div className='flex items-center justify-between'>
-                      <Link href={`/newsletters/${newsletterInfo.id}`}>
-                        <Button variant='outline' size='sm'>
-                          View Stories
-                        </Button>
-                      </Link>
+                    <div className='flex items-center justify-end'>
                       {user &&
                         userChannels.length > 0 &&
                         newsletterInfo.userId !== user.id && (
