@@ -99,3 +99,8 @@ The application follows a hybrid approach for data handling:
 - Server Components use `export const dynamic = 'force-dynamic'` for real-time data
 - Client Components marked with `'use client'` directive
 - Form handling uses React Hook Form with Zod validation matching server schemas
+
+## Notes
+
+- Prefer Shadcn Primitives, such as bg-background instead of defining two different colors for light mode and dark mode.
+- Prefer Tailwind gap instead of paddings and margins. Do not use space-x or space-y; use gap.
