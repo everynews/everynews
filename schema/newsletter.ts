@@ -9,6 +9,7 @@ import { WaitSchema } from './wait'
 export const newsletter = pgTable('newsletter', {
   active: boolean('active').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
+  description: text('description'),
   id: text('id').primaryKey().$defaultFn(nanoid),
   isPublic: boolean('is_public').notNull().default(true),
   lastRun: timestamp('last_run').defaultNow(),
@@ -26,6 +27,10 @@ export const NewsletterSchema = z
   .object({
     active: z.coerce.boolean().openapi({ example: true }),
     createdAt: z.coerce.date().openapi({ example: new Date() }),
+    description: z.coerce
+      .string()
+      .nullable()
+      .openapi({ example: 'A brief description of the newsletter' }),
     id: z.coerce.string().openapi({ example: '123' }),
     isPublic: z.coerce.boolean().openapi({ example: true }),
     lastRun: z.coerce.date().nullable().openapi({ example: new Date() }),

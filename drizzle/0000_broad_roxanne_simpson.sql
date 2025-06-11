@@ -51,6 +51,7 @@ CREATE TABLE "contents" (
 CREATE TABLE "newsletter" (
 	"active" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"description" text,
 	"id" text PRIMARY KEY NOT NULL,
 	"is_public" boolean DEFAULT true NOT NULL,
 	"last_run" timestamp DEFAULT now(),

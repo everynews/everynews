@@ -75,7 +75,12 @@ export default async function NewsletterStoriesPage({
 
   return (
     <>
-      <h1 className='text-2xl font-bold text-center'>{newsletterInfo.name}</h1>
+      <div className='text-center space-y-2 mb-6'>
+        <h1 className='text-2xl font-bold'>{newsletterInfo.name}</h1>
+        {newsletterInfo.description && (
+          <p className='text-muted-foreground'>{newsletterInfo.description}</p>
+        )}
+      </div>
 
       <div className='container mx-auto max-w-prose p-4 space-y-6'>
         {storiesData.length === 0 ? (
@@ -94,31 +99,13 @@ export default async function NewsletterStoriesPage({
                   className='hover:shadow-md transition-shadow cursor-pointer m-0'
                 >
                   <Card>
-                    <CardHeader className='pb-3'>
-                      <div className='flex-1'>
-                        <div className='flex items-center gap-2 mt-2 text-sm text-muted-foreground'>
-                          <Calendar className='size-4' />
-                          <time dateTime={story.createdAt.toISOString()}>
-                            {story.createdAt.toLocaleDateString('en-US', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric',
-                            })}
-                          </time>
-                        </div>
-                        <h2 className='text-xl font-semibold line-clamp-2'>
+                    <CardHeader className='text-xl font-semibold line-clamp-2'>
                           {story.title}
-                        </h2>
-                      </div>
                     </CardHeader>
 
                     {Array.isArray(story.keyFindings) &&
                       story.keyFindings.length > 0 && (
                         <CardContent className='pt-0'>
-                          <div className='space-y-2'>
-                            <h3 className='text-sm font-medium text-muted-foreground'>
-                              Key Findings
-                            </h3>
                             <div className='space-y-2'>
                               {story.keyFindings
                                 .slice(0, 3)
@@ -140,19 +127,12 @@ export default async function NewsletterStoriesPage({
                                 ))}
                               {story.keyFindings.length > 3 && (
                                 <div className='flex items-center gap-2'>
-                                  <Badge
-                                    variant='outline'
-                                    className='text-xs px-2 py-1'
-                                  >
-                                    +{story.keyFindings.length - 3}
-                                  </Badge>
                                   <span className='text-xs text-muted-foreground'>
-                                    more findings
+                                    +{story.keyFindings.length - 3} more findings
                                   </span>
                                 </div>
                               )}
                             </div>
-                          </div>
                         </CardContent>
                       )}
                   </Card>

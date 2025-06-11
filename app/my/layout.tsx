@@ -13,6 +13,10 @@ const sidebarItems = [
     href: '/my/channels',
     title: 'Channels',
   },
+  {
+    href: '/my/subscriptions',
+    title: 'Subscriptions',
+  },
 ]
 
 const MyLayout = ({ children }: { children: React.ReactNode }) => {

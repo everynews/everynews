@@ -75,6 +75,7 @@ export const NewsletterDialog = ({
 
   const createValues: NewsletterDto = {
     active: true,
+    description: '',
     isPublic: true,
     name: '',
     strategy: { provider: 'hnbest' },
@@ -87,6 +88,7 @@ export const NewsletterDialog = ({
         ? createValues
         : {
             active: original?.active ?? true,
+            description: original?.description || '',
             isPublic: original?.isPublic ?? true,
             name: original?.name || '',
             strategy: original?.strategy || { provider: 'hnbest' },
@@ -100,6 +102,7 @@ export const NewsletterDialog = ({
     try {
       const apiData: NewsletterDto = {
         active: values.active,
+        description: values.description,
         isPublic: values.isPublic,
         name: values.name,
         strategy:
@@ -175,6 +178,30 @@ export const NewsletterDialog = ({
                   <div className='md:w-2/3'>
                     <FormControl>
                       <Input placeholder='Daily Tech News' {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='description'
+              render={({ field }) => (
+                <FormItem className='md:flex md:items-start md:justify-between'>
+                  <div className='md:w-1/3'>
+                    <FormLabel className='text-md'>
+                      Description (optional)
+                    </FormLabel>
+                  </div>
+                  <div className='md:w-2/3'>
+                    <FormControl>
+                      <Textarea
+                        placeholder='A brief description of what this newsletter covers...'
+                        {...field}
+                        value={field.value || ''}
+                      />
                     </FormControl>
                     <FormMessage />
                   </div>

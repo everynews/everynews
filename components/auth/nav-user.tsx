@@ -65,6 +65,12 @@ export const NavUser = ({ user }: { user: User }) => {
               <span>My Channels</span>
             </Link>
           </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href='/my/subscriptions'>
+              <Settings className='mr-2 h-4 w-4' />
+              <span>My Subscriptions</span>
+            </Link>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownSignOut />
