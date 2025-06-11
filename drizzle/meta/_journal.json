@@ -1,13 +1,13 @@
 {
-  "version": "7",
   "dialect": "postgresql",
   "entries": [
     {
+      "breakpoints": true,
       "idx": 0,
-      "version": "7",
-      "when": 1749674088328,
       "tag": "0000_broad_roxanne_simpson",
-      "breakpoints": true
+      "version": "7",
+      "when": 1749674088328
     }
-  ]
+  ],
+  "version": "7"
 }
