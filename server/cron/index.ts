@@ -39,7 +39,7 @@ const findNextRunDateBasedOnSchedule = (schedule: string) => {
   return null
 }
 
-const cronAuthMiddleware = async (c: Context, next: () => Promise<void>) => {
+const validateCronJob = async (c: Context): Promise<boolean> => {
   // Only allow requests from Vercel cron jobs - block all user access
   const authHeader = c.req.header('Authorization')
   const cronSecret = process.env.CRON_SECRET
@@ -55,7 +55,7 @@ const cronAuthMiddleware = async (c: Context, next: () => Promise<void>) => {
         type: 'error',
       },
     })
-    return c.json({ error: 'Cron service not configured' }, 503)
+    return false
   }
 
   if (!authHeader && !isDev) {
@@ -68,7 +68,7 @@ const cronAuthMiddleware = async (c: Context, next: () => Promise<void>) => {
         type: 'error',
       },
     })
-    return c.json({ error: 'Unauthorized - Cron jobs only' }, 401)
+    return false
   }
 
   const expectedHeader = `Bearer ${cronSecret}`
@@ -95,7 +95,7 @@ const cronAuthMiddleware = async (c: Context, next: () => Promise<void>) => {
         type: 'error',
       },
     })
-    return c.json({ error: 'Unauthorized - Invalid cron secret' }, 401)
+    return false
   }
 
   // Valid cron job authenticated
@@ -110,13 +110,10 @@ const cronAuthMiddleware = async (c: Context, next: () => Promise<void>) => {
     },
   })
 
-  c.set('user', { id: 'system-cron' })
-  c.set('session', null)
-  return next()
+  return true
 }
 
-export const CronRouter = new Hono<WithAuth>()
-  .use('/', cronAuthMiddleware)
+export const CronRouter = new Hono()
   .post(
     '/',
     describeRoute({
@@ -130,9 +127,40 @@ export const CronRouter = new Hono<WithAuth>()
           },
           description: 'Cron Job Execution Result',
         },
+        401: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  error: { type: 'string' }
+                }
+              }
+            }
+          },
+          description: 'Unauthorized'
+        },
+        503: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  error: { type: 'string' }
+                }
+              }
+            }
+          },
+          description: 'Service Unavailable'
+        }
       },
     }),
     async (c) => {
+      const isValid = await validateCronJob(c)
+      
+      if (!isValid) {
+        return c.json({ error: 'Unauthorized - Invalid cron job' }, 401)
+      }
       try {
         // At this point, we know it's a valid cron job (middleware verified)
         await track({
