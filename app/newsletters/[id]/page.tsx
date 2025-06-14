@@ -114,7 +114,7 @@ export default async function NewsletterStoriesPage({
 
   return (
     <>
-      <div className='text-center space-y-2 mb-6'>
+      <div className='flex flex-col text-center gap-2 mb-6'>
         <div className='flex items-center justify-center gap-4'>
           <h1 className='text-2xl font-bold'>{newsletterInfo.name}</h1>
           {user && !isOwner && userChannels.length > 0 && (
@@ -130,7 +130,7 @@ export default async function NewsletterStoriesPage({
         )}
       </div>
 
-      <div className='container mx-auto max-w-prose p-4 space-y-6'>
+      <div className='container mx-auto max-w-prose p-4 flex flex-col gap-6'>
         {storiesData.length === 0 ? (
           <div className='text-center py-12'>
             <p className='text-muted-foreground'>
@@ -139,7 +139,7 @@ export default async function NewsletterStoriesPage({
           </div>
         ) : (
           <>
-            <div className='space-y-4 grid gap-4'>
+            <div className='grid gap-4'>
               {storiesData.map(({ story }) => (
                 <Link
                   key={story.id}
@@ -154,7 +154,7 @@ export default async function NewsletterStoriesPage({
                     {Array.isArray(story.keyFindings) &&
                       story.keyFindings.length > 0 && (
                         <CardContent className='pt-0'>
-                          <div className='space-y-2'>
+                          <div className='flex flex-col gap-2'>
                             {story.keyFindings
                               .slice(0, 3)
                               .map((finding, index) => (

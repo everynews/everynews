@@ -24,7 +24,7 @@ const MyLayout = ({ children }: { children: React.ReactNode }) => {
     <>
       <div className='flex'>
         <aside className='w-64 bg-background/50 p-6'>
-          <nav className='space-y-2'>
+          <nav className='flex flex-col gap-2'>
             {sidebarItems.map((item) => (
               <SidebarLink
                 key={item.href}

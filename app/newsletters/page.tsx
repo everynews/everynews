@@ -1,7 +1,6 @@
 import { whoami } from '@everynews/auth/session'
 import { SubscribeNewsletterButton } from '@everynews/components/subscribe-newsletter-button'
 import { Badge } from '@everynews/components/ui/badge'
-import { Button } from '@everynews/components/ui/button'
 import {
   Card,
   CardContent,
@@ -125,7 +124,7 @@ export default async function NewslettersPage() {
                 </CardHeader>
 
                 <CardContent>
-                  <div className='space-y-3'>
+                  <div className='flex flex-col gap-3'>
                     {newsletterInfo.description && (
                       <p className='text-sm text-muted-foreground line-clamp-2'>
                         {newsletterInfo.description}

@@ -1,12 +1,18 @@
 import { Badge } from '@everynews/components/ui/badge'
-import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
 import { contents } from '@everynews/schema/content'
 import { newsletter } from '@everynews/schema/newsletter'
 import { stories } from '@everynews/schema/story'
 import { desc, eq } from 'drizzle-orm'
-import { ArrowRight, Calendar, CheckCircle, Globe, Zap, X, HelpCircle, AlertCircle } from 'lucide-react'
+import {
+  AlertCircle,
+  CheckCircle,
+  Globe,
+  HelpCircle,
+  X,
+  Zap,
+} from 'lucide-react'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
@@ -46,10 +52,11 @@ export default async function Page() {
               Beyond Traditional Alerts
             </h2>
             <p className='text-lg text-muted-foreground w-full max-w-4xl mx-auto'>
-              Traditional monitoring tools fall short in today's complex information landscape
+              Traditional monitoring tools fall short in today's complex
+              information landscape
             </p>
           </div>
-          
+
           <div className='grid md:grid-cols-3 gap-8'>
             <Card className='border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-950/20 w-full'>
               <CardContent className='p-6 flex flex-col gap-4'>
@@ -60,11 +67,12 @@ export default async function Page() {
                 </div>
                 <h3 className='font-semibold text-foreground'>Too Literal</h3>
                 <p className='text-sm text-muted-foreground'>
-                  Want to monitor the SWIFT banking system? Good luck filtering through Taylor Swift news.
+                  Want to monitor the SWIFT banking system? Good luck filtering
+                  through Taylor Swift news.
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className='border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-950/20 w-full'>
               <CardContent className='p-6 flex flex-col gap-4'>
                 <div className='text-red-600'>
@@ -74,11 +82,12 @@ export default async function Page() {
                 </div>
                 <h3 className='font-semibold text-foreground'>No Context</h3>
                 <p className='text-sm text-muted-foreground'>
-                  Searching for "new models"? You'll get everything from AI to fashion runway shows.
+                  Searching for "new models"? You'll get everything from AI to
+                  fashion runway shows.
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card className='border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-950/20 w-full'>
               <CardContent className='p-6 flex flex-col gap-4'>
                 <div className='text-red-600'>
@@ -86,9 +95,12 @@ export default async function Page() {
                     <AlertCircle className='w-6 h-6' />
                   </div>
                 </div>
-                <h3 className='font-semibold text-foreground'>Limited Delivery</h3>
+                <h3 className='font-semibold text-foreground'>
+                  Limited Delivery
+                </h3>
                 <p className='text-sm text-muted-foreground'>
-                  Stuck with basic email alerts when you need Slack, webhooks, or custom scheduling.
+                  Stuck with basic email alerts when you need Slack, webhooks,
+                  or custom scheduling.
                 </p>
               </CardContent>
             </Card>
@@ -105,14 +117,16 @@ export default async function Page() {
               Powered by AI and designed for modern workflows
             </p>
           </div>
-          
+
           <div className='grid md:grid-cols-3 gap-8'>
             <Card className='border-blue-200 bg-blue-50/50 dark:border-blue-800 dark:bg-blue-950/20 w-full'>
               <CardContent className='p-6 flex flex-col gap-4'>
                 <div className='text-blue-600'>
                   <Zap className='w-8 h-8' />
                 </div>
-                <h3 className='font-semibold text-foreground'>Semantic Intelligence</h3>
+                <h3 className='font-semibold text-foreground'>
+                  Semantic Intelligence
+                </h3>
                 <ul className='flex flex-col gap-2 text-sm text-muted-foreground'>
                   <li className='flex items-start gap-2'>
                     <CheckCircle className='w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0' />
@@ -129,13 +143,15 @@ export default async function Page() {
                 </ul>
               </CardContent>
             </Card>
-            
+
             <Card className='border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-950/20 w-full'>
               <CardContent className='p-6 flex flex-col gap-4'>
                 <div className='text-green-600'>
                   <Globe className='w-8 h-8' />
                 </div>
-                <h3 className='font-semibold text-foreground'>Flexible Delivery</h3>
+                <h3 className='font-semibold text-foreground'>
+                  Flexible Delivery
+                </h3>
                 <ul className='flex flex-col gap-2 text-sm text-muted-foreground'>
                   <li className='flex items-start gap-2'>
                     <CheckCircle className='w-4 h-4 text-green-500 mt-0.5 flex-shrink-0' />
@@ -152,13 +168,15 @@ export default async function Page() {
                 </ul>
               </CardContent>
             </Card>
-            
+
             <Card className='border-purple-200 bg-purple-50/50 dark:border-purple-800 dark:bg-purple-950/20 w-full'>
               <CardContent className='p-6 flex flex-col gap-4'>
                 <div className='text-purple-600'>
                   <CheckCircle className='w-8 h-8' />
                 </div>
-                <h3 className='font-semibold text-foreground'>Learning System</h3>
+                <h3 className='font-semibold text-foreground'>
+                  Learning System
+                </h3>
                 <ul className='flex flex-col gap-2 text-sm text-muted-foreground'>
                   <li className='flex items-start gap-2'>
                     <CheckCircle className='w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0' />
@@ -185,7 +203,7 @@ export default async function Page() {
               Built for Modern Teams
             </h2>
           </div>
-          
+
           <div className='grid md:grid-cols-2 lg:grid-cols-4 gap-4'>
             <div className='p-6 rounded-lg border bg-card flex flex-col gap-3 w-full'>
               <h3 className='font-semibold text-foreground'>Professionals</h3>
@@ -212,7 +230,9 @@ export default async function Page() {
               </ul>
             </div>
             <div className='p-6 rounded-lg border bg-card flex flex-col gap-3 w-full'>
-              <h3 className='font-semibold text-foreground'>PR & Communications</h3>
+              <h3 className='font-semibold text-foreground'>
+                PR & Communications
+              </h3>
               <ul className='list-disc list-inside flex flex-col gap-1 text-sm text-muted-foreground'>
                 <li>Brand mentions</li>
                 <li>Campaign performance</li>
@@ -232,7 +252,7 @@ export default async function Page() {
               See what our AI-powered system is finding right now
             </p>
           </div>
-          
+
           <div className='grid md:grid-cols-2 gap-6'>
             {recentStories.map(({ story, newsletter: newsletterInfo }) => (
               <Link key={story.id} href={`/stories/${story.id}`}>
@@ -245,8 +265,8 @@ export default async function Page() {
                       <span>•</span>
                       <time dateTime={story.createdAt.toISOString()}>
                         {story.createdAt.toLocaleDateString('en-US', {
-                          month: 'short',
                           day: 'numeric',
+                          month: 'short',
                         })}
                       </time>
                     </div>
@@ -255,27 +275,36 @@ export default async function Page() {
                     </h3>
                   </CardHeader>
 
-                  {Array.isArray(story.keyFindings) && story.keyFindings.length > 0 && (
-                    <CardContent className='pt-0'>
-                      <div className='flex flex-col gap-2'>
-                        {story.keyFindings.slice(0, 2).map((finding, index) => (
-                          <div key={`${story.id}-finding-${index}`} className='flex items-start gap-2'>
-                            <Badge variant='outline' className='text-xs px-1.5 py-0.5 flex-shrink-0'>
-                              {index + 1}
-                            </Badge>
-                            <p className='flex-1 text-xs text-muted-foreground line-clamp-2'>
-                              {finding}
+                  {Array.isArray(story.keyFindings) &&
+                    story.keyFindings.length > 0 && (
+                      <CardContent className='pt-0'>
+                        <div className='flex flex-col gap-2'>
+                          {story.keyFindings
+                            .slice(0, 2)
+                            .map((finding, index) => (
+                              <div
+                                key={`${story.id}-finding-${index}`}
+                                className='flex items-start gap-2'
+                              >
+                                <Badge
+                                  variant='outline'
+                                  className='text-xs px-1.5 py-0.5 flex-shrink-0'
+                                >
+                                  {index + 1}
+                                </Badge>
+                                <p className='flex-1 text-xs text-muted-foreground line-clamp-2'>
+                                  {finding}
+                                </p>
+                              </div>
+                            ))}
+                          {story.keyFindings.length > 2 && (
+                            <p className='text-xs text-muted-foreground'>
+                              +{story.keyFindings.length - 2} more insights
                             </p>
-                          </div>
-                        ))}
-                        {story.keyFindings.length > 2 && (
-                          <p className='text-xs text-muted-foreground'>
-                            +{story.keyFindings.length - 2} more insights
-                          </p>
-                        )}
-                      </div>
-                    </CardContent>
-                  )}
+                          )}
+                        </div>
+                      </CardContent>
+                    )}
                 </Card>
               </Link>
             ))}
