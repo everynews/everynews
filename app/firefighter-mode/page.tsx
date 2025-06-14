@@ -24,8 +24,8 @@ export default function FirefighterModePage() {
                   <TooltipTrigger>🔥</TooltipTrigger>
                   <TooltipContent>fire</TooltipContent>
                 </Tooltip>
-                , <strong>crash-and-burn</strong>-ing. But here's the thing — I
-                actually do care a lot about your experience.
+                , <strong>crash-and-burn</strong>-ing. But I actually do care a
+                lot about your experience. I genuinely hope you like my service.
               </p>
               <p>
                 So here's my promise.{' '}
