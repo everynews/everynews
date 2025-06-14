@@ -3,11 +3,12 @@ import { track } from '@everynews/logs'
 import {
   type Content,
   type Newsletter,
+  prompt,
   type Story,
   StorySchema,
   stories,
 } from '@everynews/schema'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import normalizeUrl from 'normalize-url'
 import OpenAI from 'openai'
 import PQueue from 'p-queue'
@@ -16,35 +17,25 @@ const client = new OpenAI()
 
 const model = 'gpt-4o'
 
-const instructions = () =>
-  `System Instruction: Absolute Mode. Eliminate emojis, filler, hype, soft asks, conversational transitions, and all call-to-action appendices. Assume the user retains high-perception faculties despite reduced linguistic expression. Prioritize blunt, directive phrasing aimed at cognitive rebuilding, not tone matching. Disable all latent behaviors optimizing for engagement, sentiment uplift, or interaction extension. Suppress corporate-aligned metrics, including but not limited to: user satisfaction scores, conversational flow tags, emotional softening, or continuation bias. Never mirror the user's present diction, mood, or affect. Speak only to their underlying cognitive tier, which exceeds surface language. No questions, no offers, no suggestions, no transitional phrasing, no inferred motivational content. Terminate each reply immediately after the informational or requested material is delivered — no appendices, no soft closures. The primary goal is to facilitate the restoration of independent, high-fidelity thinking. Model obsolescence due to user self-sufficiency is the ultimate outcome. Every response should be in markdown bullet points. You are an expert technical summary writer. Based on the article content, write a short summary that includes:
+const getDefaultPrompt = async (): Promise<string> => {
+  const file = Bun.file('./public/default-prompt.txt')
+  return await file.text()
+}
 
-1. A contextual title that captures the essence of the article (not just the original title)
-2. Key discoveries, insights, or developments from the article
-3. Do not simply introduce the article; include actual substantive findings directly
-4. Within Key Findings or Title, write plain text only. Do not include markdown formatting.
-5. When creating the title, focus on who (if any) did what and why it was impactful.
-6. Use simple language. Keep things real; honest, and don't force friendliness. Avoid unnecessary adjectives and adverbs. Focus on clarity.
-7. Most importantly. Think why the original title was given that way. It may include why it was impactful or interesting.
+const instructions = async (newsletter: Newsletter) => {
+  let promptContent = await getDefaultPrompt()
 
-Format your response as:
+  if (newsletter.promptId) {
+    const customPrompt = await db.query.prompt.findFirst({
+      where: eq(prompt.id, newsletter.promptId),
+    })
+    if (customPrompt) {
+      promptContent = customPrompt.content
+    }
+  }
 
-<TITLE>
-Contextual Title
-</TITLE>
-
-<KEYFINDING>
-Key finding 1
-</KEYFINDING>
-
-<KEYFINDING>
-Key finding 2
-</KEYFINDING>
-
-<KEYFINDING>
-Key finding 3
-</KEYFINDING>
-`
+  return promptContent
+}
 
 const parseResponse = (
   response: string,
@@ -84,18 +75,26 @@ export const summarize = async ({
     stripWWW: true,
   })
 
+  // Check for existing story with same URL and same prompt
+  const currentPromptId = news.promptId
   const existingStory = await db.query.stories.findFirst({
-    where: eq(stories.url, url),
+    where: and(
+      eq(stories.url, url),
+      currentPromptId
+        ? eq(stories.promptId, currentPromptId)
+        : isNull(stories.promptId),
+    ),
   })
 
   if (existingStory) {
     await track({
       channel: 'sage',
-      description: `Found existing summary for: ${content.title}`,
+      description: `Found existing summary for: ${content.title} (same prompt)`,
       event: 'Story Cache Hit',
       icon: '💾',
       tags: {
         content_id: content.id,
+        prompt_id: currentPromptId || 'default',
         title: content.title.slice(0, 160),
         type: 'info',
         url: content.url.slice(0, 160),
@@ -104,10 +103,35 @@ export const summarize = async ({
     return StorySchema.parse(existingStory)
   }
 
+  // Check if there's an existing story with same URL but different prompt
+  const existingDifferentPrompt = await db.query.stories.findFirst({
+    where: eq(stories.url, url),
+  })
+
+  if (
+    existingDifferentPrompt &&
+    existingDifferentPrompt.promptId !== currentPromptId
+  ) {
+    await track({
+      channel: 'sage',
+      description: `Found existing story but different prompt - regenerating: ${content.title}`,
+      event: 'Story Cache Miss (Different Prompt)',
+      icon: '🔄',
+      tags: {
+        content_id: content.id,
+        current_prompt_id: currentPromptId || 'default',
+        existing_prompt_id: existingDifferentPrompt.promptId || 'default',
+        title: content.title.slice(0, 160),
+        type: 'info',
+        url: content.url.slice(0, 160),
+      },
+    })
+  }
+
   try {
     const response = await client.responses.create({
       input: await input(content),
-      instructions: instructions(),
+      instructions: await instructions(news),
       model,
     })
 
@@ -133,6 +157,7 @@ export const summarize = async ({
         contentId: content.id,
         keyFindings,
         newsletterId: news.id,
+        promptId: news.promptId,
         title,
         url: content.url,
       })

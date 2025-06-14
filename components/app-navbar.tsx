@@ -14,7 +14,10 @@ export const AppNavbar = async () => {
       <div className='flex gap-6'>
         <Link href='/' className='flex items-center gap-2'>
           <Logo />
-          <span className='inline-block font-bold'>every.news</span>
+          <span className='inline-block font-bold'>Everynews</span>
+          <span className='inline-block px-1.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded-md'>
+            beta
+          </span>
         </Link>
         <nav className='flex gap-6'>
           <Link

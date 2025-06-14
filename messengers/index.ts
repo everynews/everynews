@@ -16,9 +16,9 @@ export const sendMagicLink = async ({
   url: string
 }): Promise<void> => {
   const { error } = await resend.emails.send({
-    from: 'every.news <no-reply@app.every.news>',
+    from: 'Everynews <no-reply@app.every.news>',
     react: MagicLinkEmail({ loginLink: url }),
-    subject: 'Sign in to every.news',
+    subject: 'Sign in to Everynews',
     to: [email],
   })
 
@@ -37,7 +37,7 @@ export const sendChannelVerification = async ({
   verificationLink: string
 }): Promise<void> => {
   const { error } = await resend.emails.send({
-    from: 'every.news <no-reply@app.every.news>',
+    from: 'Everynews <no-reply@app.every.news>',
     react: ChannelVerificationEmail({ channelName, verificationLink }),
     subject: `Verify your notification channel "${channelName}"`,
     to: [email],

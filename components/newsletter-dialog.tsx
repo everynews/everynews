@@ -23,6 +23,13 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from '@everynews/components/ui/radio-group'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@everynews/components/ui/select'
 import { Separator } from '@everynews/components/ui/separator'
 import { Switch } from '@everynews/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
@@ -33,7 +40,9 @@ import {
   type NewsletterDto,
   NewsletterDtoSchema,
 } from '@everynews/schema/newsletter'
+import type { Prompt } from '@everynews/schema/prompt'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { humanId } from 'human-id'
 import { PlusCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useId, useState } from 'react'
@@ -58,10 +67,12 @@ export const NewsletterDialog = ({
   mode,
   original,
   trigger,
+  prompts,
 }: {
   mode: 'create' | 'edit'
   original?: Newsletter
   trigger?: React.ReactNode
+  prompts: Prompt[]
 }) => {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -77,7 +88,8 @@ export const NewsletterDialog = ({
     active: true,
     description: '',
     isPublic: true,
-    name: '',
+    name: humanId({ capitalize: true, separator: ' ' }),
+    promptId: null,
     strategy: { provider: 'hnbest' },
     wait: { type: 'count', value: 10 },
   }
@@ -91,6 +103,7 @@ export const NewsletterDialog = ({
             description: original?.description || '',
             isPublic: original?.isPublic ?? true,
             name: original?.name || '',
+            promptId: original?.promptId || null,
             strategy: original?.strategy || { provider: 'hnbest' },
             wait: original?.wait || { type: 'count', value: 10 },
           },
@@ -105,6 +118,7 @@ export const NewsletterDialog = ({
         description: values.description,
         isPublic: values.isPublic,
         name: values.name,
+        promptId: values.promptId,
         strategy:
           values.strategy.provider === 'exa'
             ? { provider: 'exa', query: values.strategy.query || '' }
@@ -135,7 +149,14 @@ export const NewsletterDialog = ({
           : `Newsletter "${form.watch('name')}" updated.`,
       )
       setOpen(false)
-      form.reset()
+      if (mode === 'create') {
+        form.reset({
+          ...createValues,
+          name: humanId({ capitalize: true, separator: ' ' }),
+        })
+      } else {
+        form.reset()
+      }
       router.refresh()
     } catch (e) {
       toastNetworkError(e as Error)
@@ -195,7 +216,7 @@ export const NewsletterDialog = ({
                 <FormItem className='md:flex md:items-start md:justify-between'>
                   <div className='md:w-1/3'>
                     <FormLabel className='text-md'>
-                      Description (optional)
+                      What is this newsletter about?
                     </FormLabel>
                   </div>
                   <div className='md:w-2/3'>
@@ -205,6 +226,45 @@ export const NewsletterDialog = ({
                         {...field}
                         value={field.value || ''}
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='promptId'
+              render={({ field }) => (
+                <FormItem className='md:flex md:items-start md:justify-between'>
+                  <div className='md:w-1/3'>
+                    <FormLabel className='text-md'>
+                      What prompt should we use to summarize the article?
+                    </FormLabel>
+                  </div>
+                  <div className='md:w-2/3'>
+                    <FormControl>
+                      <Select
+                        value={field.value || 'default'}
+                        onValueChange={(value) =>
+                          field.onChange(value === 'default' ? null : value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder='Select a prompt' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value='default'>
+                            Default Prompt
+                          </SelectItem>
+                          {prompts.map((prompt) => (
+                            <SelectItem key={prompt.id} value={prompt.id}>
+                              {prompt.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </div>

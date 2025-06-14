@@ -6,9 +6,9 @@
   },
   "dialect": "postgresql",
   "enums": {},
-  "id": "5362a043-d549-4e89-9c94-bef5ab0f279b",
+  "id": "356a95c1-a7fa-4167-b9e3-b9e2eef5e237",
   "policies": {},
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "prevId": "6f883fbe-76fe-49b9-abfb-358f82a892a7",
   "roles": {},
   "schemas": {},
   "sequences": {},
@@ -469,6 +469,13 @@
           "primaryKey": true,
           "type": "text"
         },
+        "language": {
+          "default": "'en'",
+          "name": "language",
+          "notNull": true,
+          "primaryKey": false,
+          "type": "text"
+        },
         "name": {
           "name": "name",
           "notNull": true,
@@ -619,6 +626,12 @@
           "primaryKey": false,
           "type": "text"
         },
+        "prompt_id": {
+          "name": "prompt_id",
+          "notNull": false,
+          "primaryKey": false,
+          "type": "text"
+        },
         "title": {
           "name": "title",
           "notNull": true,
@@ -658,6 +671,15 @@
           "onUpdate": "no action",
           "tableFrom": "stories",
           "tableTo": "newsletter"
+        },
+        "stories_prompt_id_prompt_id_fk": {
+          "columnsFrom": ["prompt_id"],
+          "columnsTo": ["id"],
+          "name": "stories_prompt_id_prompt_id_fk",
+          "onDelete": "set null",
+          "onUpdate": "no action",
+          "tableFrom": "stories",
+          "tableTo": "prompt"
         }
       },
       "indexes": {},
@@ -666,9 +688,9 @@
       "policies": {},
       "schema": "",
       "uniqueConstraints": {
-        "stories_url_unique": {
-          "columns": ["url"],
-          "name": "stories_url_unique",
+        "stories_url_prompt_id_unique": {
+          "columns": ["url", "prompt_id"],
+          "name": "stories_url_prompt_id_unique",
           "nullsNotDistinct": false
         }
       }

@@ -1,0 +1,18 @@
+- Do not simply introduce the article; research why this is interesting.
+- Within Title or Key Findings, write plain text only; no markdowns.
+- Use simple language, as if you're talking to a friend.
+- Be honest, and don't force friendliness.
+- Avoid unnecessary adjectives and adverbs.
+- Original title may include why it was impactful or interesting. 
+
+Format your response as
+
+<TITLE>
+Contextual Title
+</TITLE>
+
+<KEYFINDING>
+Key finding 1
+</KEYFINDING>
+
+Note that there could be many <KEYFINDING> tags.

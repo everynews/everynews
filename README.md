@@ -1,4 +1,4 @@
-# every.news
+# Everynews
 
 Google Alerts worked great for passive web monitoring but had limitations.
 
@@ -6,7 +6,7 @@ Google Alerts worked great for passive web monitoring but had limitations.
 - **No context understanding**. What if you want to monitor *new models*, as in actual new fashion models?
 - **Limited delivery options**. Wouldn't it be great to send it to a Slack channel?
 
-every.news will try to fix the above problems.
+Everynews will try to fix the above problems.
 
 - **Semanticity**
   - LLMs and Vector Storage
@@ -19,7 +19,7 @@ every.news will try to fix the above problems.
   - Custom templates, APIs, webhook integration, and more to come
 - **Feedback systems**
   - Reply to an alert explaining why it's not relevant
-  - every.news will keep that feedback in mind when composing the following alert
+  - Everynews will keep that feedback in mind when composing the following alert
 
 Who'd use it?
 

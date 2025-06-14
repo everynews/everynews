@@ -7,6 +7,7 @@ import { generateSpecs } from 'hono-openapi'
 import { ChannelRouter } from './channels'
 import { CronRouter } from './cron'
 import { NewsletterRouter } from './newsletters'
+import { PromptsRouter } from './prompts'
 import { SubscriptionRouter } from './subscriptions'
 
 const app = new Hono<WithAuth>()
@@ -15,6 +16,7 @@ const app = new Hono<WithAuth>()
   .route('/cron', CronRouter)
   .route('/newsletters', NewsletterRouter)
   .route('/channels', ChannelRouter)
+  .route('/prompts', PromptsRouter)
   .route('/subscriptions', SubscriptionRouter)
 
 app.get(
@@ -25,8 +27,8 @@ app.get(
         content: await generateSpecs(app, {
           documentation: {
             info: {
-              description: 'API for every.news',
-              title: 'every.news API',
+              description: 'API for Everynews',
+              title: 'Everynews API',
               version: '0.1.0',
             },
             servers: [
@@ -36,7 +38,7 @@ app.get(
             ],
           },
         }),
-        title: 'every.news',
+        title: 'Everynews',
       },
       {
         content: {
@@ -47,7 +49,7 @@ app.get(
             },
           ],
         },
-        title: 'every.news Auth',
+        title: 'Everynews Auth',
       },
     ],
   }),

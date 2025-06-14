@@ -2,6 +2,7 @@ import { z } from 'zod'
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
 import { boolean, json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { prompt } from './prompt'
 import { strategySchema } from './strategy'
 import { users } from './user'
 import { WaitSchema } from './wait'
@@ -15,6 +16,9 @@ export const newsletter = pgTable('newsletter', {
   lastRun: timestamp('last_run').defaultNow(),
   name: text('name').notNull(),
   nextRun: timestamp('next_run').defaultNow(),
+  promptId: text('prompt_id').references(() => prompt.id, {
+    onDelete: 'set null',
+  }),
   strategy: json('strategy').notNull(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   userId: text('user_id')
@@ -39,6 +43,7 @@ export const NewsletterSchema = z
       .min(1, 'Name is required')
       .openapi({ example: 'News' }),
     nextRun: z.coerce.date().nullable().openapi({ example: new Date() }),
+    promptId: z.coerce.string().nullable().openapi({ example: '123' }),
     strategy: strategySchema,
     updatedAt: z.coerce.date().openapi({ example: new Date() }),
     userId: z.coerce.string().openapi({ example: '123' }),
