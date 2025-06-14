@@ -268,7 +268,6 @@ export const PromptCreatePage = () => {
               <Separator />
 
               <div>
-                <h4 className='font-medium mb-3'>Key Findings:</h4>
                 <ul className='space-y-2'>
                   {testResult.keyFindings.map((finding) => (
                     <li key={finding} className='flex items-start gap-2'>
@@ -279,18 +278,6 @@ export const PromptCreatePage = () => {
                 </ul>
               </div>
 
-              <Separator />
-
-              <div className='text-sm text-muted-foreground'>
-                <a
-                  href={testResult.url}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className='hover:underline'
-                >
-                  Source: {testResult.url}
-                </a>
-              </div>
             </CardContent>
           </Card>
         )}

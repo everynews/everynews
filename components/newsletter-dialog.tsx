@@ -230,7 +230,7 @@ export const NewsletterDialog = ({
                 <FormItem className='md:flex md:items-start md:justify-between'>
                   <div className='md:w-1/3'>
                     <FormLabel className='text-md'>
-                      Description (optional)
+                      What is this newsletter about?
                     </FormLabel>
                   </div>
                   <div className='md:w-2/3'>
@@ -254,49 +254,28 @@ export const NewsletterDialog = ({
                 <FormItem className='md:flex md:items-start md:justify-between'>
                   <div className='md:w-1/3'>
                     <FormLabel className='text-md'>
-                      AI Prompt (optional)
+                      What prompt should we use to summarize the article?
                     </FormLabel>
-                    <p className='text-muted-foreground text-sm mt-1'>
-                      Choose a custom prompt for AI summarization. Uses default
-                      prompt if none selected.
-                    </p>
                   </div>
                   <div className='md:w-2/3'>
-                    <div className='flex gap-2'>
-                      <FormControl>
-                        <Select
-                          value={field.value || ''}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder='Select a prompt (optional)' />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value=''>Default Prompt</SelectItem>
-                            {prompts.map((prompt) => (
-                              <SelectItem key={prompt.id} value={prompt.id}>
-                                {prompt.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <PromptDialog
-                        mode='create'
-                        onSuccess={() => {
-                          // Refetch prompts when a new one is created
-                          api.prompts.$get().then((res) => {
-                            if (res.ok) {
-                              res.json().then(data => setPrompts(data.map((p: any) => ({
-                                ...p,
-                                createdAt: new Date(p.createdAt),
-                                updatedAt: new Date(p.updatedAt),
-                              }))))
-                            }
-                          })
-                        }}
-                      />
-                    </div>
+                    <FormControl>
+                      <Select
+                        value={field.value || 'default'}
+                        onValueChange={(value) => field.onChange(value === 'default' ? null : value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder='Select a prompt' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value='default'>Default Prompt</SelectItem>
+                          {prompts.map((prompt) => (
+                            <SelectItem key={prompt.id} value={prompt.id}>
+                              {prompt.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
                     <FormMessage />
                   </div>
                 </FormItem>

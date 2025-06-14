@@ -12,11 +12,12 @@ import {
   DialogTrigger,
 } from '@everynews/components/ui/dialog'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@everynews/components/ui/dropdown-menu'
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@everynews/components/ui/select'
 import {
   Form,
   FormControl,
@@ -110,30 +111,20 @@ export const SubscribeNewsletterDialog = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Channel</FormLabel>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant='outline'
-                          className='w-full justify-between'
-                        >
-                          {field.value
-                            ? channels.find((c) => c.id === field.value)?.name
-                            : 'Select a channel'}
-                        </Button>
-                      </FormControl>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className='w-full'>
-                      {channels.map((channel) => (
-                        <DropdownMenuItem
-                          key={channel.id}
-                          onClick={() => field.onChange(channel.id)}
-                        >
-                          {channel.name} ({channel.type})
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Select a channel' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {channels.map((channel) => (
+                          <SelectItem key={channel.id} value={channel.id}>
+                            {channel.name} ({channel.type})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
