@@ -10,13 +10,12 @@ export const dynamic = 'force-dynamic'
 
 export default function FirefighterModePage() {
   return (
-    <div className='min-h-screen bg-background'>
-      <div className='container mx-auto px-6 py-20'>
-        <div className='max-w-2xl mx-auto'>
+    
+      <div className='container mx-auto px-6 py-20 max-w-2xl mx-auto'>
           <div className='prose prose-lg dark:prose-invert max-w-none'>
             <h1 className='text-3xl font-bold mb-8'>Firefighter Mode 🧑‍🚒</h1>
             <div className='flex flex-col gap-6 leading-relaxed'>
-              <p>Hey there!</p>
+              
               <p>
                 We are in <Badge variant='outline'>Beta</Badge> and things are
                 literally on{' '}
@@ -104,8 +103,8 @@ export default function FirefighterModePage() {
               </p>
             </div>
           </div>
-        </div>
+        
       </div>
-    </div>
+    
   )
 }
