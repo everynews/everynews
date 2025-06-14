@@ -1,7 +1,7 @@
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import { whoami } from '@everynews/auth/session'
-import { readFile } from 'fs/promises'
 import { redirect } from 'next/navigation'
-import { join } from 'path'
 import { PromptCreatePage } from './prompt-create-page'
 
 export const dynamic = 'force-dynamic'
@@ -18,7 +18,7 @@ export default async function CreatePromptPage() {
       join(process.cwd(), 'public', 'default-prompt.txt'),
       'utf-8',
     )
-  } catch (error) {
+  } catch (_error) {
     // Use fallback if file doesn't exist
   }
 

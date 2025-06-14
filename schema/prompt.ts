@@ -2,14 +2,17 @@ import { z } from 'zod'
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
-import { LanguageSchema } from './language'
+import { LANGUAGE_CODES, LANGUAGE_LABELS, LanguageSchema } from './language'
 import { users } from './user'
+
+// Re-export language constants for convenience
+export { LANGUAGE_CODES as SUPPORTED_LANGUAGES, LANGUAGE_LABELS }
 
 export const prompt = pgTable('prompt', {
   content: text('content').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   id: text('id').primaryKey().$defaultFn(nanoid),
-  language: text('language').notNull().default('en'),
+  language: text('language', { enum: LANGUAGE_CODES }).notNull().default('en'),
   name: text('name').notNull(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   userId: text('user_id')

@@ -66,12 +66,12 @@ export const AppFooter = ({
                 <h3 className='text-xl font-bold'>{name}</h3>
               </div>
             </FooterColumn>
-            {columns.map((column, index) => (
-              <FooterColumn key={index}>
+            {columns.map((column) => (
+              <FooterColumn key={column.title}>
                 <h3 className='text-md pt-1 font-semibold'>{column.title}</h3>
-                {column.links.map((link, linkIndex) => (
+                {column.links.map((link) => (
                   <a
-                    key={linkIndex}
+                    key={link.text}
                     href={link.href}
                     className='text-muted-foreground text-sm hover:text-foreground'
                   >
@@ -84,9 +84,9 @@ export const AppFooter = ({
           <FooterBottom>
             <div className='text-sm text-muted-foreground'>{copyright}</div>
             <div className='flex items-center gap-4'>
-              {policies.map((policy, index) => (
+              {policies.map((policy) => (
                 <a
-                  key={index}
+                  key={policy.text}
                   href={policy.href}
                   className='text-sm text-muted-foreground hover:text-foreground'
                 >
