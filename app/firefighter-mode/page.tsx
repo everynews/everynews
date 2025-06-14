@@ -8,6 +8,11 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
+export const metadata = {
+  description: 'Bug fixing promise for early users.',
+  title: 'Firefighter Mode',
+}
+
 export default function FirefighterModePage() {
   return (
     <div className='container mx-auto px-6 py-20 max-w-2xl mx-auto'>

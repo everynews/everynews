@@ -24,6 +24,11 @@ import { unauthorized } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
+export const metadata = {
+  description: 'Your created newsletters.',
+  title: 'Newsletters',
+}
+
 export default async function MyNewslettersPage() {
   const user = await whoami()
   if (!user) return unauthorized()

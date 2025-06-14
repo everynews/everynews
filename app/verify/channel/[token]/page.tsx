@@ -3,6 +3,11 @@ import { Button } from '@everynews/components/ui/button'
 import { CheckCircle, XCircle } from 'lucide-react'
 import Link from 'next/link'
 
+export const metadata = {
+  description: 'Confirm your delivery channel.',
+  title: 'Verify Channel',
+}
+
 export default async function VerifyChannelPage({
   params,
 }: {

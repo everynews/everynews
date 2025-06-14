@@ -11,6 +11,11 @@ import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
+export const metadata = {
+  description: 'Full story from a subscribed newsletter.',
+  title: 'Story Details',
+}
+
 export default async function StoryPage({
   params,
 }: {
