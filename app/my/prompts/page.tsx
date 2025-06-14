@@ -1,5 +1,4 @@
 import { whoami } from '@everynews/auth/session'
-import { PromptDialog } from '@everynews/components/prompt-dialog'
 import { Button } from '@everynews/components/ui/button'
 import {
   Table,
@@ -12,7 +11,7 @@ import {
 import { db } from '@everynews/database'
 import { prompt } from '@everynews/schema'
 import { eq } from 'drizzle-orm'
-import { Edit, Eye } from 'lucide-react'
+import { PlusCircle, Wrench } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -38,7 +37,12 @@ export default async function PromptsPage() {
             Manage your custom AI prompts for newsletter summarization
           </p>
         </div>
-        <PromptDialog mode='create' />
+        <Button asChild>
+          <Link href='/my/prompts/create'>
+            <PlusCircle className='size-4 mr-2' />
+            Create Prompt
+          </Link>
+        </Button>
       </div>
 
       <div className='border rounded-lg'>
@@ -75,22 +79,11 @@ export default async function PromptsPage() {
                     {new Date(promptItem.updatedAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    <div className='flex items-center gap-2'>
-                      <Button asChild size='sm' variant='ghost'>
-                        <Link href={`/my/prompts/${promptItem.id}`}>
-                          <Eye className='size-4' />
-                        </Link>
-                      </Button>
-                      <PromptDialog
-                        mode='edit'
-                        original={promptItem}
-                        trigger={
-                          <Button size='sm' variant='ghost'>
-                            <Edit className='size-4' />
-                          </Button>
-                        }
-                      />
-                    </div>
+                    <Button asChild size='sm' variant='ghost'>
+                      <Link href={`/my/prompts/${promptItem.id}`}>
+                        <Wrench className='size-4' />
+                      </Link>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))

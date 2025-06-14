@@ -13,11 +13,10 @@ import { Label } from '@everynews/components/ui/label'
 import { Separator } from '@everynews/components/ui/separator'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
-import type { Prompt } from '@everynews/schema/prompt'
-import { ArrowLeft, Loader2, Save, TestTube } from 'lucide-react'
+import { ArrowLeft, Loader2, Plus, TestTube } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useId, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { toast } from 'sonner'
 
 type TestResult = {
@@ -27,19 +26,35 @@ type TestResult = {
   originalTitle: string
 }
 
-export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
+export const PromptCreatePage = () => {
   const router = useRouter()
-  const [testUrl, setTestUrl] = useState<string>('')
+  const [name, setName] = useState('')
+  const [content, setContent] = useState('')
+  const [testUrl, setTestUrl] = useState('')
+  const [isCreating, setIsCreating] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [testResult, setTestResult] = useState<TestResult | null>(null)
-  const [name, setName] = useState(prompt.name)
-  const [content, setContent] = useState(prompt.content)
-  const [isSaving, setIsSaving] = useState(false)
-  const testUrlId = useId()
+  const [defaultPromptContent, setDefaultPromptContent] = useState('')
+  
   const nameId = useId()
   const contentId = useId()
+  const testUrlId = useId()
 
-  const handleSave = async () => {
+  useEffect(() => {
+    fetch('/default-prompt.txt')
+      .then((res) => res.text())
+      .then((text) => {
+        setDefaultPromptContent(text)
+        setContent(text)
+      })
+      .catch(() => {
+        const fallback = 'Enter your prompt instructions here...'
+        setDefaultPromptContent(fallback)
+        setContent(fallback)
+      })
+  }, [])
+
+  const handleCreate = async () => {
     if (!name.trim()) {
       toast.error('Please enter a prompt name')
       return
@@ -50,31 +65,36 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
       return
     }
 
-    setIsSaving(true)
+    setIsCreating(true)
 
     try {
-      const res = await api.prompts[':id'].$put({
+      const res = await api.prompts.$post({
         json: { name: name.trim(), content: content.trim() },
-        param: { id: prompt.id },
       })
 
       if (!res.ok) {
-        toast.error('Failed to save prompt')
+        toast.error('Failed to create prompt')
         return
       }
 
-      toast.success('Prompt saved successfully')
-      router.refresh()
+      const prompt = await res.json()
+      toast.success('Prompt created successfully')
+      router.push(`/my/prompts/${prompt.id}`)
     } catch (error) {
       toastNetworkError(error as Error)
     } finally {
-      setIsSaving(false)
+      setIsCreating(false)
     }
   }
 
   const handleTest = async () => {
     if (!testUrl.trim()) {
       toast.error('Please enter a URL to test')
+      return
+    }
+
+    if (!name.trim() || !content.trim()) {
+      toast.error('Please fill in prompt name and content before testing')
       return
     }
 
@@ -90,20 +110,33 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
     setTestResult(null)
 
     try {
-      const res = await api.prompts.test.$post({
+      // First create the prompt temporarily to test it
+      const createRes = await api.prompts.$post({
+        json: { name: name.trim(), content: content.trim() },
+      })
+
+      if (!createRes.ok) {
+        toast.error('Failed to create prompt for testing')
+        return
+      }
+
+      const prompt = await createRes.json()
+
+      // Then test it
+      const testRes = await api.prompts.test.$post({
         json: {
           promptId: prompt.id,
           url: testUrl,
         },
       })
 
-      if (!res.ok) {
-        const error = await res.text()
+      if (!testRes.ok) {
+        const error = await testRes.text()
         toast.error(`Test failed: ${error}`)
         return
       }
 
-      const result = await res.json()
+      const result = await testRes.json()
       setTestResult(result)
       toast.success('Prompt test completed')
     } catch (error) {
@@ -126,22 +159,21 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
 
       <div className='flex items-center justify-between mb-8'>
         <div>
-          <h1 className='text-3xl font-bold'>{name}</h1>
+          <h1 className='text-3xl font-bold'>Create New Prompt</h1>
           <p className='text-muted-foreground mt-2'>
-            Created {new Date(prompt.createdAt).toLocaleDateString()} • Updated{' '}
-            {new Date(prompt.updatedAt).toLocaleDateString()}
+            Create a custom AI prompt for newsletter summarization
           </p>
         </div>
-        <Button onClick={handleSave} disabled={isSaving}>
-          {isSaving ? (
+        <Button onClick={handleCreate} disabled={isCreating}>
+          {isCreating ? (
             <>
               <Loader2 className='size-4 animate-spin mr-2' />
-              Saving...
+              Creating...
             </>
           ) : (
             <>
-              <Save className='size-4 mr-2' />
-              Save
+              <Plus className='size-4 mr-2' />
+              Create Prompt
             </>
           )}
         </Button>
@@ -173,7 +205,7 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
                 id={contentId}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder='Enter your prompt instructions here...'
+                placeholder={defaultPromptContent}
                 className='min-h-48'
               />
             </div>
@@ -201,7 +233,7 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
 
             <Button
               onClick={handleTest}
-              disabled={isLoading || !testUrl.trim()}
+              disabled={isLoading || !testUrl.trim() || !name.trim() || !content.trim()}
             >
               {isLoading ? (
                 <>
