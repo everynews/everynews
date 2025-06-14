@@ -33,7 +33,7 @@ export default async function VerifyChannelPage({
 
   return (
     <div className='flex flex-col items-center justify-center min-h-[400px] p-8'>
-      <div className='text-center space-y-6 max-w-md'>
+      <div className='flex flex-col text-center gap-6 max-w-md'>
         {success ? (
           <>
             <CheckCircle className='mx-auto h-16 w-16 text-green-700 dark:text-green-400' />
@@ -57,7 +57,7 @@ export default async function VerifyChannelPage({
             <p className='text-sm text-muted-foreground'>
               You can resend the verification email from your channels page.
             </p>
-            <div className='space-y-2'>
+            <div className='flex flex-col gap-2'>
               <Link href='/my/channels'>
                 <Button variant='outline'>Go to Channels</Button>
               </Link>

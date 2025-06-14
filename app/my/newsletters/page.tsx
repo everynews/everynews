@@ -49,7 +49,7 @@ export default async function MyNewslettersPage() {
   const userSubscriptions = subscriptionsRes
 
   return (
-    <div className='space-y-6'>
+    <div className='flex flex-col gap-6'>
       <div className='flex justify-between items-center px-3'>
         <div>
           <h2 className='text-2xl font-bold'>My Newsletters</h2>
