@@ -1,6 +1,6 @@
 import { Resend } from 'resend'
-import ChannelVerificationEmail from '../emails/channel-verification'
-import MagicLinkEmail from '../emails/magic-link'
+import { ChannelVerificationEmail } from '../emails/channel-verification'
+import { MagicLinkEmail } from '../emails/magic-link'
 
 if (!process.env.RESEND_API_KEY) {
   throw new Error('RESEND_API_KEY is not defined')

@@ -8,7 +8,7 @@ import {
   Text,
 } from '@react-email/components'
 
-const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
+export const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
   return (
     <Tailwind>
       <Body className='bg-white px-2 font-sans'>
@@ -39,5 +39,3 @@ const MagicLinkEmail = ({ loginLink }: { loginLink: string }) => {
 MagicLinkEmail.PreviewProps = {
   loginLink: 'https://every.news/sign-in',
 }
-
-export default MagicLinkEmail

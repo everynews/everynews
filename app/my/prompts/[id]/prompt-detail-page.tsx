@@ -1,6 +1,7 @@
 'use client'
 
 import { api } from '@everynews/app/api'
+import { PromptDetailsCard } from '@everynews/components/prompt-details-card'
 import { Button } from '@everynews/components/ui/button'
 import {
   Card,
@@ -14,7 +15,6 @@ import { Separator } from '@everynews/components/ui/separator'
 import { toastNetworkError } from '@everynews/lib/error'
 import type { LanguageCode } from '@everynews/schema/language'
 import type { Prompt } from '@everynews/schema/prompt'
-import PromptDetailsCard from '@everynews/components/prompt-details-card'
 import { ArrowLeft, Loader2, Save, TestTube } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'

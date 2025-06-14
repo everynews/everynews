@@ -8,7 +8,7 @@ import {
   Text,
 } from '@react-email/components'
 
-const ChannelVerificationEmail = ({
+export const ChannelVerificationEmail = ({
   channelName,
   verificationLink,
 }: {
@@ -46,5 +46,3 @@ ChannelVerificationEmail.PreviewProps = {
   channelName: '이메일',
   verificationLink: 'https://every.news/verify/channel/abc123',
 }
-
-export default ChannelVerificationEmail
