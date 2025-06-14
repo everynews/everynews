@@ -20,6 +20,7 @@ import {
 import { Separator } from '@everynews/components/ui/separator'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
+import type { LanguageCode } from '@everynews/schema/language'
 import { LANGUAGE_LABELS, SUPPORTED_LANGUAGES } from '@everynews/schema/prompt'
 import { humanId } from 'human-id'
 import { ArrowLeft, Loader2, Plus, TestTube } from 'lucide-react'
@@ -45,7 +46,7 @@ export const PromptCreatePage = ({
     humanId({ capitalize: true, separator: ' ' }),
   )
   const [content, setContent] = useState('')
-  const [language, setLanguage] = useState<string>('en')
+  const [language, setLanguage] = useState<LanguageCode>('en')
   const [testUrl, setTestUrl] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -203,7 +204,10 @@ export const PromptCreatePage = ({
 
             <div className='grid gap-2'>
               <Label htmlFor={languageId}>Language</Label>
-              <Select value={language} onValueChange={setLanguage}>
+              <Select
+                value={language}
+                onValueChange={(value) => setLanguage(value as LanguageCode)}
+              >
                 <SelectTrigger id={languageId}>
                   <SelectValue placeholder='Select language' />
                 </SelectTrigger>

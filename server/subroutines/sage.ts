@@ -8,7 +8,7 @@ import {
   StorySchema,
   stories,
 } from '@everynews/schema'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import normalizeUrl from 'normalize-url'
 import OpenAI from 'openai'
 import PQueue from 'p-queue'
@@ -78,7 +78,12 @@ export const summarize = async ({
   // Check for existing story with same URL and same prompt
   const currentPromptId = news.promptId
   const existingStory = await db.query.stories.findFirst({
-    where: and(eq(stories.url, url), eq(stories.promptId, currentPromptId)),
+    where: and(
+      eq(stories.url, url),
+      currentPromptId
+        ? eq(stories.promptId, currentPromptId)
+        : isNull(stories.promptId),
+    ),
   })
 
   if (existingStory) {
