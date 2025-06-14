@@ -1,5 +1,5 @@
 import { db } from '@everynews/database'
-import Newsletter from '@everynews/emails/newsletter'
+import { Newsletter } from '@everynews/emails/newsletter'
 import { track } from '@everynews/logs'
 import { ChannelSchema, channels, type Story } from '@everynews/schema'
 import { eq } from 'drizzle-orm'

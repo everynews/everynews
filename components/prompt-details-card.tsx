@@ -95,5 +95,3 @@ export const PromptDetailsCard = ({
     </CardContent>
   </Card>
 )
-
-export default PromptDetailsCard
