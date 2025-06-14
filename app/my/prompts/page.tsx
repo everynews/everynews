@@ -17,6 +17,11 @@ import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
+export const metadata = {
+  description: 'Manage your prompts for custom searches.',
+  title: 'Prompts',
+}
+
 export default async function PromptsPage() {
   const user = await whoami()
   if (!user) {

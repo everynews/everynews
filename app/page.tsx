@@ -1,3 +1,4 @@
+import { siteConfig } from '@everynews/app/site-config'
 import { Badge } from '@everynews/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
@@ -16,6 +17,11 @@ import {
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata = {
+  description: siteConfig.description,
+  title: siteConfig.name,
+}
 
 export default async function Page() {
   // Get recent stories from all public newsletters

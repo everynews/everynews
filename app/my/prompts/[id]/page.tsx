@@ -7,6 +7,11 @@ import { PromptDetailPage } from './prompt-detail-page'
 
 export const dynamic = 'force-dynamic'
 
+export const metadata = {
+  description: 'View or edit your prompt configuration.',
+  title: 'Prompt Details',
+}
+
 export default async function PromptPage({
   params,
 }: {
