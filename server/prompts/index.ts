@@ -93,28 +93,17 @@ export const PromptsRouter = new Hono<WithAuth>()
     zValidator(
       'json',
       z.object({
-        promptId: z.string().nullable(),
+        promptContent: z.string(),
         url: z.string().url(),
       }),
     ),
     async (c) => {
       const user = c.get('user')
       if (!user) return c.json({ error: 'Unauthorized' }, 401)
-      const { url, promptId } = c.req.valid('json')
-
-      // Verify prompt belongs to user if promptId is provided
-      if (promptId) {
-        const foundPrompt = await db.query.prompt.findFirst({
-          where: and(eq(prompt.id, promptId), eq(prompt.userId, user.id)),
-        })
-
-        if (!foundPrompt) {
-          return c.json({ error: 'Prompt not found' }, 404)
-        }
-      }
+      const { url, promptContent } = c.req.valid('json')
 
       try {
-        const result = await apprentice({ promptId, url })
+        const result = await apprentice({ promptContent, url })
         return c.json(result)
       } catch (error) {
         return c.json({ error: String(error) }, 500)

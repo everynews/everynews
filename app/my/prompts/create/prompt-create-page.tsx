@@ -106,22 +106,9 @@ export const PromptCreatePage = ({
     setTestResult(null)
 
     try {
-      // First create the prompt temporarily to test it
-      const createRes = await api.prompts.$post({
-        json: { content: content.trim(), language, name: name.trim() },
-      })
-
-      if (!createRes.ok) {
-        toast.error('Failed to create prompt for testing')
-        return
-      }
-
-      const prompt = await createRes.json()
-
-      // Then test it
       const testRes = await api.prompts.test.$post({
         json: {
-          promptId: prompt.id,
+          promptContent: content.trim(),
           url: testUrl,
         },
       })

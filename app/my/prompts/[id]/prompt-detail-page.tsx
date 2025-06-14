@@ -97,7 +97,7 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
     try {
       const res = await api.prompts.test.$post({
         json: {
-          promptId: prompt.id,
+          promptContent: content.trim(),
           url: testUrl,
         },
       })
