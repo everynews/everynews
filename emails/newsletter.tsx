@@ -10,7 +10,7 @@ import {
   Tailwind,
 } from '@react-email/components'
 
-const Newsletter = ({ stories }: { stories: Story[] }) => {
+export const Newsletter = ({ stories }: { stories: Story[] }) => {
   return (
     <Html lang='en' dir='ltr'>
       <Preview>{stories[0]?.keyFindings?.join(' ') ?? ''}</Preview>
@@ -84,5 +84,3 @@ Newsletter.PreviewProps = {
     },
   ],
 }
-
-export default Newsletter
