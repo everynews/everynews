@@ -9,7 +9,7 @@ import {
   TableRow,
 } from '@everynews/components/ui/table'
 import { db } from '@everynews/database'
-import { prompt } from '@everynews/schema'
+import { prompt, LANGUAGE_LABELS } from '@everynews/schema'
 import { eq } from 'drizzle-orm'
 import { PlusCircle, Wrench } from 'lucide-react'
 import Link from 'next/link'
@@ -50,6 +50,7 @@ export default async function PromptsPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
+              <TableHead>Language</TableHead>
               <TableHead>Created</TableHead>
               <TableHead>Updated</TableHead>
               <TableHead className='w-[100px]'>Actions</TableHead>
@@ -59,7 +60,7 @@ export default async function PromptsPage() {
             {prompts.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={4}
+                  colSpan={5}
                   className='text-center text-muted-foreground py-8'
                 >
                   No prompts yet. Create your first custom prompt to get
@@ -71,6 +72,9 @@ export default async function PromptsPage() {
                 <TableRow key={promptItem.id}>
                   <TableCell className='font-medium'>
                     {promptItem.name}
+                  </TableCell>
+                  <TableCell className='text-muted-foreground'>
+                    {LANGUAGE_LABELS[promptItem.language as keyof typeof LANGUAGE_LABELS] || promptItem.language}
                   </TableCell>
                   <TableCell className='text-muted-foreground'>
                     {new Date(promptItem.createdAt).toLocaleDateString()}

@@ -1,5 +1,6 @@
 import '@everynews/app/globals.css'
 import { siteConfig } from '@everynews/app/site-config'
+import { AppFooter } from '@everynews/components/app-footer'
 import { AppNavbar } from '@everynews/components/app-navbar'
 import { ThemeProvider } from '@everynews/components/theme/provider'
 import { Toaster } from '@everynews/components/ui/sonner'
@@ -50,6 +51,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
       >
         <AppNavbar />
         <main className='container mx-auto flex-1'>{children}</main>
+        <AppFooter />
         <Toaster richColors position='top-center' />
       </ThemeProvider>
       <Analytics />

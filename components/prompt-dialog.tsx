@@ -18,12 +18,21 @@ import {
   FormMessage,
 } from '@everynews/components/ui/form'
 import { Input } from '@everynews/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@everynews/components/ui/select'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
 import {
   type Prompt,
   type PromptDto,
   PromptDtoSchema,
+  LANGUAGE_LABELS,
+  SUPPORTED_LANGUAGES,
 } from '@everynews/schema/prompt'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
@@ -62,6 +71,7 @@ export const PromptDialog = ({
 
   const createValues: PromptDto = {
     content: defaultPromptContent,
+    language: 'en',
     name: humanId({ separator: ' ', capitalize: true }),
   }
 
@@ -71,6 +81,7 @@ export const PromptDialog = ({
         ? createValues
         : {
             content: original?.content || defaultPromptContent,
+            language: original?.language || 'en',
             name: original?.name || '',
           },
     resolver: zodResolver(PromptDtoSchema),
@@ -80,6 +91,7 @@ export const PromptDialog = ({
     if (defaultPromptContent && mode === 'create') {
       form.reset({
         content: defaultPromptContent,
+        language: 'en',
         name: humanId({ separator: ' ', capitalize: true }),
       })
     }
@@ -162,6 +174,31 @@ export const PromptDialog = ({
                   <FormLabel>Prompt Name</FormLabel>
                   <FormControl>
                     <Input placeholder='My Custom Prompt' {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='language'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Language</FormLabel>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Select language' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SUPPORTED_LANGUAGES.map((lang) => (
+                          <SelectItem key={lang} value={lang}>
+                            {LANGUAGE_LABELS[lang]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
