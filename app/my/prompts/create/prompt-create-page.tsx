@@ -10,19 +10,11 @@ import {
 } from '@everynews/components/ui/card'
 import { Input } from '@everynews/components/ui/input'
 import { Label } from '@everynews/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@everynews/components/ui/select'
 import { Separator } from '@everynews/components/ui/separator'
-import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
 import type { LanguageCode } from '@everynews/schema/language'
-import { LANGUAGE_LABELS, SUPPORTED_LANGUAGES } from '@everynews/schema/prompt'
 import { humanId } from 'human-id'
+import PromptDetailsCard from '@everynews/components/prompt-details-card'
 import { ArrowLeft, Loader2, Plus, TestTube } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -187,56 +179,18 @@ export const PromptCreatePage = ({
       </div>
 
       <div className='grid gap-8'>
-        <Card>
-          <CardHeader>
-            <CardTitle>Prompt Details</CardTitle>
-          </CardHeader>
-          <CardContent className='space-y-6'>
-            <div className='grid gap-2'>
-              <Label htmlFor={nameId}>Prompt Name</Label>
-              <Input
-                id={nameId}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder='My Custom Prompt'
-              />
-            </div>
-
-            <div className='grid gap-2'>
-              <Label htmlFor={languageId}>Language</Label>
-              <Select
-                value={language}
-                onValueChange={(value) => setLanguage(value as LanguageCode)}
-              >
-                <SelectTrigger id={languageId}>
-                  <SelectValue placeholder='Select language' />
-                </SelectTrigger>
-                <SelectContent>
-                  {SUPPORTED_LANGUAGES.map((lang) => (
-                    <SelectItem key={lang} value={lang}>
-                      {LANGUAGE_LABELS[lang]}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className='grid gap-2'>
-              <Label htmlFor={contentId}>Prompt Instructions</Label>
-              <p className='text-muted-foreground text-sm'>
-                The AI will use <code>&lt;TITLE&gt;</code> and{' '}
-                <code>&lt;KEYFINDING&gt;</code> tags for structured output.
-              </p>
-              <Textarea
-                id={contentId}
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder={defaultPromptContent}
-                className='min-h-48'
-              />
-            </div>
-          </CardContent>
-        </Card>
+        <PromptDetailsCard
+          name={name}
+          language={language}
+          content={content}
+          onNameChange={setName}
+          onLanguageChange={setLanguage}
+          onContentChange={setContent}
+          nameId={nameId}
+          languageId={languageId}
+          contentId={contentId}
+          contentPlaceholder={defaultPromptContent}
+        />
 
         <Card>
           <CardHeader>
@@ -245,7 +199,7 @@ export const PromptCreatePage = ({
               Test This Prompt
             </CardTitle>
           </CardHeader>
-          <CardContent className='space-y-6'>
+          <CardContent className='grid gap-6'>
             <div className='grid gap-2'>
               <Label htmlFor={testUrlId}>Article URL</Label>
               <Input
@@ -286,7 +240,7 @@ export const PromptCreatePage = ({
                 Original: {testResult.originalTitle}
               </p>
             </CardHeader>
-            <CardContent className='space-y-4'>
+            <CardContent className='grid gap-4'>
               <div>
                 <h3 className='font-semibold text-lg mb-2'>
                   {testResult.title}
@@ -296,7 +250,7 @@ export const PromptCreatePage = ({
               <Separator />
 
               <div>
-                <ul className='space-y-2'>
+                <ul className='flex flex-col gap-2'>
                   {testResult.keyFindings.map((finding) => (
                     <li key={finding} className='flex items-start gap-2'>
                       <span className='text-muted-foreground mt-1'>•</span>

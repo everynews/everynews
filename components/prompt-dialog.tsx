@@ -218,7 +218,7 @@ export const PromptDialog = ({
                   <FormControl>
                     <Textarea
                       placeholder={defaultPromptContent}
-                      className='min-h-48'
+                      className='min-h-[12rem]'
                       {...field}
                     />
                   </FormControl>
