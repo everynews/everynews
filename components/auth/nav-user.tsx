@@ -1,3 +1,4 @@
+'use client'
 import { DropdownSignOut } from '@everynews/components/auth/sign-out'
 import {
   Avatar,
