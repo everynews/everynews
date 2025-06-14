@@ -58,7 +58,7 @@ export default async function StoryPage({
           Back to {newsletterInfo.name}
         </Link>
 
-        <div className='space-y-4'>
+        <div className='flex flex-col gap-4'>
           <div className='flex items-center gap-2 text-sm text-muted-foreground'>
             <Globe className='size-4' />
             <Link
@@ -94,7 +94,7 @@ export default async function StoryPage({
       {story.keyFindings && story.keyFindings.length > 0 && (
         <Card>
           <CardContent className='p-4'>
-            <div className='space-y-2'>
+            <div className='flex flex-col gap-2'>
               {story.keyFindings.map((finding, index) => (
                 <div
                   key={`${story.id}-finding-${index}`}

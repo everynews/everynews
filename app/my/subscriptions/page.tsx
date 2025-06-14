@@ -55,7 +55,7 @@ export default async function MySubscriptionsPage() {
   const userChannels = ChannelSchema.array().parse(userChannelsRes)
 
   return (
-    <div className='space-y-6'>
+    <div className='flex flex-col gap-6'>
       <div className='flex justify-between items-center px-3'>
         <div>
           <h2 className='text-2xl font-bold'>My Subscriptions</h2>
@@ -121,12 +121,11 @@ export default async function MySubscriptionsPage() {
                   </span>
                 </TableCell>
                 <TableCell className='text-right'>
-                  
-                    <SubscribeNewsletterButton
-                      newsletter={newsletter}
-                      channels={userChannels}
-                      subscription={subscription}
-                    />
+                  <SubscribeNewsletterButton
+                    newsletter={newsletter}
+                    channels={userChannels}
+                    subscription={subscription}
+                  />
                 </TableCell>
               </TableRow>
             ))}
