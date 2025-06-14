@@ -7,27 +7,31 @@ import { prompt } from './prompt'
 import 'zod-openapi/extend'
 import { contents } from './content'
 
-export const stories = pgTable('stories', {
-  contentId: text('content_id')
-    .notNull()
-    .references(() => contents.id, { onDelete: 'cascade' }),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  id: text('id').primaryKey().$defaultFn(nanoid),
-  keyFindings: json('key_findings'),
-  newsletterId: text('newsletter_id')
-    .notNull()
-    .references(() => newsletter.id, { onDelete: 'cascade' }),
-  promptId: text('prompt_id').references(() => prompt.id, {
-    onDelete: 'set null',
+export const stories = pgTable(
+  'stories',
+  {
+    contentId: text('content_id')
+      .notNull()
+      .references(() => contents.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    id: text('id').primaryKey().$defaultFn(nanoid),
+    keyFindings: json('key_findings'),
+    newsletterId: text('newsletter_id')
+      .notNull()
+      .references(() => newsletter.id, { onDelete: 'cascade' }),
+    promptId: text('prompt_id').references(() => prompt.id, {
+      onDelete: 'set null',
+    }),
+    title: text('title').notNull(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+    url: text('url').notNull(),
+  },
+  (table) => ({
+    // Unique constraint on URL + promptId combination
+    // This allows multiple stories for the same URL but with different prompts
+    urlPromptUnique: unique().on(table.url, table.promptId),
   }),
-  title: text('title').notNull(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-  url: text('url').notNull(),
-}, (table) => ({
-  // Unique constraint on URL + promptId combination
-  // This allows multiple stories for the same URL but with different prompts
-  urlPromptUnique: unique().on(table.url, table.promptId),
-}))
+)
 
 export const StorySchema = z
   .object({

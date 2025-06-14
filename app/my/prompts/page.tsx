@@ -9,7 +9,7 @@ import {
   TableRow,
 } from '@everynews/components/ui/table'
 import { db } from '@everynews/database'
-import { prompt, LANGUAGE_LABELS } from '@everynews/schema'
+import { LANGUAGE_LABELS, prompt } from '@everynews/schema'
 import { eq } from 'drizzle-orm'
 import { PlusCircle, Wrench } from 'lucide-react'
 import Link from 'next/link'
@@ -74,7 +74,9 @@ export default async function PromptsPage() {
                     {promptItem.name}
                   </TableCell>
                   <TableCell className='text-muted-foreground'>
-                    {LANGUAGE_LABELS[promptItem.language as keyof typeof LANGUAGE_LABELS] || promptItem.language}
+                    {LANGUAGE_LABELS[
+                      promptItem.language as keyof typeof LANGUAGE_LABELS
+                    ] || promptItem.language}
                   </TableCell>
                   <TableCell className='text-muted-foreground'>
                     {new Date(promptItem.createdAt).toLocaleDateString()}

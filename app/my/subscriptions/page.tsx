@@ -82,14 +82,19 @@ export default async function MySubscriptionsPage() {
           <TableBody>
             {userSubscriptions.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className='text-center text-muted-foreground py-8'>
+                <TableCell
+                  colSpan={5}
+                  className='text-center text-muted-foreground py-8'
+                >
                   No subscriptions yet. Browse newsletters to subscribe to one.
                 </TableCell>
               </TableRow>
             ) : (
               userSubscriptions.map(({ subscription, newsletter, channel }) => (
                 <TableRow key={subscription.id}>
-                  <TableCell className='font-medium'>{newsletter.name}</TableCell>
+                  <TableCell className='font-medium'>
+                    {newsletter.name}
+                  </TableCell>
                   <TableCell>
                     <div className='flex items-center gap-2'>
                       {channel.type === 'email' ? (

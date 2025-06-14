@@ -2,25 +2,8 @@ import { z } from 'zod'
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { LanguageSchema } from './language'
 import { users } from './user'
-
-export const SUPPORTED_LANGUAGES = [
-  'en',
-  'ko', 
-  'ja',
-  'zh-Hans',
-  'zh-Hant',
-] as const
-
-export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number]
-
-export const LANGUAGE_LABELS: Record<SupportedLanguage, string> = {
-  'en': 'English',
-  'ko': '한국어',
-  'ja': '日本語', 
-  'zh-Hans': '简体中文',
-  'zh-Hant': '繁體中文',
-}
 
 export const prompt = pgTable('prompt', {
   content: text('content').notNull(),
@@ -42,7 +25,7 @@ export const PromptSchema = z
       .openapi({ example: 'Custom prompt instructions...' }),
     createdAt: z.coerce.date().openapi({ example: new Date() }),
     id: z.coerce.string().openapi({ example: '123' }),
-    language: z.enum(SUPPORTED_LANGUAGES).openapi({ example: 'en' }),
+    language: LanguageSchema,
     name: z.coerce
       .string()
       .min(1, 'Name is required')

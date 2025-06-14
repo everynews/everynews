@@ -35,16 +35,22 @@ type TestResult = {
   originalTitle: string
 }
 
-export const PromptCreatePage = ({ defaultPromptContent }: { defaultPromptContent: string }) => {
+export const PromptCreatePage = ({
+  defaultPromptContent,
+}: {
+  defaultPromptContent: string
+}) => {
   const router = useRouter()
-  const [name, setName] = useState(humanId({ separator: ' ', capitalize: true }))
+  const [name, setName] = useState(
+    humanId({ capitalize: true, separator: ' ' }),
+  )
   const [content, setContent] = useState('')
   const [language, setLanguage] = useState<string>('en')
   const [testUrl, setTestUrl] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [testResult, setTestResult] = useState<TestResult | null>(null)
-  
+
   const nameId = useId()
   const contentId = useId()
   const languageId = useId()
@@ -69,7 +75,7 @@ export const PromptCreatePage = ({ defaultPromptContent }: { defaultPromptConten
 
     try {
       const res = await api.prompts.$post({
-        json: { name: name.trim(), content: content.trim(), language },
+        json: { content: content.trim(), language, name: name.trim() },
       })
 
       if (!res.ok) {
@@ -112,7 +118,7 @@ export const PromptCreatePage = ({ defaultPromptContent }: { defaultPromptConten
     try {
       // First create the prompt temporarily to test it
       const createRes = await api.prompts.$post({
-        json: { name: name.trim(), content: content.trim(), language },
+        json: { content: content.trim(), language, name: name.trim() },
       })
 
       if (!createRes.ok) {
@@ -210,7 +216,7 @@ export const PromptCreatePage = ({ defaultPromptContent }: { defaultPromptConten
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className='grid gap-2'>
               <Label htmlFor={contentId}>Prompt Instructions</Label>
               <p className='text-muted-foreground text-sm'>
@@ -249,7 +255,9 @@ export const PromptCreatePage = ({ defaultPromptContent }: { defaultPromptConten
 
             <Button
               onClick={handleTest}
-              disabled={isLoading || !testUrl.trim() || !name.trim() || !content.trim()}
+              disabled={
+                isLoading || !testUrl.trim() || !name.trim() || !content.trim()
+              }
             >
               {isLoading ? (
                 <>
@@ -293,7 +301,6 @@ export const PromptCreatePage = ({ defaultPromptContent }: { defaultPromptConten
                   ))}
                 </ul>
               </div>
-
             </CardContent>
           </Card>
         )}

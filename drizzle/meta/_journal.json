@@ -1,34 +1,34 @@
 {
-  "version": "7",
   "dialect": "postgresql",
   "entries": [
     {
+      "breakpoints": true,
       "idx": 0,
-      "version": "7",
-      "when": 1749871218967,
       "tag": "0000_freezing_mister_fear",
-      "breakpoints": true
+      "version": "7",
+      "when": 1749871218967
     },
     {
+      "breakpoints": true,
       "idx": 1,
-      "version": "7",
-      "when": 1749873733083,
       "tag": "0001_pretty_madame_hydra",
-      "breakpoints": true
+      "version": "7",
+      "when": 1749873733083
     },
     {
+      "breakpoints": true,
       "idx": 2,
-      "version": "7",
-      "when": 1749873814603,
       "tag": "0002_thankful_metal_master",
-      "breakpoints": true
+      "version": "7",
+      "when": 1749873814603
     },
     {
+      "breakpoints": true,
       "idx": 3,
-      "version": "7",
-      "when": 1749874132543,
       "tag": "0003_yellow_dakota_north",
-      "breakpoints": true
+      "version": "7",
+      "when": 1749874132543
     }
-  ]
+  ],
+  "version": "7"
 }

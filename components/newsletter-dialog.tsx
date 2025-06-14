@@ -45,7 +45,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
 import { PlusCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useId, useState } from 'react'
+import { useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { SubmitButton } from './submit-button'
@@ -88,7 +88,7 @@ export const NewsletterDialog = ({
     active: true,
     description: '',
     isPublic: true,
-    name: humanId({ separator: ' ', capitalize: true }),
+    name: humanId({ capitalize: true, separator: ' ' }),
     promptId: null,
     strategy: { provider: 'hnbest' },
     wait: { type: 'count', value: 10 },
@@ -152,7 +152,7 @@ export const NewsletterDialog = ({
       if (mode === 'create') {
         form.reset({
           ...createValues,
-          name: humanId({ separator: ' ', capitalize: true }),
+          name: humanId({ capitalize: true, separator: ' ' }),
         })
       } else {
         form.reset()
@@ -247,13 +247,17 @@ export const NewsletterDialog = ({
                     <FormControl>
                       <Select
                         value={field.value || 'default'}
-                        onValueChange={(value) => field.onChange(value === 'default' ? null : value)}
+                        onValueChange={(value) =>
+                          field.onChange(value === 'default' ? null : value)
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder='Select a prompt' />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value='default'>Default Prompt</SelectItem>
+                          <SelectItem value='default'>
+                            Default Prompt
+                          </SelectItem>
                           {prompts.map((prompt) => (
                             <SelectItem key={prompt.id} value={prompt.id}>
                               {prompt.name}

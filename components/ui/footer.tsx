@@ -1,5 +1,5 @@
 import { cn } from '@everynews/lib/utils'
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 interface FooterProps {
   children: ReactNode
@@ -22,25 +22,31 @@ interface FooterBottomProps {
 }
 
 const Footer = ({ children, className }: FooterProps) => (
-  <div className={cn('border-t py-8', className)}>
-    {children}
-  </div>
+  <div className={cn('border-t py-8', className)}>{children}</div>
 )
 
 const FooterContent = ({ children, className }: FooterContentProps) => (
-  <div className={cn('grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5', className)}>
+  <div
+    className={cn(
+      'grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5',
+      className,
+    )}
+  >
     {children}
   </div>
 )
 
 const FooterColumn = ({ children, className }: FooterColumnProps) => (
-  <div className={cn('flex flex-col gap-3', className)}>
-    {children}
-  </div>
+  <div className={cn('flex flex-col gap-3', className)}>{children}</div>
 )
 
 const FooterBottom = ({ children, className }: FooterBottomProps) => (
-  <div className={cn('mt-8 flex flex-col items-center justify-between gap-4 border-t pt-8 md:flex-row', className)}>
+  <div
+    className={cn(
+      'mt-8 flex flex-col items-center justify-between gap-4 border-t pt-8 md:flex-row',
+      className,
+    )}
+  >
     {children}
   </div>
 )

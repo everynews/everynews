@@ -12,13 +12,6 @@ import {
   DialogTrigger,
 } from '@everynews/components/ui/dialog'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@everynews/components/ui/select'
-import {
   Form,
   FormControl,
   FormField,
@@ -26,6 +19,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@everynews/components/ui/form'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@everynews/components/ui/select'
 import { toastNetworkError } from '@everynews/lib/error'
 import type { Channel } from '@everynews/schema/channel'
 import type { Newsletter } from '@everynews/schema/newsletter'

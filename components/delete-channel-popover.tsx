@@ -13,7 +13,13 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { SubmitButton } from './submit-button'
 
-export const DeleteChannelPopover = ({ channel, trigger }: { channel: Channel; trigger?: React.ReactNode }) => {
+export const DeleteChannelPopover = ({
+  channel,
+  trigger,
+}: {
+  channel: Channel
+  trigger?: React.ReactNode
+}) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -45,9 +51,7 @@ export const DeleteChannelPopover = ({ channel, trigger }: { channel: Channel; t
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        {trigger || defaultTrigger}
-      </PopoverTrigger>
+      <PopoverTrigger asChild>{trigger || defaultTrigger}</PopoverTrigger>
       <PopoverContent className='flex flex-col gap-2'>
         <h2 className='font-semibold text-lg'>Delete "{channel.name}"?</h2>
         <p className='text-muted-foreground'>This action cannot be undone.</p>

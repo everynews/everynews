@@ -50,9 +50,7 @@ export const DeleteNewsletterPopover = ({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        {trigger || defaultTrigger}
-      </PopoverTrigger>
+      <PopoverTrigger asChild>{trigger || defaultTrigger}</PopoverTrigger>
       <PopoverContent className='flex flex-col gap-2'>
         <h2 className='font-semibold text-lg'>Delete "{newsletter.name}"?</h2>
         <p className='text-muted-foreground'>This action cannot be undone.</p>

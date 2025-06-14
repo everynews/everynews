@@ -57,8 +57,12 @@ export default async function MyChannelsPage() {
           <TableBody>
             {channelList.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className='text-center text-muted-foreground py-8'>
-                  No channels yet. Create your first delivery channel to get started.
+                <TableCell
+                  colSpan={6}
+                  className='text-center text-muted-foreground py-8'
+                >
+                  No channels yet. Create your first delivery channel to get
+                  started.
                 </TableCell>
               </TableRow>
             ) : (
@@ -92,8 +96,10 @@ export default async function MyChannelsPage() {
                           </Button>
                         }
                       />
-                      {!item.verified && <SendVerificationButton channel={item} />}
-                      <DeleteChannelPopover 
+                      {!item.verified && (
+                        <SendVerificationButton channel={item} />
+                      )}
+                      <DeleteChannelPopover
                         channel={item}
                         trigger={
                           <Button size='sm' variant='ghost'>

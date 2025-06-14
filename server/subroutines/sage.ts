@@ -103,7 +103,10 @@ export const summarize = async ({
     where: eq(stories.url, url),
   })
 
-  if (existingDifferentPrompt && existingDifferentPrompt.promptId !== currentPromptId) {
+  if (
+    existingDifferentPrompt &&
+    existingDifferentPrompt.promptId !== currentPromptId
+  ) {
     await track({
       channel: 'sage',
       description: `Found existing story but different prompt - regenerating: ${content.title}`,

@@ -27,8 +27,8 @@ app.get(
         content: await generateSpecs(app, {
           documentation: {
             info: {
-              description: 'API for every.news',
-              title: 'every.news API',
+              description: 'API for Everynews',
+              title: 'Everynews API',
               version: '0.1.0',
             },
             servers: [
@@ -38,7 +38,7 @@ app.get(
             ],
           },
         }),
-        title: 'every.news',
+        title: 'Everynews',
       },
       {
         content: {
@@ -49,7 +49,7 @@ app.get(
             },
           ],
         },
-        title: 'every.news Auth',
+        title: 'Everynews Auth',
       },
     ],
   }),

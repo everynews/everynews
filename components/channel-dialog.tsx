@@ -49,7 +49,7 @@ export const ChannelDialog = ({
 
   const createValues: ChannelDto = {
     config: { destination: '' },
-    name: humanId({ separator: ' ', capitalize: true }),
+    name: humanId({ capitalize: true, separator: ' ' }),
     type: 'email',
   }
 
@@ -135,7 +135,7 @@ export const ChannelDialog = ({
       if (mode === 'create') {
         form.reset({
           ...createValues,
-          name: humanId({ separator: ' ', capitalize: true }),
+          name: humanId({ capitalize: true, separator: ' ' }),
         })
       } else {
         form.reset()

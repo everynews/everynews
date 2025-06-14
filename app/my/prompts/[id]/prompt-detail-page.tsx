@@ -22,7 +22,6 @@ import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
 import type { Prompt } from '@everynews/schema/prompt'
 import { LANGUAGE_LABELS, SUPPORTED_LANGUAGES } from '@everynews/schema/prompt'
-import { humanId } from 'human-id'
 import { ArrowLeft, Loader2, Save, TestTube } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -65,7 +64,7 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
 
     try {
       const res = await api.prompts[':id'].$put({
-        json: { name: name.trim(), content: content.trim(), language },
+        json: { content: content.trim(), language, name: name.trim() },
         param: { id: prompt.id },
       })
 
@@ -189,7 +188,7 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className='grid gap-2'>
               <Label htmlFor={contentId}>Prompt Instructions</Label>
               <p className='text-muted-foreground text-sm'>

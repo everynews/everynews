@@ -82,8 +82,12 @@ export default async function MyNewslettersPage() {
           <TableBody>
             {news.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className='text-center text-muted-foreground py-8'>
-                  No newsletters yet. Create your first newsletter to get started.
+                <TableCell
+                  colSpan={5}
+                  className='text-center text-muted-foreground py-8'
+                >
+                  No newsletters yet. Create your first newsletter to get
+                  started.
                 </TableCell>
               </TableRow>
             ) : (
@@ -138,7 +142,7 @@ export default async function MyNewslettersPage() {
                             </Button>
                           }
                         />
-                        <DeleteNewsletterPopover 
+                        <DeleteNewsletterPopover
                           newsletter={item}
                           trigger={
                             <Button size='sm' variant='ghost'>

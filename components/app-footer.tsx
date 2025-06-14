@@ -1,7 +1,3 @@
-import { ReactNode } from 'react'
-import { siteConfig } from '@everynews/app/site-config'
-import { cn } from '@everynews/lib/utils'
-import { Logo } from '@everynews/public/logo'
 import { ThemeToggle } from '@everynews/components/theme/toggle'
 import {
   Footer,
@@ -9,6 +5,9 @@ import {
   FooterColumn,
   FooterContent,
 } from '@everynews/components/ui/footer'
+import { cn } from '@everynews/lib/utils'
+import { Logo } from '@everynews/public/logo'
+import type { ReactNode } from 'react'
 
 interface FooterLink {
   text: string
@@ -32,26 +31,26 @@ interface FooterProps {
 
 export const AppFooter = ({
   logo = <Logo />,
-  name = 'every.news',
+  name = 'Everynews',
   columns = [
     {
-      title: 'About',
       links: [
-        { text: 'The Story Behind', href: 'https://antiagile.every.news/' },
-        { text: 'The Three-day Turnaround', href: '/three-day-turnaround' },
+        { href: 'https://antiagile.every.news/', text: 'The Story Behind' },
+        { href: '/three-day-turnaround', text: 'The Three-day Turnaround' },
       ],
+      title: 'About',
     },
     {
-      title: 'Connect',
       links: [
-        { text: 'GitHub', href: 'https://github.com/everynews/everynews' },
+        { href: 'https://github.com/everynews/everynews', text: 'GitHub' },
       ],
+      title: 'Connect',
     },
   ],
-  copyright = '© 2025 every.news. All rights reserved.',
+  copyright = '© 2025 Everynews. All rights reserved.',
   policies = [
-    { text: 'Privacy Policy', href: '/privacy' },
-    { text: 'Terms of Service', href: '/terms' },
+    { href: '/privacy', text: 'Privacy Policy' },
+    { href: '/terms', text: 'Terms of Service' },
   ],
   showThemeToggle = true,
   className,
@@ -86,7 +85,11 @@ export const AppFooter = ({
             <div className='text-sm text-muted-foreground'>{copyright}</div>
             <div className='flex items-center gap-4'>
               {policies.map((policy, index) => (
-                <a key={index} href={policy.href} className='text-sm text-muted-foreground hover:text-foreground'>
+                <a
+                  key={index}
+                  href={policy.href}
+                  className='text-sm text-muted-foreground hover:text-foreground'
+                >
                   {policy.text}
                 </a>
               ))}

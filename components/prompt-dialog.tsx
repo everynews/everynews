@@ -28,10 +28,10 @@ import {
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
 import {
+  LANGUAGE_LABELS,
   type Prompt,
   type PromptDto,
   PromptDtoSchema,
-  LANGUAGE_LABELS,
   SUPPORTED_LANGUAGES,
 } from '@everynews/schema/prompt'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -72,7 +72,7 @@ export const PromptDialog = ({
   const createValues: PromptDto = {
     content: defaultPromptContent,
     language: 'en',
-    name: humanId({ separator: ' ', capitalize: true }),
+    name: humanId({ capitalize: true, separator: ' ' }),
   }
 
   const form = useForm<PromptDto>({
@@ -92,7 +92,7 @@ export const PromptDialog = ({
       form.reset({
         content: defaultPromptContent,
         language: 'en',
-        name: humanId({ separator: ' ', capitalize: true }),
+        name: humanId({ capitalize: true, separator: ' ' }),
       })
     }
   }, [defaultPromptContent, mode, form])
@@ -128,7 +128,7 @@ export const PromptDialog = ({
       if (mode === 'create') {
         form.reset({
           ...createValues,
-          name: humanId({ separator: ' ', capitalize: true }),
+          name: humanId({ capitalize: true, separator: ' ' }),
         })
       } else {
         form.reset()
