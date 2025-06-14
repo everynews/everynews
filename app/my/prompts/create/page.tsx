@@ -1,6 +1,5 @@
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
 import { whoami } from '@everynews/auth/session'
+import { getDefaultPromptContent } from '@everynews/lib/prompts'
 import { redirect } from 'next/navigation'
 import { PromptCreatePage } from './prompt-create-page'
 
@@ -12,15 +11,7 @@ export default async function CreatePromptPage() {
     redirect('/')
   }
 
-  let defaultPromptContent = 'Enter your prompt instructions here...'
-  try {
-    defaultPromptContent = await readFile(
-      join(process.cwd(), 'public', 'default-prompt.txt'),
-      'utf-8',
-    )
-  } catch (_error) {
-    // Use fallback if file doesn't exist
-  }
+  const defaultPromptContent = await getDefaultPromptContent()
 
   return <PromptCreatePage defaultPromptContent={defaultPromptContent} />
 }

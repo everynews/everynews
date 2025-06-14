@@ -1,12 +1,11 @@
 import { Badge } from '@everynews/components/ui/badge'
-import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
 import { ContentSchema, contents } from '@everynews/schema/content'
 import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
 import { StorySchema, stories } from '@everynews/schema/story'
 import { eq } from 'drizzle-orm'
-import { ArrowLeft, Calendar, ExternalLink, Globe } from 'lucide-react'
+import { ArrowLeft, Calendar, Globe } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -80,15 +79,7 @@ export default async function StoryPage({
             </time>
           </div>
 
-          <h1 className='text-3xl font-bold leading-tight flex items-center gap-2 justify-between'>
-            {story.title}
-            <Link href={content.url} target='_blank' rel='noopener noreferrer'>
-              <Button variant='outline' size='icon'>
-                <ExternalLink />
-                <span className='sr-only'>View Original</span>
-              </Button>
-            </Link>
-          </h1>
+          <h1 className='text-3xl font-bold leading-tight'>{story.title}</h1>
         </div>
       </div>
       {story.keyFindings && story.keyFindings.length > 0 && (
@@ -120,7 +111,7 @@ export default async function StoryPage({
           </Link>
 
           <Link
-            href={content.url}
+            href={`https://${content.url}`}
             target='_blank'
             rel='noopener noreferrer'
             className='text-sm text-muted-foreground hover:text-foreground'

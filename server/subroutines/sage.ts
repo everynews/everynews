@@ -1,4 +1,9 @@
 import { db } from '@everynews/database'
+import {
+  getDefaultPromptContent,
+  parsePromptResponse,
+  prepareContentInput,
+} from '@everynews/lib/prompts'
 import { track } from '@everynews/logs'
 import {
   type Content,
@@ -17,13 +22,8 @@ const client = new OpenAI()
 
 const model = 'gpt-4o'
 
-const getDefaultPrompt = async (): Promise<string> => {
-  const file = Bun.file('./public/default-prompt.txt')
-  return await file.text()
-}
-
 const instructions = async (newsletter: Newsletter) => {
-  let promptContent = await getDefaultPrompt()
+  let promptContent = await getDefaultPromptContent()
 
   if (newsletter.promptId) {
     const customPrompt = await db.query.prompt.findFirst({
@@ -35,32 +35,6 @@ const instructions = async (newsletter: Newsletter) => {
   }
 
   return promptContent
-}
-
-const parseResponse = (
-  response: string,
-): { title: string; keyFindings: string[] } => {
-  const titleMatch = response.match(/<TITLE>(.*?)<\/TITLE>/s)
-  const keyFindingsMatch = response.match(/<KEYFINDING>(.*?)<\/KEYFINDING>/gs)
-
-  return {
-    keyFindings: keyFindingsMatch
-      ? keyFindingsMatch.map((match) =>
-          match.replace(/<KEYFINDING>(.*?)<\/KEYFINDING>/s, '$1').trim(),
-        )
-      : [],
-    title: titleMatch ? titleMatch[1].trim() : '',
-  }
-}
-
-const input = async (content: Content): Promise<string> => {
-  const markdownBody = content.markdownBlobUrl
-    ? await fetch(content.markdownBlobUrl).then((res) => res.text())
-    : ''
-  const htmlBody = !content.markdownBlobUrl
-    ? await fetch(content.htmlBlobUrl).then((res) => res.text())
-    : ''
-  return `# [${content.title}](${content.url})\n\n${markdownBody || htmlBody}`
 }
 
 export const summarize = async ({
@@ -130,12 +104,12 @@ export const summarize = async ({
 
   try {
     const response = await client.responses.create({
-      input: await input(content),
+      input: await prepareContentInput(content),
       instructions: await instructions(news),
       model,
     })
 
-    const { title, keyFindings } = parseResponse(response.output_text)
+    const { title, keyFindings } = parsePromptResponse(response.output_text)
 
     await track({
       channel: 'sage',

@@ -28,6 +28,10 @@ import {
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
 import {
+  DEFAULT_PROMPT_PLACEHOLDER,
+  getDefaultPromptContent,
+} from '@everynews/lib/prompts'
+import {
   LANGUAGE_LABELS,
   type Prompt,
   type PromptDto,
@@ -57,16 +61,12 @@ export const PromptDialog = ({
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [open, setOpen] = useState(false)
-  const [defaultPromptContent, setDefaultPromptContent] = useState('')
+  const [defaultPromptContent, setDefaultPromptContent] = useState(
+    DEFAULT_PROMPT_PLACEHOLDER,
+  )
 
   useEffect(() => {
-    fetch('/default-prompt.txt')
-      .then((res) => res.text())
-      .then(setDefaultPromptContent)
-      .catch(() => {
-        // Fallback if file doesn't exist
-        setDefaultPromptContent('Enter your prompt instructions here...')
-      })
+    getDefaultPromptContent().then(setDefaultPromptContent)
   }, [])
 
   const createValues: PromptDto = {
@@ -217,7 +217,7 @@ export const PromptDialog = ({
                   </p>
                   <FormControl>
                     <Textarea
-                      placeholder={defaultPromptContent}
+                      placeholder={DEFAULT_PROMPT_PLACEHOLDER}
                       className='min-h-[12rem]'
                       {...field}
                     />

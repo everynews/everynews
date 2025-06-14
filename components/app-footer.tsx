@@ -36,7 +36,7 @@ export const AppFooter = ({
     {
       links: [
         { href: 'https://antiagile.every.news/', text: 'The Story Behind' },
-        { href: '/three-day-turnaround', text: 'The Three-day Turnaround' },
+        { href: '/firefighter-mode', text: 'Firefighter Mode' },
       ],
       title: 'About',
     },
