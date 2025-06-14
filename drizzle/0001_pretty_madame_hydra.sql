@@ -1,0 +1,2 @@
+ALTER TABLE "stories" ADD COLUMN "prompt_id" text;--> statement-breakpoint
+ALTER TABLE "stories" ADD CONSTRAINT "stories_prompt_id_prompt_id_fk" FOREIGN KEY ("prompt_id") REFERENCES "public"."prompt"("id") ON DELETE set null ON UPDATE no action;

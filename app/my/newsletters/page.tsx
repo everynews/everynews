@@ -15,6 +15,7 @@ import {
 import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
+import { PromptSchema, prompt } from '@everynews/schema/prompt'
 import { subscriptions } from '@everynews/schema/subscription'
 import { eq } from 'drizzle-orm'
 import { Edit, Eye, Trash2 } from 'lucide-react'
@@ -48,6 +49,13 @@ export default async function MyNewslettersPage() {
     .where(eq(subscriptions.userId, user.id))
   const userSubscriptions = subscriptionsRes
 
+  // Get user's prompts
+  const promptsRes = await db
+    .select()
+    .from(prompt)
+    .where(eq(prompt.userId, user.id))
+  const userPrompts = PromptSchema.array().parse(promptsRes)
+
   return (
     <div className='container mx-auto'>
       <div className='flex items-center justify-between mb-8'>
@@ -57,7 +65,7 @@ export default async function MyNewslettersPage() {
             Manage your AI-powered newsletters
           </p>
         </div>
-        <NewsletterDialog mode='create' />
+        <NewsletterDialog mode='create' prompts={userPrompts} />
       </div>
 
       <div className='border rounded-lg'>
@@ -123,6 +131,7 @@ export default async function MyNewslettersPage() {
                         <NewsletterDialog
                           mode='edit'
                           original={item}
+                          prompts={userPrompts}
                           trigger={
                             <Button size='sm' variant='ghost'>
                               <Edit className='size-4' />

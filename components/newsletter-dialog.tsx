@@ -42,12 +42,12 @@ import {
 } from '@everynews/schema/newsletter'
 import type { Prompt } from '@everynews/schema/prompt'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { humanId } from 'human-id'
 import { PlusCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { PromptDialog } from './prompt-dialog'
 import { SubmitButton } from './submit-button'
 
 const STRATEGY_WITH_QUERY = ['exa']
@@ -67,10 +67,12 @@ export const NewsletterDialog = ({
   mode,
   original,
   trigger,
+  prompts,
 }: {
   mode: 'create' | 'edit'
   original?: Newsletter
   trigger?: React.ReactNode
+  prompts: Prompt[]
 }) => {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -81,35 +83,12 @@ export const NewsletterDialog = ({
 
   const [scheduleDays, setScheduleDays] = useState<string[]>([])
   const [scheduleHours, setScheduleHours] = useState<number[]>([])
-  const [prompts, setPrompts] = useState<Prompt[]>([])
-
-  useEffect(() => {
-    const fetchPrompts = async () => {
-      try {
-        const res = await api.prompts.$get()
-        if (res.ok) {
-          const data = await res.json()
-          setPrompts(data.map((p: any) => ({
-            ...p,
-            createdAt: new Date(p.createdAt),
-            updatedAt: new Date(p.updatedAt),
-          })))
-        }
-      } catch (error) {
-        console.error('Failed to fetch prompts:', error)
-      }
-    }
-
-    if (open) {
-      fetchPrompts()
-    }
-  }, [open])
 
   const createValues: NewsletterDto = {
     active: true,
     description: '',
     isPublic: true,
-    name: '',
+    name: humanId({ separator: ' ', capitalize: true }),
     promptId: null,
     strategy: { provider: 'hnbest' },
     wait: { type: 'count', value: 10 },
@@ -170,7 +149,14 @@ export const NewsletterDialog = ({
           : `Newsletter "${form.watch('name')}" updated.`,
       )
       setOpen(false)
-      form.reset()
+      if (mode === 'create') {
+        form.reset({
+          ...createValues,
+          name: humanId({ separator: ' ', capitalize: true }),
+        })
+      } else {
+        form.reset()
+      }
       router.refresh()
     } catch (e) {
       toastNetworkError(e as Error)

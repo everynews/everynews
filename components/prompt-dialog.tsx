@@ -26,6 +26,7 @@ import {
   PromptDtoSchema,
 } from '@everynews/schema/prompt'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { humanId } from 'human-id'
 import { PlusCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -61,7 +62,7 @@ export const PromptDialog = ({
 
   const createValues: PromptDto = {
     content: defaultPromptContent,
-    name: '',
+    name: humanId({ separator: ' ', capitalize: true }),
   }
 
   const form = useForm<PromptDto>({
@@ -79,7 +80,7 @@ export const PromptDialog = ({
     if (defaultPromptContent && mode === 'create') {
       form.reset({
         content: defaultPromptContent,
-        name: '',
+        name: humanId({ separator: ' ', capitalize: true }),
       })
     }
   }, [defaultPromptContent, mode, form])
@@ -112,7 +113,14 @@ export const PromptDialog = ({
           : `Prompt "${form.watch('name')}" updated.`,
       )
       setOpen(false)
-      form.reset()
+      if (mode === 'create') {
+        form.reset({
+          ...createValues,
+          name: humanId({ separator: ' ', capitalize: true }),
+        })
+      } else {
+        form.reset()
+      }
       if (onSuccess) {
         onSuccess()
       } else {

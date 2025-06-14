@@ -26,6 +26,7 @@ import {
   ChannelDtoSchema,
 } from '@everynews/schema/channel'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { humanId } from 'human-id'
 import { PlusCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -48,7 +49,7 @@ export const ChannelDialog = ({
 
   const createValues: ChannelDto = {
     config: { destination: '' },
-    name: '',
+    name: humanId({ separator: ' ', capitalize: true }),
     type: 'email',
   }
 
@@ -131,7 +132,14 @@ export const ChannelDialog = ({
       }
 
       setOpen(false)
-      form.reset()
+      if (mode === 'create') {
+        form.reset({
+          ...createValues,
+          name: humanId({ separator: ' ', capitalize: true }),
+        })
+      } else {
+        form.reset()
+      }
       router.refresh()
     } catch (e) {
       toastNetworkError(e as Error)

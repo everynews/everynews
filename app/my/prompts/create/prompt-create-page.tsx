@@ -10,9 +10,18 @@ import {
 } from '@everynews/components/ui/card'
 import { Input } from '@everynews/components/ui/input'
 import { Label } from '@everynews/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@everynews/components/ui/select'
 import { Separator } from '@everynews/components/ui/separator'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
+import { LANGUAGE_LABELS, SUPPORTED_LANGUAGES } from '@everynews/schema/prompt'
+import { humanId } from 'human-id'
 import { ArrowLeft, Loader2, Plus, TestTube } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -26,33 +35,24 @@ type TestResult = {
   originalTitle: string
 }
 
-export const PromptCreatePage = () => {
+export const PromptCreatePage = ({ defaultPromptContent }: { defaultPromptContent: string }) => {
   const router = useRouter()
-  const [name, setName] = useState('')
+  const [name, setName] = useState(humanId({ separator: ' ', capitalize: true }))
   const [content, setContent] = useState('')
+  const [language, setLanguage] = useState<string>('en')
   const [testUrl, setTestUrl] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [testResult, setTestResult] = useState<TestResult | null>(null)
-  const [defaultPromptContent, setDefaultPromptContent] = useState('')
   
   const nameId = useId()
   const contentId = useId()
+  const languageId = useId()
   const testUrlId = useId()
 
   useEffect(() => {
-    fetch('/default-prompt.txt')
-      .then((res) => res.text())
-      .then((text) => {
-        setDefaultPromptContent(text)
-        setContent(text)
-      })
-      .catch(() => {
-        const fallback = 'Enter your prompt instructions here...'
-        setDefaultPromptContent(fallback)
-        setContent(fallback)
-      })
-  }, [])
+    setContent(defaultPromptContent)
+  }, [defaultPromptContent])
 
   const handleCreate = async () => {
     if (!name.trim()) {
@@ -69,7 +69,7 @@ export const PromptCreatePage = () => {
 
     try {
       const res = await api.prompts.$post({
-        json: { name: name.trim(), content: content.trim() },
+        json: { name: name.trim(), content: content.trim(), language },
       })
 
       if (!res.ok) {
@@ -112,7 +112,7 @@ export const PromptCreatePage = () => {
     try {
       // First create the prompt temporarily to test it
       const createRes = await api.prompts.$post({
-        json: { name: name.trim(), content: content.trim() },
+        json: { name: name.trim(), content: content.trim(), language },
       })
 
       if (!createRes.ok) {
@@ -193,6 +193,22 @@ export const PromptCreatePage = () => {
                 onChange={(e) => setName(e.target.value)}
                 placeholder='My Custom Prompt'
               />
+            </div>
+
+            <div className='grid gap-2'>
+              <Label htmlFor={languageId}>Language</Label>
+              <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger id={languageId}>
+                  <SelectValue placeholder='Select language' />
+                </SelectTrigger>
+                <SelectContent>
+                  {SUPPORTED_LANGUAGES.map((lang) => (
+                    <SelectItem key={lang} value={lang}>
+                      {LANGUAGE_LABELS[lang]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             
             <div className='grid gap-2'>

@@ -8,7 +8,7 @@ import {
   StorySchema,
   stories,
 } from '@everynews/schema'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import normalizeUrl from 'normalize-url'
 import OpenAI from 'openai'
 import PQueue from 'p-queue'
@@ -75,24 +75,49 @@ export const summarize = async ({
     stripWWW: true,
   })
 
+  // Check for existing story with same URL and same prompt
+  const currentPromptId = news.promptId
   const existingStory = await db.query.stories.findFirst({
-    where: eq(stories.url, url),
+    where: and(eq(stories.url, url), eq(stories.promptId, currentPromptId)),
   })
 
   if (existingStory) {
     await track({
       channel: 'sage',
-      description: `Found existing summary for: ${content.title}`,
+      description: `Found existing summary for: ${content.title} (same prompt)`,
       event: 'Story Cache Hit',
       icon: '💾',
       tags: {
         content_id: content.id,
+        prompt_id: currentPromptId || 'default',
         title: content.title.slice(0, 160),
         type: 'info',
         url: content.url.slice(0, 160),
       },
     })
     return StorySchema.parse(existingStory)
+  }
+
+  // Check if there's an existing story with same URL but different prompt
+  const existingDifferentPrompt = await db.query.stories.findFirst({
+    where: eq(stories.url, url),
+  })
+
+  if (existingDifferentPrompt && existingDifferentPrompt.promptId !== currentPromptId) {
+    await track({
+      channel: 'sage',
+      description: `Found existing story but different prompt - regenerating: ${content.title}`,
+      event: 'Story Cache Miss (Different Prompt)',
+      icon: '🔄',
+      tags: {
+        content_id: content.id,
+        current_prompt_id: currentPromptId || 'default',
+        existing_prompt_id: existingDifferentPrompt.promptId || 'default',
+        title: content.title.slice(0, 160),
+        type: 'info',
+        url: content.url.slice(0, 160),
+      },
+    })
   }
 
   try {
@@ -124,6 +149,7 @@ export const summarize = async ({
         contentId: content.id,
         keyFindings,
         newsletterId: news.id,
+        promptId: news.promptId,
         title,
         url: content.url,
       })

@@ -10,10 +10,19 @@ import {
 } from '@everynews/components/ui/card'
 import { Input } from '@everynews/components/ui/input'
 import { Label } from '@everynews/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@everynews/components/ui/select'
 import { Separator } from '@everynews/components/ui/separator'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
 import type { Prompt } from '@everynews/schema/prompt'
+import { LANGUAGE_LABELS, SUPPORTED_LANGUAGES } from '@everynews/schema/prompt'
+import { humanId } from 'human-id'
 import { ArrowLeft, Loader2, Save, TestTube } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -34,10 +43,12 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
   const [testResult, setTestResult] = useState<TestResult | null>(null)
   const [name, setName] = useState(prompt.name)
   const [content, setContent] = useState(prompt.content)
+  const [language, setLanguage] = useState(prompt.language || 'en')
   const [isSaving, setIsSaving] = useState(false)
   const testUrlId = useId()
   const nameId = useId()
   const contentId = useId()
+  const languageId = useId()
 
   const handleSave = async () => {
     if (!name.trim()) {
@@ -54,7 +65,7 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
 
     try {
       const res = await api.prompts[':id'].$put({
-        json: { name: name.trim(), content: content.trim() },
+        json: { name: name.trim(), content: content.trim(), language },
         param: { id: prompt.id },
       })
 
@@ -161,6 +172,22 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
                 onChange={(e) => setName(e.target.value)}
                 placeholder='My Custom Prompt'
               />
+            </div>
+
+            <div className='grid gap-2'>
+              <Label htmlFor={languageId}>Language</Label>
+              <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger id={languageId}>
+                  <SelectValue placeholder='Select language' />
+                </SelectTrigger>
+                <SelectContent>
+                  {SUPPORTED_LANGUAGES.map((lang) => (
+                    <SelectItem key={lang} value={lang}>
+                      {LANGUAGE_LABELS[lang]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             
             <div className='grid gap-2'>
