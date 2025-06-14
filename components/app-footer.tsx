@@ -81,7 +81,7 @@ export const AppFooter = ({
               </FooterColumn>
             ))}
           </FooterContent>
-          <FooterBottom>
+          <FooterBottom className='p-2'>
             <div className='text-sm text-muted-foreground'>{copyright}</div>
             <div className='flex items-center gap-4'>
               {policies.map((policy) => (

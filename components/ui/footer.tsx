@@ -22,7 +22,7 @@ interface FooterBottomProps {
 }
 
 const Footer = ({ children, className }: FooterProps) => (
-  <div className={cn('border-t py-8', className)}>{children}</div>
+  <div className={cn('py-8', className)}>{children}</div>
 )
 
 const FooterContent = ({ children, className }: FooterContentProps) => (
@@ -43,7 +43,7 @@ const FooterColumn = ({ children, className }: FooterColumnProps) => (
 const FooterBottom = ({ children, className }: FooterBottomProps) => (
   <div
     className={cn(
-      'mt-8 flex flex-col items-center justify-between gap-4 border-t pt-8 md:flex-row',
+      'mt-8 flex flex-col items-center justify-between gap-4 pt-8 md:flex-row',
       className,
     )}
   >
