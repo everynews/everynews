@@ -1,9 +1,9 @@
 import { db } from '@everynews/database'
 import {
-  getDefaultPromptContent,
   parsePromptResponse,
   prepareContentInput,
 } from '@everynews/lib/prompts'
+import { getDefaultPromptContent } from '@everynews/lib/prompts/server'
 import { track } from '@everynews/logs'
 import {
   type Content,

@@ -1,5 +1,5 @@
 import { whoami } from '@everynews/auth/session'
-import { getDefaultPromptContent } from '@everynews/lib/prompts'
+import { getDefaultPromptContent } from '@everynews/lib/prompts/server'
 import { redirect } from 'next/navigation'
 import { PromptCreatePage } from './prompt-create-page'
 

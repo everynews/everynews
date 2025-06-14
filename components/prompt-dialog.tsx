@@ -27,10 +27,7 @@ import {
 } from '@everynews/components/ui/select'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
-import {
-  DEFAULT_PROMPT_PLACEHOLDER,
-  getDefaultPromptContent,
-} from '@everynews/lib/prompts'
+import { DEFAULT_PROMPT_PLACEHOLDER } from '@everynews/lib/prompts'
 import {
   LANGUAGE_LABELS,
   type Prompt,
@@ -42,7 +39,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
 import { PlusCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { SubmitButton } from './submit-button'
@@ -61,13 +58,7 @@ export const PromptDialog = ({
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [open, setOpen] = useState(false)
-  const [defaultPromptContent, setDefaultPromptContent] = useState(
-    DEFAULT_PROMPT_PLACEHOLDER,
-  )
-
-  useEffect(() => {
-    getDefaultPromptContent().then(setDefaultPromptContent)
-  }, [])
+  const defaultPromptContent = DEFAULT_PROMPT_PLACEHOLDER
 
   const createValues: PromptDto = {
     content: defaultPromptContent,
@@ -86,16 +77,6 @@ export const PromptDialog = ({
           },
     resolver: zodResolver(PromptDtoSchema),
   })
-
-  useEffect(() => {
-    if (defaultPromptContent && mode === 'create') {
-      form.reset({
-        content: defaultPromptContent,
-        language: 'en',
-        name: humanId({ capitalize: true, separator: ' ' }),
-      })
-    }
-  }, [defaultPromptContent, mode, form])
 
   const onSubmit = async (values: PromptDto) => {
     setIsSubmitting(true)
