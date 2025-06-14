@@ -23,6 +23,13 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from '@everynews/components/ui/radio-group'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@everynews/components/ui/select'
 import { Separator } from '@everynews/components/ui/separator'
 import { Switch } from '@everynews/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
@@ -33,12 +40,14 @@ import {
   type NewsletterDto,
   NewsletterDtoSchema,
 } from '@everynews/schema/newsletter'
+import type { Prompt } from '@everynews/schema/prompt'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useId, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { PromptDialog } from './prompt-dialog'
 import { SubmitButton } from './submit-button'
 
 const STRATEGY_WITH_QUERY = ['exa']
@@ -72,12 +81,36 @@ export const NewsletterDialog = ({
 
   const [scheduleDays, setScheduleDays] = useState<string[]>([])
   const [scheduleHours, setScheduleHours] = useState<number[]>([])
+  const [prompts, setPrompts] = useState<Prompt[]>([])
+
+  useEffect(() => {
+    const fetchPrompts = async () => {
+      try {
+        const res = await api.prompts.$get()
+        if (res.ok) {
+          const data = await res.json()
+          setPrompts(data.map((p: any) => ({
+            ...p,
+            createdAt: new Date(p.createdAt),
+            updatedAt: new Date(p.updatedAt),
+          })))
+        }
+      } catch (error) {
+        console.error('Failed to fetch prompts:', error)
+      }
+    }
+
+    if (open) {
+      fetchPrompts()
+    }
+  }, [open])
 
   const createValues: NewsletterDto = {
     active: true,
     description: '',
     isPublic: true,
     name: '',
+    promptId: null,
     strategy: { provider: 'hnbest' },
     wait: { type: 'count', value: 10 },
   }
@@ -91,6 +124,7 @@ export const NewsletterDialog = ({
             description: original?.description || '',
             isPublic: original?.isPublic ?? true,
             name: original?.name || '',
+            promptId: original?.promptId || null,
             strategy: original?.strategy || { provider: 'hnbest' },
             wait: original?.wait || { type: 'count', value: 10 },
           },
@@ -105,6 +139,7 @@ export const NewsletterDialog = ({
         description: values.description,
         isPublic: values.isPublic,
         name: values.name,
+        promptId: values.promptId,
         strategy:
           values.strategy.provider === 'exa'
             ? { provider: 'exa', query: values.strategy.query || '' }
@@ -206,6 +241,62 @@ export const NewsletterDialog = ({
                         value={field.value || ''}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='promptId'
+              render={({ field }) => (
+                <FormItem className='md:flex md:items-start md:justify-between'>
+                  <div className='md:w-1/3'>
+                    <FormLabel className='text-md'>
+                      AI Prompt (optional)
+                    </FormLabel>
+                    <p className='text-muted-foreground text-sm mt-1'>
+                      Choose a custom prompt for AI summarization. Uses default
+                      prompt if none selected.
+                    </p>
+                  </div>
+                  <div className='md:w-2/3'>
+                    <div className='flex gap-2'>
+                      <FormControl>
+                        <Select
+                          value={field.value || ''}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder='Select a prompt (optional)' />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value=''>Default Prompt</SelectItem>
+                            {prompts.map((prompt) => (
+                              <SelectItem key={prompt.id} value={prompt.id}>
+                                {prompt.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <PromptDialog
+                        mode='create'
+                        onSuccess={() => {
+                          // Refetch prompts when a new one is created
+                          api.prompts.$get().then((res) => {
+                            if (res.ok) {
+                              res.json().then(data => setPrompts(data.map((p: any) => ({
+                                ...p,
+                                createdAt: new Date(p.createdAt),
+                                updatedAt: new Date(p.updatedAt),
+                              }))))
+                            }
+                          })
+                        }}
+                      />
+                    </div>
                     <FormMessage />
                   </div>
                 </FormItem>

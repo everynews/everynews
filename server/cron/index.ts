@@ -112,7 +112,7 @@ const validateCronJob = async (c: Context): Promise<boolean> => {
   return true
 }
 
-export const CronRouter = new Hono().post(
+export const CronRouter = new Hono().get(
   '/',
   describeRoute({
     description: 'Run Cron Job - Newsletter Processing',

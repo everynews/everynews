@@ -7,6 +7,7 @@ import { generateSpecs } from 'hono-openapi'
 import { ChannelRouter } from './channels'
 import { CronRouter } from './cron'
 import { NewsletterRouter } from './newsletters'
+import { PromptsRouter } from './prompts'
 import { SubscriptionRouter } from './subscriptions'
 
 const app = new Hono<WithAuth>()
@@ -15,6 +16,7 @@ const app = new Hono<WithAuth>()
   .route('/cron', CronRouter)
   .route('/newsletters', NewsletterRouter)
   .route('/channels', ChannelRouter)
+  .route('/prompts', PromptsRouter)
   .route('/subscriptions', SubscriptionRouter)
 
 app.get(

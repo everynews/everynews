@@ -10,6 +10,10 @@ const sidebarItems = [
     title: 'Newsletters',
   },
   {
+    href: '/my/prompts',
+    title: 'Prompts',
+  },
+  {
     href: '/my/channels',
     title: 'Channels',
   },

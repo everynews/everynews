@@ -13,7 +13,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { SubmitButton } from './submit-button'
 
-export const DeleteChannelPopover = ({ channel }: { channel: Channel }) => {
+export const DeleteChannelPopover = ({ channel, trigger }: { channel: Channel; trigger?: React.ReactNode }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -36,12 +36,17 @@ export const DeleteChannelPopover = ({ channel }: { channel: Channel }) => {
       setLoading(false)
     }
   }
+
+  const defaultTrigger = (
+    <Button variant='outline' size='sm'>
+      Delete
+    </Button>
+  )
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant='outline' size='sm'>
-          Delete
-        </Button>
+        {trigger || defaultTrigger}
       </PopoverTrigger>
       <PopoverContent className='flex flex-col gap-2'>
         <h2 className='font-semibold text-lg'>Delete "{channel.name}"?</h2>

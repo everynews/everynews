@@ -17,7 +17,7 @@ import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
 import { subscriptions } from '@everynews/schema/subscription'
 import { eq } from 'drizzle-orm'
-import { Edit } from 'lucide-react'
+import { Edit, Eye, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -49,81 +49,103 @@ export default async function MyNewslettersPage() {
   const userSubscriptions = subscriptionsRes
 
   return (
-    <div className='flex flex-col gap-6'>
-      <div className='flex justify-between items-center px-3'>
+    <div className='container mx-auto'>
+      <div className='flex items-center justify-between mb-8'>
         <div>
-          <h2 className='text-2xl font-bold'>My Newsletters</h2>
-          <p className='text-muted-foreground'>What topics interest you?</p>
+          <h1 className='text-3xl font-bold'>Newsletters</h1>
+          <p className='text-muted-foreground mt-2'>
+            Manage your AI-powered newsletters
+          </p>
         </div>
         <NewsletterDialog mode='create' />
       </div>
 
-      {news.length === 0 ? (
-        <div className='text-center py-12'>
-          <p className='text-muted-foreground mb-4'>
-            You haven't created any newsletters yet.
-          </p>
-          <NewsletterDialog mode='create' />
-        </div>
-      ) : (
+      <div className='border rounded-lg'>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className='text-right'>Actions</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead>Updated</TableHead>
+              <TableHead className='w-[200px]'>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {news.map((item) => {
-              const subscription = userSubscriptions.find(
-                (sub) => sub.newsletterId === item.id,
-              )
-              return (
-                <TableRow key={item.id}>
-                  <TableCell className='font-medium text-blue-500'>
-                    <Link href={`/newsletters/${item.id}`}>{item.name}</Link>
-                  </TableCell>
-                  <TableCell>
-                    <div className='flex items-center gap-2'>
-                      <Badge variant={item.active ? 'default' : 'outline'}>
-                        {item.active ? 'Active' : 'Inactive'}
-                      </Badge>
-                      <Badge
-                        variant={
-                          subscription?.channelId ? 'default' : 'outline'
-                        }
-                      >
-                        {subscription?.channelId
-                          ? 'Subscribed'
-                          : 'Not Subscribed'}
-                      </Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell className='flex gap-2 justify-end'>
-                    <SubscribeNewsletterButton
-                      newsletter={item}
-                      channels={userChannels}
-                      subscription={subscription}
-                    />
-                    <NewsletterDialog
-                      mode='edit'
-                      original={item}
-                      trigger={
-                        <Button variant='outline' size='sm'>
-                          <Edit className='size-4 mr-1' />
-                          Edit
+            {news.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className='text-center text-muted-foreground py-8'>
+                  No newsletters yet. Create your first newsletter to get started.
+                </TableCell>
+              </TableRow>
+            ) : (
+              news.map((item) => {
+                const subscription = userSubscriptions.find(
+                  (sub) => sub.newsletterId === item.id,
+                )
+                return (
+                  <TableRow key={item.id}>
+                    <TableCell className='font-medium'>{item.name}</TableCell>
+                    <TableCell>
+                      <div className='flex items-center gap-2'>
+                        <Badge variant={item.active ? 'default' : 'outline'}>
+                          {item.active ? 'Active' : 'Inactive'}
+                        </Badge>
+                        <Badge
+                          variant={
+                            subscription?.channelId ? 'default' : 'outline'
+                          }
+                        >
+                          {subscription?.channelId
+                            ? 'Subscribed'
+                            : 'Not Subscribed'}
+                        </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell className='text-muted-foreground'>
+                      {new Date(item.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className='text-muted-foreground'>
+                      {new Date(item.updatedAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <div className='flex items-center gap-2'>
+                        <Button asChild size='sm' variant='ghost'>
+                          <Link href={`/newsletters/${item.id}`}>
+                            <Eye className='size-4' />
+                          </Link>
                         </Button>
-                      }
-                    />
-                    <DeleteNewsletterPopover newsletter={item} />
-                  </TableCell>
-                </TableRow>
-              )
-            })}
+                        <SubscribeNewsletterButton
+                          newsletter={item}
+                          channels={userChannels}
+                          subscription={subscription}
+                        />
+                        <NewsletterDialog
+                          mode='edit'
+                          original={item}
+                          trigger={
+                            <Button size='sm' variant='ghost'>
+                              <Edit className='size-4' />
+                            </Button>
+                          }
+                        />
+                        <DeleteNewsletterPopover 
+                          newsletter={item}
+                          trigger={
+                            <Button size='sm' variant='ghost'>
+                              <Trash2 className='size-4' />
+                            </Button>
+                          }
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
+              })
+            )}
           </TableBody>
         </Table>
-      )}
+      </div>
     </div>
   )
 }

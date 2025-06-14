@@ -15,7 +15,7 @@ import {
 import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { eq } from 'drizzle-orm'
-import { Edit } from 'lucide-react'
+import { Edit, Trash2 } from 'lucide-react'
 import { unauthorized } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -31,24 +31,18 @@ export default async function MyChannelsPage() {
   const channelList = ChannelSchema.array().parse(res)
 
   return (
-    <div className='flex flex-col gap-6'>
-      <div className='flex justify-between items-center px-3'>
+    <div className='container mx-auto'>
+      <div className='flex items-center justify-between mb-8'>
         <div>
-          <h2 className='text-2xl font-bold'>My Channels</h2>
-          <p className='text-muted-foreground'>
-            Where should we send your newsletters?
+          <h1 className='text-3xl font-bold'>Channels</h1>
+          <p className='text-muted-foreground mt-2'>
+            Manage where your newsletters are delivered
           </p>
         </div>
         <ChannelDialog mode='create' />
       </div>
 
-      {channelList.length === 0 ? (
-        <div className='text-center py-12'>
-          <p className='text-muted-foreground mb-4'>
-            You haven't created any channels yet.
-          </p>
-        </div>
-      ) : (
+      <div className='border rounded-lg'>
         <Table>
           <TableHeader>
             <TableRow>
@@ -56,45 +50,65 @@ export default async function MyChannelsPage() {
               <TableHead>Type</TableHead>
               <TableHead>Destination</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className='text-right'>Actions</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead className='w-[150px]'>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {channelList.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell className='font-medium'>{item.name}</TableCell>
-                <TableCell>
-                  <Badge variant='outline' className='capitalize'>
-                    {item.type}
-                  </Badge>
-                </TableCell>
-                <TableCell className='text-sm text-muted-foreground'>
-                  {item.config.destination}
-                </TableCell>
-                <TableCell>
-                  <Badge variant={item.verified ? 'default' : 'destructive'}>
-                    {item.verified ? 'Verified' : 'Pending'}
-                  </Badge>
-                </TableCell>
-                <TableCell className='flex gap-2 justify-end'>
-                  <ChannelDialog
-                    mode='edit'
-                    original={item}
-                    trigger={
-                      <Button variant='outline' size='sm'>
-                        <Edit className='size-4 mr-1' />
-                        Edit
-                      </Button>
-                    }
-                  />
-                  {!item.verified && <SendVerificationButton channel={item} />}
-                  <DeleteChannelPopover channel={item} />
+            {channelList.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className='text-center text-muted-foreground py-8'>
+                  No channels yet. Create your first delivery channel to get started.
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              channelList.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell className='font-medium'>{item.name}</TableCell>
+                  <TableCell>
+                    <Badge variant='outline' className='capitalize'>
+                      {item.type}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className='text-sm text-muted-foreground'>
+                    {item.config.destination}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={item.verified ? 'default' : 'destructive'}>
+                      {item.verified ? 'Verified' : 'Pending'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className='text-muted-foreground'>
+                    {new Date(item.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <div className='flex items-center gap-2'>
+                      <ChannelDialog
+                        mode='edit'
+                        original={item}
+                        trigger={
+                          <Button size='sm' variant='ghost'>
+                            <Edit className='size-4' />
+                          </Button>
+                        }
+                      />
+                      {!item.verified && <SendVerificationButton channel={item} />}
+                      <DeleteChannelPopover 
+                        channel={item}
+                        trigger={
+                          <Button size='sm' variant='ghost'>
+                            <Trash2 className='size-4' />
+                          </Button>
+                        }
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
-      )}
+      </div>
     </div>
   )
 }

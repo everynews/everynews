@@ -18,7 +18,7 @@ import {
   subscriptions,
 } from '@everynews/schema/subscription'
 import { eq } from 'drizzle-orm'
-import { Mail, MessageSquare } from 'lucide-react'
+import { Eye, Mail, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -55,26 +55,20 @@ export default async function MySubscriptionsPage() {
   const userChannels = ChannelSchema.array().parse(userChannelsRes)
 
   return (
-    <div className='flex flex-col gap-6'>
-      <div className='flex justify-between items-center px-3'>
+    <div className='container mx-auto'>
+      <div className='flex items-center justify-between mb-8'>
         <div>
-          <h2 className='text-2xl font-bold'>My Subscriptions</h2>
-          <p className='text-muted-foreground'>
+          <h1 className='text-3xl font-bold'>Subscriptions</h1>
+          <p className='text-muted-foreground mt-2'>
             Newsletters you're subscribed to
           </p>
         </div>
+        <Button asChild>
+          <Link href='/newsletters'>Browse Newsletters</Link>
+        </Button>
       </div>
 
-      {userSubscriptions.length === 0 ? (
-        <div className='text-center py-12'>
-          <p className='text-muted-foreground mb-4'>
-            You haven't subscribed to any newsletters yet.
-          </p>
-          <Link href='/newsletters'>
-            <Button>Browse Newsletters</Button>
-          </Link>
-        </div>
-      ) : (
+      <div className='border rounded-lg'>
         <Table>
           <TableHeader>
             <TableRow>
@@ -82,56 +76,65 @@ export default async function MySubscriptionsPage() {
               <TableHead>Channel</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Subscribed</TableHead>
-              <TableHead className='text-right'>Actions</TableHead>
+              <TableHead className='w-[150px]'>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {userSubscriptions.map(({ subscription, newsletter, channel }) => (
-              <TableRow key={subscription.id}>
-                <TableCell className='font-medium text-blue-500'>
-                  <Link href={`/newsletters/${newsletter.id}`}>
-                    {newsletter.name}
-                  </Link>
+            {userSubscriptions.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className='text-center text-muted-foreground py-8'>
+                  No subscriptions yet. Browse newsletters to subscribe to one.
                 </TableCell>
-                <TableCell>
-                  <div className='flex items-center gap-2'>
-                    {channel.type === 'email' ? (
-                      <Mail className='size-4' />
-                    ) : (
-                      <MessageSquare className='size-4' />
-                    )}
-                    <span className='capitalize'>{channel.type}</span>
-                    <span className='text-muted-foreground text-sm'>
-                      ({channel.config.destination})
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge variant={newsletter.active ? 'default' : 'outline'}>
-                    {newsletter.active ? 'Active' : 'Inactive'}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <span className='text-sm text-muted-foreground'>
+              </TableRow>
+            ) : (
+              userSubscriptions.map(({ subscription, newsletter, channel }) => (
+                <TableRow key={subscription.id}>
+                  <TableCell className='font-medium'>{newsletter.name}</TableCell>
+                  <TableCell>
+                    <div className='flex items-center gap-2'>
+                      {channel.type === 'email' ? (
+                        <Mail className='size-4' />
+                      ) : (
+                        <MessageSquare className='size-4' />
+                      )}
+                      <span className='capitalize'>{channel.type}</span>
+                      <span className='text-muted-foreground text-sm'>
+                        ({channel.config.destination})
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={newsletter.active ? 'default' : 'outline'}>
+                      {newsletter.active ? 'Active' : 'Inactive'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className='text-muted-foreground'>
                     {subscription.createdAt.toLocaleDateString('en-US', {
                       day: 'numeric',
                       month: 'short',
                       year: 'numeric',
                     })}
-                  </span>
-                </TableCell>
-                <TableCell className='text-right'>
-                  <SubscribeNewsletterButton
-                    newsletter={newsletter}
-                    channels={userChannels}
-                    subscription={subscription}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                  <TableCell>
+                    <div className='flex items-center gap-2'>
+                      <Button asChild size='sm' variant='ghost'>
+                        <Link href={`/newsletters/${newsletter.id}`}>
+                          <Eye className='size-4' />
+                        </Link>
+                      </Button>
+                      <SubscribeNewsletterButton
+                        newsletter={newsletter}
+                        channels={userChannels}
+                        subscription={subscription}
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
-      )}
+      </div>
     </div>
   )
 }
