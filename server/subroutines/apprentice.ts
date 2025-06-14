@@ -1,4 +1,5 @@
 import { db } from '@everynews/database'
+import { getDefaultPromptContent } from '@everynews/lib/prompts'
 import { track } from '@everynews/logs'
 import { type Content, prompt } from '@everynews/schema'
 import { eq } from 'drizzle-orm'
@@ -8,16 +9,8 @@ import { firecrawl } from './reapers/firecrawl'
 const client = new OpenAI()
 const model = 'gpt-4o'
 
-const defaultPrompt = `1. A contextual title that captures the essence of the article (not just the original title)
-2. Key discoveries, insights, or developments from the article
-3. Do not simply introduce the article; include actual substantive findings directly
-4. Within Key Findings or Title, write plain text only. Do not include markdown formatting.
-5. When creating the title, focus on who (if any) did what and why it was impactful.
-6. Use simple language. Keep things real; honest, and don't force friendliness. Avoid unnecessary adjectives and adverbs. Focus on clarity.
-7. Most importantly. Think why the original title was given that way. It may include why it was impactful or interesting.`
-
 const getInstructions = async (promptId: string | null) => {
-  let promptContent = defaultPrompt
+  let promptContent = await getDefaultPromptContent()
 
   if (promptId) {
     const customPrompt = await db.query.prompt.findFirst({
@@ -78,7 +71,7 @@ const prepareInput = async (content: Content): Promise<string> => {
   return `# [${content.title}](${content.url})\n\n${markdownBody || htmlBody}`
 }
 
-export const testPrompt = async ({
+export const apprentice = async ({
   url,
   promptId,
 }: {
@@ -91,7 +84,7 @@ export const testPrompt = async ({
   originalTitle: string
 }> => {
   await track({
-    channel: 'prompt-test',
+    channel: 'apprentice',
     description: `Testing prompt on URL: ${url}`,
     event: 'Prompt Test Started',
     icon: '🧪',
@@ -116,7 +109,7 @@ export const testPrompt = async ({
     const { title, keyFindings } = parseResponse(response.output_text)
 
     await track({
-      channel: 'prompt-test',
+      channel: 'apprentice',
       description: `Test completed: ${title}`,
       event: 'Prompt Test Completed',
       icon: '✅',
@@ -138,7 +131,7 @@ export const testPrompt = async ({
     }
   } catch (error) {
     await track({
-      channel: 'prompt-test',
+      channel: 'apprentice',
       description: `Test failed for URL: ${url}`,
       event: 'Prompt Test Failed',
       icon: '❌',

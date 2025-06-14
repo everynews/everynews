@@ -1,4 +1,5 @@
 import { db } from '@everynews/database'
+import { getDefaultPromptContent } from '@everynews/lib/prompts'
 import { track } from '@everynews/logs'
 import {
   type Content,
@@ -17,13 +18,8 @@ const client = new OpenAI()
 
 const model = 'gpt-4o'
 
-const getDefaultPrompt = async (): Promise<string> => {
-  const file = Bun.file('./public/default-prompt.txt')
-  return await file.text()
-}
-
 const instructions = async (newsletter: Newsletter) => {
-  let promptContent = await getDefaultPrompt()
+  let promptContent = await getDefaultPromptContent()
 
   if (newsletter.promptId) {
     const customPrompt = await db.query.prompt.findFirst({

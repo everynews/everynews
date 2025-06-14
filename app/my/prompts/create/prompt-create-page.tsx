@@ -13,12 +13,13 @@ import { Input } from '@everynews/components/ui/input'
 import { Label } from '@everynews/components/ui/label'
 import { Separator } from '@everynews/components/ui/separator'
 import { toastNetworkError } from '@everynews/lib/error'
+import { DEFAULT_PROMPT_PLACEHOLDER } from '@everynews/lib/prompts'
 import type { LanguageCode } from '@everynews/schema/language'
 import { humanId } from 'human-id'
 import { ArrowLeft, Loader2, Plus, TestTube } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect, useId, useState } from 'react'
+import { useId, useState } from 'react'
 import { toast } from 'sonner'
 
 type TestResult = {
@@ -37,7 +38,7 @@ export const PromptCreatePage = ({
   const [name, setName] = useState(
     humanId({ capitalize: true, separator: ' ' }),
   )
-  const [content, setContent] = useState('')
+  const [content, setContent] = useState(defaultPromptContent)
   const [language, setLanguage] = useState<LanguageCode>('en')
   const [testUrl, setTestUrl] = useState('')
   const [isCreating, setIsCreating] = useState(false)
@@ -48,10 +49,6 @@ export const PromptCreatePage = ({
   const contentId = useId()
   const languageId = useId()
   const testUrlId = useId()
-
-  useEffect(() => {
-    setContent(defaultPromptContent)
-  }, [defaultPromptContent])
 
   const handleCreate = async () => {
     if (!name.trim()) {
@@ -189,7 +186,7 @@ export const PromptCreatePage = ({
           nameId={nameId}
           languageId={languageId}
           contentId={contentId}
-          contentPlaceholder={defaultPromptContent}
+          contentPlaceholder={DEFAULT_PROMPT_PLACEHOLDER}
         />
 
         <Card>

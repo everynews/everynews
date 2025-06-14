@@ -6,7 +6,7 @@ import { Hono } from 'hono'
 import { z } from 'zod'
 import type { WithAuth } from '../bindings/auth'
 import { authMiddleware } from '../middleware/auth'
-import { testPrompt } from '../subroutines/test-prompt'
+import { apprentice } from '../subroutines/apprentice'
 
 export const PromptsRouter = new Hono<WithAuth>()
   .use(authMiddleware)
@@ -114,7 +114,7 @@ export const PromptsRouter = new Hono<WithAuth>()
       }
 
       try {
-        const result = await testPrompt({ promptId, url })
+        const result = await apprentice({ promptId, url })
         return c.json(result)
       } catch (error) {
         return c.json({ error: String(error) }, 500)
