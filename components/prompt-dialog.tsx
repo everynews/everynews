@@ -28,18 +28,10 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { SubmitButton } from './submit-button'
-
-const defaultPromptContent = `1. A contextual title that captures the essence of the article (not just the original title)
-2. Key discoveries, insights, or developments from the article
-3. Do not simply introduce the article; include actual substantive findings directly
-4. Within Key Findings or Title, write plain text only. Do not include markdown formatting.
-5. When creating the title, focus on who (if any) did what and why it was impactful.
-6. Use simple language. Keep things real; honest, and don't force friendliness. Avoid unnecessary adjectives and adverbs. Focus on clarity.
-7. Most importantly. Think why the original title was given that way. It may include why it was impactful or interesting.`
 
 export const PromptDialog = ({
   mode,
@@ -55,6 +47,17 @@ export const PromptDialog = ({
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [open, setOpen] = useState(false)
+  const [defaultPromptContent, setDefaultPromptContent] = useState('')
+
+  useEffect(() => {
+    fetch('/default-prompt.txt')
+      .then((res) => res.text())
+      .then(setDefaultPromptContent)
+      .catch(() => {
+        // Fallback if file doesn't exist
+        setDefaultPromptContent('Enter your prompt instructions here...')
+      })
+  }, [])
 
   const createValues: PromptDto = {
     content: defaultPromptContent,
@@ -71,6 +74,15 @@ export const PromptDialog = ({
           },
     resolver: zodResolver(PromptDtoSchema),
   })
+
+  useEffect(() => {
+    if (defaultPromptContent && mode === 'create') {
+      form.reset({
+        content: defaultPromptContent,
+        name: '',
+      })
+    }
+  }, [defaultPromptContent, mode, form])
 
   const onSubmit = async (values: PromptDto) => {
     setIsSubmitting(true)

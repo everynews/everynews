@@ -17,32 +17,13 @@ const client = new OpenAI()
 
 const model = 'gpt-4o'
 
-const defaultPrompt = `1. A contextual title that captures the essence of the article (not just the original title)
-2. Key discoveries, insights, or developments from the article
-3. Do not simply introduce the article; include actual substantive findings directly
-4. Within Key Findings or Title, write plain text only. Do not include markdown formatting.
-5. When creating the title, focus on who (if any) did what and why it was impactful.
-6. Use simple language. Keep things real; honest, and don't force friendliness. Avoid unnecessary adjectives and adverbs. Focus on clarity.
-7. Most importantly. Think why the original title was given that way. It may include why it was impactful or interesting. 
-Format your response as:
-<TITLE>
-Contextual Title
-</TITLE>
-
-<KEYFINDING>
-Key finding 1
-</KEYFINDING>
-
-<KEYFINDING>
-Key finding 2
-</KEYFINDING>
-
-<KEYFINDING>
-Key finding 3
-</KEYFINDING>`
+const getDefaultPrompt = async (): Promise<string> => {
+  const file = Bun.file('./public/default-prompt.txt')
+  return await file.text()
+}
 
 const instructions = async (newsletter: Newsletter) => {
-  let promptContent = defaultPrompt
+  let promptContent = await getDefaultPrompt()
 
   if (newsletter.promptId) {
     const customPrompt = await db.query.prompt.findFirst({
