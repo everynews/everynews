@@ -683,20 +683,16 @@ export const AlertEditPage = ({
           </Form>
         </div>
 
-        <div>
-          <Card className='bg-white'>
-            <div className='p-6 border-b'>
-              <h3 className='text-lg font-semibold'>Preview</h3>
-            </div>
-            <div className='p-6'>
-              {testResults && testResults.length > 0 ? (
-                <AlertPreview stories={testResults} />
-              ) : (
-                <div className='text-center text-muted-foreground py-12'>
-                  <p>Click "Test" to preview your alert</p>
-                </div>
-              )}
-            </div>
+        <div className='space-y-4'>
+          <h3 className='text-lg font-semibold'>Preview</h3>
+          <Card className='p-6 bg-background'>
+            {testResults && testResults.length > 0 ? (
+              <AlertPreview stories={testResults} />
+            ) : (
+              <div className='text-center text-muted-foreground py-12'>
+                <p>Click "Test" to preview your alert</p>
+              </div>
+            )}
           </Card>
         </div>
       </div>
