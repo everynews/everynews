@@ -66,12 +66,12 @@ const HOURS_2_INTERVAL = Array.from({ length: 12 }, (_, i) => i * 2) // 0-22
 export const AlertDialog = ({
   mode,
   original,
-  trigger,
+  children,
   prompts,
 }: {
   mode: 'create' | 'edit'
   original?: Alert
-  trigger?: React.ReactNode
+  children?: React.ReactNode
   prompts: Prompt[]
 }) => {
   const router = useRouter()
@@ -171,11 +171,9 @@ export const AlertDialog = ({
   const strategyProvider = form.watch('strategy.provider')
   const waitType = form.watch('wait.type')
 
-  const defaultTrigger = <Button>Create Alert</Button>
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='md:min-w-6xl max-h-[90dvh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>

@@ -638,16 +638,16 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
                   Cancel
                 </Button>
                 <div className='flex gap-2'>
-                <SubmitButton
-                  variant='outline'
-                  onClick={onTest}
-                  loading={isTesting}
-                >
-                  Test
-                </SubmitButton>
-                <SubmitButton
-                  onClick={form.handleSubmit(onSubmit)}
-                  loading={isSubmitting}
+                  <SubmitButton
+                    variant='outline'
+                    onClick={onTest}
+                    loading={isTesting}
+                  >
+                    Test
+                  </SubmitButton>
+                  <SubmitButton
+                    onClick={form.handleSubmit(onSubmit)}
+                    loading={isSubmitting}
                   >
                     Create
                   </SubmitButton>

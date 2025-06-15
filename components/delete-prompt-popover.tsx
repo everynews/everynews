@@ -15,10 +15,10 @@ import { SubmitButton } from './submit-button'
 
 export const DeletePromptPopover = ({
   prompt,
-  trigger,
+  children,
 }: {
   prompt: Prompt
-  trigger?: React.ReactNode
+  children?: React.ReactNode
 }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -42,16 +42,9 @@ export const DeletePromptPopover = ({
       setLoading(false)
     }
   }
-
-  const defaultTrigger = (
-    <Button size='sm' variant='ghost' className='text-destructive'>
-      Delete
-    </Button>
-  )
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>{trigger || defaultTrigger}</PopoverTrigger>
+      <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent className='flex flex-col gap-2'>
         <h2 className='font-semibold text-lg'>Delete "{prompt.name}"?</h2>
         <p className='text-muted-foreground'>This action cannot be undone.</p>

@@ -117,25 +117,18 @@ export default async function MyChannelsPage() {
                     {new Date(item.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    <div className='flex items-center gap-1 justify-end'>
-                      <Button asChild size='sm' variant='ghost'>
-                        <Link href={`/my/channels/${item.id}`}>Edit</Link>
-                      </Button>
-                      {!item.verified && (
-                        <SendVerificationButton channel={item} />
-                      )}
-                      <DeleteChannelPopover
-                        channel={item}
-                        trigger={
-                          <Button
-                            size='sm'
-                            variant='ghost'
-                            className='text-destructive'
-                          >
-                            Delete
-                          </Button>
-                        }
-                      />
+                    <div className='flex items-center gap-1 justify-between'>
+                      <DeleteChannelPopover channel={item}>
+                        <Button variant='destructive'>Delete</Button>
+                      </DeleteChannelPopover>
+                      <div className='flex items-center gap-1'>
+                        <Button asChild size='sm' variant='ghost'>
+                          <Link href={`/my/channels/${item.id}`}>Edit</Link>
+                        </Button>
+                        {!item.verified && (
+                          <SendVerificationButton channel={item} />
+                        )}
+                      </div>
                     </div>
                   </TableCell>
                 </TableRow>

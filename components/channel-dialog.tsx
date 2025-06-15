@@ -35,11 +35,11 @@ import { SubmitButton } from './submit-button'
 export const ChannelDialog = ({
   mode,
   original,
-  trigger,
+  children,
 }: {
   mode: 'create' | 'edit'
   original?: Channel
-  trigger?: React.ReactNode
+  children?: React.ReactNode
 }) => {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -148,11 +148,9 @@ export const ChannelDialog = ({
     }
   }
 
-  const defaultTrigger = <Button>Create Channel</Button>
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='max-w-xl'>
         <DialogHeader>
           <DialogTitle>

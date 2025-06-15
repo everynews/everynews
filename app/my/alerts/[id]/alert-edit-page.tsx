@@ -659,27 +659,27 @@ export const AlertEditPage = ({
 
               <div className='flex justify-between gap-2'>
                 <div className='flex gap-2'>
-                <Button
-                  type='button'
-                  variant='destructive'
-                  onClick={() => router.push('/my/alerts')}
-                >
-                  Cancel
-                </Button>
+                  <Button
+                    type='button'
+                    variant='destructive'
+                    onClick={() => router.push('/my/alerts')}
+                  >
+                    Cancel
+                  </Button>
                 </div>
                 <div className='flex gap-2'>
-                <SubmitButton
-                  variant='outline'
-                  onClick={onTest}
-                  loading={isTesting}
-                >
-                  Test
-                </SubmitButton>
-                <SubmitButton
-                  onClick={form.handleSubmit(onSubmit)}
-                  loading={isSubmitting}
-                >
-                      Update
+                  <SubmitButton
+                    variant='outline'
+                    onClick={onTest}
+                    loading={isTesting}
+                  >
+                    Test
+                  </SubmitButton>
+                  <SubmitButton
+                    onClick={form.handleSubmit(onSubmit)}
+                    loading={isSubmitting}
+                  >
+                    Update
                   </SubmitButton>
                 </div>
               </div>

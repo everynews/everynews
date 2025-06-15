@@ -86,18 +86,23 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
             className='min-h-96 font-mono text-sm'
           />
         </div>
-        <div className='flex justify-end gap-2'>
-          <Button
-            type='button'
-            variant='outline'
-            onClick={() => router.push('/my/prompts')}
-          >
-            Cancel
-          </Button>
-          <DeletePromptPopover prompt={prompt} />
-          <SubmitButton onClick={handleSave} loading={isSaving}>
-            Save
-          </SubmitButton>
+
+        <div className='flex flex-row items-center gap-1 justify-between'>
+          <DeletePromptPopover prompt={prompt}>
+            <Button variant='destructive'>Delete</Button>
+          </DeletePromptPopover>
+          <div className='flex flex-row items-center gap-1'>
+            <Button
+              type='button'
+              variant='outline'
+              onClick={() => router.push('/my/prompts')}
+            >
+              Cancel
+            </Button>
+            <SubmitButton onClick={handleSave} loading={isSaving}>
+              Save
+            </SubmitButton>
+          </div>
         </div>
       </div>
     </div>

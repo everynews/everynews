@@ -92,20 +92,9 @@ export default async function MyAlertsPage() {
                   <TableRow key={item.id}>
                     <TableCell className='font-medium'>{item.name}</TableCell>
                     <TableCell>
-                      <div className='flex items-center gap-1 justify-end'>
-                        <Badge variant={item.active ? 'default' : 'outline'}>
-                          {item.active ? 'Active' : 'Inactive'}
-                        </Badge>
-                        <Badge
-                          variant={
-                            subscription?.channelId ? 'default' : 'outline'
-                          }
-                        >
-                          {subscription?.channelId
-                            ? 'Subscribed'
-                            : 'Not Subscribed'}
-                        </Badge>
-                      </div>
+                      <Badge variant={item.active ? 'default' : 'outline'}>
+                        {item.active ? 'Active' : 'Inactive'}
+                      </Badge>
                     </TableCell>
                     <TableCell className='text-muted-foreground'>
                       {new Date(item.createdAt).toLocaleDateString()}
@@ -114,31 +103,24 @@ export default async function MyAlertsPage() {
                       {new Date(item.updatedAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
-                      <div className='flex items-center gap-1 justify-end'>
-                        <Button asChild size='sm' variant='ghost'>
-                          <Link href={`/alerts/${item.id}`}>View</Link>
-                        </Button>
-                        <SubscribeAlertButton
-                          alert={item}
-                          channels={userChannels}
-                          subscription={subscription}
-                          user={user}
-                        />
-                        <Button asChild size='sm' variant='ghost'>
-                          <Link href={`/my/alerts/${item.id}`}>Edit</Link>
-                        </Button>
-                        <DeleteAlertPopover
-                          alert={item}
-                          trigger={
-                            <Button
-                              size='sm'
-                              variant='ghost'
-                              className='text-destructive'
-                            >
-                              Delete
-                            </Button>
-                          }
-                        />
+                      <div className='flex items-center gap-1 justify-between'>
+                        <DeleteAlertPopover alert={item}>
+                          <Button variant='destructive'>Delete</Button>
+                        </DeleteAlertPopover>
+                        <div className='flex items-center gap-1'>
+                          <Button asChild size='sm' variant='ghost'>
+                            <Link href={`/alerts/${item.id}`}>View</Link>
+                          </Button>
+                          <SubscribeAlertButton
+                            alert={item}
+                            channels={userChannels}
+                            subscription={subscription}
+                            user={user}
+                          />
+                          <Button asChild size='sm' variant='ghost'>
+                            <Link href={`/my/alerts/${item.id}`}>Edit</Link>
+                          </Button>
+                        </div>
                       </div>
                     </TableCell>
                   </TableRow>

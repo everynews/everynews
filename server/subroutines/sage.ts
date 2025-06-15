@@ -37,7 +37,85 @@ const input = async ({ content, news }: { content: Content; news: Alert }) => {
   return `${userPrompt}\n\n$TEXT: """\n${await prepareContentInput(content)}\n"""`
 }
 
-export const summarize = async ({
+// Pure function that only does summarization without database operations
+export const summarizeContent = async ({
+  content,
+  news,
+}: {
+  content: Content
+  news: Alert
+}): Promise<Omit<Story, 'id' | 'createdAt' | 'updatedAt'> | null> => {
+  try {
+    const response = await client.responses.create({
+      input: await input({ content, news }),
+      instructions: getSystemPromptContent(news.language),
+      model,
+    })
+
+    const { title, keyFindings, importance, languageCode } =
+      parsePromptResponse(response.output_text)
+
+    if (importance === 0) {
+      await track({
+        channel: 'sage',
+        description: `Skipped irrelevant content: ${content.title}`,
+        event: 'Irrelevant Content Skipped',
+        icon: '⏭️',
+        tags: {
+          content_id: content.id,
+          model,
+          original_title: content.title.slice(0, 160),
+          type: 'info',
+          url: content.url.slice(0, 160),
+        },
+      })
+      return null
+    }
+
+    await track({
+      channel: 'sage',
+      description: keyFindings.join('\n'),
+      event: title,
+      icon: '✅',
+      tags: {
+        content_id: content.id,
+        model,
+        original_title: content.title.slice(0, 160),
+        type: 'info',
+        url: content.url.slice(0, 160),
+      },
+    })
+
+    return {
+      alertId: news.id,
+      contentId: content.id,
+      keyFindings,
+      languageCode,
+      promptId: news.promptId,
+      title,
+      url: content.url,
+    }
+  } catch (error) {
+    await track({
+      channel: 'sage',
+      description: `AI summarization failed for: ${content.title}`,
+      event: 'Summarization Failed',
+      icon: '❌',
+      tags: {
+        content_id: content.id,
+        error: String(error),
+        model,
+        original_title: content.title.slice(0, 160),
+        type: 'error',
+        url: content.url.slice(0, 160),
+      },
+    })
+    return null
+  }
+}
+
+// Function that handles summarization with database caching
+const summarizeWithCache = async ({
   content,
   news,
 }: {
@@ -102,78 +180,27 @@ export const summarize = async ({
     })
   }
 
-  try {
-    const response = await client.responses.create({
-      input: await input({ content, news }),
-      instructions: getSystemPromptContent(news.language),
-      model,
-    })
-
-    const { title, keyFindings, importance, languageCode } =
-      parsePromptResponse(response.output_text)
-
-    if (importance === 0) {
-      await track({
-        channel: 'sage',
-        description: `Skipped irrelevant content: ${content.title}`,
-        event: 'Irrelevant Content Skipped',
-        icon: '⏭️',
-        tags: {
-          content_id: content.id,
-          model,
-          original_title: content.title.slice(0, 160),
-          type: 'info',
-          url: content.url.slice(0, 160),
-        },
-      })
-      return null
-    }
-
-    await track({
-      channel: 'sage',
-      description: keyFindings.join('\n'),
-      event: title,
-      icon: '✅',
-      tags: {
-        content_id: content.id,
-        model,
-        original_title: content.title.slice(0, 160),
-        type: 'info',
-        url: content.url.slice(0, 160),
-      },
-    })
-
-    const [story] = await db
-      .insert(stories)
-      .values({
-        alertId: news.id,
-        contentId: content.id,
-        keyFindings,
-        languageCode,
-        promptId: news.promptId,
-        title,
-        url: content.url,
-      })
-      .returning()
-
-    return StorySchema.parse(story)
-  } catch (error) {
-    await track({
-      channel: 'sage',
-      description: `AI summarization failed for: ${content.title}`,
-      event: 'Summarization Failed',
-      icon: '❌',
-      tags: {
-        content_id: content.id,
-        error: String(error),
-        model,
-        original_title: content.title.slice(0, 160),
-        type: 'error',
-        url: content.url.slice(0, 160),
-      },
-    })
+  // Get the summary without database operations
+  const summary = await summarizeContent({ content, news })
+  if (!summary) {
     return null
   }
+
+  // Insert into database
+  const [story] = await db
+    .insert(stories)
+    .values({
+      alertId: summary.alertId,
+      contentId: summary.contentId,
+      keyFindings: summary.keyFindings,
+      languageCode: summary.languageCode,
+      promptId: summary.promptId,
+      title: summary.title,
+      url: summary.url,
+    })
+    .returning()
+
+  return StorySchema.parse(story)
 }
 
 export const sage = async ({
@@ -198,7 +225,7 @@ export const sage = async ({
     const queue = new PQueue({ concurrency: 8 })
     const results = await Promise.all(
       contents.map((content) =>
-        queue.add(async () => summarize({ content, news })),
+        queue.add(async () => summarizeWithCache({ content, news })),
       ),
     )
 
