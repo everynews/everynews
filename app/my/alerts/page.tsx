@@ -1,5 +1,4 @@
 import { whoami } from '@everynews/auth/session'
-import { AlertDialog } from '@everynews/components/alert-dialog'
 import { DeleteAlertPopover } from '@everynews/components/delete-alert-popover'
 import { SubscribeAlertButton } from '@everynews/components/subscribe-alert-button'
 import { Badge } from '@everynews/components/ui/badge'
@@ -15,10 +14,8 @@ import {
 import { db } from '@everynews/database'
 import { AlertSchema, alert } from '@everynews/schema/alert'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
-import { PromptSchema, prompt } from '@everynews/schema/prompt'
 import { subscriptions } from '@everynews/schema/subscription'
 import { eq } from 'drizzle-orm'
-import { Edit, Eye, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -51,23 +48,18 @@ export default async function MyAlertsPage() {
     .where(eq(subscriptions.userId, user.id))
   const userSubscriptions = subscriptionsRes
 
-  // Get user's prompts
-  const promptsRes = await db
-    .select()
-    .from(prompt)
-    .where(eq(prompt.userId, user.id))
-  const userPrompts = PromptSchema.array().parse(promptsRes)
-
   return (
-    <div className='container mx-auto'>
-      <div className='flex items-center justify-between mb-8'>
-        <div>
+    <div className='container mx-auto max-w-6xl'>
+      <div className='flex items-center justify-between gap-4 mb-6'>
+        <div className='flex-1'>
           <h1 className='text-3xl font-bold'>Alerts</h1>
-          <p className='text-muted-foreground mt-2'>
+          <p className='text-muted-foreground mt-1'>
             Manage your AI-powered alerts
           </p>
         </div>
-        <AlertDialog mode='create' prompts={userPrompts} />
+        <Button asChild>
+          <Link href='/my/alerts/create'>Create Alert</Link>
+        </Button>
       </div>
 
       <div className='border rounded-lg'>
@@ -78,7 +70,7 @@ export default async function MyAlertsPage() {
               <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
               <TableHead>Updated</TableHead>
-              <TableHead className='w-[200px]'>Actions</TableHead>
+              <TableHead className='text-right'>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -100,7 +92,7 @@ export default async function MyAlertsPage() {
                   <TableRow key={item.id}>
                     <TableCell className='font-medium'>{item.name}</TableCell>
                     <TableCell>
-                      <div className='flex items-center gap-2'>
+                      <div className='flex items-center gap-1 justify-end'>
                         <Badge variant={item.active ? 'default' : 'outline'}>
                           {item.active ? 'Active' : 'Inactive'}
                         </Badge>
@@ -122,32 +114,28 @@ export default async function MyAlertsPage() {
                       {new Date(item.updatedAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
-                      <div className='flex items-center gap-2'>
+                      <div className='flex items-center gap-1 justify-end'>
                         <Button asChild size='sm' variant='ghost'>
-                          <Link href={`/alerts/${item.id}`}>
-                            <Eye className='size-4' />
-                          </Link>
+                          <Link href={`/alerts/${item.id}`}>View</Link>
                         </Button>
                         <SubscribeAlertButton
                           alert={item}
                           channels={userChannels}
                           subscription={subscription}
+                          user={user}
                         />
-                        <AlertDialog
-                          mode='edit'
-                          original={item}
-                          prompts={userPrompts}
-                          trigger={
-                            <Button size='sm' variant='ghost'>
-                              <Edit className='size-4' />
-                            </Button>
-                          }
-                        />
+                        <Button asChild size='sm' variant='ghost'>
+                          <Link href={`/my/alerts/${item.id}`}>Edit</Link>
+                        </Button>
                         <DeleteAlertPopover
                           alert={item}
                           trigger={
-                            <Button size='sm' variant='ghost'>
-                              <Trash2 className='size-4' />
+                            <Button
+                              size='sm'
+                              variant='ghost'
+                              className='text-destructive'
+                            >
+                              Delete
                             </Button>
                           }
                         />

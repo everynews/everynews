@@ -18,7 +18,7 @@ import {
   subscriptions,
 } from '@everynews/schema/subscription'
 import { eq } from 'drizzle-orm'
-import { Eye, Mail, MessageSquare } from 'lucide-react'
+import { Mail, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -60,11 +60,11 @@ export default async function MySubscriptionsPage() {
   const userChannels = ChannelSchema.array().parse(userChannelsRes)
 
   return (
-    <div className='container mx-auto'>
-      <div className='flex items-center justify-between mb-8'>
-        <div>
+    <div className='container mx-auto max-w-6xl'>
+      <div className='flex items-center justify-between gap-4 mb-6'>
+        <div className='flex-1'>
           <h1 className='text-3xl font-bold'>Subscriptions</h1>
-          <p className='text-muted-foreground mt-2'>
+          <p className='text-muted-foreground mt-1'>
             Alerts you're subscribed to
           </p>
         </div>
@@ -81,7 +81,7 @@ export default async function MySubscriptionsPage() {
               <TableHead>Channel</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Subscribed</TableHead>
-              <TableHead className='w-[150px]'>Actions</TableHead>
+              <TableHead className='text-right'>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -124,16 +124,15 @@ export default async function MySubscriptionsPage() {
                     })}
                   </TableCell>
                   <TableCell>
-                    <div className='flex items-center gap-2'>
+                    <div className='flex items-center gap-1 justify-end'>
                       <Button asChild size='sm' variant='ghost'>
-                        <Link href={`/alerts/${alert.id}`}>
-                          <Eye className='size-4' />
-                        </Link>
+                        <Link href={`/alerts/${alert.id}`}>View</Link>
                       </Button>
                       <SubscribeAlertButton
                         alert={alert}
                         channels={userChannels}
                         subscription={subscription}
+                        user={user}
                       />
                     </div>
                   </TableCell>

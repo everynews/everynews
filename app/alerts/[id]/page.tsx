@@ -124,6 +124,7 @@ export default async function AlertStoriesPage({
               alert={AlertSchema.parse(alertInfo)}
               channels={userChannels}
               subscription={userSubscription ?? undefined}
+              user={user}
             />
           )}
         </div>

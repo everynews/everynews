@@ -6,7 +6,7 @@
   },
   "dialect": "postgresql",
   "enums": {},
-  "id": "7795fd8b-e8ee-4e6a-8640-3b004b585c43",
+  "id": "660a4d81-733a-4111-a200-3f18f36d2da7",
   "policies": {},
   "prevId": "00000000-0000-0000-0000-000000000000",
   "roles": {},
@@ -713,7 +713,7 @@
         },
         "channel_id": {
           "name": "channel_id",
-          "notNull": true,
+          "notNull": false,
           "primaryKey": false,
           "type": "text"
         },

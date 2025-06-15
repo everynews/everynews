@@ -102,7 +102,7 @@ CREATE TABLE "stories" (
 --> statement-breakpoint
 CREATE TABLE "subscriptions" (
 	"alert_id" text NOT NULL,
-	"channel_id" text NOT NULL,
+	"channel_id" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"id" text PRIMARY KEY NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,

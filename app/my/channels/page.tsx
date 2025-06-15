@@ -1,5 +1,4 @@
 import { whoami } from '@everynews/auth/session'
-import { ChannelDialog } from '@everynews/components/channel-dialog'
 import { DeleteChannelPopover } from '@everynews/components/delete-channel-popover'
 import { SendVerificationButton } from '@everynews/components/send-verification-button'
 import { Badge } from '@everynews/components/ui/badge'
@@ -15,6 +14,7 @@ import {
 import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { eq } from 'drizzle-orm'
+import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -35,15 +35,17 @@ export default async function MyChannelsPage() {
   const channelList = ChannelSchema.array().parse(res)
 
   return (
-    <div className='container mx-auto'>
-      <div className='flex items-center justify-between mb-8'>
-        <div>
+    <div className='container mx-auto max-w-6xl'>
+      <div className='flex items-center justify-between gap-4 mb-6'>
+        <div className='flex-1'>
           <h1 className='text-3xl font-bold'>Channels</h1>
-          <p className='text-muted-foreground mt-2'>
+          <p className='text-muted-foreground mt-1'>
             Manage where your alerts are delivered
           </p>
         </div>
-        <ChannelDialog mode='create' />
+        <Button asChild>
+          <Link href='/my/channels/create'>Create Channel</Link>
+        </Button>
       </div>
 
       <div className='border rounded-lg'>
@@ -55,7 +57,7 @@ export default async function MyChannelsPage() {
               <TableHead>Destination</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
-              <TableHead className='w-40'>Actions</TableHead>
+              <TableHead className='text-right'>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -115,16 +117,10 @@ export default async function MyChannelsPage() {
                     {new Date(item.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    <div className='flex items-center gap-2'>
-                      <ChannelDialog
-                        mode='edit'
-                        original={item}
-                        trigger={
-                          <Button size='sm' variant='ghost'>
-                            Edit
-                          </Button>
-                        }
-                      />
+                    <div className='flex items-center gap-1 justify-end'>
+                      <Button asChild size='sm' variant='ghost'>
+                        <Link href={`/my/channels/${item.id}`}>Edit</Link>
+                      </Button>
                       {!item.verified && (
                         <SendVerificationButton channel={item} />
                       )}

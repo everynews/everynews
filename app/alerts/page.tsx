@@ -162,6 +162,7 @@ export default async function AlertsPage() {
                             alert={alertInfo}
                             channels={userChannels}
                             subscription={userSubscription ?? undefined}
+                            user={user}
                           />
                         )}
                     </div>

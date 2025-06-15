@@ -10,9 +10,9 @@ export const subscriptions = pgTable('subscriptions', {
   alertId: text('alert_id')
     .notNull()
     .references(() => alert.id, { onDelete: 'cascade' }),
-  channelId: text('channel_id')
-    .notNull()
-    .references(() => channels.id, { onDelete: 'cascade' }),
+  channelId: text('channel_id').references(() => channels.id, {
+    onDelete: 'cascade',
+  }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   id: text('id').primaryKey().$defaultFn(nanoid),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
@@ -24,7 +24,7 @@ export const subscriptions = pgTable('subscriptions', {
 export const SubscriptionSchema = z
   .object({
     alertId: z.string().openapi({ example: 'alert123' }),
-    channelId: z.string().openapi({ example: 'channel123' }),
+    channelId: z.string().nullable().openapi({ example: 'channel123' }),
     createdAt: z.coerce.date().openapi({ example: new Date() }),
     id: z.string().openapi({ example: '123' }),
     updatedAt: z.coerce.date().openapi({ example: new Date() }),
@@ -36,7 +36,11 @@ export const SubscriptionDtoSchema = SubscriptionSchema.omit({
   createdAt: true,
   id: true,
   updatedAt: true,
-}).openapi({ ref: 'SubscriptionDtoSchema' })
+})
+  .extend({
+    channelId: z.string().nullable().openapi({ example: 'channel123' }),
+  })
+  .openapi({ ref: 'SubscriptionDtoSchema' })
 
 export type Subscription = z.infer<typeof SubscriptionSchema>
 

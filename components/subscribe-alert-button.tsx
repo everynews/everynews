@@ -16,10 +16,12 @@ export const SubscribeAlertButton = ({
   alert,
   channels,
   subscription,
+  user,
 }: {
   alert: Alert
   channels: Channel[]
   subscription?: Subscription
+  user?: { id: string; email: string; createdAt: Date }
 }) => {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -50,7 +52,7 @@ export const SubscribeAlertButton = ({
   if (subscription) {
     return (
       <SubmitButton
-        variant='outline'
+        variant='ghost'
         size='sm'
         onClick={handleUnsubscribe}
         loading={loading}
@@ -61,8 +63,8 @@ export const SubscribeAlertButton = ({
   }
 
   return (
-    <SubscribeAlertDialog alert={alert} channels={channels}>
-      <Button variant='outline' size='sm'>
+    <SubscribeAlertDialog alert={alert} channels={channels} user={user}>
+      <Button variant='ghost' size='sm'>
         Subscribe
       </Button>
     </SubscribeAlertDialog>

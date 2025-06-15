@@ -35,7 +35,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
     validator('json', SubscriptionDtoSchema),
 
     async (c) => {
-      const { alertId, channelId } = await c.req.json()
+      const { alertId, channelId, userId } = await c.req.json()
       const user = c.get('user')
       if (!user?.id) {
         await track({
@@ -49,20 +49,19 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         })
         return c.json({ error: 'User not authenticated' }, 401)
       }
-      if (!alertId || !channelId) {
+      if (!alertId) {
         await track({
           channel: 'subscriptions',
-          description: 'Missing alertId or channelId in subscription request',
+          description: 'Missing alertId in subscription request',
           event: 'Invalid Subscription Request',
           icon: '⚠️',
           tags: {
             has_alert_id: String(!!alertId),
-            has_channel_id: String(!!channelId),
             type: 'error',
           },
           user_id: user.id,
         })
-        return c.json({ error: 'Missing alertId or channelId' }, 400)
+        return c.json({ error: 'Missing alertId' }, 400)
       }
       const found = await db.query.alert.findFirst({
         where: eq(alert.id, alertId),
@@ -90,23 +89,23 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         .insert(subscriptions)
         .values({
           alertId,
-          channelId,
-          userId: user.id,
+          channelId: channelId ?? null,
+          userId: userId ?? user.id,
         })
         .returning()
 
       await track({
         channel: 'subscriptions',
-        description: `User subscribed to alert: ${found.name}`,
+        description: `User subscribed to alert: ${found.name}${channelId ? '' : ' (default channel)'}`,
         event: 'Subscription Created',
         icon: '✅',
         tags: {
           alert_id: alertId,
           alert_name: found.name,
-          channel_id: channelId,
+          channel_id: channelId || 'default',
           type: 'info',
         },
-        user_id: user.id,
+        user_id: userId ?? user.id,
       })
 
       return c.json(result)

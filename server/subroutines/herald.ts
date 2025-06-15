@@ -88,11 +88,17 @@ const sendAlertSlack = async (parcel: {
   }
 }
 
-export const herald = async (
-  channelId: string,
-  alertName: string,
-  stories: Story[],
-) => {
+export const herald = async ({
+  channelId,
+  alertName,
+  stories,
+  user,
+}: {
+  channelId: string | null
+  alertName: string
+  stories: Story[]
+  user?: { id: string; email: string }
+}) => {
   try {
     await track({
       channel: 'herald',
@@ -101,39 +107,66 @@ export const herald = async (
       icon: '📨',
       tags: {
         alert_name: alertName,
-        channel_id: channelId,
+        channel_id: channelId || 'default',
         stories_count: stories.length,
         type: 'info',
       },
     })
 
-    const channel = ChannelSchema.parse(
-      await db.query.channels.findFirst({
-        where: eq(channels.id, channelId),
-      }),
-    )
+    let parcel: { alertName: string; destination: string; stories: Story[] }
+    let channelType: 'email' | 'slack' = 'email'
 
-    if (!channel) {
-      await track({
-        channel: 'herald',
-        description: `Channel ${channelId} not found`,
-        event: 'Channel Not Found',
-        icon: '❌',
-        tags: {
-          channel_id: channelId,
-          type: 'error',
-        },
-      })
-      throw new Error(`Channel ${channelId} not found`)
+    if (!channelId) {
+      // Handle default channel (user's email)
+      if (!user?.email) {
+        await track({
+          channel: 'herald',
+          description: 'No channel ID and no user email provided',
+          event: 'Missing Destination',
+          icon: '❌',
+          tags: {
+            type: 'error',
+          },
+        })
+        throw new Error('No channel ID and no user email provided')
+      }
+
+      parcel = {
+        alertName,
+        destination: user.email,
+        stories,
+      }
+    } else {
+      // Handle regular channel
+      const channel = ChannelSchema.parse(
+        await db.query.channels.findFirst({
+          where: eq(channels.id, channelId),
+        }),
+      )
+
+      if (!channel) {
+        await track({
+          channel: 'herald',
+          description: `Channel ${channelId} not found`,
+          event: 'Channel Not Found',
+          icon: '❌',
+          tags: {
+            channel_id: channelId,
+            type: 'error',
+          },
+        })
+        throw new Error(`Channel ${channelId} not found`)
+      }
+
+      parcel = {
+        alertName,
+        destination: channel.config.destination,
+        stories,
+      }
+      channelType = channel.type as 'email' | 'slack'
     }
 
-    const parcel = {
-      alertName,
-      destination: channel.config.destination,
-      stories,
-    }
-
-    const channelType = channel.type as 'email' | 'slack'
+    // Send the alert
     if (channelType === 'email') await sendAlertEmail(parcel)
     else if (channelType === 'slack') await sendAlertSlack(parcel)
     else {
@@ -143,12 +176,12 @@ export const herald = async (
         event: 'Unsupported Channel',
         icon: '❌',
         tags: {
-          channel_id: channelId,
+          channel_id: channelId ?? 'default',
           channel_type: channelType,
           type: 'error',
         },
       })
-      throw new Error(`Unsupported channel: ${JSON.stringify(channel)}`)
+      throw new Error(`Unsupported channel type: ${channelType}`)
     }
 
     await track({
@@ -158,8 +191,8 @@ export const herald = async (
       icon: '✅',
       tags: {
         alert_name: alertName,
-        channel_id: channelId,
-        channel_type: channel.type,
+        channel_id: channelId || 'default',
+        channel_type: channelType,
         stories_count: stories.length,
         type: 'info',
       },
@@ -172,7 +205,7 @@ export const herald = async (
       icon: '💥',
       tags: {
         alert_name: alertName,
-        channel_id: channelId,
+        channel_id: channelId || 'default',
         error: String(error),
         type: 'error',
       },

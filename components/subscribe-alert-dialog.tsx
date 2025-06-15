@@ -38,7 +38,7 @@ import { z } from 'zod'
 import { SubmitButton } from './submit-button'
 
 const SubscribeFormSchema = z.object({
-  channelId: z.string().min(1, 'Please select a channel'),
+  channelId: z.string(),
 })
 
 type SubscribeFormData = z.infer<typeof SubscribeFormSchema>
@@ -47,10 +47,12 @@ export const SubscribeAlertDialog = ({
   alert,
   channels,
   children,
+  user,
 }: {
   alert: Alert
   channels: Channel[]
   children: React.ReactNode
+  user?: { id: string; email: string; createdAt: Date }
 }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -69,8 +71,8 @@ export const SubscribeAlertDialog = ({
       const response = await api.subscriptions.$post({
         json: {
           alertId: alert.id,
-          channelId: data.channelId,
-          userId: '', // This will be handled server-side
+          channelId: data.channelId === 'default' ? null : data.channelId,
+          userId: user?.id ?? '',
         },
       })
 
@@ -117,6 +119,11 @@ export const SubscribeAlertDialog = ({
                         <SelectValue placeholder='Select a channel' />
                       </SelectTrigger>
                       <SelectContent>
+                        {user && (
+                          <SelectItem value='default'>
+                            Default Channel (email: {user.email})
+                          </SelectItem>
+                        )}
                         {channels.map((channel) => (
                           <SelectItem key={channel.id} value={channel.id}>
                             {channel.name} ({channel.type})

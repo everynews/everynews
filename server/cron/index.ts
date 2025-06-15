@@ -6,6 +6,7 @@ import {
   alert,
   type Content,
   subscriptions,
+  users,
 } from '@everynews/schema'
 import { WorkerStatusSchema } from '@everynews/schema/worker-status'
 import { and, eq, lt } from 'drizzle-orm'
@@ -254,7 +255,15 @@ export const CronRouter = new Hono().get(
           })
 
           for (const subscriber of subscribers) {
-            await herald(subscriber.channelId, item.name, filteredStories)
+            const user = await db.query.users.findFirst({
+              where: eq(users.id, subscriber.userId),
+            })
+            await herald({
+              alertName: item.name,
+              channelId: subscriber.channelId,
+              stories: filteredStories,
+              user,
+            })
           }
         } else {
           await track({

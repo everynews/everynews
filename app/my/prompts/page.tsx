@@ -1,4 +1,5 @@
 import { whoami } from '@everynews/auth/session'
+import { DeletePromptPopover } from '@everynews/components/delete-prompt-popover'
 import { Button } from '@everynews/components/ui/button'
 import {
   Table,
@@ -33,8 +34,8 @@ export default async function PromptsPage() {
   })
 
   return (
-    <div className='container mx-auto'>
-      <div className='flex items-center justify-between gap-4'>
+    <div className='container mx-auto max-w-6xl'>
+      <div className='flex items-center justify-between gap-4 mb-6'>
         <div className='flex-1'>
           <h1 className='text-3xl font-bold'>Prompts</h1>
           <p className='text-muted-foreground mt-1'>
@@ -46,14 +47,14 @@ export default async function PromptsPage() {
         </Button>
       </div>
 
-      <div className='border rounded-lg mt-6'>
+      <div className='border rounded-lg'>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Created</TableHead>
               <TableHead>Updated</TableHead>
-              <TableHead className='w-16'>Actions</TableHead>
+              <TableHead className='text-right'>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -78,9 +79,12 @@ export default async function PromptsPage() {
                     {new Date(item.updatedAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    <Button asChild variant='ghost' size='sm'>
-                      <Link href={`/my/prompts/${item.id}`}>Edit</Link>
-                    </Button>
+                    <div className='flex items-center gap-1 justify-end'>
+                      <Button asChild variant='ghost' size='sm'>
+                        <Link href={`/my/prompts/${item.id}`}>Edit</Link>
+                      </Button>
+                      <DeletePromptPopover prompt={item} />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

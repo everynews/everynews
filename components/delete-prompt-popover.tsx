@@ -43,7 +43,11 @@ export const DeletePromptPopover = ({
     }
   }
 
-  const defaultTrigger = <Button variant='outline'>Delete</Button>
+  const defaultTrigger = (
+    <Button size='sm' variant='ghost' className='text-destructive'>
+      Delete
+    </Button>
+  )
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

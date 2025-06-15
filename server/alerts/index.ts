@@ -110,7 +110,16 @@ export const AlertRouter = new Hono<WithAuth>()
     }),
     validator('json', AlertDtoSchema),
     async (c) => {
-      const { name, strategy, wait, isPublic } = await c.req.json()
+      const {
+        name,
+        strategy,
+        wait,
+        isPublic,
+        description,
+        language,
+        promptId,
+        active,
+      } = await c.req.json()
       const user = c.get('user')
       if (!user) {
         await track({
@@ -125,8 +134,12 @@ export const AlertRouter = new Hono<WithAuth>()
       const [inserted] = await db
         .insert(alert)
         .values({
+          active,
+          description,
           isPublic,
+          language,
           name,
+          promptId,
           strategy,
           userId: user.id,
           wait,
