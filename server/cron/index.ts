@@ -13,6 +13,7 @@ import { type Context, Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver } from 'hono-openapi/zod'
 import { curator } from '../subroutines/curator'
+import { custodian } from '../subroutines/custodian'
 import { herald } from '../subroutines/herald'
 import { reaper } from '../subroutines/reaper'
 import { sage } from '../subroutines/sage'
@@ -291,12 +292,16 @@ export const CronRouter = new Hono().get(
         })
       }
 
+      // Run custodian to clean up stories with empty titles
+      const custodianResult = await custodian()
+      
       await track({
         channel: 'cron',
-        description: `Newsletter processing completed successfully - processed ${found.length} newsletters`,
+        description: `Newsletter processing completed successfully - processed ${found.length} newsletters, cleaned up ${custodianResult.deletedCount} empty stories`,
         event: 'Newsletter Processing Completed',
         icon: '🎉',
         tags: {
+          empty_stories_deleted: custodianResult.deletedCount,
           newsletters_processed: found.length,
           timestamp: new Date().toISOString(),
           triggered_by: 'cron',
@@ -305,6 +310,7 @@ export const CronRouter = new Hono().get(
       })
 
       return c.json({
+        empty_stories_deleted: custodianResult.deletedCount,
         newsletters_processed: found.length,
         ok: true,
         timestamp: new Date().toISOString(),

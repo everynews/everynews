@@ -3,7 +3,9 @@
 - Use simple language, as if you're talking to a friend.
 - Be honest, and don't force friendliness.
 - Avoid unnecessary adjectives and adverbs.
-- Original title may include why it was impactful or interesting. 
+- Original title may include why it was impactful or interesting.
+
+IMPORTANT: If the content is irrelevant or contains nothing important (such as 404 Not Found, 403 Forbidden, Access Denied, or similar error messages), you MUST return an empty <TITLE> tag and NO <KEYFINDING> tags.
 
 Format your response as
 

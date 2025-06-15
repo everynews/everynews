@@ -111,6 +111,24 @@ export const summarize = async ({
 
     const { title, keyFindings } = parsePromptResponse(response.output_text)
 
+    // Skip insertion if title is empty and there are no key findings
+    if (!title && keyFindings.length === 0) {
+      await track({
+        channel: 'sage',
+        description: `Skipped irrelevant content: ${content.title}`,
+        event: 'Irrelevant Content Skipped',
+        icon: '⏭️',
+        tags: {
+          content_id: content.id,
+          model,
+          original_title: content.title.slice(0, 160),
+          type: 'info',
+          url: content.url.slice(0, 160),
+        },
+      })
+      return null
+    }
+
     await track({
       channel: 'sage',
       description: keyFindings.join('\n'),
