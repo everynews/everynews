@@ -288,7 +288,7 @@ export const AlertEditPage = ({
                               key={language.code}
                               value={language.code}
                             >
-                              {language.label}
+                              {language.code} ({language.label})
                             </SelectItem>
                           ))}
                         </SelectContent>

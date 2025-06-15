@@ -260,7 +260,7 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
                               key={language.code}
                               value={language.code}
                             >
-                              {language.label}
+                              {language.code} ({language.label})
                             </SelectItem>
                           ))}
                         </SelectContent>
