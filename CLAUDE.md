@@ -105,3 +105,4 @@ The application follows a hybrid approach for data handling:
 - Prefer Shadcn Primitives, such as bg-background instead of defining two different colors for light mode and dark mode.
 - Prefer Tailwind gap instead of paddings and margins. Do not use space-x or space-y; use gap. Or, do not use mb- and use gap- in the parent element.
 - Always prefer to use Server Component Rendering, and in the smallest component scope possible.
+- Within small components, prefer gap-1 instead of gap-2.
