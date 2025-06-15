@@ -15,7 +15,6 @@ import {
 import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { eq } from 'drizzle-orm'
-import { Edit, Trash2 } from 'lucide-react'
 import { unauthorized } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -56,7 +55,7 @@ export default async function MyChannelsPage() {
               <TableHead>Destination</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
-              <TableHead className='w-[150px]'>Actions</TableHead>
+              <TableHead className='w-40'>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -122,7 +121,7 @@ export default async function MyChannelsPage() {
                         original={item}
                         trigger={
                           <Button size='sm' variant='ghost'>
-                            <Edit className='size-4' />
+                            Edit
                           </Button>
                         }
                       />
@@ -132,8 +131,12 @@ export default async function MyChannelsPage() {
                       <DeleteChannelPopover
                         channel={item}
                         trigger={
-                          <Button size='sm' variant='ghost'>
-                            <Trash2 className='size-4' />
+                          <Button
+                            size='sm'
+                            variant='ghost'
+                            className='text-destructive'
+                          >
+                            Delete
                           </Button>
                         }
                       />

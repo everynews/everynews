@@ -11,7 +11,6 @@ import {
 import { db } from '@everynews/database'
 import { prompt } from '@everynews/schema'
 import { eq } from 'drizzle-orm'
-import { PlusCircle, Wrench } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -43,10 +42,7 @@ export default async function PromptsPage() {
           </p>
         </div>
         <Button asChild>
-          <Link href='/my/prompts/create'>
-            <PlusCircle className='size-4' />
-            Create Prompt
-          </Link>
+          <Link href='/my/prompts/create'>Create Prompt</Link>
         </Button>
       </div>
 
@@ -82,10 +78,8 @@ export default async function PromptsPage() {
                     {new Date(item.updatedAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    <Button asChild variant='ghost'>
-                      <Link href={`/my/prompts/${item.id}`}>
-                        <Wrench className='size-4' />
-                      </Link>
+                    <Button asChild variant='ghost' size='sm'>
+                      <Link href={`/my/prompts/${item.id}`}>Edit</Link>
                     </Button>
                   </TableCell>
                 </TableRow>

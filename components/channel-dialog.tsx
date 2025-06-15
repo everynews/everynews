@@ -26,7 +26,6 @@ import {
 } from '@everynews/schema/channel'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
-import { PlusCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -149,12 +148,7 @@ export const ChannelDialog = ({
     }
   }
 
-  const defaultTrigger = (
-    <Button className='flex gap-1'>
-      <PlusCircle className='size-4' />
-      Create Channel
-    </Button>
-  )
+  const defaultTrigger = <Button>Create Channel</Button>
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

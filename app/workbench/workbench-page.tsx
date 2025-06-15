@@ -1,7 +1,7 @@
 'use client'
 
 import { api } from '@everynews/app/api'
-import { Button } from '@everynews/components/ui/button'
+import { SubmitButton } from '@everynews/components/submit-button'
 import {
   Card,
   CardContent,
@@ -27,7 +27,6 @@ type TestStory = Pick<Story, 'title' | 'keyFindings' | 'url'> & {
   originalTitle: string
 }
 
-import { Loader2, TestTube } from 'lucide-react'
 import { useId, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -105,10 +104,7 @@ export const WorkbenchPage = ({ prompts }: WorkbenchProps) => {
         <div className='grid gap-8'>
           <Card>
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <TestTube className='size-5' />
-                Configure Test
-              </CardTitle>
+              <CardTitle>Configure Test</CardTitle>
             </CardHeader>
             <CardContent className='grid gap-6'>
               <div className='grid gap-2'>
@@ -146,23 +142,13 @@ export const WorkbenchPage = ({ prompts }: WorkbenchProps) => {
                   placeholder='https://example.com/article'
                   value={urlsText}
                   onChange={(e) => setUrlsText(e.target.value)}
-                  className='min-h-[8rem]'
+                  className='min-h-32'
                 />
               </div>
 
-              <Button onClick={handleTest} disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className='size-4 animate-spin mr-2' />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <TestTube className='size-4 mr-2' />
-                    Test Alert
-                  </>
-                )}
-              </Button>
+              <SubmitButton onClick={handleTest} loading={isLoading}>
+                Test Alert
+              </SubmitButton>
             </CardContent>
           </Card>
 

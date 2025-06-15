@@ -44,7 +44,6 @@ import { getLanguageOptions } from '@everynews/schema/language'
 import type { Prompt } from '@everynews/schema/prompt'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
-import { PlusCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -172,12 +171,7 @@ export const AlertDialog = ({
   const strategyProvider = form.watch('strategy.provider')
   const waitType = form.watch('wait.type')
 
-  const defaultTrigger = (
-    <Button className='flex gap-1'>
-      <PlusCircle className='size-4' />
-      Create Alert
-    </Button>
-  )
+  const defaultTrigger = <Button>Create Alert</Button>
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

@@ -3,7 +3,6 @@
 import { api } from '@everynews/app/api'
 import { DeletePromptPopover } from '@everynews/components/delete-prompt-popover'
 import { SubmitButton } from '@everynews/components/submit-button'
-import { Button } from '@everynews/components/ui/button'
 import {
   Card,
   CardContent,
@@ -16,8 +15,6 @@ import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
 import { DEFAULT_PROMPT_PLACEHOLDER } from '@everynews/lib/prompts'
 import type { Prompt } from '@everynews/schema/prompt'
-import { ArrowLeft, Save } from 'lucide-react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useId, useState } from 'react'
 import { toast } from 'sonner'

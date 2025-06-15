@@ -1,4 +1,5 @@
-export const getDefaultPromptContent = () => `For each section, follow the instructions carefully:
+export const getDefaultPromptContent =
+  () => `For each section, follow the instructions carefully:
 
 1. TITLE: Title Case, less than 10 words.
 2. KEYFINDINGS: Entry-level explanation.

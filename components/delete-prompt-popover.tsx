@@ -23,7 +23,7 @@ export const DeletePromptPopover = ({
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  
+
   const handleDelete = async () => {
     try {
       setLoading(true)
@@ -42,12 +42,8 @@ export const DeletePromptPopover = ({
       setLoading(false)
     }
   }
-  
-  const defaultTrigger = (
-    <Button variant='outline'>
-      Delete
-    </Button>
-  )
+
+  const defaultTrigger = <Button variant='outline'>Delete</Button>
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
