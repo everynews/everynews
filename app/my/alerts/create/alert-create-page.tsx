@@ -38,6 +38,7 @@ import type { Prompt } from '@everynews/schema/prompt'
 import { type Story, StorySchema } from '@everynews/schema/story'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
+import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -658,7 +659,11 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
         <div className='space-y-4'>
           <h3 className='text-lg font-semibold'>Preview</h3>
           <Card className='p-6 bg-background'>
-            {testResults && testResults.length > 0 ? (
+            {isTesting ? (
+              <div className='flex flex-col items-center justify-center py-12 space-y-4'>
+                <Loader2 className='size-4 animate-spin' />
+              </div>
+            ) : testResults && testResults.length > 0 ? (
               <AlertPreview stories={testResults} />
             ) : (
               <div className='text-center text-muted-foreground py-12'>
