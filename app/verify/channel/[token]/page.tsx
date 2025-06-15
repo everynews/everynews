@@ -1,5 +1,12 @@
 import { api } from '@everynews/app/api'
 import { Button } from '@everynews/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@everynews/components/ui/card'
 import { CheckCircle, XCircle } from 'lucide-react'
 import Link from 'next/link'
 
@@ -37,39 +44,45 @@ export default async function VerifyChannelPage({
   }
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-[400px] p-8'>
-      <div className='flex flex-col text-center gap-6 max-w-md'>
+    <div className='flex items-center justify-center bg-background p-4 my-10'>
+      <Card className='w-full max-w-md'>
         {success ? (
           <>
-            <CheckCircle className='mx-auto h-16 w-16 text-green-700 dark:text-green-400' />
-            <h1 className='text-2xl font-bold text-green-700 dark:text-green-400'>
-              Channel Verified Successfully!
-            </h1>
-            <p className='text-muted-foreground'>
-              Your channel "{channelName}" has been verified and is now ready to
-              receive newsletters.
-            </p>
-            <Link href='/my/channels'>
-              <Button className='mt-4'>View Your Channels</Button>
-            </Link>
+            <CardHeader className='text-center'>
+              <CheckCircle className='mx-auto h-16 w-16 text-green-700 dark:text-green-400 my-2' />
+              <CardTitle className='text-green-700 dark:text-green-400'>
+                Channel Verified Successfully!
+              </CardTitle>
+              <CardDescription>
+                Your channel "{channelName}" has been verified and is now ready
+                to receive newsletters.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className='flex justify-center'>
+              <Link href='/my/channels'>
+                <Button>View Your Channels</Button>
+              </Link>
+            </CardContent>
           </>
         ) : (
           <>
-            <XCircle className='mx-auto h-16 w-16 text-red-700 dark:text-red-400' />
-            <h1 className='text-2xl font-bold text-red-700 dark:text-red-400'>
-              {error}
-            </h1>
-            <p className='text-sm text-muted-foreground'>
-              You can resend the verification email from your channels page.
-            </p>
-            <div className='flex flex-col gap-2'>
+            <CardHeader className='text-center'>
+              <XCircle className='mx-auto h-16 w-16 text-red-700 dark:text-red-400' />
+              <CardTitle className='text-red-700 dark:text-red-400'>
+                {error}
+              </CardTitle>
+              <CardDescription>
+                You can resend the verification email from your channels page.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className='flex justify-center'>
               <Link href='/my/channels'>
                 <Button variant='outline'>Go to Channels</Button>
               </Link>
-            </div>
+            </CardContent>
           </>
         )}
-      </div>
+      </Card>
     </div>
   )
 }

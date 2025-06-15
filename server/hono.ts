@@ -4,9 +4,9 @@ import type { WithAuth } from '@everynews/server/bindings/auth'
 import { Scalar } from '@scalar/hono-api-reference'
 import { Hono } from 'hono'
 import { generateSpecs } from 'hono-openapi'
+import { AlertRouter } from './alerts'
 import { ChannelRouter } from './channels'
 import { CronRouter } from './cron'
-import { NewsletterRouter } from './newsletters'
 import { PromptsRouter } from './prompts'
 import { SubscriptionRouter } from './subscriptions'
 
@@ -14,7 +14,7 @@ const app = new Hono<WithAuth>()
   .basePath('/api')
   .on(['POST', 'GET'], '/auth/*', (c) => auth.handler(c.req.raw))
   .route('/cron', CronRouter)
-  .route('/newsletters', NewsletterRouter)
+  .route('/alerts', AlertRouter)
   .route('/channels', ChannelRouter)
   .route('/prompts', PromptsRouter)
   .route('/subscriptions', SubscriptionRouter)

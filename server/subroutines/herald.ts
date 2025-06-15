@@ -1,5 +1,5 @@
 import { db } from '@everynews/database'
-import { Newsletter } from '@everynews/emails/newsletter'
+import { Alert } from '@everynews/emails/alert'
 import { track } from '@everynews/logs'
 import { ChannelSchema, channels, type Story } from '@everynews/schema'
 import { eq } from 'drizzle-orm'
@@ -7,27 +7,27 @@ import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-const sendNewsletterEmail = async (parcel: {
+const sendAlertEmail = async (parcel: {
   destination: string
-  newsletterName: string
+  alertName: string
   stories: Story[]
 }) => {
   try {
     await resend.emails.send({
       from: 'Everynews <onboarding@resend.dev>',
-      react: Newsletter({ stories: parcel.stories }),
-      subject: parcel.stories[0].title ?? parcel.newsletterName,
+      react: Alert({ stories: parcel.stories }),
+      subject: parcel.stories[0].title ?? parcel.alertName,
       to: parcel.destination,
     })
 
     await track({
       channel: 'herald',
       description: `Sent email to ${parcel.destination}`,
-      event: 'Email Newsletter Sent',
+      event: 'Email Alert Sent',
       icon: '📧',
       tags: {
         destination: parcel.destination,
-        newsletter_name: parcel.newsletterName,
+        alert_name: parcel.alertName,
         stories_count: parcel.stories.length,
         type: 'info',
       },
@@ -36,12 +36,12 @@ const sendNewsletterEmail = async (parcel: {
     await track({
       channel: 'herald',
       description: `Failed to send email to ${parcel.destination}`,
-      event: 'Email Newsletter Failed',
+      event: 'Email Alert Failed',
       icon: '❌',
       tags: {
         destination: parcel.destination,
         error: String(error),
-        newsletter_name: parcel.newsletterName,
+        alert_name: parcel.alertName,
         type: 'error',
       },
     })
@@ -49,24 +49,24 @@ const sendNewsletterEmail = async (parcel: {
   }
 }
 
-const sendNewsletterSlack = async (parcel: {
+const sendAlertSlack = async (parcel: {
   destination: string
-  newsletterName: string
+  alertName: string
   stories: Story[]
 }) => {
   try {
     console.log(
-      `Sending slack message to ${parcel.destination} for ${parcel.newsletterName} with ${parcel.stories.length} stories`,
+      `Sending slack message to ${parcel.destination} for ${parcel.alertName} with ${parcel.stories.length} stories`,
     )
 
     await track({
       channel: 'herald',
       description: `Sent slack message to ${parcel.destination}`,
-      event: 'Slack Newsletter Sent',
+      event: 'Slack Alert Sent',
       icon: '💬',
       tags: {
         destination: parcel.destination,
-        newsletter_name: parcel.newsletterName,
+        alert_name: parcel.alertName,
         stories_count: parcel.stories.length,
         type: 'info',
       },
@@ -75,12 +75,12 @@ const sendNewsletterSlack = async (parcel: {
     await track({
       channel: 'herald',
       description: `Failed to send slack message to ${parcel.destination}`,
-      event: 'Slack Newsletter Failed',
+      event: 'Slack Alert Failed',
       icon: '❌',
       tags: {
         destination: parcel.destination,
         error: String(error),
-        newsletter_name: parcel.newsletterName,
+        alert_name: parcel.alertName,
         type: 'error',
       },
     })
@@ -90,18 +90,18 @@ const sendNewsletterSlack = async (parcel: {
 
 export const herald = async (
   channelId: string,
-  newsletterName: string,
+  alertName: string,
   stories: Story[],
 ) => {
   try {
     await track({
       channel: 'herald',
-      description: `Starting to send newsletter "${newsletterName}"`,
-      event: 'Newsletter Delivery Started',
+      description: `Starting to send alert "${alertName}"`,
+      event: 'Alert Delivery Started',
       icon: '📨',
       tags: {
         channel_id: channelId,
-        newsletter_name: newsletterName,
+        alert_name: alertName,
         stories_count: stories.length,
         type: 'info',
       },
@@ -129,13 +129,13 @@ export const herald = async (
 
     const parcel = {
       destination: channel.config.destination,
-      newsletterName,
+      alertName,
       stories,
     }
 
     const channelType = channel.type as 'email' | 'slack'
-    if (channelType === 'email') await sendNewsletterEmail(parcel)
-    else if (channelType === 'slack') await sendNewsletterSlack(parcel)
+    if (channelType === 'email') await sendAlertEmail(parcel)
+    else if (channelType === 'slack') await sendAlertSlack(parcel)
     else {
       await track({
         channel: 'herald',
@@ -153,13 +153,13 @@ export const herald = async (
 
     await track({
       channel: 'herald',
-      description: `Successfully delivered newsletter "${newsletterName}"`,
-      event: 'Newsletter Delivery Completed',
+      description: `Successfully delivered alert "${alertName}"`,
+      event: 'Alert Delivery Completed',
       icon: '✅',
       tags: {
         channel_id: channelId,
         channel_type: channel.type,
-        newsletter_name: newsletterName,
+        alert_name: alertName,
         stories_count: stories.length,
         type: 'info',
       },
@@ -167,13 +167,13 @@ export const herald = async (
   } catch (error) {
     await track({
       channel: 'herald',
-      description: `Failed to deliver newsletter "${newsletterName}"`,
-      event: 'Newsletter Delivery Failed',
+      description: `Failed to deliver alert "${alertName}"`,
+      event: 'Alert Delivery Failed',
       icon: '💥',
       tags: {
         channel_id: channelId,
         error: String(error),
-        newsletter_name: newsletterName,
+        alert_name: alertName,
         type: 'error',
       },
     })

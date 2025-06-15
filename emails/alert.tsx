@@ -10,7 +10,7 @@ import {
   Tailwind,
 } from '@react-email/components'
 
-export const Newsletter = ({ stories }: { stories: Story[] }) => {
+export const Alert = ({ stories }: { stories: Story[] }) => {
   return (
     <Html lang='en' dir='ltr'>
       <Preview>{stories[0]?.keyFindings?.join(' ') ?? ''}</Preview>
@@ -49,9 +49,10 @@ export const Newsletter = ({ stories }: { stories: Story[] }) => {
   )
 }
 
-Newsletter.PreviewProps = {
+Alert.PreviewProps = {
   stories: [
     {
+      alertId: '6JTQMD8N8BMD',
       contentId: 'CMR4XRW20ECJ',
       createdAt: new Date('2025-06-04T08:40:24.919Z'),
       id: '00AK3NF069VT',
@@ -61,12 +62,12 @@ Newsletter.PreviewProps = {
         'Approximately 10% of the time, AI eventually gives a correct answer, indicating inconsistency and the potential for misleading non-expert users.',
         "AI's inability to acknowledge uncertainty undermines its utility in research, as it generates responses based on statistical likelihood without contextual understanding.",
       ],
-      newsletterId: '6JTQMD8N8BMD',
       title: 'AI Inaccuracies in IBM PS/2 Model Identification',
       updatedAt: new Date('2025-06-04T08:40:24.919Z'),
       url: 'https://os2museum.com/wp/ai-responses-may-include-mistakes',
     },
     {
+      alertId: '6JTQMD8N8BMD',
       contentId: '1B2N47W0FXJB',
       createdAt: new Date('2025-06-04T08:40:36.233Z'),
       id: '0738HMRMVS00',
@@ -77,7 +78,6 @@ Newsletter.PreviewProps = {
         'New plugins enable mathematical calculations and SQL query execution through sandboxed environments.',
         "LLM's design enhances tool integration by accommodating multiple models and adopting a unified abstraction layer.",
       ],
-      newsletterId: '6JTQMD8N8BMD',
       title: 'LLM 0.26 Enables Terminal Tool Integration for Language Models',
       updatedAt: new Date('2025-06-04T08:40:36.233Z'),
       url: 'https://simonwillison.net/2025/May/27/llm-tools',

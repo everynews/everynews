@@ -2,7 +2,14 @@
 
 import { auth } from '@everynews/auth/client'
 import { SubmitButton } from '@everynews/components/submit-button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@everynews/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@everynews/components/ui/card'
 import { Input } from '@everynews/components/ui/input'
 import { toastNetworkError } from '@everynews/lib/error'
 import MetaKeyIcon from '@everynews/lib/meta-key'
@@ -11,8 +18,6 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
-
-
 export default function SignInPage() {
   const [contact, setContact] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -20,15 +25,17 @@ export default function SignInPage() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && (event.key === "Enter" || event.key === "s" || event.key === "S")) {
-        event.preventDefault();
+      if (
+        (event.metaKey || event.ctrlKey) &&
+        (event.key === 'Enter' || event.key === 's' || event.key === 'S')
+      ) {
+        event.preventDefault()
         handleSubmit({ contact, isFeelingLucky: true })
       }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [contact]);
-
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [contact])
 
   const handleSubmit = async ({
     contact,
@@ -44,7 +51,10 @@ export default function SignInPage() {
       } else {
         setIsLoading(true)
       }
-      await auth.signIn.magicLink({ email: contact, callbackURL: '/sign-in/success' })
+      await auth.signIn.magicLink({
+        callbackURL: '/sign-in/success',
+        email: contact,
+      })
       if (isFeelingLucky) {
         if (window) {
           window.open(`https://${contact.split('@')[1]}`, '_blank')
@@ -55,14 +65,14 @@ export default function SignInPage() {
     } finally {
       setIsLoading(false)
       setIsFeelingLuckyLoading(false)
-      toast.success("Magic Link Sent!")
+      toast.success('Magic Link Sent!')
     }
   }
 
   return (
-    <div className="flex items-center justify-center bg-background p-4 my-10">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
+    <div className='flex items-center justify-center bg-background p-4 my-10'>
+      <Card className='w-full max-w-md'>
+        <CardHeader className='text-center'>
           <CardTitle>Welcome to every.news</CardTitle>
           <CardDescription>
             By logging in, you agree to our{' '}
@@ -73,7 +83,10 @@ export default function SignInPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={() => handleSubmit({ contact, isFeelingLucky: false })} className="space-y-4">
+          <form
+            onSubmit={() => handleSubmit({ contact, isFeelingLucky: false })}
+            className='space-y-4'
+          >
             <Input
               type='email'
               placeholder='elon@x.com'
@@ -83,20 +96,27 @@ export default function SignInPage() {
             />
           </form>
         </CardContent>
-          <CardFooter className='flex justify-end gap-2'>
-              <SubmitButton onClick={() => handleSubmit({ contact, isFeelingLucky: false })} loading={isLoading} variant='outline'>
-                Sign In
-              </SubmitButton>
-              <SubmitButton onClick={() => handleSubmit({ contact, isFeelingLucky: true })} loading={isFeelingLuckyLoading}>
-                <div className='flex items-center gap-1'> 
-                I&apos;m feeling lucky
-                <span className='flex items-center'>
+        <CardFooter className='flex justify-end gap-2'>
+          <SubmitButton
+            onClick={() => handleSubmit({ contact, isFeelingLucky: false })}
+            loading={isLoading}
+            variant='outline'
+          >
+            Sign In
+          </SubmitButton>
+          <SubmitButton
+            onClick={() => handleSubmit({ contact, isFeelingLucky: true })}
+            loading={isFeelingLuckyLoading}
+          >
+            <div className='flex items-center gap-1'>
+              I&apos;m feeling lucky
+              <span className='flex items-center'>
                 <MetaKeyIcon className='size-3' />
-                <CornerDownLeft className="size-3" />
-                </span> 
-                </div>
-              </SubmitButton>
-          </CardFooter>
+                <CornerDownLeft className='size-3' />
+              </span>
+            </div>
+          </SubmitButton>
+        </CardFooter>
       </Card>
     </div>
   )

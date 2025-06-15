@@ -1,10 +1,7 @@
 import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
-import { newsletter } from '@everynews/schema'
-import {
-  NewsletterDtoSchema,
-  NewsletterSchema,
-} from '@everynews/schema/newsletter'
+import { alert } from '@everynews/schema'
+import { AlertDtoSchema, AlertSchema } from '@everynews/schema/alert'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { eq } from 'drizzle-orm'
 import { Hono } from 'hono'
@@ -12,20 +9,20 @@ import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
 import type { WithAuth } from '../bindings/auth'
 
-export const NewsletterRouter = new Hono<WithAuth>()
+export const AlertRouter = new Hono<WithAuth>()
   .use(authMiddleware)
   .get(
     '/',
     describeRoute({
-      description: 'Get All Newsletters',
+      description: 'Get All Alerts',
       responses: {
         200: {
           content: {
             'application/json': {
-              schema: resolver(NewsletterSchema.array()),
+              schema: resolver(AlertSchema.array()),
             },
           },
-          description: 'Get All Newsletters',
+          description: 'Get All Alerts',
         },
       },
     }),
@@ -33,8 +30,8 @@ export const NewsletterRouter = new Hono<WithAuth>()
       const user = c.get('user')
       if (!user) {
         await track({
-          channel: 'news',
-          description: 'User tried to access news without authentication',
+          channel: 'alerts',
+          description: 'User tried to access alerts without authentication',
           event: 'Unauthorized Access',
           icon: '🚫',
           tags: {
@@ -44,13 +41,13 @@ export const NewsletterRouter = new Hono<WithAuth>()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const result = await db.select().from(newsletter)
+      const result = await db.select().from(alert)
 
       await track({
-        channel: 'news',
-        description: `Retrieved ${result.length} newsletter items`,
-        event: 'Newsletter List Retrieved',
-        icon: '📰',
+        channel: 'alerts',
+        description: `Retrieved ${result.length} alert items`,
+        event: 'Alert List Retrieved',
+        icon: '🚨',
         tags: {
           count: result.length,
           type: 'info',
@@ -64,34 +61,31 @@ export const NewsletterRouter = new Hono<WithAuth>()
   .get(
     '/:id',
     describeRoute({
-      description: 'Get Newsletter by ID',
+      description: 'Get Alert by ID',
       responses: {
         200: {
           content: {
             'application/json': {
-              schema: resolver(NewsletterSchema),
+              schema: resolver(AlertSchema),
             },
           },
-          description: 'Get Newsletter by ID',
+          description: 'Get Alert by ID',
         },
       },
     }),
     async (c) => {
       const { id } = c.req.param()
 
-      const result = await db
-        .select()
-        .from(newsletter)
-        .where(eq(newsletter.id, id))
+      const result = await db.select().from(alert).where(eq(alert.id, id))
 
       await track({
-        channel: 'news',
-        description: `Retrieved Newsleter ${id}`,
-        event: 'Newsletter Item Retrieved',
-        icon: '📰',
+        channel: 'alerts',
+        description: `Retrieved Alert ${id}`,
+        event: 'Alert Item Retrieved',
+        icon: '🚨',
         tags: {
+          alert_id: id,
           found: String(result.length > 0),
-          newsletter_id: id,
           type: 'info',
         },
       })
@@ -102,34 +96,34 @@ export const NewsletterRouter = new Hono<WithAuth>()
   .post(
     '/',
     describeRoute({
-      description: 'Create Newsletter',
+      description: 'Create Alert',
       responses: {
         200: {
           content: {
             'application/json': {
-              schema: resolver(NewsletterSchema),
+              schema: resolver(AlertSchema),
             },
           },
-          description: 'Create Newsletter',
+          description: 'Create Alert',
         },
       },
     }),
-    validator('json', NewsletterDtoSchema),
+    validator('json', AlertDtoSchema),
     async (c) => {
       const { name, strategy, wait, isPublic } = await c.req.json()
       const user = c.get('user')
       if (!user) {
         await track({
-          channel: 'news',
-          description: 'User tried to create news without authentication',
-          event: 'Unauthorized News Creation',
+          channel: 'alerts',
+          description: 'User tried to create alert without authentication',
+          event: 'Unauthorized Alert Creation',
           icon: '🚫',
         })
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
       const [inserted] = await db
-        .insert(newsletter)
+        .insert(alert)
         .values({
           isPublic,
           name,
@@ -140,14 +134,14 @@ export const NewsletterRouter = new Hono<WithAuth>()
         .returning()
 
       await track({
-        channel: 'news',
-        description: `Created newsletter: ${name}`,
-        event: 'Newsletter Created',
+        channel: 'alerts',
+        description: `Created alert: ${name}`,
+        event: 'Alert Created',
         icon: '✅',
         tags: {
+          alert_id: inserted.id,
+          alert_name: name,
           is_public: isPublic,
-          news_name: name,
-          newsletter_id: inserted.id,
           strategy_provider: strategy.provider,
           type: 'info',
         },
@@ -160,37 +154,37 @@ export const NewsletterRouter = new Hono<WithAuth>()
   .put(
     '/:id',
     describeRoute({
-      description: 'Update Newsletter by ID',
+      description: 'Update Alert by ID',
       responses: {
         200: {
           content: {
             'application/json': {
-              schema: resolver(NewsletterSchema),
+              schema: resolver(AlertSchema),
             },
           },
-          description: 'Update Newsletter by ID',
+          description: 'Update Alert by ID',
         },
       },
     }),
-    validator('json', NewsletterDtoSchema),
+    validator('json', AlertDtoSchema),
     async (c) => {
       const { id } = c.req.param()
       const request = await c.req.json()
 
       const result = await db
-        .update(newsletter)
+        .update(alert)
         .set({ ...request })
-        .where(eq(newsletter.id, id))
+        .where(eq(alert.id, id))
         .returning()
 
       await track({
-        channel: 'news',
-        description: `Updated Newsleter ${id}`,
-        event: 'Newsletter Updated',
+        channel: 'alerts',
+        description: `Updated Alert ${id}`,
+        event: 'Alert Updated',
         icon: '✏️',
         tags: {
+          alert_id: id,
           fields_updated: Object.keys(request).join(', '),
-          newsletter_id: id,
           type: 'info',
         },
       })
@@ -201,15 +195,15 @@ export const NewsletterRouter = new Hono<WithAuth>()
   .delete(
     '/:id',
     describeRoute({
-      description: 'Delete Newsletter by ID',
+      description: 'Delete Alert by ID',
       responses: {
         200: {
           content: {
             'application/json': {
-              schema: resolver(NewsletterSchema),
+              schema: resolver(AlertSchema),
             },
           },
-          description: 'Delete Newsletter by ID',
+          description: 'Delete Alert by ID',
         },
       },
     }),
@@ -219,9 +213,9 @@ export const NewsletterRouter = new Hono<WithAuth>()
 
       if (!user) {
         await track({
-          channel: 'news',
-          description: 'User tried to delete newsletter without authentication',
-          event: 'Unauthorized Newsletter Deletion',
+          channel: 'alerts',
+          description: 'User tried to delete alert without authentication',
+          event: 'Unauthorized Alert Deletion',
           icon: '🚫',
           tags: {
             type: 'error',
@@ -230,18 +224,15 @@ export const NewsletterRouter = new Hono<WithAuth>()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const result = await db
-        .delete(newsletter)
-        .where(eq(newsletter.id, id))
-        .returning()
+      const result = await db.delete(alert).where(eq(alert.id, id)).returning()
 
       await track({
-        channel: 'news',
-        description: `Deleted Newsletter ${id}`,
-        event: 'Newsletter Deleted',
+        channel: 'alerts',
+        description: `Deleted Alert ${id}`,
+        event: 'Alert Deleted',
         icon: '🗑️',
         tags: {
-          newsletter_id: id,
+          alert_id: id,
           type: 'info',
         },
         user_id: user.id,

@@ -3,21 +3,21 @@
 import { api } from '@everynews/app/api'
 import { Button } from '@everynews/components/ui/button'
 import { toastNetworkError } from '@everynews/lib/error'
+import type { Alert } from '@everynews/schema/alert'
 import type { Channel } from '@everynews/schema/channel'
-import type { Newsletter } from '@everynews/schema/newsletter'
 import type { Subscription } from '@everynews/schema/subscription'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { SubmitButton } from './submit-button'
-import { SubscribeNewsletterDialog } from './subscribe-newsletter-dialog'
+import { SubscribeAlertDialog } from './subscribe-alert-dialog'
 
-export const SubscribeNewsletterButton = ({
-  newsletter,
+export const SubscribeAlertButton = ({
+  alert,
   channels,
   subscription,
 }: {
-  newsletter: Newsletter
+  alert: Alert
   channels: Channel[]
   subscription?: Subscription
 }) => {
@@ -34,11 +34,11 @@ export const SubscribeNewsletterButton = ({
       })
 
       if (!response.ok) {
-        toast.error('Failed to unsubscribe from newsletter')
+        toast.error('Failed to unsubscribe from alert')
         return
       }
 
-      toast.success(`Successfully unsubscribed from "${newsletter.name}"`)
+      toast.success(`Successfully unsubscribed from "${alert.name}"`)
       router.refresh()
     } catch (error) {
       toastNetworkError(error as Error)
@@ -61,10 +61,10 @@ export const SubscribeNewsletterButton = ({
   }
 
   return (
-    <SubscribeNewsletterDialog newsletter={newsletter} channels={channels}>
+    <SubscribeAlertDialog alert={alert} channels={channels}>
       <Button variant='outline' size='sm'>
         Subscribe
       </Button>
-    </SubscribeNewsletterDialog>
+    </SubscribeAlertDialog>
   )
 }

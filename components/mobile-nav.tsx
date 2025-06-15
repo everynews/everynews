@@ -39,16 +39,22 @@ export const MobileNav = ({ user }: { user?: User | null }) => (
       <nav className='flex flex-col gap-4 p-4'>
         <SheetClose asChild>
           <Link
-            href='/newsletters'
+            href='/alerts'
             className='flex items-center text-sm font-medium text-muted-foreground hover:text-foreground'
           >
-            Newsletters
+            Alerts
           </Link>
         </SheetClose>
       </nav>
       <SheetFooter className='mt-auto flex-row items-center justify-between'>
         <ThemeToggle />
-        {user ? <NavUser user={user} /> : <Button asChild><Link href='/sign-in'>Sign In</Link></Button>}
+        {user ? (
+          <NavUser user={user} />
+        ) : (
+          <Button asChild>
+            <Link href='/sign-in'>Sign In</Link>
+          </Button>
+        )}
       </SheetFooter>
     </SheetContent>
   </Sheet>

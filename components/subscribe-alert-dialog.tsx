@@ -27,8 +27,8 @@ import {
   SelectValue,
 } from '@everynews/components/ui/select'
 import { toastNetworkError } from '@everynews/lib/error'
+import type { Alert } from '@everynews/schema/alert'
 import type { Channel } from '@everynews/schema/channel'
-import type { Newsletter } from '@everynews/schema/newsletter'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -43,12 +43,12 @@ const SubscribeFormSchema = z.object({
 
 type SubscribeFormData = z.infer<typeof SubscribeFormSchema>
 
-export const SubscribeNewsletterDialog = ({
-  newsletter,
+export const SubscribeAlertDialog = ({
+  alert,
   channels,
   children,
 }: {
-  newsletter: Newsletter
+  alert: Alert
   channels: Channel[]
   children: React.ReactNode
 }) => {
@@ -68,18 +68,18 @@ export const SubscribeNewsletterDialog = ({
     try {
       const response = await api.subscriptions.$post({
         json: {
+          alertId: alert.id,
           channelId: data.channelId,
-          newsletterId: newsletter.id,
           userId: '', // This will be handled server-side
         },
       })
 
       if (!response.ok) {
-        toast.error('Failed to subscribe to newsletter')
+        toast.error('Failed to subscribe to alert')
         return
       }
 
-      toast.success(`Successfully subscribed to "${newsletter.name}"`)
+      toast.success(`Successfully subscribed to "${alert.name}"`)
       setOpen(false)
       form.reset()
       router.refresh()
@@ -95,9 +95,9 @@ export const SubscribeNewsletterDialog = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className='sm:max-w-md'>
         <DialogHeader>
-          <DialogTitle>Subscribe to "{newsletter.name}"</DialogTitle>
+          <DialogTitle>Subscribe to "{alert.name}"</DialogTitle>
           <DialogDescription>
-            Choose a channel to receive notifications for this newsletter.
+            Choose a channel to receive notifications for this alert.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>

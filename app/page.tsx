@@ -1,9 +1,10 @@
 import { siteConfig } from '@everynews/app/site-config'
+import { whoami } from '@everynews/auth/session'
 import { Badge } from '@everynews/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
 import { contents } from '@everynews/schema/content'
-import { newsletter } from '@everynews/schema/newsletter'
+import { alert } from '@everynews/schema/alert'
 import { stories } from '@everynews/schema/story'
 import { desc, eq } from 'drizzle-orm'
 import {
@@ -15,6 +16,7 @@ import {
   Zap,
 } from 'lucide-react'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,17 +26,19 @@ export const metadata = {
 }
 
 export default async function Page() {
-  // Get recent stories from all public newsletters
+  const user = await whoami()
+  if (user) redirect('/home')
+
   const recentStories = await db
     .select({
       content: contents,
-      newsletter: newsletter,
+      alert: alert,
       story: stories,
     })
     .from(stories)
     .innerJoin(contents, eq(stories.contentId, contents.id))
-    .innerJoin(newsletter, eq(stories.newsletterId, newsletter.id))
-    .where(eq(newsletter.isPublic, true))
+    .innerJoin(alert, eq(stories.alertId, alert.id))
+    .where(eq(alert.isPublic, true))
     .orderBy(desc(stories.createdAt))
     .limit(8)
 
@@ -260,13 +264,13 @@ export default async function Page() {
           </div>
 
           <div className='grid md:grid-cols-2 gap-6'>
-            {recentStories.map(({ story, newsletter: newsletterInfo }) => (
+            {recentStories.map(({ story, alert: alertInfo }) => (
               <Link key={story.id} href={`/stories/${story.id}`}>
                 <Card className='hover:shadow-lg transition-all duration-200 cursor-pointer bg-card w-full'>
                   <CardHeader className='pb-3 flex flex-col gap-2'>
                     <div className='flex items-center gap-2 text-sm text-muted-foreground'>
                       <Badge variant='secondary' className='text-xs'>
-                        {newsletterInfo.name}
+                        {alertInfo.name}
                       </Badge>
                       <span>•</span>
                       <time dateTime={story.createdAt.toISOString()}>

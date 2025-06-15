@@ -1,7 +1,7 @@
 import { whoami } from '@everynews/auth/session'
-import { DeleteNewsletterPopover } from '@everynews/components/delete-newsletter-popover'
-import { NewsletterDialog } from '@everynews/components/newsletter-dialog'
-import { SubscribeNewsletterButton } from '@everynews/components/subscribe-newsletter-button'
+import { AlertDialog } from '@everynews/components/alert-dialog'
+import { DeleteAlertPopover } from '@everynews/components/delete-alert-popover'
+import { SubscribeAlertButton } from '@everynews/components/subscribe-alert-button'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import {
@@ -13,8 +13,8 @@ import {
   TableRow,
 } from '@everynews/components/ui/table'
 import { db } from '@everynews/database'
+import { AlertSchema, alert } from '@everynews/schema/alert'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
-import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
 import { PromptSchema, prompt } from '@everynews/schema/prompt'
 import { subscriptions } from '@everynews/schema/subscription'
 import { eq } from 'drizzle-orm'
@@ -25,20 +25,17 @@ import { unauthorized } from 'next/navigation'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  description: 'Your created newsletters.',
-  title: 'Newsletters',
+  description: 'Your created alerts.',
+  title: 'Alerts',
 }
 
-export default async function MyNewslettersPage() {
+export default async function MyAlertsPage() {
   const user = await whoami()
   if (!user) return unauthorized()
 
-  // Get user's newsletters
-  const res = await db
-    .select()
-    .from(newsletter)
-    .where(eq(newsletter.userId, user.id))
-  const news = NewsletterSchema.array().parse(res)
+  // Get user's alerts
+  const res = await db.select().from(alert).where(eq(alert.userId, user.id))
+  const alerts = AlertSchema.array().parse(res)
 
   // Get user's channels
   const channelsRes = await db
@@ -65,12 +62,12 @@ export default async function MyNewslettersPage() {
     <div className='container mx-auto'>
       <div className='flex items-center justify-between mb-8'>
         <div>
-          <h1 className='text-3xl font-bold'>Newsletters</h1>
+          <h1 className='text-3xl font-bold'>Alerts</h1>
           <p className='text-muted-foreground mt-2'>
-            Manage your AI-powered newsletters
+            Manage your AI-powered alerts
           </p>
         </div>
-        <NewsletterDialog mode='create' prompts={userPrompts} />
+        <AlertDialog mode='create' prompts={userPrompts} />
       </div>
 
       <div className='border rounded-lg'>
@@ -85,20 +82,19 @@ export default async function MyNewslettersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {news.length === 0 ? (
+            {alerts.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={5}
                   className='text-center text-muted-foreground py-8'
                 >
-                  No newsletters yet. Create your first newsletter to get
-                  started.
+                  No alerts yet. Create your first alert to get started.
                 </TableCell>
               </TableRow>
             ) : (
-              news.map((item) => {
+              alerts.map((item) => {
                 const subscription = userSubscriptions.find(
-                  (sub) => sub.newsletterId === item.id,
+                  (sub) => sub.alertId === item.id,
                 )
                 return (
                   <TableRow key={item.id}>
@@ -128,16 +124,16 @@ export default async function MyNewslettersPage() {
                     <TableCell>
                       <div className='flex items-center gap-2'>
                         <Button asChild size='sm' variant='ghost'>
-                          <Link href={`/newsletters/${item.id}`}>
+                          <Link href={`/alerts/${item.id}`}>
                             <Eye className='size-4' />
                           </Link>
                         </Button>
-                        <SubscribeNewsletterButton
-                          newsletter={item}
+                        <SubscribeAlertButton
+                          alert={item}
                           channels={userChannels}
                           subscription={subscription}
                         />
-                        <NewsletterDialog
+                        <AlertDialog
                           mode='edit'
                           original={item}
                           prompts={userPrompts}
@@ -147,8 +143,8 @@ export default async function MyNewslettersPage() {
                             </Button>
                           }
                         />
-                        <DeleteNewsletterPopover
-                          newsletter={item}
+                        <DeleteAlertPopover
+                          alert={item}
                           trigger={
                             <Button size='sm' variant='ghost'>
                               <Trash2 className='size-4' />

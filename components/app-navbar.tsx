@@ -23,10 +23,10 @@ export const AppNavbar = async () => {
       <div className='hidden items-center gap-2 md:flex'>
         <nav className='flex gap-6'>
           <Link
-            href='/newsletters'
+            href='/alerts'
             className='flex items-center text-sm font-medium text-muted-foreground hover:text-foreground'
           >
-            Newsletters
+            Alerts
           </Link>
         </nav>
         <ThemeToggle />
@@ -35,7 +35,13 @@ export const AppNavbar = async () => {
             <div className='h-8 w-8 animate-pulse rounded-full bg-muted' />
           }
         >
-          {user ? <NavUser user={user} /> : <Button asChild><Link href='/sign-in'>Sign In</Link></Button>}
+          {user ? (
+            <NavUser user={user} />
+          ) : (
+            <Button asChild>
+              <Link href='/sign-in'>Sign In</Link>
+            </Button>
+          )}
         </Suspense>
       </div>
     </div>

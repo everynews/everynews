@@ -1,5 +1,5 @@
 import { whoami } from '@everynews/auth/session'
-import { SubscribeNewsletterButton } from '@everynews/components/subscribe-newsletter-button'
+import { SubscribeAlertButton } from '@everynews/components/subscribe-alert-button'
 import { Badge } from '@everynews/components/ui/badge'
 import {
   Card,
@@ -8,12 +8,12 @@ import {
   CardTitle,
 } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
+import { AlertSchema, alert } from '@everynews/schema/alert'
 import {
   type Channel,
   ChannelSchema,
   channels,
 } from '@everynews/schema/channel'
-import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
 import { stories } from '@everynews/schema/story'
 import {
   type Subscription,
@@ -27,11 +27,11 @@ import Link from 'next/link'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  description: 'Browse public newsletters.',
-  title: 'Newsletters',
+  description: 'Browse public alerts.',
+  title: 'Alerts',
 }
 
-export default async function NewslettersPage() {
+export default async function AlertsPage() {
   // Get current user and their data
   const user = await whoami()
 
@@ -53,44 +53,44 @@ export default async function NewslettersPage() {
     userSubscriptions = SubscriptionSchema.array().parse(subscriptionsRes)
   }
 
-  // First get newsletter data with story counts
-  const newslettersWithStories = await db
+  // First get alert data with story counts
+  const alertsWithStories = await db
     .select({
-      newsletter: newsletter,
+      alert: alert,
       storyCount: count(stories.id),
     })
-    .from(newsletter)
-    .leftJoin(stories, eq(newsletter.id, stories.newsletterId))
-    .where(eq(newsletter.isPublic, true))
-    .groupBy(newsletter.id)
+    .from(alert)
+    .leftJoin(stories, eq(alert.id, stories.alertId))
+    .where(eq(alert.isPublic, true))
+    .groupBy(alert.id)
 
-  // Then get subscriber counts for each newsletter
+  // Then get subscriber counts for each alert
   const subscriberCounts = await db
     .select({
-      newsletterId: subscriptions.newsletterId,
+      alertId: subscriptions.alertId,
       subscriberCount: count(subscriptions.id),
     })
     .from(subscriptions)
-    .groupBy(subscriptions.newsletterId)
+    .groupBy(subscriptions.alertId)
 
   // Create a map for quick lookup
   const subscriberMap = new Map(
-    subscriberCounts.map(({ newsletterId, subscriberCount }) => [
-      newsletterId,
+    subscriberCounts.map(({ alertId, subscriberCount }) => [
+      alertId,
       subscriberCount,
     ]),
   )
 
   // Parse and combine the data
-  const newslettersData = newslettersWithStories
-    .map(({ newsletter: newsletterData, storyCount }) => {
+  const alertsData = alertsWithStories
+    .map(({ alert: alertData, storyCount }) => {
       const userSubscription = userSubscriptions.find(
-        (sub) => sub.newsletterId === newsletterData.id,
+        (sub) => sub.alertId === alertData.id,
       )
       return {
-        newsletter: NewsletterSchema.parse(newsletterData),
+        alert: AlertSchema.parse(alertData),
         storyCount,
-        subscriberCount: subscriberMap.get(newsletterData.id) || 0,
+        subscriberCount: subscriberMap.get(alertData.id) || 0,
         userSubscription,
       }
     })
@@ -100,39 +100,37 @@ export default async function NewslettersPage() {
     <>
       <div className='container mx-auto p-4'>
         <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
-          {newslettersData.map(
+          {alertsData.map(
             ({
-              newsletter: newsletterInfo,
+              alert: alertInfo,
               storyCount,
               subscriberCount,
               userSubscription,
             }) => (
               <Card
-                key={newsletterInfo.id}
+                key={alertInfo.id}
                 className='h-full hover:shadow-md transition-shadow'
               >
                 <CardHeader>
                   <div className='flex items-start justify-between'>
                     <div className='flex-1'>
-                      <Link href={`/newsletters/${newsletterInfo.id}`}>
+                      <Link href={`/alerts/${alertInfo.id}`}>
                         <CardTitle className='text-lg line-clamp-2 hover:text-blue-600 cursor-pointer'>
-                          {newsletterInfo.name}
+                          {alertInfo.name}
                         </CardTitle>
                       </Link>
                     </div>
-                    <Badge
-                      variant={newsletterInfo.active ? 'default' : 'secondary'}
-                    >
-                      {newsletterInfo.active ? 'Active' : 'Inactive'}
+                    <Badge variant={alertInfo.active ? 'default' : 'secondary'}>
+                      {alertInfo.active ? 'Active' : 'Inactive'}
                     </Badge>
                   </div>
                 </CardHeader>
 
                 <CardContent>
                   <div className='flex flex-col gap-3'>
-                    {newsletterInfo.description && (
+                    {alertInfo.description && (
                       <p className='text-sm text-muted-foreground line-clamp-2'>
-                        {newsletterInfo.description}
+                        {alertInfo.description}
                       </p>
                     )}
                     <div className='flex items-center justify-between text-sm text-muted-foreground'>
@@ -150,18 +148,18 @@ export default async function NewslettersPage() {
                         </span>
                       </div>
                     </div>
-                    {newsletterInfo.strategy.provider === 'exa' &&
-                      newsletterInfo.strategy.query && (
+                    {alertInfo.strategy.provider === 'exa' &&
+                      alertInfo.strategy.query && (
                         <Badge className='text-muted-foreground'>
-                          {newsletterInfo.strategy.query}
+                          {alertInfo.strategy.query}
                         </Badge>
                       )}
                     <div className='flex items-center justify-end'>
                       {user &&
                         userChannels.length > 0 &&
-                        newsletterInfo.userId !== user.id && (
-                          <SubscribeNewsletterButton
-                            newsletter={newsletterInfo}
+                        alertInfo.userId !== user.id && (
+                          <SubscribeAlertButton
+                            alert={alertInfo}
                             channels={userChannels}
                             subscription={userSubscription ?? undefined}
                           />

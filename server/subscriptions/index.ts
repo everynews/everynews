@@ -1,6 +1,6 @@
 import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
-import { newsletter, subscriptions } from '@everynews/schema'
+import { alert, subscriptions } from '@everynews/schema'
 import {
   SubscriptionDtoSchema,
   SubscriptionSchema,
@@ -35,7 +35,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
     validator('json', SubscriptionDtoSchema),
 
     async (c) => {
-      const { newsletterId, channelId } = await c.req.json()
+      const { alertId, channelId } = await c.req.json()
       const user = c.get('user')
       if (!user?.id) {
         await track({
@@ -49,38 +49,37 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         })
         return c.json({ error: 'User not authenticated' }, 401)
       }
-      if (!newsletterId || !channelId) {
+      if (!alertId || !channelId) {
         await track({
           channel: 'subscriptions',
-          description:
-            'Missing newsletterId or channelId in subscription request',
+          description: 'Missing alertId or channelId in subscription request',
           event: 'Invalid Subscription Request',
           icon: '⚠️',
           tags: {
+            has_alert_id: String(!!alertId),
             has_channel_id: String(!!channelId),
-            has_newsletter_id: String(!!newsletterId),
             type: 'error',
           },
           user_id: user.id,
         })
-        return c.json({ error: 'Missing newsletterId or channelId' }, 400)
+        return c.json({ error: 'Missing alertId or channelId' }, 400)
       }
-      const found = await db.query.newsletter.findFirst({
-        where: eq(newsletter.id, newsletterId),
+      const found = await db.query.alert.findFirst({
+        where: eq(alert.id, alertId),
       })
       if (!found || (!found.isPublic && found.userId !== user.id)) {
         await track({
           channel: 'subscriptions',
-          description: `User tried to subscribe to inaccessible news: ${newsletterId}`,
+          description: `User tried to subscribe to inaccessible alert: ${alertId}`,
           event: 'Forbidden Subscription',
           icon: '🔒',
           tags: {
+            alert_exists: String(!!found),
+            alert_id: alertId,
+            alert_is_public: String(found?.isPublic || false),
             channel_id: channelId,
-            news_exists: String(!!found),
-            news_is_public: String(found?.isPublic || false),
-            newsletter_id: newsletterId,
             type: 'error',
-            user_owns_news: String(found?.userId === user.id),
+            user_owns_alert: String(found?.userId === user.id),
           },
           user_id: user.id,
         })
@@ -90,21 +89,21 @@ export const SubscriptionRouter = new Hono<WithAuth>()
       const result = await db
         .insert(subscriptions)
         .values({
+          alertId,
           channelId,
-          newsletterId,
           userId: user.id,
         })
         .returning()
 
       await track({
         channel: 'subscriptions',
-        description: `User subscribed to news: ${found.name}`,
+        description: `User subscribed to alert: ${found.name}`,
         event: 'Subscription Created',
         icon: '✅',
         tags: {
+          alert_id: alertId,
+          alert_name: found.name,
           channel_id: channelId,
-          news_name: found.name,
-          newsletter_id: newsletterId,
           type: 'info',
         },
         user_id: user.id,

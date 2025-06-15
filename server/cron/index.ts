@@ -2,9 +2,9 @@ import crypto from 'node:crypto'
 import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
 import {
+  AlertSchema,
+  alert,
   type Content,
-  NewsletterSchema,
-  newsletter,
   subscriptions,
 } from '@everynews/schema'
 import { WorkerStatusSchema } from '@everynews/schema/worker-status'
@@ -116,7 +116,7 @@ const validateCronJob = async (c: Context): Promise<boolean> => {
 export const CronRouter = new Hono().get(
   '/',
   describeRoute({
-    description: 'Run Cron Job - Newsletter Processing',
+    description: 'Run Cron Job - Alert Processing',
     responses: {
       200: {
         content: {
@@ -164,7 +164,7 @@ export const CronRouter = new Hono().get(
       // At this point, we know it's a valid cron job (middleware verified)
       await track({
         channel: 'cron',
-        event: 'Newsletter Processing Started',
+        event: 'Alert Processing Started',
         icon: '🤖',
         tags: {
           timestamp: new Date().toISOString(),
@@ -173,21 +173,18 @@ export const CronRouter = new Hono().get(
         },
       })
 
-      const found = NewsletterSchema.array().parse(
-        await db.query.newsletter.findMany({
-          where: and(
-            eq(newsletter.active, true),
-            lt(newsletter.nextRun, new Date()),
-          ),
+      const found = AlertSchema.array().parse(
+        await db.query.alert.findMany({
+          where: and(eq(alert.active, true), lt(alert.nextRun, new Date())),
         }),
       )
 
       await track({
         channel: 'worker',
-        event: `${found.length} Newsletters Found`,
+        event: `${found.length} Alerts Found`,
         icon: '📋',
         tags: {
-          newsletters_count: found.length,
+          alerts_count: found.length,
           type: 'info',
         },
       })
@@ -195,11 +192,11 @@ export const CronRouter = new Hono().get(
       for (const item of found) {
         await track({
           channel: 'worker',
-          event: `Processing Newsletter "${item.name}"`,
+          event: `Processing Alert "${item.name}"`,
           icon: '⚙️',
           tags: {
-            newsletter_id: item.id,
-            newsletter_name: item.name,
+            alert_id: item.id,
+            alert_name: item.name,
             strategy_provider: item.strategy.provider,
             type: 'info',
           },
@@ -221,9 +218,9 @@ export const CronRouter = new Hono().get(
           event: 'Stories Filtered by lastRun',
           icon: '🔍',
           tags: {
+            alert_id: item.id,
+            alert_name: item.name,
             last_run: item.lastRun?.toISOString() || 'null',
-            newsletter_id: item.id,
-            newsletter_name: item.name,
             stories_filtered: filteredStories.length,
             stories_total: stories.length,
             type: 'info',
@@ -237,23 +234,23 @@ export const CronRouter = new Hono().get(
         if (item.wait.type === 'count') {
           nextRun = new Date(Date.now() + 60 * 60 * 1000)
           await db
-            .update(newsletter)
+            .update(alert)
             .set({ lastRun: currentTime, nextRun })
-            .where(eq(newsletter.id, item.id))
+            .where(eq(alert.id, item.id))
         }
         if (item.wait.type === 'schedule') {
           nextRun = findNextRunDateBasedOnSchedule(item.wait.value)
           await db
-            .update(newsletter)
+            .update(alert)
             .set({ lastRun: currentTime, nextRun })
-            .where(eq(newsletter.id, item.id))
+            .where(eq(alert.id, item.id))
         }
 
-        // Only send newsletter if there are new stories since lastRun
+        // Only send alert if there are new stories since lastRun
         if (filteredStories.length > 0) {
-          // Send email to the all subscribers of the newsletter
+          // Send email to the all subscribers of the alert
           const subscribers = await db.query.subscriptions.findMany({
-            where: eq(subscriptions.newsletterId, item.id),
+            where: eq(subscriptions.alertId, item.id),
           })
 
           for (const subscriber of subscribers) {
@@ -262,8 +259,8 @@ export const CronRouter = new Hono().get(
         } else {
           await track({
             channel: 'worker',
-            description: `No new stories since last run - skipping newsletter delivery`,
-            event: 'Newsletter Delivery Skipped',
+            description: `No new stories since last run - skipping alert delivery`,
+            event: 'Alert Delivery Skipped',
             icon: '⏭️',
             tags: {
               last_run: item.lastRun?.toISOString() || 'null',
@@ -277,11 +274,11 @@ export const CronRouter = new Hono().get(
         await track({
           channel: 'worker',
           description: `Completed processing: ${item.name} - Found ${stories.length} stories, sent ${filteredStories.length} new stories`,
-          event: 'Newsletter Processed',
+          event: 'Alert Processed',
           icon: '✅',
           tags: {
-            newsletter_id: item.id,
-            newsletter_name: item.name,
+            alert_id: item.id,
+            alert_name: item.name,
             next_run: nextRun?.toISOString() || 'unknown',
             stories_created: stories.length,
             stories_sent: filteredStories.length,
@@ -297,12 +294,12 @@ export const CronRouter = new Hono().get(
 
       await track({
         channel: 'cron',
-        description: `Newsletter processing completed successfully - processed ${found.length} newsletters, cleaned up ${custodianResult.deletedCount} empty stories`,
-        event: 'Newsletter Processing Completed',
+        description: `Alert processing completed successfully - processed ${found.length} alerts, cleaned up ${custodianResult.deletedCount} empty stories`,
+        event: 'Alert Processing Completed',
         icon: '🎉',
         tags: {
+          alerts_processed: found.length,
           empty_stories_deleted: custodianResult.deletedCount,
-          newsletters_processed: found.length,
           timestamp: new Date().toISOString(),
           triggered_by: 'cron',
           type: 'info',
@@ -319,8 +316,8 @@ export const CronRouter = new Hono().get(
     } catch (error) {
       await track({
         channel: 'cron',
-        description: `Newsletter processing failed: ${String(error)}`,
-        event: 'Newsletter Processing Failed',
+        description: `Alert processing failed: ${String(error)}`,
+        event: 'Alert Processing Failed',
         icon: '💥',
         tags: {
           error: String(error),

@@ -1,5 +1,5 @@
 import { whoami } from '@everynews/auth/session'
-import { SubscribeNewsletterButton } from '@everynews/components/subscribe-newsletter-button'
+import { SubscribeAlertButton } from '@everynews/components/subscribe-alert-button'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import {
@@ -12,7 +12,7 @@ import {
 } from '@everynews/components/ui/table'
 import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
-import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
+import { AlertSchema, alert } from '@everynews/schema/alert'
 import {
   SubscriptionSchema,
   subscriptions,
@@ -25,7 +25,7 @@ import { unauthorized } from 'next/navigation'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  description: "Review newsletters you're subscribed to.",
+  description: "Review alerts you're subscribed to.",
   title: 'Subscriptions',
 }
 
@@ -33,22 +33,22 @@ export default async function MySubscriptionsPage() {
   const user = await whoami()
   if (!user) return unauthorized()
 
-  // Get user's subscriptions with related newsletter and channel data
+  // Get user's subscriptions with related alert and channel data
   const subscriptionsRes = await db
     .select({
       channel: channels,
-      newsletter: newsletter,
+      alert: alert,
       subscription: subscriptions,
     })
     .from(subscriptions)
-    .innerJoin(newsletter, eq(subscriptions.newsletterId, newsletter.id))
+    .innerJoin(alert, eq(subscriptions.alertId, alert.id))
     .innerJoin(channels, eq(subscriptions.channelId, channels.id))
     .where(eq(subscriptions.userId, user.id))
 
   // Parse the results with Zod schemas
   const userSubscriptions = subscriptionsRes.map((row) => ({
     channel: ChannelSchema.parse(row.channel),
-    newsletter: NewsletterSchema.parse(row.newsletter),
+    alert: AlertSchema.parse(row.alert),
     subscription: SubscriptionSchema.parse(row.subscription),
   }))
 
@@ -65,11 +65,11 @@ export default async function MySubscriptionsPage() {
         <div>
           <h1 className='text-3xl font-bold'>Subscriptions</h1>
           <p className='text-muted-foreground mt-2'>
-            Newsletters you're subscribed to
+            Alerts you're subscribed to
           </p>
         </div>
         <Button asChild>
-          <Link href='/newsletters'>Browse Newsletters</Link>
+          <Link href='/alerts'>Browse Alerts</Link>
         </Button>
       </div>
 
@@ -77,7 +77,7 @@ export default async function MySubscriptionsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Newsletter</TableHead>
+              <TableHead>Alert</TableHead>
               <TableHead>Channel</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Subscribed</TableHead>
@@ -91,14 +91,14 @@ export default async function MySubscriptionsPage() {
                   colSpan={5}
                   className='text-center text-muted-foreground py-8'
                 >
-                  No subscriptions yet. Browse newsletters to subscribe to one.
+                  No subscriptions yet. Browse alerts to subscribe to one.
                 </TableCell>
               </TableRow>
             ) : (
-              userSubscriptions.map(({ subscription, newsletter, channel }) => (
+              userSubscriptions.map(({ subscription, alert, channel }) => (
                 <TableRow key={subscription.id}>
                   <TableCell className='font-medium'>
-                    {newsletter.name}
+                    {alert.name}
                   </TableCell>
                   <TableCell>
                     <div className='flex items-center gap-2'>
@@ -114,8 +114,8 @@ export default async function MySubscriptionsPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={newsletter.active ? 'default' : 'outline'}>
-                      {newsletter.active ? 'Active' : 'Inactive'}
+                    <Badge variant={alert.active ? 'default' : 'outline'}>
+                      {alert.active ? 'Active' : 'Inactive'}
                     </Badge>
                   </TableCell>
                   <TableCell className='text-muted-foreground'>
@@ -128,12 +128,12 @@ export default async function MySubscriptionsPage() {
                   <TableCell>
                     <div className='flex items-center gap-2'>
                       <Button asChild size='sm' variant='ghost'>
-                        <Link href={`/newsletters/${newsletter.id}`}>
+                        <Link href={`/alerts/${alert.id}`}>
                           <Eye className='size-4' />
                         </Link>
                       </Button>
-                      <SubscribeNewsletterButton
-                        newsletter={newsletter}
+                      <SubscribeAlertButton
+                        alert={alert}
                         channels={userChannels}
                         subscription={subscription}
                       />

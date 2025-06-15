@@ -14,8 +14,8 @@ import { usePathname } from 'next/navigation'
 
 const sidebarItems = [
   {
-    href: '/my/newsletters',
-    title: 'Newsletters',
+    href: '/my/alerts',
+    title: 'Alerts',
   },
   {
     href: '/my/prompts',

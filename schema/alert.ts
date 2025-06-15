@@ -8,7 +8,7 @@ import { strategySchema } from './strategy'
 import { users } from './user'
 import { WaitSchema } from './wait'
 
-export const newsletter = pgTable('newsletter', {
+export const alert = pgTable('alert', {
   active: boolean('active').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   description: text('description'),
@@ -29,14 +29,14 @@ export const newsletter = pgTable('newsletter', {
   wait: json('wait').notNull(),
 })
 
-export const NewsletterSchema = z
+export const AlertSchema = z
   .object({
     active: z.coerce.boolean().openapi({ example: true }),
     createdAt: z.coerce.date().openapi({ example: new Date() }),
     description: z.coerce
       .string()
       .nullable()
-      .openapi({ example: 'A brief description of the newsletter' }),
+      .openapi({ example: 'A brief description of the alert' }),
     id: z.coerce.string().openapi({ example: '123' }),
     isPublic: z.coerce.boolean().openapi({ example: true }),
     language: LanguageSchema,
@@ -52,9 +52,9 @@ export const NewsletterSchema = z
     userId: z.coerce.string().openapi({ example: '123' }),
     wait: WaitSchema,
   })
-  .openapi({ ref: 'Newsletter' })
+  .openapi({ ref: 'Alert' })
 
-export const NewsletterDtoSchema = NewsletterSchema.omit({
+export const AlertDtoSchema = AlertSchema.omit({
   createdAt: true,
   id: true,
   lastRun: true,
@@ -63,5 +63,5 @@ export const NewsletterDtoSchema = NewsletterSchema.omit({
   userId: true,
 })
 
-export type Newsletter = z.infer<typeof NewsletterSchema>
-export type NewsletterDto = z.infer<typeof NewsletterDtoSchema>
+export type Alert = z.infer<typeof AlertSchema>
+export type AlertDto = z.infer<typeof AlertDtoSchema>

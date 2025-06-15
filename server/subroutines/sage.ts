@@ -7,8 +7,8 @@ import { getDefaultPromptContent } from '@everynews/lib/prompts/default-prompt'
 import { getSystemPromptContent } from '@everynews/lib/prompts/system-prompt'
 import { track } from '@everynews/logs'
 import {
+  type Alert,
   type Content,
-  type Newsletter,
   prompt,
   type Story,
   StorySchema,
@@ -23,13 +23,7 @@ const client = new OpenAI()
 
 const model = 'gpt-4o'
 
-const input = async ({
-  content,
-  news,
-}: {
-  content: Content
-  news: Newsletter
-}) => {
+const input = async ({ content, news }: { content: Content; news: Alert }) => {
   let userPrompt = getDefaultPromptContent()
 
   if (news.promptId) {
@@ -48,7 +42,7 @@ export const summarize = async ({
   news,
 }: {
   content: Content
-  news: Newsletter
+  news: Alert
 }): Promise<Story | null> => {
   const url = normalizeUrl(content.url, {
     stripProtocol: true,
@@ -152,10 +146,10 @@ export const summarize = async ({
     const [story] = await db
       .insert(stories)
       .values({
+        alertId: news.id,
         contentId: content.id,
         keyFindings,
         languageCode,
-        newsletterId: news.id,
         promptId: news.promptId,
         title,
         url: content.url,
@@ -187,7 +181,7 @@ export const sage = async ({
   news,
 }: {
   contents: Content[]
-  news: Newsletter
+  news: Alert
 }): Promise<Story[]> => {
   try {
     await track({

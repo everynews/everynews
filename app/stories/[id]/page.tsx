@@ -2,7 +2,7 @@ import { Badge } from '@everynews/components/ui/badge'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
 import { ContentSchema, contents } from '@everynews/schema/content'
-import { NewsletterSchema, newsletter } from '@everynews/schema/newsletter'
+import { AlertSchema, alert } from '@everynews/schema/alert'
 import { StorySchema, stories } from '@everynews/schema/story'
 import { eq } from 'drizzle-orm'
 import { ArrowLeft, Calendar, Globe } from 'lucide-react'
@@ -12,7 +12,7 @@ import { notFound } from 'next/navigation'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  description: 'Full story from a subscribed newsletter.',
+  description: 'Full story from a subscribed alert.',
   title: 'Story Details',
 }
 
@@ -23,16 +23,16 @@ export default async function StoryPage({
 }) {
   const { id } = await params
 
-  // Get story with content and newsletter information
+  // Get story with content and alert information
   const rawStoryData = await db
     .select({
       content: contents,
-      newsletter: newsletter,
+      alert: alert,
       story: stories,
     })
     .from(stories)
     .innerJoin(contents, eq(stories.contentId, contents.id))
-    .innerJoin(newsletter, eq(stories.newsletterId, newsletter.id))
+    .innerJoin(alert, eq(stories.alertId, alert.id))
     .where(eq(stories.id, id))
     .limit(1)
 
@@ -43,33 +43,33 @@ export default async function StoryPage({
   const {
     story: rawStory,
     content: rawContent,
-    newsletter: rawNewsletter,
+    alert: rawAlert,
   } = rawStoryData[0]
 
   // Parse with Zod schemas
   const story = StorySchema.parse(rawStory)
   const content = ContentSchema.parse(rawContent)
-  const newsletterInfo = NewsletterSchema.parse(rawNewsletter)
+  const alertInfo = AlertSchema.parse(rawAlert)
   return (
     <div className='container mx-auto max-w-4xl p-4'>
       {/* Header */}
       <div className='mb-6'>
         <Link
-          href={`/newsletters/${newsletterInfo.id}`}
+          href={`/alerts/${alertInfo.id}`}
           className='inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4'
         >
           <ArrowLeft className='size-4 mr-1' />
-          Back to {newsletterInfo.name}
+          Back to {alertInfo.name}
         </Link>
 
         <div className='flex flex-col gap-4'>
           <div className='flex items-center gap-2 text-sm text-muted-foreground'>
             <Globe className='size-4' />
             <Link
-              href={`/newsletters/${newsletterInfo.id}`}
+              href={`/alerts/${alertInfo.id}`}
               className='hover:underline'
             >
-              {newsletterInfo.name}
+              {alertInfo.name}
             </Link>
             <span>•</span>
             <Calendar className='size-4' />
@@ -109,10 +109,10 @@ export default async function StoryPage({
       <div className='mt-8 pt-6 border-t'>
         <div className='flex justify-between items-center'>
           <Link
-            href={`/newsletters/${newsletterInfo.id}`}
+            href={`/alerts/${alertInfo.id}`}
             className='text-sm text-muted-foreground hover:text-foreground'
           >
-            ← Back to newsletter
+            ← Back to Alerts
           </Link>
 
           <Link
@@ -121,7 +121,7 @@ export default async function StoryPage({
             rel='noopener noreferrer'
             className='text-sm text-muted-foreground hover:text-foreground'
           >
-            View original source ↗
+            View Original Source ↗
           </Link>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import type { Newsletter } from '@everynews/schema'
+import type { Alert } from '@everynews/schema'
 import PQueue from 'p-queue'
 import z from 'zod'
 import type { Curator } from './type'
@@ -18,14 +18,14 @@ const HackerNewsStorySchema = z.object({
 })
 
 export const HnBestCurator: Curator = async (
-  newsletter: Newsletter,
+  alert: Alert,
 ): Promise<string[]> => {
   const queue = new PQueue({
     concurrency: 8,
   })
-  if (newsletter.strategy.provider !== 'hnbest') {
+  if (alert.strategy.provider !== 'hnbest') {
     throw new Error(
-      `HackerNewsCurator got News Strategy ${newsletter.strategy.provider}`,
+      `HackerNewsCurator got Alert Strategy ${alert.strategy.provider}`,
     )
   }
 

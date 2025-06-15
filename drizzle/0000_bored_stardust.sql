@@ -14,6 +14,23 @@ CREATE TABLE "accounts" (
 	"user_id" text NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "alert" (
+	"active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"description" text,
+	"id" text PRIMARY KEY NOT NULL,
+	"is_public" boolean DEFAULT true NOT NULL,
+	"language" text DEFAULT 'en' NOT NULL,
+	"last_run" timestamp DEFAULT now(),
+	"name" text NOT NULL,
+	"next_run" timestamp DEFAULT now(),
+	"prompt_id" text,
+	"strategy" json NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"user_id" text NOT NULL,
+	"wait" json NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "channels" (
 	"config" json NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -48,23 +65,6 @@ CREATE TABLE "contents" (
 	CONSTRAINT "contents_url_unique" UNIQUE("url")
 );
 --> statement-breakpoint
-CREATE TABLE "newsletter" (
-	"active" boolean DEFAULT true NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"description" text,
-	"id" text PRIMARY KEY NOT NULL,
-	"is_public" boolean DEFAULT true NOT NULL,
-	"language" text DEFAULT 'en' NOT NULL,
-	"last_run" timestamp DEFAULT now(),
-	"name" text NOT NULL,
-	"next_run" timestamp DEFAULT now(),
-	"prompt_id" text,
-	"strategy" json NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"user_id" text NOT NULL,
-	"wait" json NOT NULL
-);
---> statement-breakpoint
 CREATE TABLE "prompt" (
 	"content" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -87,12 +87,12 @@ CREATE TABLE "sessions" (
 );
 --> statement-breakpoint
 CREATE TABLE "stories" (
+	"alert_id" text NOT NULL,
 	"content_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"id" text PRIMARY KEY NOT NULL,
 	"key_findings" json,
 	"language_code" text DEFAULT 'en' NOT NULL,
-	"newsletter_id" text NOT NULL,
 	"prompt_id" text,
 	"title" text NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
@@ -101,10 +101,10 @@ CREATE TABLE "stories" (
 );
 --> statement-breakpoint
 CREATE TABLE "subscriptions" (
+	"alert_id" text NOT NULL,
 	"channel_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"id" text PRIMARY KEY NOT NULL,
-	"newsletter_id" text NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"user_id" text NOT NULL
 );
@@ -133,15 +133,15 @@ CREATE TABLE "verifications" (
 );
 --> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "alert" ADD CONSTRAINT "alert_prompt_id_prompt_id_fk" FOREIGN KEY ("prompt_id") REFERENCES "public"."prompt"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "alert" ADD CONSTRAINT "alert_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "channels" ADD CONSTRAINT "channels_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "channel_verifications" ADD CONSTRAINT "channel_verifications_channel_id_channels_id_fk" FOREIGN KEY ("channel_id") REFERENCES "public"."channels"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "newsletter" ADD CONSTRAINT "newsletter_prompt_id_prompt_id_fk" FOREIGN KEY ("prompt_id") REFERENCES "public"."prompt"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "newsletter" ADD CONSTRAINT "newsletter_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "prompt" ADD CONSTRAINT "prompt_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "stories" ADD CONSTRAINT "stories_alert_id_alert_id_fk" FOREIGN KEY ("alert_id") REFERENCES "public"."alert"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "stories" ADD CONSTRAINT "stories_content_id_contents_id_fk" FOREIGN KEY ("content_id") REFERENCES "public"."contents"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "stories" ADD CONSTRAINT "stories_newsletter_id_newsletter_id_fk" FOREIGN KEY ("newsletter_id") REFERENCES "public"."newsletter"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "stories" ADD CONSTRAINT "stories_prompt_id_prompt_id_fk" FOREIGN KEY ("prompt_id") REFERENCES "public"."prompt"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_alert_id_alert_id_fk" FOREIGN KEY ("alert_id") REFERENCES "public"."alert"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_channel_id_channels_id_fk" FOREIGN KEY ("channel_id") REFERENCES "public"."channels"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_newsletter_id_newsletter_id_fk" FOREIGN KEY ("newsletter_id") REFERENCES "public"."newsletter"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;

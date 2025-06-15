@@ -1,5 +1,5 @@
 {
-  "id": "39b047e0-6ff8-49e2-8189-9a37c4814537",
+  "id": "7795fd8b-e8ee-4e6a-8640-3b004b585c43",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -92,6 +92,137 @@
         "accounts_user_id_users_id_fk": {
           "name": "accounts_user_id_users_id_fk",
           "tableFrom": "accounts",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.alert": {
+      "name": "alert",
+      "schema": "",
+      "columns": {
+        "active": {
+          "name": "active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "is_public": {
+          "name": "is_public",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "language": {
+          "name": "language",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'en'"
+        },
+        "last_run": {
+          "name": "last_run",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "next_run": {
+          "name": "next_run",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "prompt_id": {
+          "name": "prompt_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "strategy": {
+          "name": "strategy",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wait": {
+          "name": "wait",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "alert_prompt_id_prompt_id_fk": {
+          "name": "alert_prompt_id_prompt_id_fk",
+          "tableFrom": "alert",
+          "tableTo": "prompt",
+          "columnsFrom": [
+            "prompt_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "alert_user_id_users_id_fk": {
+          "name": "alert_user_id_users_id_fk",
+          "tableFrom": "alert",
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
@@ -338,137 +469,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.newsletter": {
-      "name": "newsletter",
-      "schema": "",
-      "columns": {
-        "active": {
-          "name": "active",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "is_public": {
-          "name": "is_public",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": true
-        },
-        "language": {
-          "name": "language",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'en'"
-        },
-        "last_run": {
-          "name": "last_run",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "next_run": {
-          "name": "next_run",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "prompt_id": {
-          "name": "prompt_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "strategy": {
-          "name": "strategy",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "wait": {
-          "name": "wait",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "newsletter_prompt_id_prompt_id_fk": {
-          "name": "newsletter_prompt_id_prompt_id_fk",
-          "tableFrom": "newsletter",
-          "tableTo": "prompt",
-          "columnsFrom": [
-            "prompt_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "set null",
-          "onUpdate": "no action"
-        },
-        "newsletter_user_id_users_id_fk": {
-          "name": "newsletter_user_id_users_id_fk",
-          "tableFrom": "newsletter",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.prompt": {
       "name": "prompt",
       "schema": "",
@@ -621,6 +621,12 @@
       "name": "stories",
       "schema": "",
       "columns": {
+        "alert_id": {
+          "name": "alert_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "content_id": {
           "name": "content_id",
           "type": "text",
@@ -653,12 +659,6 @@
           "notNull": true,
           "default": "'en'"
         },
-        "newsletter_id": {
-          "name": "newsletter_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "prompt_id": {
           "name": "prompt_id",
           "type": "text",
@@ -687,12 +687,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "stories_content_id_contents_id_fk": {
-          "name": "stories_content_id_contents_id_fk",
+        "stories_alert_id_alert_id_fk": {
+          "name": "stories_alert_id_alert_id_fk",
           "tableFrom": "stories",
-          "tableTo": "contents",
+          "tableTo": "alert",
           "columnsFrom": [
-            "content_id"
+            "alert_id"
           ],
           "columnsTo": [
             "id"
@@ -700,12 +700,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "stories_newsletter_id_newsletter_id_fk": {
-          "name": "stories_newsletter_id_newsletter_id_fk",
+        "stories_content_id_contents_id_fk": {
+          "name": "stories_content_id_contents_id_fk",
           "tableFrom": "stories",
-          "tableTo": "newsletter",
+          "tableTo": "contents",
           "columnsFrom": [
-            "newsletter_id"
+            "content_id"
           ],
           "columnsTo": [
             "id"
@@ -746,6 +746,12 @@
       "name": "subscriptions",
       "schema": "",
       "columns": {
+        "alert_id": {
+          "name": "alert_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "channel_id": {
           "name": "channel_id",
           "type": "text",
@@ -765,12 +771,6 @@
           "primaryKey": true,
           "notNull": true
         },
-        "newsletter_id": {
-          "name": "newsletter_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
@@ -787,12 +787,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "subscriptions_channel_id_channels_id_fk": {
-          "name": "subscriptions_channel_id_channels_id_fk",
+        "subscriptions_alert_id_alert_id_fk": {
+          "name": "subscriptions_alert_id_alert_id_fk",
           "tableFrom": "subscriptions",
-          "tableTo": "channels",
+          "tableTo": "alert",
           "columnsFrom": [
-            "channel_id"
+            "alert_id"
           ],
           "columnsTo": [
             "id"
@@ -800,12 +800,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "subscriptions_newsletter_id_newsletter_id_fk": {
-          "name": "subscriptions_newsletter_id_newsletter_id_fk",
+        "subscriptions_channel_id_channels_id_fk": {
+          "name": "subscriptions_channel_id_channels_id_fk",
           "tableFrom": "subscriptions",
-          "tableTo": "newsletter",
+          "tableTo": "channels",
           "columnsFrom": [
-            "newsletter_id"
+            "channel_id"
           ],
           "columnsTo": [
             "id"

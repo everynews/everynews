@@ -35,12 +35,12 @@ import { Switch } from '@everynews/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
-import { getLanguageOptions } from '@everynews/schema/language'
 import {
-  type Newsletter,
-  type NewsletterDto,
-  NewsletterDtoSchema,
-} from '@everynews/schema/newsletter'
+  type Alert,
+  type AlertDto,
+  AlertDtoSchema,
+} from '@everynews/schema/alert'
+import { getLanguageOptions } from '@everynews/schema/language'
 import type { Prompt } from '@everynews/schema/prompt'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
@@ -64,14 +64,14 @@ const DAYS_OF_WEEK = [
 ] as const
 const HOURS_2_INTERVAL = Array.from({ length: 12 }, (_, i) => i * 2) // 0-22
 
-export const NewsletterDialog = ({
+export const AlertDialog = ({
   mode,
   original,
   trigger,
   prompts,
 }: {
   mode: 'create' | 'edit'
-  original?: Newsletter
+  original?: Alert
   trigger?: React.ReactNode
   prompts: Prompt[]
 }) => {
@@ -85,7 +85,7 @@ export const NewsletterDialog = ({
   const [scheduleDays, setScheduleDays] = useState<string[]>([])
   const [scheduleHours, setScheduleHours] = useState<number[]>([])
 
-  const createValues: NewsletterDto = {
+  const createValues: AlertDto = {
     active: true,
     description: '',
     isPublic: true,
@@ -96,7 +96,7 @@ export const NewsletterDialog = ({
     wait: { type: 'count', value: 10 },
   }
 
-  const form = useForm<NewsletterDto>({
+  const form = useForm<AlertDto>({
     defaultValues:
       mode === 'create'
         ? createValues
@@ -110,13 +110,13 @@ export const NewsletterDialog = ({
             strategy: original?.strategy || { provider: 'hnbest' },
             wait: original?.wait || { type: 'count', value: 10 },
           },
-    resolver: zodResolver(NewsletterDtoSchema),
+    resolver: zodResolver(AlertDtoSchema),
   })
 
-  const onSubmit = async (values: NewsletterDto) => {
+  const onSubmit = async (values: AlertDto) => {
     setIsSubmitting(true)
     try {
-      const apiData: NewsletterDto = {
+      const apiData: AlertDto = {
         active: values.active,
         description: values.description,
         isPublic: values.isPublic,
@@ -131,26 +131,26 @@ export const NewsletterDialog = ({
       }
       let res: Response
       if (mode === 'create') {
-        res = await api.newsletters.$post({ json: apiData })
+        res = await api.alerts.$post({ json: apiData })
       } else {
         if (!original?.id) {
-          toast.error('Missing newsletter ID for update')
+          toast.error('Missing alert ID for update')
           return
         }
-        res = await api.newsletters[':id'].$put({
+        res = await api.alerts[':id'].$put({
           json: apiData,
           param: { id: original.id },
         })
       }
 
       if (!res.ok) {
-        toast.error(`Failed to ${mode} newsletter`)
+        toast.error(`Failed to ${mode} alert`)
         return
       }
       toast.success(
         mode === 'create'
-          ? `Newsletter "${form.watch('name')}" created.`
-          : `Newsletter "${form.watch('name')}" updated.`,
+          ? `Alert "${form.watch('name')}" created.`
+          : `Alert "${form.watch('name')}" updated.`,
       )
       setOpen(false)
       if (mode === 'create') {
@@ -175,7 +175,7 @@ export const NewsletterDialog = ({
   const defaultTrigger = (
     <Button className='flex gap-1'>
       <PlusCircle className='size-4' />
-      Create Newsletter
+      Create Alert
     </Button>
   )
 
@@ -185,7 +185,7 @@ export const NewsletterDialog = ({
       <DialogContent className='md:min-w-6xl max-h-[90dvh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>
-            {mode === 'create' ? 'Create Newsletter' : 'Edit Newsletter'}
+            {mode === 'create' ? 'Create Alert' : 'Edit Alert'}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -200,7 +200,7 @@ export const NewsletterDialog = ({
                 <FormItem className='md:flex md:items-center md:justify-between'>
                   <div className='md:w-1/3'>
                     <FormLabel className='text-md'>
-                      How should we call this newsletter?
+                      How should we call this alert?
                     </FormLabel>
                   </div>
                   <div className='md:w-2/3'>
@@ -220,13 +220,13 @@ export const NewsletterDialog = ({
                 <FormItem className='md:flex md:items-start md:justify-between'>
                   <div className='md:w-1/3'>
                     <FormLabel className='text-md'>
-                      What is this newsletter about?
+                      What is this alert about?
                     </FormLabel>
                   </div>
                   <div className='md:w-2/3'>
                     <FormControl>
                       <Textarea
-                        placeholder='A brief description of what this newsletter covers...'
+                        placeholder='A brief description of what this alert covers...'
                         {...field}
                         value={field.value || ''}
                       />
@@ -630,7 +630,7 @@ export const NewsletterDialog = ({
                             id={`${switchActiveId}-description`}
                             className='text-muted-foreground text-sm'
                           >
-                            We will only gather & send news when the news is
+                            We will only gather & send alerts when the alert is
                             marked active.
                           </p>
                         </div>
@@ -656,7 +656,7 @@ export const NewsletterDialog = ({
                             id={`${switchPublicId}-description`}
                             className='text-muted-foreground text-sm'
                           >
-                            Should others be able to subscribe to this news?
+                            Should others be able to subscribe to this alert?
                           </p>
                         </div>
                       </div>

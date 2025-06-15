@@ -1,4 +1,4 @@
-import type { Newsletter } from '@everynews/schema'
+import type { Alert } from '@everynews/schema'
 import Exa from 'exa-js'
 import type { Curator } from './type'
 
@@ -8,16 +8,12 @@ if (!process.env.EXASEARCH_API_KEY) {
 
 const exa = new Exa(process.env.EXASEARCH_API_KEY)
 
-export const ExaCurator: Curator = async (
-  newsletter: Newsletter,
-): Promise<string[]> => {
-  if (newsletter.strategy.provider !== 'exa') {
-    throw new Error(
-      `ExaCurator got Newsletter Strategy ${newsletter.strategy.provider}`,
-    )
+export const ExaCurator: Curator = async (alert: Alert): Promise<string[]> => {
+  if (alert.strategy.provider !== 'exa') {
+    throw new Error(`ExaCurator got Alert Strategy ${alert.strategy.provider}`)
   }
 
-  const { results } = await exa.searchAndContents(newsletter.strategy.query)
+  const { results } = await exa.searchAndContents(alert.strategy.query)
 
   return results.map((doc) => doc.url)
 }
