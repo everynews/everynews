@@ -21,7 +21,7 @@ import { unauthorized } from 'next/navigation'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  description: 'Manage where your newsletters are delivered.',
+  description: 'Manage where your alerts are delivered.',
   title: 'Channels',
 }
 
@@ -41,7 +41,7 @@ export default async function MyChannelsPage() {
         <div>
           <h1 className='text-3xl font-bold'>Channels</h1>
           <p className='text-muted-foreground mt-2'>
-            Manage where your newsletters are delivered
+            Manage where your alerts are delivered
           </p>
         </div>
         <ChannelDialog mode='create' />
@@ -92,7 +92,7 @@ export default async function MyChannelsPage() {
                   className='text-center text-muted-foreground py-8'
                 >
                   You can create additional delivery channels to get your
-                  newsletters sent to different destinations.
+                  alerts sent to different destinations.
                 </TableCell>
               </TableRow>
             ) : (

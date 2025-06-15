@@ -55,9 +55,9 @@ export const NavUser = ({ user }: { user: User }) => {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href='/my/newsletters'>
+            <Link href='/my/alerts'>
               <Mail className='mr-2 h-4 w-4' />
-              <span>My Newsletters</span>
+              <span>My Alerts</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>

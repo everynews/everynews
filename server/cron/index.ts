@@ -264,8 +264,8 @@ export const CronRouter = new Hono().get(
             icon: '⏭️',
             tags: {
               last_run: item.lastRun?.toISOString() || 'null',
-              newsletter_id: item.id,
-              newsletter_name: item.name,
+              alert_id: item.id,
+              alert_name: item.name,
               type: 'info',
             },
           })
@@ -308,7 +308,7 @@ export const CronRouter = new Hono().get(
 
       return c.json({
         empty_stories_deleted: custodianResult.deletedCount,
-        newsletters_processed: found.length,
+        alerts_processed: found.length,
         ok: true,
         timestamp: new Date().toISOString(),
         triggered_by: 'cron',

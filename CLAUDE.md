@@ -52,12 +52,12 @@ The app uses Hono.js for the backend API with:
 - OpenAPI documentation auto-generated and served at `/api`
 - Type-safe routes with Zod validation
 - Authentication middleware on all routes
-- Modular routers for newsletters, channels, subscriptions, and worker processes
+- Modular routers for alerts, channels, subscriptions, and worker processes
 
 ### Database Schema
 Key entities include:
 - Users and authentication (Better Auth tables)
-- Newsletters and subscriptions
+- Alerts and subscriptions
 - Content and stories
 - Channels for delivery
 - Worker status tracking
@@ -76,15 +76,15 @@ The application follows a hybrid approach for data handling:
 ### Server-Side Data Display (Server Components)
 - All user data presentation uses direct database access through Drizzle ORM
 - Server Components render data at request time for optimal performance and SEO
-- Examples: Newsletter lists (`app/newsletters/(index)/page.tsx`), newsletter details (`app/newsletters/[id]/page.tsx`)
+- Examples: Alert lists (`app/alerts/(index)/page.tsx`), alert details (`app/alerts/[id]/page.tsx`)
 - Authentication state checked server-side with `whoami()` function
-- Data fetched directly: `db.select().from(newsletter).where(eq(newsletter.userId, user.id))`
+- Data fetched directly: `db.select().from(alert).where(eq(alert.userId, user.id))`
 
 ### Client-Side Data Mutations (Hono RPC)
 - All form submissions and user actions use Hono RPC client for type-safe API calls
 - Client Components handle interactive forms and user actions
-- Examples: Newsletter creation/editing (`components/newsletter-detail.tsx`), deletion (`components/delete-newsletter-popover.tsx`)
-- API client configured: `api.newsletters.$post({ json: data })` or `api.newsletters[':id'].$delete({ param: { id } })`
+- Examples: Alert creation/editing (`components/alert-detail.tsx`), deletion (`components/delete-alert-popover.tsx`)
+- API client configured: `api.alerts.$post({ json: data })` or `api.alerts[':id'].$delete({ param: { id } })`
 - Uses `router.refresh()` to trigger server-side re-rendering after mutations
 
 ### Pattern Benefits

@@ -39,7 +39,7 @@ export default async function PromptsPage() {
         <div>
           <h1 className='text-3xl font-bold'>Prompts</h1>
           <p className='text-muted-foreground mt-2'>
-            Manage your custom AI prompts for newsletter summarization
+            Manage your custom AI prompts for alert summarization
           </p>
         </div>
         <Button asChild>

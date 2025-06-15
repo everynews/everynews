@@ -141,7 +141,7 @@ export const PromptCreatePage = () => {
         <div>
           <h1 className='text-3xl font-bold'>Create New Prompt</h1>
           <p className='text-muted-foreground mt-2'>
-            Create a custom AI prompt for newsletter summarization
+            Create a custom AI prompt for alert summarization
           </p>
         </div>
         <Button onClick={handleCreate} disabled={isCreating}>

@@ -126,7 +126,7 @@ export const ChannelDialog = ({
         if (emailChanged && wasVerified) {
           toast.success(`Channel "${form.watch('name')}" updated!`, {
             description:
-              'Please verify the new email address to receive newsletters.',
+              'Please verify the new email address to receive alerts.',
           })
         } else {
           toast.success(`Channel "${form.watch('name')}" updated.`)

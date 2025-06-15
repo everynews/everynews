@@ -55,7 +55,7 @@ export default async function VerifyChannelPage({
               </CardTitle>
               <CardDescription>
                 Your channel "{channelName}" has been verified and is now ready
-                to receive newsletters.
+                to receive alerts.
               </CardDescription>
             </CardHeader>
             <CardContent className='flex justify-center'>
