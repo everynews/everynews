@@ -3,7 +3,8 @@ import {
   parsePromptResponse,
   prepareContentInput,
 } from '@everynews/lib/prompts'
-import { getDefaultPromptContent } from '@everynews/lib/prompts/server'
+import { getDefaultPromptContent } from '@everynews/lib/prompts/default-prompt'
+import { getSystemPromptContent } from '@everynews/lib/prompts/system-prompt'
 import { track } from '@everynews/logs'
 import {
   type Content,
@@ -22,19 +23,24 @@ const client = new OpenAI()
 
 const model = 'gpt-4o'
 
-const instructions = async (newsletter: Newsletter) => {
-  let promptContent = await getDefaultPromptContent()
+const input = async ({
+  content,
+  news,
+}: {
+  content: Content
+  news: Newsletter
+}) => {
+  let userPrompt = getDefaultPromptContent()
 
-  if (newsletter.promptId) {
+  if (news.promptId) {
     const customPrompt = await db.query.prompt.findFirst({
-      where: eq(prompt.id, newsletter.promptId),
+      where: eq(prompt.id, news.promptId),
     })
     if (customPrompt) {
-      promptContent = customPrompt.content
+      userPrompt = customPrompt.content
     }
   }
-
-  return promptContent
+  return `${userPrompt}\n\n$TEXT: """\n${await prepareContentInput(content)}\n"""`
 }
 
 export const summarize = async ({
@@ -104,15 +110,15 @@ export const summarize = async ({
 
   try {
     const response = await client.responses.create({
-      input: await prepareContentInput(content),
-      instructions: await instructions(news),
+      input: await input({ content, news }),
+      instructions: getSystemPromptContent(news.language),
       model,
     })
 
-    const { title, keyFindings } = parsePromptResponse(response.output_text)
+    const { title, keyFindings, importance, languageCode } =
+      parsePromptResponse(response.output_text)
 
-    // Skip insertion if title is empty and there are no key findings
-    if (!title && keyFindings.length === 0) {
+    if (importance === 0) {
       await track({
         channel: 'sage',
         description: `Skipped irrelevant content: ${content.title}`,
@@ -148,6 +154,7 @@ export const summarize = async ({
       .values({
         contentId: content.id,
         keyFindings,
+        languageCode,
         newsletterId: news.id,
         promptId: news.promptId,
         title,

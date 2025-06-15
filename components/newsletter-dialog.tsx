@@ -35,6 +35,7 @@ import { Switch } from '@everynews/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
+import { getLanguageOptions } from '@everynews/schema/language'
 import {
   type Newsletter,
   type NewsletterDto,
@@ -88,6 +89,7 @@ export const NewsletterDialog = ({
     active: true,
     description: '',
     isPublic: true,
+    language: 'en',
     name: humanId({ capitalize: true, separator: ' ' }),
     promptId: null,
     strategy: { provider: 'hnbest' },
@@ -102,6 +104,7 @@ export const NewsletterDialog = ({
             active: original?.active ?? true,
             description: original?.description || '',
             isPublic: original?.isPublic ?? true,
+            language: original?.language || 'en',
             name: original?.name || '',
             promptId: original?.promptId || null,
             strategy: original?.strategy || { provider: 'hnbest' },
@@ -117,6 +120,7 @@ export const NewsletterDialog = ({
         active: values.active,
         description: values.description,
         isPublic: values.isPublic,
+        language: values.language,
         name: values.name,
         promptId: values.promptId,
         strategy:
@@ -226,6 +230,43 @@ export const NewsletterDialog = ({
                         {...field}
                         value={field.value || ''}
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='language'
+              render={({ field }) => (
+                <FormItem className='md:flex md:items-center md:justify-between'>
+                  <div className='md:w-1/3'>
+                    <FormLabel className='text-md'>
+                      What language should the summaries be in?
+                    </FormLabel>
+                  </div>
+                  <div className='md:w-2/3'>
+                    <FormControl>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder='Select a language' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {getLanguageOptions().map((language) => (
+                            <SelectItem
+                              key={language.code}
+                              value={language.code}
+                            >
+                              {language.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </div>

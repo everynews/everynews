@@ -6,7 +6,6 @@ import { Hono } from 'hono'
 import { generateSpecs } from 'hono-openapi'
 import { ChannelRouter } from './channels'
 import { CronRouter } from './cron'
-import { CustodianRouter } from './custodian'
 import { NewsletterRouter } from './newsletters'
 import { PromptsRouter } from './prompts'
 import { SubscriptionRouter } from './subscriptions'
@@ -15,7 +14,6 @@ const app = new Hono<WithAuth>()
   .basePath('/api')
   .on(['POST', 'GET'], '/auth/*', (c) => auth.handler(c.req.raw))
   .route('/cron', CronRouter)
-  .route('/custodian', CustodianRouter)
   .route('/newsletters', NewsletterRouter)
   .route('/channels', ChannelRouter)
   .route('/prompts', PromptsRouter)

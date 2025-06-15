@@ -107,8 +107,11 @@ export const ChannelRouter = new Hono<WithAuth>()
           user_id: user.id,
         })
         return c.json(
-          { error: 'Cannot use your sign-in email as a channel. Your sign-in email is already your default channel.' },
-          400
+          {
+            error:
+              'Cannot use your sign-in email as a channel. Your sign-in email is already your default channel.',
+          },
+          400,
         )
       }
 
@@ -187,14 +190,17 @@ export const ChannelRouter = new Hono<WithAuth>()
           event: 'Duplicate Sign-in Email',
           icon: '⚠️',
           tags: {
-            type: 'warning',
             channel_id: id,
+            type: 'warning',
           },
           user_id: user.id,
         })
         return c.json(
-          { error: 'Cannot use your sign-in email as a channel. Your sign-in email is already your default channel.' },
-          400
+          {
+            error:
+              'Cannot use your sign-in email as a channel. Your sign-in email is already your default channel.',
+          },
+          400,
         )
       }
 

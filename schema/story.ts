@@ -6,6 +6,7 @@ import { newsletter } from './newsletter'
 import { prompt } from './prompt'
 import 'zod-openapi/extend'
 import { contents } from './content'
+import { LANGUAGE_CODES, LanguageSchema } from './language'
 
 export const stories = pgTable(
   'stories',
@@ -16,6 +17,9 @@ export const stories = pgTable(
     createdAt: timestamp('created_at').notNull().defaultNow(),
     id: text('id').primaryKey().$defaultFn(nanoid),
     keyFindings: json('key_findings'),
+    languageCode: text('language_code', { enum: LANGUAGE_CODES })
+      .notNull()
+      .default('en'),
     newsletterId: text('newsletter_id')
       .notNull()
       .references(() => newsletter.id, { onDelete: 'cascade' }),
@@ -44,6 +48,7 @@ export const StorySchema = z
       .openapi({
         example: ['Key finding 1', 'Key finding 2', 'Key finding 3'],
       }),
+    languageCode: LanguageSchema,
     newsletterId: z.coerce.string().openapi({ example: 'news123' }),
     promptId: z.coerce.string().nullable().openapi({ example: 'prompt123' }),
     title: z.string().openapi({ example: 'Title' }),

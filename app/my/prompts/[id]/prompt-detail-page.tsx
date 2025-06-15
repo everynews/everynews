@@ -35,9 +35,7 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
   const [testResult, setTestResult] = useState<TestResult | null>(null)
   const [name, setName] = useState(prompt.name)
   const [content, setContent] = useState(prompt.content)
-  const [language, setLanguage] = useState<LanguageCode>(
-    prompt.language || 'en',
-  )
+  const [language, setLanguage] = useState<LanguageCode>('en')
   const [isSaving, setIsSaving] = useState(false)
   const testUrlId = useId()
   const nameId = useId()
@@ -59,7 +57,7 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
 
     try {
       const res = await api.prompts[':id'].$put({
-        json: { content: content.trim(), language, name: name.trim() },
+        json: { content: content.trim(), name: name.trim() },
         param: { id: prompt.id },
       })
 

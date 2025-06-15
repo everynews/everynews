@@ -17,7 +17,7 @@ import {
 } from '@everynews/components/ui/select'
 import { Textarea } from '@everynews/components/ui/textarea'
 import type { LanguageCode } from '@everynews/schema/language'
-import { LANGUAGE_LABELS, SUPPORTED_LANGUAGES } from '@everynews/schema/prompt'
+import { LANGUAGE_CODES, LANGUAGE_LABELS } from '@everynews/schema/language'
 
 interface PromptDetailsCardProps {
   name: string
@@ -69,7 +69,7 @@ export const PromptDetailsCard = ({
             <SelectValue placeholder='Select language' />
           </SelectTrigger>
           <SelectContent>
-            {SUPPORTED_LANGUAGES.map((lang) => (
+            {LANGUAGE_CODES.map((lang: LanguageCode) => (
               <SelectItem key={lang} value={lang}>
                 {LANGUAGE_LABELS[lang]}
               </SelectItem>

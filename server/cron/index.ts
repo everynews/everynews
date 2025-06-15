@@ -294,7 +294,7 @@ export const CronRouter = new Hono().get(
 
       // Run custodian to clean up stories with empty titles
       const custodianResult = await custodian()
-      
+
       await track({
         channel: 'cron',
         description: `Newsletter processing completed successfully - processed ${found.length} newsletters, cleaned up ${custodianResult.deletedCount} empty stories`,

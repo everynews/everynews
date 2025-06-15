@@ -2,6 +2,7 @@ import { z } from 'zod'
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
 import { boolean, json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { LANGUAGE_CODES, LanguageSchema } from './language'
 import { prompt } from './prompt'
 import { strategySchema } from './strategy'
 import { users } from './user'
@@ -13,6 +14,7 @@ export const newsletter = pgTable('newsletter', {
   description: text('description'),
   id: text('id').primaryKey().$defaultFn(nanoid),
   isPublic: boolean('is_public').notNull().default(true),
+  language: text('language', { enum: LANGUAGE_CODES }).notNull().default('en'),
   lastRun: timestamp('last_run').defaultNow(),
   name: text('name').notNull(),
   nextRun: timestamp('next_run').defaultNow(),
@@ -37,6 +39,7 @@ export const NewsletterSchema = z
       .openapi({ example: 'A brief description of the newsletter' }),
     id: z.coerce.string().openapi({ example: '123' }),
     isPublic: z.coerce.boolean().openapi({ example: true }),
+    language: LanguageSchema,
     lastRun: z.coerce.date().nullable().openapi({ example: new Date() }),
     name: z.coerce
       .string()

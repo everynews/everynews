@@ -14,6 +14,7 @@ import { Label } from '@everynews/components/ui/label'
 import { Separator } from '@everynews/components/ui/separator'
 import { toastNetworkError } from '@everynews/lib/error'
 import { DEFAULT_PROMPT_PLACEHOLDER } from '@everynews/lib/prompts'
+import { getDefaultPromptContent } from '@everynews/lib/prompts/default-prompt'
 import type { LanguageCode } from '@everynews/schema/language'
 import { humanId } from 'human-id'
 import { ArrowLeft, Loader2, Plus, TestTube } from 'lucide-react'
@@ -29,16 +30,12 @@ type TestResult = {
   originalTitle: string
 }
 
-export const PromptCreatePage = ({
-  defaultPromptContent,
-}: {
-  defaultPromptContent: string
-}) => {
+export const PromptCreatePage = () => {
   const router = useRouter()
   const [name, setName] = useState(
     humanId({ capitalize: true, separator: ' ' }),
   )
-  const [content, setContent] = useState(defaultPromptContent)
+  const [content, setContent] = useState(getDefaultPromptContent())
   const [language, setLanguage] = useState<LanguageCode>('en')
   const [testUrl, setTestUrl] = useState('')
   const [isCreating, setIsCreating] = useState(false)
@@ -65,7 +62,7 @@ export const PromptCreatePage = ({
 
     try {
       const res = await api.prompts.$post({
-        json: { content: content.trim(), language, name: name.trim() },
+        json: { content: content.trim(), name: name.trim() },
       })
 
       if (!res.ok) {

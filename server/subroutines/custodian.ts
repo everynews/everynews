@@ -56,7 +56,7 @@ export const custodian = async (): Promise<{
       try {
         await db.delete(stories).where(eq(stories.id, story.id))
         deletedStories.push({ id: story.id, url: story.url })
-        
+
         await track({
           channel: 'custodian',
           description: `Deleted story: ${story.url}`,
@@ -64,8 +64,8 @@ export const custodian = async (): Promise<{
           icon: '🗑️',
           tags: {
             story_id: story.id,
-            url: story.url.slice(0, 160),
             type: 'info',
+            url: story.url.slice(0, 160),
           },
         })
       } catch (error) {

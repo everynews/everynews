@@ -1,5 +1,4 @@
 import { whoami } from '@everynews/auth/session'
-import { getDefaultPromptContent } from '@everynews/lib/prompts/server'
 import { redirect } from 'next/navigation'
 import { PromptCreatePage } from './prompt-create-page'
 
@@ -15,8 +14,5 @@ export default async function CreatePromptPage() {
   if (!user) {
     redirect('/')
   }
-
-  const defaultPromptContent = await getDefaultPromptContent()
-
-  return <PromptCreatePage defaultPromptContent={defaultPromptContent} />
+  return <PromptCreatePage />
 }
