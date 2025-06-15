@@ -44,7 +44,7 @@ export default function SignInPage() {
       } else {
         setIsLoading(true)
       }
-      await auth.signIn.magicLink({ email: contact })
+      await auth.signIn.magicLink({ email: contact, callbackURL: '/sign-in/success' })
       if (isFeelingLucky) {
         if (window) {
           window.open(`https://${contact.split('@')[1]}`, '_blank')
