@@ -1,6 +1,7 @@
 'use client'
 
 import { api } from '@everynews/app/api'
+import { FormFieldRow } from '@everynews/components/form-field-row'
 import { Button } from '@everynews/components/ui/button'
 import {
   Dialog,
@@ -13,8 +14,6 @@ import {
   Form,
   FormControl,
   FormField,
-  FormItem,
-  FormLabel,
   FormMessage,
 } from '@everynews/components/ui/form'
 import { Input } from '@everynews/components/ui/input'
@@ -175,19 +174,15 @@ export const ChannelDialog = ({
               control={form.control}
               name='name'
               render={({ field }) => (
-                <FormItem className='md:flex md:items-center md:justify-between'>
-                  <div className='md:w-1/2'>
-                    <FormLabel className='text-md'>
-                      What should we call this channel?
-                    </FormLabel>
-                  </div>
-                  <div className='md:w-1/2'>
-                    <FormControl>
-                      <Input placeholder='My Email Channel' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </div>
-                </FormItem>
+                <FormFieldRow
+                  label='What should we call this channel?'
+                  labelWidth='1/2'
+                >
+                  <FormControl>
+                    <Input placeholder='My Email Channel' {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormFieldRow>
               )}
             />
 
@@ -197,17 +192,12 @@ export const ChannelDialog = ({
               control={form.control}
               name='config.destination'
               render={({ field }) => (
-                <FormItem className='md:flex md:items-center md:justify-between'>
-                  <div className='md:w-1/2'>
-                    <FormLabel className='text-md'>Email Address</FormLabel>
-                  </div>
-                  <div className='md:w-1/2'>
-                    <FormControl>
-                      <Input placeholder='you@example.com' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </div>
-                </FormItem>
+                <FormFieldRow label='Email Address' labelWidth='1/2'>
+                  <FormControl>
+                    <Input placeholder='you@example.com' {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormFieldRow>
               )}
             />
 
