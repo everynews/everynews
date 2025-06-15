@@ -25,21 +25,25 @@ export const aspirant = async (alert: Alert): Promise<Story[]> => {
       },
     })
 
+    // Step 1: Get URLs from curator (limited to 5)
     const urls = await curator(alert)
+    const limitedUrls = urls.slice(0, 5)
+
     await track({
       channel: 'aspirant',
-      description: `Selected ${urls.length} URLs for testing`,
+      description: `Selected ${limitedUrls.length} URLs for testing`,
       event: 'URLs Selected',
       icon: '📋',
       tags: {
         alert_id: alert.id,
-        selected_count: urls.length,
+        selected_count: limitedUrls.length,
         total_count: urls.length,
         type: 'info',
       },
     })
 
-    const contents = await reaper(urls)
+    // Step 2: Fetch content using reaper
+    const contents = await reaper(limitedUrls)
 
     await track({
       channel: 'aspirant',
@@ -53,6 +57,7 @@ export const aspirant = async (alert: Alert): Promise<Story[]> => {
       },
     })
 
+    // Step 3: Summarize content using sage
     const stories = await sage({ contents, news: alert })
 
     await track({
