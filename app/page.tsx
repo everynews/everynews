@@ -26,9 +26,6 @@ export const metadata = {
 }
 
 export default async function Page() {
-  const user = await whoami()
-  if (user) redirect('/home')
-
   const recentStories = await db
     .select({
       alert: alert,
