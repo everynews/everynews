@@ -3,10 +3,8 @@ import { PromptDtoSchema, PromptSchema, prompt } from '@everynews/schema'
 import { zValidator } from '@hono/zod-validator'
 import { and, eq } from 'drizzle-orm'
 import { Hono } from 'hono'
-import { z } from 'zod'
 import type { WithAuth } from '../bindings/auth'
 import { authMiddleware } from '../middleware/auth'
-import { apprentice } from '../subroutines/apprentice'
 
 export const PromptsRouter = new Hono<WithAuth>()
   .use(authMiddleware)
@@ -100,23 +98,3 @@ export const PromptsRouter = new Hono<WithAuth>()
 
     return c.json({ success: true })
   })
-  .post(
-    '/test',
-    zValidator(
-      'json',
-      z.object({
-        promptContent: z.string(),
-        url: z.string().url(),
-      }),
-    ),
-    async (c) => {
-      const { url, promptContent } = c.req.valid('json')
-
-      try {
-        const result = await apprentice({ promptContent, url })
-        return c.json(result)
-      } catch (error) {
-        return c.json({ error: String(error) }, 500)
-      }
-    },
-  )

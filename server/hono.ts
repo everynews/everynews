@@ -7,6 +7,7 @@ import { generateSpecs } from 'hono-openapi'
 import { AlertRouter } from './alerts'
 import { ChannelRouter } from './channels'
 import { CronRouter } from './cron'
+import { DrillRouter } from './drill'
 import { PromptsRouter } from './prompts'
 import { SubscriptionRouter } from './subscriptions'
 
@@ -16,6 +17,7 @@ const app = new Hono<WithAuth>()
   .route('/cron', CronRouter)
   .route('/alerts', AlertRouter)
   .route('/channels', ChannelRouter)
+  .route('/drill', DrillRouter)
   .route('/prompts', PromptsRouter)
   .route('/subscriptions', SubscriptionRouter)
 
