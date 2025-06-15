@@ -1,7 +1,6 @@
 'use client'
 
 import { NavUser } from '@everynews/components/auth/nav-user'
-import { SignIn } from '@everynews/components/auth/sign-in'
 import { ThemeToggle } from '@everynews/components/theme/toggle'
 import { Button } from '@everynews/components/ui/button'
 import {
@@ -49,7 +48,7 @@ export const MobileNav = ({ user }: { user?: User | null }) => (
       </nav>
       <SheetFooter className='mt-auto flex-row items-center justify-between'>
         <ThemeToggle />
-        {user ? <NavUser user={user} /> : <SignIn />}
+        {user ? <NavUser user={user} /> : <Button asChild><Link href='/sign-in'>Sign In</Link></Button>}
       </SheetFooter>
     </SheetContent>
   </Sheet>

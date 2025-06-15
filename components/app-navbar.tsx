@@ -1,6 +1,6 @@
 import { whoami } from '@everynews/auth/session'
 import { NavUser } from '@everynews/components/auth/nav-user'
-import { SignIn } from '@everynews/components/auth/sign-in'
+import { Button } from '@everynews/components/ui/button'
 import { Logo } from '@everynews/public/logo'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -35,7 +35,7 @@ export const AppNavbar = async () => {
             <div className='h-8 w-8 animate-pulse rounded-full bg-muted' />
           }
         >
-          {user ? <NavUser user={user} /> : <SignIn />}
+          {user ? <NavUser user={user} /> : <Button asChild><Link href='/sign-in'>Sign In</Link></Button>}
         </Suspense>
       </div>
     </div>
