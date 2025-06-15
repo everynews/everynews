@@ -1,1 +1,0 @@
-ALTER TABLE "prompt" ADD COLUMN "language" text DEFAULT 'en' NOT NULL;
