@@ -26,6 +26,11 @@ import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 
+export const metadata = {
+  description: 'Browse public newsletters.',
+  title: 'Newsletters',
+}
+
 export default async function NewslettersPage() {
   // Get current user and their data
   const user = await whoami()
