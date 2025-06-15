@@ -26,22 +26,20 @@ export const aspirant = async (alert: Alert): Promise<Story[]> => {
     })
 
     const urls = await curator(alert)
-    const limitedUrls = urls.slice(0, 10)
-
     await track({
       channel: 'aspirant',
-      description: `Selected ${limitedUrls.length} URLs for testing`,
+      description: `Selected ${urls.length} URLs for testing`,
       event: 'URLs Selected',
       icon: '📋',
       tags: {
         alert_id: alert.id,
-        selected_count: limitedUrls.length,
+        selected_count: urls.length,
         total_count: urls.length,
         type: 'info',
       },
     })
 
-    const contents = await reaper(limitedUrls)
+    const contents = await reaper(urls)
 
     await track({
       channel: 'aspirant',

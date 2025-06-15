@@ -629,28 +629,29 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
                 />
               </div>
 
-              <div className='flex justify-end gap-2'>
+              <div className='flex justify-between gap-2'>
                 <Button
                   type='button'
-                  variant='outline'
+                  variant='destructive'
                   onClick={() => router.push('/my/alerts')}
                 >
                   Cancel
                 </Button>
-                <Button
-                  type='button'
-                  variant='secondary'
+                <div className='flex gap-2'>
+                <SubmitButton
+                  variant='outline'
                   onClick={onTest}
-                  disabled={isTesting}
+                  loading={isTesting}
                 >
-                  {isTesting ? 'Testing...' : 'Test'}
-                </Button>
+                  Test
+                </SubmitButton>
                 <SubmitButton
                   onClick={form.handleSubmit(onSubmit)}
                   loading={isSubmitting}
-                >
-                  Create
-                </SubmitButton>
+                  >
+                    Create
+                  </SubmitButton>
+                </div>
               </div>
             </form>
           </Form>
