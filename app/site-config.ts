@@ -1,6 +1,6 @@
 export const siteConfig = {
-  description: "Google Alerts like it's 2025",
-  name: 'every.news',
+  description: "Google Alerts Reimagined",
+  name: 'Everynews',
   url: 'https://every.news',
 }
 
