@@ -83,7 +83,9 @@ export const ChannelDialog = ({
       }
 
       if (!res.ok) {
-        toast.error(`Failed to ${mode} channel`)
+        const errorData = await res.json()
+        const errorMessage = errorData?.error || `Failed to ${mode} channel`
+        toast.error(errorMessage)
         return
       }
 

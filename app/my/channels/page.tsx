@@ -55,14 +55,43 @@ export default async function MyChannelsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
+            <TableRow>
+              <TableCell className='font-medium'>
+                Default Channel
+                <Badge variant='secondary' className='ml-2'>
+                  Sign-in Email
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Badge variant='outline' className='capitalize'>
+                  email
+                </Badge>
+              </TableCell>
+              <TableCell className='text-sm text-muted-foreground'>
+                {user.email}
+              </TableCell>
+              <TableCell>
+                <Badge variant='default'>
+                  Verified
+                </Badge>
+              </TableCell>
+              <TableCell className='text-muted-foreground'>
+                {new Date(user.createdAt).toLocaleDateString()}
+              </TableCell>
+              <TableCell>
+                <div className='text-sm text-muted-foreground'>
+                  Default
+                </div>
+              </TableCell>
+            </TableRow>
             {channelList.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
                   className='text-center text-muted-foreground py-8'
                 >
-                  No channels yet. Create your first delivery channel to get
-                  started.
+                  You can create additional delivery channels to get your newsletters
+                  sent to different destinations.
                 </TableCell>
               </TableRow>
             ) : (

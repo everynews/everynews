@@ -94,6 +94,24 @@ export const ChannelRouter = new Hono<WithAuth>()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
+      // Check if the destination email is the same as the user's sign-in email
+      if (config.destination === user.email) {
+        await track({
+          channel: 'channels',
+          description: 'User tried to create channel with sign-in email',
+          event: 'Duplicate Sign-in Email',
+          icon: '⚠️',
+          tags: {
+            type: 'warning',
+          },
+          user_id: user.id,
+        })
+        return c.json(
+          { error: 'Cannot use your sign-in email as a channel. Your sign-in email is already your default channel.' },
+          400
+        )
+      }
+
       const inserted = await db
         .insert(channels)
         .values({
@@ -159,6 +177,25 @@ export const ChannelRouter = new Hono<WithAuth>()
 
       if (!existingChannel) {
         return c.json({ error: 'Channel not found' }, 404)
+      }
+
+      // Check if the destination email is the same as the user's sign-in email
+      if (request.config.destination === user.email) {
+        await track({
+          channel: 'channels',
+          description: 'User tried to update channel with sign-in email',
+          event: 'Duplicate Sign-in Email',
+          icon: '⚠️',
+          tags: {
+            type: 'warning',
+            channel_id: id,
+          },
+          user_id: user.id,
+        })
+        return c.json(
+          { error: 'Cannot use your sign-in email as a channel. Your sign-in email is already your default channel.' },
+          400
+        )
       }
 
       // Check if email address has changed
