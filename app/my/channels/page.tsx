@@ -91,8 +91,8 @@ export default async function MyChannelsPage() {
                   colSpan={6}
                   className='text-center text-muted-foreground py-8'
                 >
-                  You can create additional delivery channels to get your
-                  alerts sent to different destinations.
+                  You can create additional delivery channels to get your alerts
+                  sent to different destinations.
                 </TableCell>
               </TableRow>
             ) : (

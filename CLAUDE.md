@@ -106,3 +106,7 @@ The application follows a hybrid approach for data handling:
 - Prefer Tailwind gap instead of paddings and margins. Do not use space-x or space-y; use gap. Or, do not use mb- and use gap- in the parent element.
 - Always prefer to use Server Component Rendering, and in the smallest component scope possible.
 - Within small components, prefer gap-1 instead of gap-2.
+- Do not use arbitrary tailwind styles, such as min-h-[blah-blah]. Use the closest tailwind default, such as min-h-96.
+- For submitting Hono RPC actions, try to use <SubmitButton /> Component.
+- Do not use arrow directly as unicode. Use Lucide icons such as <ArrowLeft />.
+- Inside a button, do not use an icon. Only put plain text in it.

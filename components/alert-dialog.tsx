@@ -90,7 +90,7 @@ export const AlertDialog = ({
     description: '',
     isPublic: true,
     language: 'en',
-    name: humanId({ capitalize: true, separator: ' ' }),
+    name: humanId({ capitalize: false, separator: '-' }),
     promptId: null,
     strategy: { provider: 'hnbest' },
     wait: { type: 'count', value: 10 },
@@ -156,7 +156,7 @@ export const AlertDialog = ({
       if (mode === 'create') {
         form.reset({
           ...createValues,
-          name: humanId({ capitalize: true, separator: ' ' }),
+          name: humanId({ capitalize: false, separator: '-' }),
         })
       } else {
         form.reset()

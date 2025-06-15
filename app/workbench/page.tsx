@@ -8,7 +8,7 @@ import { WorkbenchPage } from './workbench-page'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  description: 'Test run newsletters with your prompts.',
+  description: 'Test run alerts with your prompts.',
   title: 'Workbench',
 }
 

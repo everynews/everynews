@@ -1,5 +1,4 @@
 import { siteConfig } from '@everynews/app/site-config'
-import { whoami } from '@everynews/auth/session'
 import { Badge } from '@everynews/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
@@ -16,7 +15,6 @@ import {
   Zap,
 } from 'lucide-react'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,7 +45,7 @@ export default async function Page() {
           <h1 className='text-6xl font-bold tracking-tight text-foreground w-full'>
             Google Alerts Reimagined
           </h1>
-          <p className='text-xl text-muted-foreground leading-relaxed w-full max-w-4xl mx-auto'>
+          <p className='text-xl text-muted-foreground leading-relaxed w-full  mx-auto'>
             Semantic Monitoring. Context Understanding. Granular Delivery.
           </p>
         </div>
@@ -58,7 +56,7 @@ export default async function Page() {
             <h2 className='text-3xl font-bold text-foreground w-full'>
               Beyond Traditional Alerts
             </h2>
-            <p className='text-lg text-muted-foreground w-full max-w-4xl mx-auto'>
+            <p className='text-lg text-muted-foreground w-full  mx-auto'>
               Traditional monitoring tools fall short in today's complex
               information landscape
             </p>
@@ -120,7 +118,7 @@ export default async function Page() {
             <h2 className='text-3xl font-bold text-foreground w-full'>
               Intelligent Monitoring, Reimagined
             </h2>
-            <p className='text-lg text-muted-foreground w-full max-w-4xl mx-auto'>
+            <p className='text-lg text-muted-foreground w-full  mx-auto'>
               Powered by AI and designed for modern workflows
             </p>
           </div>
@@ -255,7 +253,7 @@ export default async function Page() {
             <h2 className='text-3xl font-bold text-foreground w-full'>
               Latest Discoveries
             </h2>
-            <p className='text-lg text-muted-foreground w-full max-w-4xl mx-auto'>
+            <p className='text-lg text-muted-foreground w-full  mx-auto'>
               See what our AI-powered system is finding right now
             </p>
           </div>

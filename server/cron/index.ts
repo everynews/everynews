@@ -263,9 +263,9 @@ export const CronRouter = new Hono().get(
             event: 'Alert Delivery Skipped',
             icon: '⏭️',
             tags: {
-              last_run: item.lastRun?.toISOString() || 'null',
               alert_id: item.id,
               alert_name: item.name,
+              last_run: item.lastRun?.toISOString() || 'null',
               type: 'info',
             },
           })
@@ -307,8 +307,8 @@ export const CronRouter = new Hono().get(
       })
 
       return c.json({
-        empty_stories_deleted: custodianResult.deletedCount,
         alerts_processed: found.length,
+        empty_stories_deleted: custodianResult.deletedCount,
         ok: true,
         timestamp: new Date().toISOString(),
         triggered_by: 'cron',

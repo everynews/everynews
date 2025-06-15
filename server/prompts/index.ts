@@ -12,8 +12,7 @@ export const PromptsRouter = new Hono<WithAuth>()
   .use(authMiddleware)
   .get('/', async (c) => {
     const user = c.get('user')
-    if (!user) return c.json({ error: 'Unauthorized' }, 401)
-
+    
     const prompts = await db.query.prompt.findMany({
       orderBy: (prompt, { desc }) => [desc(prompt.updatedAt)],
       where: eq(prompt.userId, user.id),
@@ -23,7 +22,6 @@ export const PromptsRouter = new Hono<WithAuth>()
   })
   .post('/', zValidator('json', PromptDtoSchema), async (c) => {
     const user = c.get('user')
-    if (!user) return c.json({ error: 'Unauthorized' }, 401)
     const data = c.req.valid('json')
 
     const [newPrompt] = await db
@@ -38,7 +36,6 @@ export const PromptsRouter = new Hono<WithAuth>()
   })
   .get('/:id', async (c) => {
     const user = c.get('user')
-    if (!user) return c.json({ error: 'Unauthorized' }, 401)
     const id = c.req.param('id')
 
     const foundPrompt = await db.query.prompt.findFirst({
@@ -53,7 +50,6 @@ export const PromptsRouter = new Hono<WithAuth>()
   })
   .put('/:id', zValidator('json', PromptDtoSchema), async (c) => {
     const user = c.get('user')
-    if (!user) return c.json({ error: 'Unauthorized' }, 401)
     const id = c.req.param('id')
     const data = c.req.valid('json')
 
@@ -74,7 +70,6 @@ export const PromptsRouter = new Hono<WithAuth>()
   })
   .delete('/:id', async (c) => {
     const user = c.get('user')
-    if (!user) return c.json({ error: 'Unauthorized' }, 401)
     const id = c.req.param('id')
 
     const [deletedPrompt] = await db
@@ -99,7 +94,6 @@ export const PromptsRouter = new Hono<WithAuth>()
     ),
     async (c) => {
       const user = c.get('user')
-      if (!user) return c.json({ error: 'Unauthorized' }, 401)
       const { url, promptContent } = c.req.valid('json')
 
       try {

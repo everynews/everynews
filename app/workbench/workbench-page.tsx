@@ -95,10 +95,9 @@ export const WorkbenchPage = ({ prompts }: WorkbenchProps) => {
   return (
     <div className='container mx-auto max-w-6xl'>
       <div className='mb-8'>
-        <h1 className='text-3xl font-bold'>Newsletter Workbench</h1>
+        <h1 className='text-3xl font-bold'>Workbench</h1>
         <p className='text-muted-foreground mt-2'>
-          Generate an email preview for a set of article URLs using your
-          prompts.
+          Test your alerts with your prompts.
         </p>
       </div>
 
@@ -160,7 +159,7 @@ export const WorkbenchPage = ({ prompts }: WorkbenchProps) => {
                 ) : (
                   <>
                     <TestTube className='size-4 mr-2' />
-                    Test Newsletter
+                    Test Alert
                   </>
                 )}
               </Button>
