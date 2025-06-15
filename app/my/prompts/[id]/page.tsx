@@ -2,7 +2,7 @@ import { whoami } from '@everynews/auth/session'
 import { db } from '@everynews/database'
 import { prompt } from '@everynews/schema'
 import { and, eq } from 'drizzle-orm'
-import { notFound, redirect } from 'next/navigation'
+import { notFound, unauthorized } from 'next/navigation'
 import { PromptDetailPage } from './prompt-detail-page'
 
 export const dynamic = 'force-dynamic'
@@ -20,7 +20,7 @@ export default async function PromptPage({
   const { id } = await params
   const user = await whoami()
   if (!user) {
-    redirect('/')
+    unauthorized()
   }
 
   const promptData = await db.query.prompt.findFirst({

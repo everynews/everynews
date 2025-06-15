@@ -13,7 +13,7 @@ import { prompt } from '@everynews/schema'
 import { eq } from 'drizzle-orm'
 import { PlusCircle, Wrench } from 'lucide-react'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { unauthorized } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,7 +25,7 @@ export const metadata = {
 export default async function PromptsPage() {
   const user = await whoami()
   if (!user) {
-    redirect('/')
+    unauthorized()
   }
 
   const prompts = await db.query.prompt.findMany({

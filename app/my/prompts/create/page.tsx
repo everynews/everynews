@@ -1,5 +1,5 @@
 import { whoami } from '@everynews/auth/session'
-import { redirect } from 'next/navigation'
+import { unauthorized } from 'next/navigation'
 import { PromptCreatePage } from './prompt-create-page'
 
 export const dynamic = 'force-dynamic'
@@ -12,7 +12,7 @@ export const metadata = {
 export default async function CreatePromptPage() {
   const user = await whoami()
   if (!user) {
-    redirect('/')
+    unauthorized()
   }
   return <PromptCreatePage />
 }
