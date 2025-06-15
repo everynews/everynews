@@ -9,6 +9,7 @@ import MetaKeyIcon from '@everynews/lib/meta-key'
 import { CornerDownLeft } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 
 
@@ -54,6 +55,7 @@ export default function SignInPage() {
     } finally {
       setIsLoading(false)
       setIsFeelingLuckyLoading(false)
+      toast.success("Magic Link Sent!")
     }
   }
 
