@@ -1,8 +1,8 @@
 import { Badge } from '@everynews/components/ui/badge'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
-import { ContentSchema, contents } from '@everynews/schema/content'
 import { AlertSchema, alert } from '@everynews/schema/alert'
+import { ContentSchema, contents } from '@everynews/schema/content'
 import { StorySchema, stories } from '@everynews/schema/story'
 import { eq } from 'drizzle-orm'
 import { ArrowLeft, Calendar, Globe } from 'lucide-react'
@@ -26,8 +26,8 @@ export default async function StoryPage({
   // Get story with content and alert information
   const rawStoryData = await db
     .select({
-      content: contents,
       alert: alert,
+      content: contents,
       story: stories,
     })
     .from(stories)
@@ -65,10 +65,7 @@ export default async function StoryPage({
         <div className='flex flex-col gap-4'>
           <div className='flex items-center gap-2 text-sm text-muted-foreground'>
             <Globe className='size-4' />
-            <Link
-              href={`/alerts/${alertInfo.id}`}
-              className='hover:underline'
-            >
+            <Link href={`/alerts/${alertInfo.id}`} className='hover:underline'>
               {alertInfo.name}
             </Link>
             <span>•</span>

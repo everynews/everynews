@@ -26,8 +26,8 @@ const sendAlertEmail = async (parcel: {
       event: 'Email Alert Sent',
       icon: '📧',
       tags: {
-        destination: parcel.destination,
         alert_name: parcel.alertName,
+        destination: parcel.destination,
         stories_count: parcel.stories.length,
         type: 'info',
       },
@@ -39,9 +39,9 @@ const sendAlertEmail = async (parcel: {
       event: 'Email Alert Failed',
       icon: '❌',
       tags: {
+        alert_name: parcel.alertName,
         destination: parcel.destination,
         error: String(error),
-        alert_name: parcel.alertName,
         type: 'error',
       },
     })
@@ -65,8 +65,8 @@ const sendAlertSlack = async (parcel: {
       event: 'Slack Alert Sent',
       icon: '💬',
       tags: {
-        destination: parcel.destination,
         alert_name: parcel.alertName,
+        destination: parcel.destination,
         stories_count: parcel.stories.length,
         type: 'info',
       },
@@ -78,9 +78,9 @@ const sendAlertSlack = async (parcel: {
       event: 'Slack Alert Failed',
       icon: '❌',
       tags: {
+        alert_name: parcel.alertName,
         destination: parcel.destination,
         error: String(error),
-        alert_name: parcel.alertName,
         type: 'error',
       },
     })
@@ -100,8 +100,8 @@ export const herald = async (
       event: 'Alert Delivery Started',
       icon: '📨',
       tags: {
-        channel_id: channelId,
         alert_name: alertName,
+        channel_id: channelId,
         stories_count: stories.length,
         type: 'info',
       },
@@ -128,8 +128,8 @@ export const herald = async (
     }
 
     const parcel = {
-      destination: channel.config.destination,
       alertName,
+      destination: channel.config.destination,
       stories,
     }
 
@@ -157,9 +157,9 @@ export const herald = async (
       event: 'Alert Delivery Completed',
       icon: '✅',
       tags: {
+        alert_name: alertName,
         channel_id: channelId,
         channel_type: channel.type,
-        alert_name: alertName,
         stories_count: stories.length,
         type: 'info',
       },
@@ -171,9 +171,9 @@ export const herald = async (
       event: 'Alert Delivery Failed',
       icon: '💥',
       tags: {
+        alert_name: alertName,
         channel_id: channelId,
         error: String(error),
-        alert_name: alertName,
         type: 'error',
       },
     })

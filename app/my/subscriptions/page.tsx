@@ -11,8 +11,8 @@ import {
   TableRow,
 } from '@everynews/components/ui/table'
 import { db } from '@everynews/database'
-import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { AlertSchema, alert } from '@everynews/schema/alert'
+import { ChannelSchema, channels } from '@everynews/schema/channel'
 import {
   SubscriptionSchema,
   subscriptions,
@@ -36,8 +36,8 @@ export default async function MySubscriptionsPage() {
   // Get user's subscriptions with related alert and channel data
   const subscriptionsRes = await db
     .select({
-      channel: channels,
       alert: alert,
+      channel: channels,
       subscription: subscriptions,
     })
     .from(subscriptions)
@@ -47,8 +47,8 @@ export default async function MySubscriptionsPage() {
 
   // Parse the results with Zod schemas
   const userSubscriptions = subscriptionsRes.map((row) => ({
-    channel: ChannelSchema.parse(row.channel),
     alert: AlertSchema.parse(row.alert),
+    channel: ChannelSchema.parse(row.channel),
     subscription: SubscriptionSchema.parse(row.subscription),
   }))
 
@@ -97,9 +97,7 @@ export default async function MySubscriptionsPage() {
             ) : (
               userSubscriptions.map(({ subscription, alert, channel }) => (
                 <TableRow key={subscription.id}>
-                  <TableCell className='font-medium'>
-                    {alert.name}
-                  </TableCell>
+                  <TableCell className='font-medium'>{alert.name}</TableCell>
                   <TableCell>
                     <div className='flex items-center gap-2'>
                       {channel.type === 'email' ? (

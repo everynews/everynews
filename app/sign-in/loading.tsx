@@ -8,6 +8,8 @@ import {
   CardTitle,
 } from '@everynews/components/ui/card'
 import { Input } from '@everynews/components/ui/input'
+import MetaKeyIcon from '@everynews/lib/meta-key'
+import { CornerDownLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export default function SignInPage() {
@@ -19,19 +21,26 @@ export default function SignInPage() {
           <CardDescription>
             By logging in, you agree to our{' '}
             <Link href='/terms' className='text-blue-500'>
-              terms of service p{' '}
+              terms of service
             </Link>
             .
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className='space-y-4'>
-            <Input type='email' placeholder='elon@x.com' required />
-          </form>
+          <Input type='email' placeholder='elon@x.com' disabled />
         </CardContent>
-        <CardFooter className='flex justify-end'>
-          <Button className='w-full' disabled={true}>
+        <CardFooter className='flex justify-end gap-2'>
+          <Button variant='outline' disabled>
             Sign In
+          </Button>
+          <Button disabled>
+            <div className='flex items-center gap-1'>
+              I&apos;m feeling lucky
+              <span className='flex items-center'>
+                <MetaKeyIcon className='size-3' />
+                <CornerDownLeft className='size-3' />
+              </span>
+            </div>
           </Button>
         </CardFooter>
       </Card>

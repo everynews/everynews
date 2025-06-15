@@ -3,8 +3,8 @@ import { whoami } from '@everynews/auth/session'
 import { Badge } from '@everynews/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
-import { contents } from '@everynews/schema/content'
 import { alert } from '@everynews/schema/alert'
+import { contents } from '@everynews/schema/content'
 import { stories } from '@everynews/schema/story'
 import { desc, eq } from 'drizzle-orm'
 import {
@@ -31,8 +31,8 @@ export default async function Page() {
 
   const recentStories = await db
     .select({
-      content: contents,
       alert: alert,
+      content: contents,
       story: stories,
     })
     .from(stories)
