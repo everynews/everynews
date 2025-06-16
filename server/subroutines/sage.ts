@@ -95,7 +95,10 @@ export const summarizeContent = async ({
       languageCode,
       promptId: news.promptId,
       title,
-      url: content.url,
+      url: normalizeUrl(content.url, {
+        stripProtocol: true,
+        stripWWW: true,
+      }),
     }
   } catch (error) {
     await track({
