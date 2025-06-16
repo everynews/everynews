@@ -16,30 +16,39 @@ import { strategySchema } from './strategy'
 import { users } from './user'
 import { WaitSchema } from './wait'
 
-export const alert = pgTable('alert', {
-  active: boolean('active').notNull().default(true),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  deletedAt: timestamp('deleted_at'),
-  description: text('description'),
-  id: text('id').primaryKey().$defaultFn(nanoid),
-  isPublic: boolean('is_public').notNull().default(true),
-  language: text('language', { enum: LANGUAGE_CODES }).notNull().default('en'),
-  lastRun: timestamp('last_run').defaultNow(),
-  name: text('name').notNull(),
-  nextRun: timestamp('next_run').defaultNow(),
-  promptId: text('prompt_id').references(() => prompt.id, {
-    onDelete: 'set null',
+export const alert = pgTable(
+  'alert',
+  {
+    active: boolean('active').notNull().default(true),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    deletedAt: timestamp('deleted_at'),
+    description: text('description'),
+    id: text('id').primaryKey().$defaultFn(nanoid),
+    isPublic: boolean('is_public').notNull().default(true),
+    language: text('language', { enum: LANGUAGE_CODES })
+      .notNull()
+      .default('en'),
+    lastRun: timestamp('last_run').defaultNow(),
+    name: text('name').notNull(),
+    nextRun: timestamp('next_run').defaultNow(),
+    promptId: text('prompt_id').references(() => prompt.id, {
+      onDelete: 'set null',
+    }),
+    strategy: json('strategy').notNull(),
+    threshold: integer('threshold').notNull().default(70),
+    updatedAt: timestamp('updated_at').notNull().defaultNow(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    wait: json('wait').notNull(),
+  },
+  (table) => ({
+    userIdDeletedAtIdx: index('alert_user_id_deleted_at_idx').on(
+      table.userId,
+      table.deletedAt,
+    ),
   }),
-  strategy: json('strategy').notNull(),
-  threshold: integer('threshold').notNull().default(70),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-  userId: text('user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  wait: json('wait').notNull(),
-}, (table) => ({
-  userIdDeletedAtIdx: index('alert_user_id_deleted_at_idx').on(table.userId, table.deletedAt),
-}))
+)
 
 export const AlertSchema = z
   .object({

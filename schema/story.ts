@@ -52,7 +52,7 @@ export const StorySchema = z
     contentId: z.coerce.string().openapi({ example: 'content123' }),
     createdAt: z.coerce.date().openapi({ example: new Date() }),
     deletedAt: z.date().nullable().openapi({ example: null }),
-    id:       z.coerce.string().openapi({ example: '123' }),
+    id: z.coerce.string().openapi({ example: '123' }),
     irrelevant: z.boolean().nullable().openapi({ example: false }),
     keyFindings: z
       .array(z.string())

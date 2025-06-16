@@ -191,19 +191,32 @@ export const AlertRouter = new Hono<WithAuth>()
     async (c) => {
       const { id } = c.req.param()
       const request = await c.req.json()
+      const user = c.get('user')
+
+      if (!user) {
+        await track({
+          channel: 'alerts',
+          description: 'User tried to update alert without authentication',
+          event: 'Unauthorized Alert Update',
+          icon: '🚫',
+          tags: {
+            type: 'error',
+          },
+        })
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
 
       // Check if alert exists and is not soft-deleted
       const existing = await db
         .select()
         .from(alert)
--       .where(and(eq(alert.id, id), isNull(alert.deletedAt)))
-+       .where(
-+         and(
-+           eq(alert.id, id),
-+           eq(alert.userId, user.id),   // enforce ownership
-+           isNull(alert.deletedAt),
-+         ),
-+       )
+        .where(
+          and(
+            eq(alert.id, id),
+            eq(alert.userId, user.id), // enforce ownership
+            isNull(alert.deletedAt),
+          ),
+        )
       if (existing.length === 0) {
         await track({
           channel: 'alerts',
@@ -221,7 +234,11 @@ export const AlertRouter = new Hono<WithAuth>()
         .update(alert)
         .set({ ...request, updatedAt: new Date() })
         .where(
-          and(eq(alert.id, id), eq(alert.userId, user.id), isNull(alert.deletedAt)),
+          and(
+            eq(alert.id, id),
+            eq(alert.userId, user.id),
+            isNull(alert.deletedAt),
+          ),
         )
         .returning()
 
@@ -277,7 +294,11 @@ export const AlertRouter = new Hono<WithAuth>()
         .update(alert)
         .set({ deletedAt: new Date(), updatedAt: new Date() })
         .where(
-          and(eq(alert.id, id), eq(alert.userId, user.id), isNull(alert.deletedAt)),
+          and(
+            eq(alert.id, id),
+            eq(alert.userId, user.id),
+            isNull(alert.deletedAt),
+          ),
         )
         .returning()
 
