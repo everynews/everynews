@@ -86,6 +86,7 @@
     "email:dev": "email dev --port 5678",
     "next:dev": "next dev --turbopack",
     "next:start": "next start",
+    "postinstall": "bun run db:generate && bun run db:migrate",
     "style:check": "biome check --write . --config-path .config/biome.json",
     "tidy": "concurrently --names 'FORMAT,SCHEMA,NEXTJS' --prefix-colors 'blue,yellow,green' 'bun run style:check' 'bun run db:check' 'bun run build'"
   },
