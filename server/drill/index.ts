@@ -38,10 +38,7 @@ export const DrillRouter = new Hono<WithAuth>().use(authMiddleware).post(
       })
       return c.json({ error: 'Unauthorized' }, 401)
     }
-
     const alertData = await c.req.json()
-
-    // Create a temporary alert object for testing
     const testAlert = {
       active: true,
       createdAt: new Date(),
@@ -59,10 +56,8 @@ export const DrillRouter = new Hono<WithAuth>().use(authMiddleware).post(
       userId: user.id,
       wait: alertData.wait,
     }
-
     try {
       const stories = await aspirant(testAlert)
-
       await track({
         channel: 'drill',
         description: `Tested alert configuration: ${alertData.name}`,

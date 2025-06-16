@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@everynews/components/ui/dropdown-menu'
 import type { User } from 'better-auth'
-import { Mail, Settings, UserIcon } from 'lucide-react'
+import { UserIcon } from 'lucide-react'
 import Link from 'next/link'
 
 export const NavUser = ({ user }: { user: User }) => {
@@ -56,19 +56,16 @@ export const NavUser = ({ user }: { user: User }) => {
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
             <Link href='/my/alerts'>
-              <Mail className='mr-2 h-4 w-4' />
               <span>My Alerts</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href='/my/channels'>
-              <Settings className='mr-2 h-4 w-4' />
               <span>My Channels</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href='/my/subscriptions'>
-              <Settings className='mr-2 h-4 w-4' />
               <span>My Subscriptions</span>
             </Link>
           </DropdownMenuItem>

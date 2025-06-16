@@ -34,17 +34,25 @@ export const HnBestCurator: Curator = async (
   )
   const ids = await HackerNewsStoriesSchema.parse(await response.json())
 
-  const items: string[] = await queue.addAll(
+  // Fetch all items with their metadata
+  const itemsWithMetadata = await queue.addAll(
     ids.map((id: number) => async () => {
       const response = await fetch(
         `https://hacker-news.firebaseio.com/v0/item/${id}.json`,
       )
       const item = await HackerNewsStorySchema.parse(await response.json())
-      return (
-        item.url || `https://news.ycombinator.com/item?id=${String(item.id)}`
-      )
+      return {
+        url: item.url || `https://news.ycombinator.com/item?id=${String(item.id)}`,
+        time: item.time,
+      }
     }),
   )
 
-  return items.filter((item): item is string => Boolean(item))
+  // Sort by time (most recent first) and extract URLs
+  const sortedUrls = itemsWithMetadata
+    .sort((a, b) => b.time - a.time)
+    .map(item => item.url)
+    .filter((url): url is string => Boolean(url))
+
+  return sortedUrls
 }

@@ -652,7 +652,6 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
         </div>
 
         <div className='space-y-4'>
-          <h3 className='text-lg font-semibold'>Preview</h3>
           <Card className='p-6 bg-background'>
             {isTesting ? (
               <div className='flex flex-col items-center justify-center py-12 space-y-4'>

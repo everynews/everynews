@@ -9,12 +9,14 @@ import {
   CardTitle,
 } from '@everynews/components/ui/card'
 import MetaKeyIcon from '@everynews/lib/meta-key'
-import { CheckCircle, CornerDownLeft, Delete } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { CheckCircle, CornerDownLeft, Delete, XCircle } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState, useTransition } from 'react'
 
 export default function SignInSuccessPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const error = searchParams.get('error')
   const [isPending, startTransition] = useTransition()
   const [loadingButton, setLoadingButton] = useState<
     'home' | 'onboarding' | null
@@ -41,6 +43,35 @@ export default function SignInSuccessPage() {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [router])
+
+  // Handle error cases
+  if (error === 'INVALID_TOKEN') {
+    return (
+      <div className='flex items-center justify-center bg-background p-4 my-10'>
+        <Card className='w-full max-w-md'>
+          <CardHeader className='text-center'>
+            <XCircle className='mx-auto h-16 w-16 text-red-700 dark:text-red-400 my-2' />
+            <CardTitle>Invalid or Expired Link</CardTitle>
+            <CardDescription>
+              The sign-in link you used is invalid or has expired. Please request a new sign-in link.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SubmitButton
+              onClick={() => {
+                startTransition(() => {
+                  router.push('/sign-in')
+                })
+              }}
+              className='w-full'
+            >
+              Back to Sign In
+            </SubmitButton>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div className='flex items-center justify-center bg-background p-4 my-10'>
