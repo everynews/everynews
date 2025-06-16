@@ -14,10 +14,10 @@ import Link from 'next/link'
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { alert?: string }
+  searchParams: Promise<{ alert?: string }>
 }) {
   const user = await whoami()
-  const selectedAlertId = searchParams.alert
+  const { alert: selectedAlertId } = await searchParams
 
   if (!user) {
     return (
@@ -152,8 +152,10 @@ export default async function Page({
         <div className='lg:col-span-2'>
           <h2 className='text-lg font-semibold mb-3'>
             {selectedAlertId
-              ? userAlerts.find((a) => a.alert.id === selectedAlertId)?.alert
-                  .name + ' Stories'
+              ? `${
+                  userAlerts.find((a) => a.alert.id === selectedAlertId)?.alert
+                    .name
+                } Stories`
               : 'Recent Stories'}
           </h2>
 
