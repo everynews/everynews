@@ -178,20 +178,29 @@ export default async function AlertStoriesPage({
           <>
             <div className='grid gap-4'>
               {storiesData.map(({ story }) => (
-                <Link
-                  key={story.id}
-                  href={`/stories/${story.id}`}
-                  className='hover:shadow-md transition-shadow cursor-pointer m-0'
-                >
-                  <Card>
-                    <CardHeader className='text-xl font-semibold line-clamp-2'>
-                      {story.title}
+                <Link key={story.id} href={`/stories/${story.id}`}>
+                  <Card className='hover:shadow-lg transition-all duration-200 cursor-pointer'>
+                    <CardHeader className='pb-3'>
+                      <div className='flex items-center gap-2 text-sm text-muted-foreground mb-2'>
+                        <time dateTime={story.createdAt.toISOString()}>
+                          {story.createdAt.toLocaleDateString('en-US', {
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                          })}
+                        </time>
+                      </div>
+                      <h3 className='font-semibold text-foreground line-clamp-2'>
+                        {story.title}
+                      </h3>
                     </CardHeader>
 
                     {Array.isArray(story.keyFindings) &&
                       story.keyFindings.length > 0 && (
                         <CardContent className='pt-0'>
-                          <div className='flex flex-col gap-2'>
+                          <div className='space-y-2'>
                             {story.keyFindings
                               .slice(0, 3)
                               .map((finding, index) => (
@@ -200,22 +209,20 @@ export default async function AlertStoriesPage({
                                   className='flex items-center gap-2'
                                 >
                                   <Badge
-                                    variant='secondary'
-                                    className='text-xs px-2 py-1 flex-shrink-0'
+                                    variant='outline'
+                                    className='text-xs px-1.5 py-0.5 flex-shrink-0'
                                   >
                                     {index + 1}
                                   </Badge>
-                                  <p className='flex-1 text-sm text-muted-foreground'>
+                                  <p className='text-xs text-muted-foreground line-clamp-2'>
                                     {finding}
                                   </p>
                                 </div>
                               ))}
                             {story.keyFindings.length > 3 && (
-                              <div className='flex items-center gap-2'>
-                                <span className='text-xs text-muted-foreground'>
-                                  +{story.keyFindings.length - 3} more findings
-                                </span>
-                              </div>
+                              <p className='text-xs text-muted-foreground'>
+                                +{story.keyFindings.length - 3} more insights
+                              </p>
                             )}
                           </div>
                         </CardContent>
