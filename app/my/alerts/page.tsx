@@ -102,26 +102,25 @@ export default async function MyAlertsPage() {
                     <TableCell className='text-muted-foreground'>
                       {new Date(item.updatedAt).toLocaleDateString()}
                     </TableCell>
-                    <TableCell>
-                      <div className='flex items-center gap-1 justify-between'>
-                        <DeleteAlertPopover alert={item}>
-                          <Button variant='destructive'>Delete</Button>
-                        </DeleteAlertPopover>
-                        <div className='flex items-center gap-1'>
-                          <Button asChild size='sm' variant='ghost'>
-                            <Link href={`/alerts/${item.id}`}>View</Link>
-                          </Button>
-                          <SubscribeAlertButton
-                            alert={item}
-                            channels={userChannels}
-                            subscription={subscription}
-                            user={user}
-                          />
-                          <Button asChild size='sm' variant='ghost'>
-                            <Link href={`/my/alerts/${item.id}`}>Edit</Link>
-                          </Button>
-                        </div>
-                      </div>
+                    <TableCell className='flex items-center gap-1 justify-end'>
+                      <DeleteAlertPopover alert={item}>
+                        <Button variant='ghost' className='text-destructive'>
+                          Delete
+                        </Button>
+                      </DeleteAlertPopover>
+
+                      <Button asChild size='sm' variant='ghost'>
+                        <Link href={`/alerts/${item.id}`}>View</Link>
+                      </Button>
+                      <SubscribeAlertButton
+                        alert={item}
+                        channels={userChannels}
+                        subscription={subscription}
+                        user={user}
+                      />
+                      <Button asChild size='sm' variant='ghost'>
+                        <Link href={`/my/alerts/${item.id}`}>Edit</Link>
+                      </Button>
                     </TableCell>
                   </TableRow>
                 )

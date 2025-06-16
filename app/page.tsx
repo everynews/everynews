@@ -54,10 +54,12 @@ export default async function Page() {
 
         <div className='mx-auto max-w-xl p-4 rounded-lg flex flex-col items-center gap-2'>
           <p className='text-sm text-orange-800 dark:text-orange-200'>
-            We're in{' '}
-            <strong>Beta Firefighting mode</strong>.
+            We're in <strong>Beta Firefighting mode</strong>.
           </p>
-          <Button asChild className='bg-orange-500 text-white hover:bg-orange-600'>
+          <Button
+            asChild
+            className='bg-orange-500 text-white hover:bg-orange-600'
+          >
             <Link href='/firefighter-mode'>
               Learn more about our 3 day promise
             </Link>

@@ -37,5 +37,8 @@ export async function prepareContentInput(content: Content): Promise<string> {
   const htmlBody = !content.markdownBlobUrl
     ? await fetch(content.htmlBlobUrl).then((res) => res.text())
     : ''
-  return `# [${content.title}](${content.url})\n\n${markdownBody || htmlBody}`.slice(0, 100_000)
+  return `# [${content.title}](${content.url})\n\n${markdownBody || htmlBody}`.slice(
+    0,
+    100_000,
+  )
 }
