@@ -84,7 +84,10 @@ export default function SignInPage() {
         </CardHeader>
         <CardContent>
           <form
-            onSubmit={() => handleSubmit({ contact, isFeelingLucky: false })}
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleSubmit({ contact, isFeelingLucky: false })
+            }}
             className='space-y-4'
           >
             <Input

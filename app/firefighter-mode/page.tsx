@@ -30,13 +30,16 @@ export default function FirefighterModePage() {
             you like my service.
           </p>
           <p>
-            So, I promise that if you <strong>report a bug</strong> or{' '}
-            <strong>ask for a feature</strong> that's reasonably sized, I will
-            personally fix it within <strong>3 days</strong>.
-          </p>
-          <p>
-            Not 3 weeks. Not <q>we'll get back to you.</q> Not a ticket in some
-            corporate queue. <strong>3 days, fixed, by me.</strong>
+            So, I promise that if you report a{' '}
+            <span className='inline-block rounded-md bg-red-100 px-1.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900/30 dark:text-red-300'>
+              bug
+            </span>{' '}
+            or{' '}
+            request a{' '}
+            <span className='inline-block rounded-md bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'>
+              feature
+            </span>{' '}
+            that's reasonably sized, I will personally fix it <strong>tomorrow</strong>.
           </p>
           <p>
             You'll get a personal response from me (yes, the actual founder)
