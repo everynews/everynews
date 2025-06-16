@@ -220,7 +220,9 @@ export const AlertRouter = new Hono<WithAuth>()
       const result = await db
         .update(alert)
         .set({ ...request, updatedAt: new Date() })
-        .where(and(eq(alert.id, id), isNull(alert.deletedAt)))
+        .where(
+          and(eq(alert.id, id), eq(alert.userId, user.id), isNull(alert.deletedAt)),
+        )
         .returning()
 
       await track({
