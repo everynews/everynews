@@ -42,13 +42,13 @@ export default async function MySubscriptionsPage() {
     })
     .from(subscriptions)
     .innerJoin(alert, eq(subscriptions.alertId, alert.id))
-    .innerJoin(channels, eq(subscriptions.channelId, channels.id))
+    .leftJoin(channels, eq(subscriptions.channelId, channels.id))
     .where(eq(subscriptions.userId, user.id))
 
   // Parse the results with Zod schemas
   const userSubscriptions = subscriptionsRes.map((row) => ({
     alert: AlertSchema.parse(row.alert),
-    channel: ChannelSchema.parse(row.channel),
+    channel: row.channel ? ChannelSchema.parse(row.channel) : null,
     subscription: SubscriptionSchema.parse(row.subscription),
   }))
 
@@ -100,15 +100,27 @@ export default async function MySubscriptionsPage() {
                   <TableCell className='font-medium'>{alert.name}</TableCell>
                   <TableCell>
                     <div className='flex items-center gap-2'>
-                      {channel.type === 'email' ? (
-                        <Mail className='size-4' />
+                      {channel ? (
+                        <>
+                          {channel.type === 'email' ? (
+                            <Mail className='size-4' />
+                          ) : (
+                            <MessageSquare className='size-4' />
+                          )}
+                          <span className='capitalize'>{channel.type}</span>
+                          <span className='text-muted-foreground text-sm'>
+                            ({channel.config.destination})
+                          </span>
+                        </>
                       ) : (
-                        <MessageSquare className='size-4' />
+                        <>
+                          <Mail className='size-4' />
+                          <span>Email</span>
+                          <span className='text-muted-foreground text-sm'>
+                            ({user.email})
+                          </span>
+                        </>
                       )}
-                      <span className='capitalize'>{channel.type}</span>
-                      <span className='text-muted-foreground text-sm'>
-                        ({channel.config.destination})
-                      </span>
                     </div>
                   </TableCell>
                   <TableCell>
