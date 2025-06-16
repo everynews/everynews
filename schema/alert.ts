@@ -18,6 +18,7 @@ import { WaitSchema } from './wait'
 export const alert = pgTable('alert', {
   active: boolean('active').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
+  deletedAt: timestamp('deleted_at'),
   description: text('description'),
   id: text('id').primaryKey().$defaultFn(nanoid),
   isPublic: boolean('is_public').notNull().default(true),
@@ -41,6 +42,7 @@ export const AlertSchema = z
   .object({
     active: z.coerce.boolean().openapi({ example: true }),
     createdAt: z.coerce.date().openapi({ example: new Date() }),
+    deletedAt: z.coerce.date().nullable().openapi({ example: null }),
     description: z.coerce
       .string()
       .nullable()
@@ -65,6 +67,7 @@ export const AlertSchema = z
 
 export const AlertDtoSchema = AlertSchema.omit({
   createdAt: true,
+  deletedAt: true,
   id: true,
   lastRun: true,
   nextRun: true,

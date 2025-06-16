@@ -17,7 +17,7 @@ import {
   SubscriptionSchema,
   subscriptions,
 } from '@everynews/schema/subscription'
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, isNull } from 'drizzle-orm'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -44,7 +44,7 @@ export default async function AlertStoriesPage({
   const alertData = await db
     .select()
     .from(alert)
-    .where(eq(alert.id, id))
+    .where(and(eq(alert.id, id), isNull(alert.deletedAt)))
     .limit(1)
 
   if (!alertData.length) {
@@ -72,7 +72,7 @@ export default async function AlertStoriesPage({
     const channelsRes = await db
       .select()
       .from(channels)
-      .where(eq(channels.userId, user.id))
+      .where(and(eq(channels.userId, user.id), isNull(channels.deletedAt)))
     userChannels = ChannelSchema.array().parse(channelsRes)
 
     // Check if user is subscribed to this alert
@@ -80,7 +80,11 @@ export default async function AlertStoriesPage({
       .select()
       .from(subscriptions)
       .where(
-        and(eq(subscriptions.userId, user.id), eq(subscriptions.alertId, id)),
+        and(
+          eq(subscriptions.userId, user.id),
+          eq(subscriptions.alertId, id),
+          isNull(subscriptions.deletedAt),
+        ),
       )
       .limit(1)
 
@@ -96,8 +100,11 @@ export default async function AlertStoriesPage({
       story: stories,
     })
     .from(stories)
-    .innerJoin(contents, eq(stories.contentId, contents.id))
-    .where(eq(stories.alertId, id))
+    .innerJoin(
+      contents,
+      and(eq(stories.contentId, contents.id), isNull(contents.deletedAt)),
+    )
+    .where(and(eq(stories.alertId, id), isNull(stories.deletedAt)))
     .orderBy(desc(stories.createdAt))
     .limit(itemsPerPage)
     .offset(offset)
@@ -106,7 +113,7 @@ export default async function AlertStoriesPage({
   const totalStories = await db
     .select({ count: stories.id })
     .from(stories)
-    .where(eq(stories.alertId, id))
+    .where(and(eq(stories.alertId, id), isNull(stories.deletedAt)))
 
   const totalPages = Math.ceil(totalStories.length / itemsPerPage)
   const hasNextPage = currentPage < totalPages

@@ -4,7 +4,7 @@ import { sendChannelVerification } from '@everynews/messengers'
 import { channels, channelVerifications } from '@everynews/schema'
 import { ChannelDtoSchema, ChannelSchema } from '@everynews/schema/channel'
 import { authMiddleware } from '@everynews/server/middleware/auth'
-import { and, eq, gt } from 'drizzle-orm'
+import { and, eq, gt, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
@@ -46,7 +46,7 @@ export const ChannelRouter = new Hono<WithAuth>()
       const result = await db
         .select()
         .from(channels)
-        .where(eq(channels.userId, user.id))
+        .where(and(eq(channels.userId, user.id), isNull(channels.deletedAt)))
 
       await track({
         channel: 'channels',
@@ -175,7 +175,11 @@ export const ChannelRouter = new Hono<WithAuth>()
 
       // Get the existing channel to compare email addresses
       const existingChannel = await db.query.channels.findFirst({
-        where: and(eq(channels.id, id), eq(channels.userId, user.id)),
+        where: and(
+          eq(channels.id, id),
+          eq(channels.userId, user.id),
+          isNull(channels.deletedAt),
+        ),
       })
 
       if (!existingChannel) {
@@ -224,7 +228,13 @@ export const ChannelRouter = new Hono<WithAuth>()
       const result = await db
         .update(channels)
         .set(updateData)
-        .where(and(eq(channels.id, id), eq(channels.userId, user.id)))
+        .where(
+          and(
+            eq(channels.id, id),
+            eq(channels.userId, user.id),
+            isNull(channels.deletedAt),
+          ),
+        )
         .returning()
 
       await track({
@@ -278,9 +288,17 @@ export const ChannelRouter = new Hono<WithAuth>()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
+      // Soft delete by setting deletedAt
       const result = await db
-        .delete(channels)
-        .where(and(eq(channels.id, id), eq(channels.userId, user.id)))
+        .update(channels)
+        .set({ deletedAt: new Date() })
+        .where(
+          and(
+            eq(channels.id, id),
+            eq(channels.userId, user.id),
+            isNull(channels.deletedAt),
+          ),
+        )
         .returning()
 
       await track({
@@ -323,7 +341,11 @@ export const ChannelRouter = new Hono<WithAuth>()
       // Get the channel and verify ownership
       const channel = ChannelSchema.parse(
         await db.query.channels.findFirst({
-          where: and(eq(channels.id, id), eq(channels.userId, user.id)),
+          where: and(
+            eq(channels.id, id),
+            eq(channels.userId, user.id),
+            isNull(channels.deletedAt),
+          ),
         }),
       )
 
@@ -419,7 +441,10 @@ export const ChannelRouter = new Hono<WithAuth>()
       // Get the channel
       const channel = ChannelSchema.parse(
         await db.query.channels.findFirst({
-          where: eq(channels.id, verification.channelId),
+          where: and(
+            eq(channels.id, verification.channelId),
+            isNull(channels.deletedAt),
+          ),
         }),
       )
 

@@ -6,7 +6,7 @@
   },
   "dialect": "postgresql",
   "enums": {},
-  "id": "394af853-bc0c-4f9e-8326-477c1c676e56",
+  "id": "d827bcab-1be2-41e5-a2c1-1b3f682fbc90",
   "policies": {},
   "prevId": "00000000-0000-0000-0000-000000000000",
   "roles": {},
@@ -128,6 +128,12 @@
           "default": "now()",
           "name": "created_at",
           "notNull": true,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "notNull": false,
           "primaryKey": false,
           "type": "timestamp"
         },
@@ -334,6 +340,12 @@
           "primaryKey": false,
           "type": "timestamp"
         },
+        "deleted_at": {
+          "name": "deleted_at",
+          "notNull": false,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
         "id": {
           "name": "id",
           "notNull": true,
@@ -408,6 +420,12 @@
           "primaryKey": false,
           "type": "timestamp"
         },
+        "deleted_at": {
+          "name": "deleted_at",
+          "notNull": false,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
         "html_blob_url": {
           "name": "html_blob_url",
           "notNull": true,
@@ -474,6 +492,12 @@
           "default": "now()",
           "name": "created_at",
           "notNull": true,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "notNull": false,
           "primaryKey": false,
           "type": "timestamp"
         },
@@ -621,6 +645,12 @@
           "primaryKey": false,
           "type": "timestamp"
         },
+        "deleted_at": {
+          "name": "deleted_at",
+          "notNull": false,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
         "id": {
           "name": "id",
           "notNull": true,
@@ -734,6 +764,12 @@
           "default": "now()",
           "name": "created_at",
           "notNull": true,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "notNull": false,
           "primaryKey": false,
           "type": "timestamp"
         },

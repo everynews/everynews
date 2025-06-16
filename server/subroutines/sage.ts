@@ -28,7 +28,7 @@ const input = async ({ content, news }: { content: Content; news: Alert }) => {
 
   if (news.promptId) {
     const customPrompt = await db.query.prompt.findFirst({
-      where: eq(prompt.id, news.promptId),
+      where: and(eq(prompt.id, news.promptId), isNull(prompt.deletedAt)),
     })
     if (customPrompt) {
       userPrompt = customPrompt.content
@@ -136,6 +136,7 @@ const summarizeWithCache = async ({
       currentPromptId
         ? eq(stories.promptId, currentPromptId)
         : isNull(stories.promptId),
+      isNull(stories.deletedAt),
     ),
   })
 
@@ -158,7 +159,7 @@ const summarizeWithCache = async ({
 
   // Check if there's an existing story with same URL but different prompt
   const existingDifferentPrompt = await db.query.stories.findFirst({
-    where: eq(stories.url, url),
+    where: and(eq(stories.url, url), isNull(stories.deletedAt)),
   })
 
   if (

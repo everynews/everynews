@@ -17,7 +17,7 @@ import {
   SubscriptionSchema,
   subscriptions,
 } from '@everynews/schema/subscription'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { Mail, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
@@ -39,9 +39,17 @@ export default async function MySubscriptionsPage() {
       subscription: subscriptions,
     })
     .from(subscriptions)
-    .innerJoin(alert, eq(subscriptions.alertId, alert.id))
-    .leftJoin(channels, eq(subscriptions.channelId, channels.id))
-    .where(eq(subscriptions.userId, user.id))
+    .innerJoin(
+      alert,
+      and(eq(subscriptions.alertId, alert.id), isNull(alert.deletedAt)),
+    )
+    .leftJoin(
+      channels,
+      and(eq(subscriptions.channelId, channels.id), isNull(channels.deletedAt)),
+    )
+    .where(
+      and(eq(subscriptions.userId, user.id), isNull(subscriptions.deletedAt)),
+    )
 
   // Parse the results with Zod schemas
   const userSubscriptions = subscriptionsRes.map((row) => ({
@@ -54,7 +62,7 @@ export default async function MySubscriptionsPage() {
   const userChannelsRes = await db
     .select()
     .from(channels)
-    .where(eq(channels.userId, user.id))
+    .where(and(eq(channels.userId, user.id), isNull(channels.deletedAt)))
   const userChannels = ChannelSchema.array().parse(userChannelsRes)
 
   return (

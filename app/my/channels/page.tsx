@@ -13,7 +13,7 @@ import {
 } from '@everynews/components/ui/table'
 import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -29,7 +29,7 @@ export default async function MyChannelsPage() {
   const res = await db
     .select()
     .from(channels)
-    .where(eq(channels.userId, user.id))
+    .where(and(eq(channels.userId, user.id), isNull(channels.deletedAt)))
   const channelList = ChannelSchema.array().parse(res)
 
   return (

@@ -2,7 +2,7 @@ import { db } from '@everynews/database'
 import { Alert } from '@everynews/emails/alert'
 import { track } from '@everynews/logs'
 import { ChannelSchema, channels, type Story } from '@everynews/schema'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -140,7 +140,7 @@ export const herald = async ({
       // Handle regular channel
       const channel = ChannelSchema.parse(
         await db.query.channels.findFirst({
-          where: eq(channels.id, channelId),
+          where: and(eq(channels.id, channelId), isNull(channels.deletedAt)),
         }),
       )
 

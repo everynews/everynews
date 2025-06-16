@@ -4,7 +4,7 @@ import { db } from '@everynews/database'
 import { AlertSchema, alert } from '@everynews/schema/alert'
 import { ContentSchema, contents } from '@everynews/schema/content'
 import { StorySchema, stories } from '@everynews/schema/story'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { ArrowLeft, Calendar, Globe } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -29,9 +29,15 @@ export default async function StoryPage({
       story: stories,
     })
     .from(stories)
-    .innerJoin(contents, eq(stories.contentId, contents.id))
-    .innerJoin(alert, eq(stories.alertId, alert.id))
-    .where(eq(stories.id, id))
+    .innerJoin(
+      contents,
+      and(eq(stories.contentId, contents.id), isNull(contents.deletedAt)),
+    )
+    .innerJoin(
+      alert,
+      and(eq(stories.alertId, alert.id), isNull(alert.deletedAt)),
+    )
+    .where(and(eq(stories.id, id), isNull(stories.deletedAt)))
     .limit(1)
 
   if (!rawStoryData.length) {

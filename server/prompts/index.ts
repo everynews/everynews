@@ -1,7 +1,7 @@
 import { db } from '@everynews/database'
 import { PromptDtoSchema, PromptSchema, prompt } from '@everynews/schema'
 import { zValidator } from '@hono/zod-validator'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import type { WithAuth } from '../bindings/auth'
 import { authMiddleware } from '../middleware/auth'
@@ -16,7 +16,7 @@ export const PromptsRouter = new Hono<WithAuth>()
 
     const prompts = await db.query.prompt.findMany({
       orderBy: (prompt, { desc }) => [desc(prompt.updatedAt)],
-      where: eq(prompt.userId, user.id),
+      where: and(eq(prompt.userId, user.id), isNull(prompt.deletedAt)),
     })
 
     return c.json(prompts.map((p) => PromptSchema.parse(p)))
@@ -46,7 +46,11 @@ export const PromptsRouter = new Hono<WithAuth>()
     const id = c.req.param('id')
 
     const foundPrompt = await db.query.prompt.findFirst({
-      where: and(eq(prompt.id, id), eq(prompt.userId, user.id)),
+      where: and(
+        eq(prompt.id, id),
+        eq(prompt.userId, user.id),
+        isNull(prompt.deletedAt),
+      ),
     })
 
     if (!foundPrompt) {
@@ -64,13 +68,32 @@ export const PromptsRouter = new Hono<WithAuth>()
     const id = c.req.param('id')
     const data = c.req.valid('json')
 
+    // Check if prompt exists and is not soft-deleted
+    const existing = await db.query.prompt.findFirst({
+      where: and(
+        eq(prompt.id, id),
+        eq(prompt.userId, user.id),
+        isNull(prompt.deletedAt),
+      ),
+    })
+
+    if (!existing) {
+      return c.json({ error: 'Prompt not found' }, 404)
+    }
+
     const [updatedPrompt] = await db
       .update(prompt)
       .set({
         ...data,
         updatedAt: new Date(),
       })
-      .where(and(eq(prompt.id, id), eq(prompt.userId, user.id)))
+      .where(
+        and(
+          eq(prompt.id, id),
+          eq(prompt.userId, user.id),
+          isNull(prompt.deletedAt),
+        ),
+      )
       .returning()
 
     if (!updatedPrompt) {
@@ -87,9 +110,17 @@ export const PromptsRouter = new Hono<WithAuth>()
 
     const id = c.req.param('id')
 
+    // Soft delete by setting deletedAt
     const [deletedPrompt] = await db
-      .delete(prompt)
-      .where(and(eq(prompt.id, id), eq(prompt.userId, user.id)))
+      .update(prompt)
+      .set({ deletedAt: new Date() })
+      .where(
+        and(
+          eq(prompt.id, id),
+          eq(prompt.userId, user.id),
+          isNull(prompt.deletedAt),
+        ),
+      )
       .returning()
 
     if (!deletedPrompt) {
