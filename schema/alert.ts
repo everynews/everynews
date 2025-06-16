@@ -3,6 +3,7 @@ import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
 import {
   boolean,
+  index,
   integer,
   json,
   pgTable,
@@ -36,7 +37,9 @@ export const alert = pgTable('alert', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   wait: json('wait').notNull(),
-})
+}, (table) => ({
+  userIdDeletedAtIdx: index('alert_user_id_deleted_at_idx').on(table.userId, table.deletedAt),
+}))
 
 export const AlertSchema = z
   .object({
