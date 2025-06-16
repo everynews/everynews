@@ -58,7 +58,9 @@ export default async function Page() {
             asChild
             className='bg-orange-700 text-white hover:bg-orange-900 text-center'
           >
-            <Link href='/firefighter-mode'>You ask. We ship in 3 days.</Link>
+            <Link href='/firefighter-mode'>
+              You spot bugs. We fix in 3 days.
+            </Link>
           </Button>
         </div>
 
