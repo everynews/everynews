@@ -25,6 +25,7 @@ export const stories = pgTable(
       .notNull()
       .references(() => contents.id, { onDelete: 'cascade' }),
     createdAt: timestamp('created_at').notNull().defaultNow(),
+    deletedAt: timestamp('deleted_at'),
     id: text('id').primaryKey().$defaultFn(nanoid),
     irrelevant: boolean('irrelevant'),
     keyFindings: json('key_findings'),
@@ -50,6 +51,7 @@ export const StorySchema = z
     alertId: z.coerce.string().openapi({ example: 'alert123' }),
     contentId: z.coerce.string().openapi({ example: 'content123' }),
     createdAt: z.coerce.date().openapi({ example: new Date() }),
+    deletedAt: z.date().nullable().openapi({ example: null }),
     id: z.coerce.string().openapi({ example: '123' }),
     irrelevant: z.boolean().nullable().openapi({ example: false }),
     keyFindings: z
@@ -70,6 +72,7 @@ export const StoryDtoSchema = StorySchema.omit({
   alertId: true,
   contentId: true,
   createdAt: true,
+  deletedAt: true,
   id: true,
   irrelevant: true,
   promptId: true,

@@ -20,7 +20,7 @@ import {
   SubscriptionSchema,
   subscriptions,
 } from '@everynews/schema/subscription'
-import { count, eq } from 'drizzle-orm'
+import { and, count, eq, isNull } from 'drizzle-orm'
 import { FileText, Users } from 'lucide-react'
 import Link from 'next/link'
 
@@ -41,13 +41,15 @@ export default async function AlertsPage() {
     const channelsRes = await db
       .select()
       .from(channels)
-      .where(eq(channels.userId, user.id))
+      .where(and(eq(channels.userId, user.id), isNull(channels.deletedAt)))
     userChannels = ChannelSchema.array().parse(channelsRes)
 
     const subscriptionsRes = await db
       .select()
       .from(subscriptions)
-      .where(eq(subscriptions.userId, user.id))
+      .where(
+        and(eq(subscriptions.userId, user.id), isNull(subscriptions.deletedAt)),
+      )
     userSubscriptions = SubscriptionSchema.array().parse(subscriptionsRes)
   }
 
@@ -58,8 +60,11 @@ export default async function AlertsPage() {
       storyCount: count(stories.id),
     })
     .from(alert)
-    .leftJoin(stories, eq(alert.id, stories.alertId))
-    .where(eq(alert.isPublic, true))
+    .leftJoin(
+      stories,
+      and(eq(alert.id, stories.alertId), isNull(stories.deletedAt)),
+    )
+    .where(and(eq(alert.isPublic, true), isNull(alert.deletedAt)))
     .groupBy(alert.id)
 
   // Then get subscriber counts for each alert
@@ -69,6 +74,7 @@ export default async function AlertsPage() {
       subscriberCount: count(subscriptions.id),
     })
     .from(subscriptions)
+    .where(isNull(subscriptions.deletedAt))
     .groupBy(subscriptions.alertId)
 
   // Create a map for quick lookup

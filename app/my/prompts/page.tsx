@@ -11,7 +11,7 @@ import {
 } from '@everynews/components/ui/table'
 import { db } from '@everynews/database'
 import { prompt } from '@everynews/schema'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -28,7 +28,7 @@ export default async function PromptsPage() {
 
   const prompts = await db.query.prompt.findMany({
     orderBy: (prompt, { desc }) => [desc(prompt.updatedAt)],
-    where: eq(prompt.userId, user.id),
+    where: and(eq(prompt.userId, user.id), isNull(prompt.deletedAt)),
   })
 
   return (

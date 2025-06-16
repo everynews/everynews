@@ -15,7 +15,7 @@ import { db } from '@everynews/database'
 import { AlertSchema, alert } from '@everynews/schema/alert'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { subscriptions } from '@everynews/schema/subscription'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -29,21 +29,26 @@ export default async function MyAlertsPage() {
   if (!user) return unauthorized()
 
   // Get user's alerts
-  const res = await db.select().from(alert).where(eq(alert.userId, user.id))
+  const res = await db
+    .select()
+    .from(alert)
+    .where(and(eq(alert.userId, user.id), isNull(alert.deletedAt)))
   const alerts = AlertSchema.array().parse(res)
 
   // Get user's channels
   const channelsRes = await db
     .select()
     .from(channels)
-    .where(eq(channels.userId, user.id))
+    .where(and(eq(channels.userId, user.id), isNull(channels.deletedAt)))
   const userChannels = ChannelSchema.array().parse(channelsRes)
 
   // Get user's subscriptions
   const subscriptionsRes = await db
     .select()
     .from(subscriptions)
-    .where(eq(subscriptions.userId, user.id))
+    .where(
+      and(eq(subscriptions.userId, user.id), isNull(subscriptions.deletedAt)),
+    )
   const userSubscriptions = subscriptionsRes
 
   return (

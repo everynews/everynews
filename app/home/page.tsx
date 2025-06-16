@@ -7,7 +7,7 @@ import { alert } from '@everynews/schema/alert'
 import { contents } from '@everynews/schema/content'
 import { stories } from '@everynews/schema/story'
 import { subscriptions } from '@everynews/schema/subscription'
-import { and, desc, eq, sql } from 'drizzle-orm'
+import { and, desc, eq, isNull, sql } from 'drizzle-orm'
 import { FileText } from 'lucide-react'
 import Link from 'next/link'
 
@@ -44,9 +44,17 @@ export default async function Page({
       storyCount: sql<number>`count(distinct ${stories.id})`,
     })
     .from(subscriptions)
-    .innerJoin(alert, eq(subscriptions.alertId, alert.id))
-    .leftJoin(stories, eq(stories.alertId, alert.id))
-    .where(eq(subscriptions.userId, user.id))
+    .innerJoin(
+      alert,
+      and(eq(subscriptions.alertId, alert.id), isNull(alert.deletedAt)),
+    )
+    .leftJoin(
+      stories,
+      and(eq(stories.alertId, alert.id), isNull(stories.deletedAt)),
+    )
+    .where(
+      and(eq(subscriptions.userId, user.id), isNull(subscriptions.deletedAt)),
+    )
     .groupBy(alert.id)
     .orderBy(desc(alert.updatedAt))
 
@@ -58,12 +66,22 @@ export default async function Page({
       story: stories,
     })
     .from(stories)
-    .innerJoin(contents, eq(stories.contentId, contents.id))
-    .innerJoin(alert, eq(stories.alertId, alert.id))
-    .innerJoin(subscriptions, eq(subscriptions.alertId, alert.id))
+    .innerJoin(
+      contents,
+      and(eq(stories.contentId, contents.id), isNull(contents.deletedAt)),
+    )
+    .innerJoin(
+      alert,
+      and(eq(stories.alertId, alert.id), isNull(alert.deletedAt)),
+    )
+    .innerJoin(
+      subscriptions,
+      and(eq(subscriptions.alertId, alert.id), isNull(subscriptions.deletedAt)),
+    )
     .where(
       and(
         eq(subscriptions.userId, user.id),
+        isNull(stories.deletedAt),
         selectedAlertId ? eq(alert.id, selectedAlertId) : undefined,
       ),
     )

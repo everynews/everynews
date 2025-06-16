@@ -6,7 +6,7 @@ import {
   SubscriptionSchema,
 } from '@everynews/schema/subscription'
 import { authMiddleware } from '@everynews/server/middleware/auth'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
@@ -64,7 +64,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         return c.json({ error: 'Missing alertId' }, 400)
       }
       const found = await db.query.alert.findFirst({
-        where: eq(alert.id, alertId),
+        where: and(eq(alert.id, alertId), isNull(alert.deletedAt)),
       })
       if (!found || (!found.isPublic && found.userId !== user.id)) {
         await track({
@@ -146,7 +146,10 @@ export const SubscriptionRouter = new Hono<WithAuth>()
       }
 
       const subscription = await db.query.subscriptions.findFirst({
-        where: eq(subscriptions.id, subscriptionId),
+        where: and(
+          eq(subscriptions.id, subscriptionId),
+          isNull(subscriptions.deletedAt),
+        ),
       })
 
       if (!subscription || subscription.userId !== user.id) {
@@ -166,7 +169,16 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         return c.json({ error: 'Forbidden' }, 403)
       }
 
-      await db.delete(subscriptions).where(eq(subscriptions.id, subscriptionId))
+      // Soft delete by setting deletedAt
+      await db
+        .update(subscriptions)
+        .set({ deletedAt: new Date() })
+        .where(
+          and(
+            eq(subscriptions.id, subscriptionId),
+            isNull(subscriptions.deletedAt),
+          ),
+        )
 
       await track({
         channel: 'subscriptions',

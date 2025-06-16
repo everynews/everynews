@@ -17,6 +17,7 @@ CREATE TABLE "accounts" (
 CREATE TABLE "alert" (
 	"active" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp,
 	"description" text,
 	"id" text PRIMARY KEY NOT NULL,
 	"is_public" boolean DEFAULT true NOT NULL,
@@ -35,6 +36,7 @@ CREATE TABLE "alert" (
 CREATE TABLE "channels" (
 	"config" json NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp,
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"type" text NOT NULL,
@@ -57,6 +59,7 @@ CREATE TABLE "channel_verifications" (
 --> statement-breakpoint
 CREATE TABLE "contents" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp,
 	"html_blob_url" text NOT NULL,
 	"id" text PRIMARY KEY NOT NULL,
 	"markdown_blob_url" text NOT NULL,
@@ -69,6 +72,7 @@ CREATE TABLE "contents" (
 CREATE TABLE "prompt" (
 	"content" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp,
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
@@ -91,6 +95,7 @@ CREATE TABLE "stories" (
 	"alert_id" text NOT NULL,
 	"content_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp,
 	"id" text PRIMARY KEY NOT NULL,
 	"irrelevant" boolean,
 	"key_findings" json,
@@ -106,6 +111,7 @@ CREATE TABLE "subscriptions" (
 	"alert_id" text NOT NULL,
 	"channel_id" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp,
 	"id" text PRIMARY KEY NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"user_id" text NOT NULL
@@ -146,4 +152,5 @@ ALTER TABLE "stories" ADD CONSTRAINT "stories_content_id_contents_id_fk" FOREIGN
 ALTER TABLE "stories" ADD CONSTRAINT "stories_prompt_id_prompt_id_fk" FOREIGN KEY ("prompt_id") REFERENCES "public"."prompt"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_alert_id_alert_id_fk" FOREIGN KEY ("alert_id") REFERENCES "public"."alert"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_channel_id_channels_id_fk" FOREIGN KEY ("channel_id") REFERENCES "public"."channels"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "alert_user_id_deleted_at_idx" ON "alert" USING btree ("user_id","deleted_at");

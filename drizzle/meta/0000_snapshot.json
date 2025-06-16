@@ -6,7 +6,7 @@
   },
   "dialect": "postgresql",
   "enums": {},
-  "id": "394af853-bc0c-4f9e-8326-477c1c676e56",
+  "id": "237e2450-b7b2-485b-85e1-4393c2bed00b",
   "policies": {},
   "prevId": "00000000-0000-0000-0000-000000000000",
   "roles": {},
@@ -131,6 +131,12 @@
           "primaryKey": false,
           "type": "timestamp"
         },
+        "deleted_at": {
+          "name": "deleted_at",
+          "notNull": false,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
         "description": {
           "name": "description",
           "notNull": false,
@@ -237,7 +243,29 @@
           "tableTo": "users"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "alert_user_id_deleted_at_idx": {
+          "columns": [
+            {
+              "asc": true,
+              "expression": "user_id",
+              "isExpression": false,
+              "nulls": "last"
+            },
+            {
+              "asc": true,
+              "expression": "deleted_at",
+              "isExpression": false,
+              "nulls": "last"
+            }
+          ],
+          "concurrently": false,
+          "isUnique": false,
+          "method": "btree",
+          "name": "alert_user_id_deleted_at_idx",
+          "with": {}
+        }
+      },
       "isRLSEnabled": false,
       "name": "alert",
       "policies": {},
@@ -334,6 +362,12 @@
           "primaryKey": false,
           "type": "timestamp"
         },
+        "deleted_at": {
+          "name": "deleted_at",
+          "notNull": false,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
         "id": {
           "name": "id",
           "notNull": true,
@@ -408,6 +442,12 @@
           "primaryKey": false,
           "type": "timestamp"
         },
+        "deleted_at": {
+          "name": "deleted_at",
+          "notNull": false,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
         "html_blob_url": {
           "name": "html_blob_url",
           "notNull": true,
@@ -474,6 +514,12 @@
           "default": "now()",
           "name": "created_at",
           "notNull": true,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "notNull": false,
           "primaryKey": false,
           "type": "timestamp"
         },
@@ -621,6 +667,12 @@
           "primaryKey": false,
           "type": "timestamp"
         },
+        "deleted_at": {
+          "name": "deleted_at",
+          "notNull": false,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
         "id": {
           "name": "id",
           "notNull": true,
@@ -734,6 +786,12 @@
           "default": "now()",
           "name": "created_at",
           "notNull": true,
+          "primaryKey": false,
+          "type": "timestamp"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "notNull": false,
           "primaryKey": false,
           "type": "timestamp"
         },

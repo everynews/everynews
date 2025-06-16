@@ -7,6 +7,7 @@ import { users } from './user'
 export const channels = pgTable('channels', {
   config: json('config').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
+  deletedAt: timestamp('deleted_at'),
   id: text('id').primaryKey().$defaultFn(nanoid),
   name: text('name').notNull(),
   type: text('type').notNull(),
@@ -21,6 +22,7 @@ export const channels = pgTable('channels', {
 const BaseChannel = z
   .object({
     createdAt: z.coerce.date(),
+    deletedAt: z.coerce.date().nullable(),
     id: z.coerce.string(),
     name: z.coerce.string(),
     updatedAt: z.coerce.date(),
@@ -51,6 +53,7 @@ export const ChannelSchema = EmailChannelSchema
 
 const EmailChannelDtoSchema = EmailChannelSchema.omit({
   createdAt: true,
+  deletedAt: true,
   id: true,
   updatedAt: true,
   userId: true,

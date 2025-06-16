@@ -28,7 +28,7 @@ const input = async ({ content, news }: { content: Content; news: Alert }) => {
 
   if (news.promptId) {
     const customPrompt = await db.query.prompt.findFirst({
-      where: eq(prompt.id, news.promptId),
+      where: and(eq(prompt.id, news.promptId), isNull(prompt.deletedAt)),
     })
     if (customPrompt) {
       userPrompt = customPrompt.content
@@ -89,12 +89,16 @@ export const summarizeContent = async ({
     return {
       alertId: news.id,
       contentId: content.id,
+      deletedAt: null,
       irrelevant: false,
       keyFindings,
       languageCode,
       promptId: news.promptId,
       title,
-      url: content.url,
+      url: normalizeUrl(content.url, {
+        stripProtocol: true,
+        stripWWW: true,
+      }),
     }
   } catch (error) {
     await track({
@@ -136,6 +140,7 @@ const summarizeWithCache = async ({
       currentPromptId
         ? eq(stories.promptId, currentPromptId)
         : isNull(stories.promptId),
+      isNull(stories.deletedAt),
     ),
   })
 
@@ -158,7 +163,7 @@ const summarizeWithCache = async ({
 
   // Check if there's an existing story with same URL but different prompt
   const existingDifferentPrompt = await db.query.stories.findFirst({
-    where: eq(stories.url, url),
+    where: and(eq(stories.url, url), isNull(stories.deletedAt)),
   })
 
   if (

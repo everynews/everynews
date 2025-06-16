@@ -3,7 +3,7 @@ import { track } from '@everynews/logs'
 import { alert } from '@everynews/schema'
 import { AlertDtoSchema, AlertSchema } from '@everynews/schema/alert'
 import { authMiddleware } from '@everynews/server/middleware/auth'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
@@ -41,7 +41,10 @@ export const AlertRouter = new Hono<WithAuth>()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const result = await db.select().from(alert)
+      const result = await db
+        .select()
+        .from(alert)
+        .where(isNull(alert.deletedAt))
 
       await track({
         channel: 'alerts',
@@ -76,7 +79,10 @@ export const AlertRouter = new Hono<WithAuth>()
     async (c) => {
       const { id } = c.req.param()
 
-      const result = await db.select().from(alert).where(eq(alert.id, id))
+      const result = await db
+        .select()
+        .from(alert)
+        .where(and(eq(alert.id, id), isNull(alert.deletedAt)))
 
       await track({
         channel: 'alerts',
@@ -185,11 +191,55 @@ export const AlertRouter = new Hono<WithAuth>()
     async (c) => {
       const { id } = c.req.param()
       const request = await c.req.json()
+      const user = c.get('user')
 
+      if (!user) {
+        await track({
+          channel: 'alerts',
+          description: 'User tried to update alert without authentication',
+          event: 'Unauthorized Alert Update',
+          icon: '🚫',
+          tags: {
+            type: 'error',
+          },
+        })
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      // Check if alert exists and is not soft-deleted
+      const existing = await db
+        .select()
+        .from(alert)
+        .where(
+          and(
+            eq(alert.id, id),
+            eq(alert.userId, user.id), // enforce ownership
+            isNull(alert.deletedAt),
+          ),
+        )
+      if (existing.length === 0) {
+        await track({
+          channel: 'alerts',
+          description: `Alert ${id} not found or already deleted`,
+          event: 'Alert Update Failed',
+          icon: '❌',
+          tags: {
+            alert_id: id,
+            type: 'error',
+          },
+        })
+        return c.json({ error: 'Alert not found' }, 404)
+      }
       const result = await db
         .update(alert)
-        .set({ ...request })
-        .where(eq(alert.id, id))
+        .set({ ...request, updatedAt: new Date() })
+        .where(
+          and(
+            eq(alert.id, id),
+            eq(alert.userId, user.id),
+            isNull(alert.deletedAt),
+          ),
+        )
         .returning()
 
       await track({
@@ -239,7 +289,18 @@ export const AlertRouter = new Hono<WithAuth>()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
-      const result = await db.delete(alert).where(eq(alert.id, id)).returning()
+      // Soft delete by setting deletedAt
+      const result = await db
+        .update(alert)
+        .set({ deletedAt: new Date(), updatedAt: new Date() })
+        .where(
+          and(
+            eq(alert.id, id),
+            eq(alert.userId, user.id),
+            isNull(alert.deletedAt),
+          ),
+        )
+        .returning()
 
       await track({
         channel: 'alerts',

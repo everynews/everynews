@@ -1,7 +1,7 @@
 import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
 import { stories } from '@everynews/schema'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 
 export const custodian = async (): Promise<{
   deletedCount: number
@@ -18,9 +18,9 @@ export const custodian = async (): Promise<{
       },
     })
 
-    // Find all stories with empty titles
+    // Find all stories with empty titles that are not soft-deleted
     const emptyTitleStories = await db.query.stories.findMany({
-      where: eq(stories.title, ''),
+      where: and(eq(stories.title, ''), isNull(stories.deletedAt)),
     })
 
     if (emptyTitleStories.length === 0) {
@@ -54,13 +54,17 @@ export const custodian = async (): Promise<{
     const deletedStories = []
     for (const story of emptyTitleStories) {
       try {
-        await db.delete(stories).where(eq(stories.id, story.id))
+        // Soft delete by setting deletedAt
+        await db
+          .update(stories)
+          .set({ deletedAt: new Date() })
+          .where(and(eq(stories.id, story.id), isNull(stories.deletedAt)))
         deletedStories.push({ id: story.id, url: story.url })
 
         await track({
           channel: 'custodian',
-          description: `Deleted story: ${story.url}`,
-          event: 'Story Deleted',
+          description: `Soft deleted story: ${story.url}`,
+          event: 'Story Soft Deleted',
           icon: '🗑️',
           tags: {
             story_id: story.id,

@@ -7,6 +7,7 @@ import { users } from './user'
 export const prompt = pgTable('prompt', {
   content: text('content').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
+  deletedAt: timestamp('deleted_at'),
   id: text('id').primaryKey().$defaultFn(nanoid),
   name: text('name').notNull(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
@@ -22,6 +23,7 @@ export const PromptSchema = z
       .min(1, 'Content is required')
       .openapi({ example: 'Custom prompt instructions...' }),
     createdAt: z.coerce.date().openapi({ example: new Date() }),
+    deletedAt: z.coerce.date().nullable().openapi({ example: null }),
     id: z.coerce.string().openapi({ example: '123' }),
     name: z.coerce
       .string()
@@ -34,6 +36,7 @@ export const PromptSchema = z
 
 export const PromptDtoSchema = PromptSchema.omit({
   createdAt: true,
+  deletedAt: true,
   id: true,
   updatedAt: true,
   userId: true,
