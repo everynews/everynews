@@ -1,7 +1,14 @@
 import { z } from 'zod'
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
-import { boolean, json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import {
+  boolean,
+  integer,
+  json,
+  pgTable,
+  text,
+  timestamp,
+} from 'drizzle-orm/pg-core'
 import { LANGUAGE_CODES, LanguageSchema } from './language'
 import { prompt } from './prompt'
 import { strategySchema } from './strategy'
@@ -22,6 +29,7 @@ export const alert = pgTable('alert', {
     onDelete: 'set null',
   }),
   strategy: json('strategy').notNull(),
+  threshold: integer('threshold').notNull().default(70),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   userId: text('user_id')
     .notNull()
@@ -48,6 +56,7 @@ export const AlertSchema = z
     nextRun: z.coerce.date().nullable().openapi({ example: new Date() }),
     promptId: z.coerce.string().nullable().openapi({ example: '123' }),
     strategy: strategySchema,
+    threshold: z.coerce.number().int().min(0).max(100).openapi({ example: 70 }),
     updatedAt: z.coerce.date().openapi({ example: new Date() }),
     userId: z.coerce.string().openapi({ example: '123' }),
     wait: WaitSchema,

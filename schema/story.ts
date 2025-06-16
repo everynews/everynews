@@ -1,6 +1,13 @@
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
-import { json, pgTable, text, timestamp, unique } from 'drizzle-orm/pg-core'
+import {
+  boolean,
+  json,
+  pgTable,
+  text,
+  timestamp,
+  unique,
+} from 'drizzle-orm/pg-core'
 import { z } from 'zod'
 import { alert } from './alert'
 import { prompt } from './prompt'
@@ -19,6 +26,7 @@ export const stories = pgTable(
       .references(() => contents.id, { onDelete: 'cascade' }),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     id: text('id').primaryKey().$defaultFn(nanoid),
+    irrelevant: boolean('irrelevant'),
     keyFindings: json('key_findings'),
     languageCode: text('language_code', { enum: LANGUAGE_CODES })
       .notNull()
@@ -43,6 +51,7 @@ export const StorySchema = z
     contentId: z.coerce.string().openapi({ example: 'content123' }),
     createdAt: z.coerce.date().openapi({ example: new Date() }),
     id: z.coerce.string().openapi({ example: '123' }),
+    irrelevant: z.boolean().nullable().openapi({ example: false }),
     keyFindings: z
       .array(z.string())
       .nullable()
@@ -62,6 +71,7 @@ export const StoryDtoSchema = StorySchema.omit({
   contentId: true,
   createdAt: true,
   id: true,
+  irrelevant: true,
   promptId: true,
   updatedAt: true,
 }).openapi({ ref: 'StoryDtoSchema' })

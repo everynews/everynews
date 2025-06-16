@@ -54,6 +54,7 @@ export const DrillRouter = new Hono<WithAuth>().use(authMiddleware).post(
       nextRun: null,
       promptId: alertData.promptId,
       strategy: alertData.strategy,
+      threshold: alertData.threshold,
       updatedAt: new Date(),
       userId: user.id,
       wait: alertData.wait,

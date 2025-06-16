@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from '@everynews/components/ui/select'
 import { Separator } from '@everynews/components/ui/separator'
+import { Slider } from '@everynews/components/ui/slider'
 import { Switch } from '@everynews/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
 import { Textarea } from '@everynews/components/ui/textarea'
@@ -85,6 +86,7 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
       name: humanId({ capitalize: false, separator: '-' }),
       promptId: null,
       strategy: { provider: 'hnbest' },
+      threshold: 70,
       wait: { type: 'count', value: 10 },
     },
     resolver: zodResolver(AlertDtoSchema),
@@ -104,6 +106,7 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
           values.strategy.provider === 'exa'
             ? { provider: 'exa', query: values.strategy.query || '' }
             : { provider: 'hnbest' },
+        threshold: values.threshold,
         wait: values.wait,
       }
 
@@ -140,6 +143,7 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
           values.strategy.provider === 'exa'
             ? { provider: 'exa', query: values.strategy.query || '' }
             : { provider: 'hnbest' },
+        threshold: values.threshold,
         wait: values.wait,
       }
 
@@ -311,6 +315,26 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
                           : 'Edit Prompt'}
                       </Button>
                     </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='threshold'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Relevance Threshold ({field.value}%)</FormLabel>
+                    <FormControl>
+                      <Slider
+                        min={0}
+                        max={100}
+                        step={1}
+                        value={[field.value]}
+                        onValueChange={(val) => field.onChange(val[0])}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
