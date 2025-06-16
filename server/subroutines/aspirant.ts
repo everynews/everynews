@@ -75,6 +75,7 @@ export const aspirant = async (alert: Alert): Promise<Story[]> => {
           alertId: summary.alertId,
           contentId: summary.contentId,
           createdAt: new Date(),
+          deletedAt: null,
           id: nanoid(),
           irrelevant: null,
           keyFindings: summary.keyFindings,
