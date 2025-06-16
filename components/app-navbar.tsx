@@ -16,7 +16,7 @@ export const AppNavbar = async () => {
         <Logo />
         <span className='inline-block font-bold'>Everynews</span>
         <span className='inline-block rounded-md bg-orange-100 px-1.5 py-0.5 text-xs font-medium text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'>
-          beta
+          open beta
         </span>
       </Link>
       <MobileNav user={user} />

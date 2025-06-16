@@ -60,9 +60,7 @@ export default async function Page() {
             asChild
             className='bg-orange-700 text-white hover:bg-orange-900 text-center'
           >
-            <Link href='/firefighter-mode'>
-              You Ask, We Ship in 3 Days
-            </Link>
+            <Link href='/firefighter-mode'>You Ask. We Ships in 3 Days.</Link>
           </Button>
         </div>
 

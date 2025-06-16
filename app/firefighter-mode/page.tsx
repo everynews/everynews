@@ -19,9 +19,9 @@ export default function FirefighterModePage() {
         <h1 className='text-3xl font-bold mb-8'>Firefighter Mode 🧑‍🚒</h1>
         <div className='flex flex-col gap-6 leading-relaxed'>
           <p>
-            We are in{' '}
+            Everynews is in{' '}
             <span className='inline-block rounded-md bg-orange-100 px-1.5 py-0.5 text-xs font-medium text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'>
-              beta
+              open beta
             </span>{' '}
             and things are literally on{' '}
             <Tooltip>

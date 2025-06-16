@@ -623,8 +623,8 @@ export const AlertEditPage = ({
                           id={`${switchActiveId}-description`}
                           className='text-muted-foreground text-sm'
                         >
-                          We will only gather & send alerts when the alert is
-                          marked active.
+                          Everynews will only gather & send alerts when the
+                          alert is marked active.
                         </p>
                       </div>
                     </div>
