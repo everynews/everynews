@@ -24,8 +24,6 @@ import { count, eq } from 'drizzle-orm'
 import { FileText, Users } from 'lucide-react'
 import Link from 'next/link'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata = {
   description: 'Browse public alerts.',
   title: 'Alerts',
@@ -107,67 +105,74 @@ export default async function AlertsPage() {
               subscriberCount,
               userSubscription,
             }) => (
-              <Card
-                key={alertInfo.id}
-                className='h-full hover:shadow-md transition-shadow'
-              >
-                <CardHeader>
-                  <div className='flex items-start justify-between'>
-                    <div className='flex-1'>
-                      <Link href={`/alerts/${alertInfo.id}`}>
-                        <CardTitle className='text-lg line-clamp-2 hover:text-orange-600 cursor-pointer'>
-                          {alertInfo.name}
-                        </CardTitle>
-                      </Link>
-                    </div>
-                    <Badge variant={alertInfo.active ? 'default' : 'secondary'}>
-                      {alertInfo.active ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </div>
-                </CardHeader>
-
-                <CardContent>
-                  <div className='flex flex-col gap-3'>
-                    {alertInfo.description && (
-                      <p className='text-sm text-muted-foreground line-clamp-2'>
-                        {alertInfo.description}
-                      </p>
-                    )}
-                    <div className='flex items-center justify-between text-sm text-muted-foreground'>
-                      <div className='flex items-center gap-2'>
-                        <FileText className='size-4' />
-                        <span>
-                          {storyCount} {storyCount === 1 ? 'story' : 'stories'}
-                        </span>
+              <Link href={`/alerts/${alertInfo.id}`} key={alertInfo.id}>
+                <Card className='h-full hover:shadow-md transition-shadow'>
+                  <CardHeader>
+                    <div className='flex items-start justify-between'>
+                      <div className='flex-1'>
+                        <Link href={`/alerts/${alertInfo.id}`}>
+                          <CardTitle className='text-lg line-clamp-2 hover:text-orange-600 cursor-pointer'>
+                            {alertInfo.name}
+                          </CardTitle>
+                        </Link>
                       </div>
-                      <div className='flex items-center gap-2'>
-                        <Users className='size-4' />
-                        <span>
-                          {subscriberCount}{' '}
-                          {subscriberCount === 1 ? 'subscriber' : 'subscribers'}
-                        </span>
-                      </div>
-                    </div>
-                    {alertInfo.strategy.query && (
-                      <Badge className='text-muted-foreground'>
-                        {alertInfo.strategy.query}
+                      <Badge
+                        variant={alertInfo.active ? 'default' : 'secondary'}
+                      >
+                        {alertInfo.active ? 'Active' : 'Inactive'}
                       </Badge>
-                    )}
-                    <div className='flex items-center justify-end'>
-                      {user &&
-                        userChannels.length > 0 &&
-                        alertInfo.userId !== user.id && (
-                          <SubscribeAlertButton
-                            alert={alertInfo}
-                            channels={userChannels}
-                            subscription={userSubscription ?? undefined}
-                            user={user}
-                          />
-                        )}
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardHeader>
+
+                  <CardContent>
+                    <div className='flex flex-col gap-3'>
+                      {alertInfo.description && (
+                        <p className='text-sm text-muted-foreground line-clamp-2'>
+                          {alertInfo.description}
+                        </p>
+                      )}
+                      <div className='flex items-center justify-between text-sm text-muted-foreground'>
+                        <div className='flex items-center gap-2'>
+                          <FileText className='size-4' />
+                          <span>
+                            {storyCount}{' '}
+                            {storyCount === 1 ? 'story' : 'stories'}
+                          </span>
+                        </div>
+                        <div className='flex items-center gap-2'>
+                          <Users className='size-4' />
+                          <span>
+                            {subscriberCount}{' '}
+                            {subscriberCount === 1
+                              ? 'subscriber'
+                              : 'subscribers'}
+                          </span>
+                        </div>
+                      </div>
+                      {alertInfo.strategy.query && (
+                        <Badge
+                          className='text-muted-foreground text-xs'
+                          variant='outline'
+                        >
+                          {alertInfo.strategy.query}
+                        </Badge>
+                      )}
+                      <div className='flex items-center justify-end'>
+                        {user &&
+                          userChannels.length > 0 &&
+                          alertInfo.userId !== user.id && (
+                            <SubscribeAlertButton
+                              alert={alertInfo}
+                              channels={userChannels}
+                              subscription={userSubscription ?? undefined}
+                              user={user}
+                            />
+                          )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             ),
           )}
         </div>

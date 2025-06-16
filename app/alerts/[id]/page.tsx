@@ -21,8 +21,6 @@ import { and, desc, eq } from 'drizzle-orm'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata = {
   description: 'Recent stories from this alert.',
   title: 'Alert Stories',

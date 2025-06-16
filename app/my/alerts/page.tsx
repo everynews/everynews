@@ -19,8 +19,6 @@ import { eq } from 'drizzle-orm'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata = {
   description: 'Your created alerts.',
   title: 'Alerts',

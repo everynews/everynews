@@ -18,8 +18,6 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata = {
   description: siteConfig.description,
   title: siteConfig.name,

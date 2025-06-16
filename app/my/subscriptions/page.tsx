@@ -22,8 +22,6 @@ import { Mail, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata = {
   description: "Review alerts you're subscribed to.",
   title: 'Subscriptions',

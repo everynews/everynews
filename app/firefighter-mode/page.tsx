@@ -5,8 +5,6 @@ import {
 } from '@everynews/components/ui/tooltip'
 import Link from 'next/link'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata = {
   description: 'Bug fixing promise for early users.',
   title: 'Firefighter Mode',

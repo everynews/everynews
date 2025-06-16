@@ -2,8 +2,6 @@ import { whoami } from '@everynews/auth/session'
 import { unauthorized } from 'next/navigation'
 import { PromptCreatePage } from './prompt-create-page'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata = {
   description: 'Start a new prompt for filtering content.',
   title: 'Create Prompt',

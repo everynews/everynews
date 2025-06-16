@@ -9,8 +9,6 @@ import { ArrowLeft, Calendar, Globe } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata = {
   description: 'Full story from a subscribed alert.',
   title: 'Story Details',

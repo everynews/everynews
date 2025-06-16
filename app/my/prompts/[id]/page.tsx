@@ -5,8 +5,6 @@ import { and, eq } from 'drizzle-orm'
 import { notFound, unauthorized } from 'next/navigation'
 import { PromptDetailPage } from './prompt-detail-page'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata = {
   description: 'View or edit your prompt configuration.',
   title: 'Prompt Details',

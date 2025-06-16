@@ -15,8 +15,6 @@ import { eq } from 'drizzle-orm'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
-export const dynamic = 'force-dynamic'
-
 export const metadata = {
   description: 'Manage your custom AI prompts for alert summarization',
   title: 'Prompts',
