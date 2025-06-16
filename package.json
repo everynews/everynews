@@ -75,7 +75,7 @@
   "name": "everynews",
   "scripts": {
     "auth:update": "bun x --bun @better-auth/cli generate --config auth/index.ts --output db/auth-schema.ts && bun run style:check",
-    "build": "bun run db:migrate && next build",
+    "build": "next build",
     "db:check": "drizzle-kit check --config ./.config/drizzle.config.ts",
     "db:generate": "drizzle-kit generate --config ./.config/drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config ./.config/drizzle.config.ts",
