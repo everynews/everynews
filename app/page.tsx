@@ -1,5 +1,6 @@
 import { siteConfig } from '@everynews/app/site-config'
 import { Badge } from '@everynews/components/ui/badge'
+import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
 import { alert } from '@everynews/schema/alert'
@@ -48,6 +49,18 @@ export default async function Page() {
           <p className='text-xl text-muted-foreground leading-relaxed w-full  mx-auto'>
             Semantic Monitoring. Context Understanding. Granular Delivery.
           </p>
+        </div>
+
+        <div className='mx-auto max-w-xl bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg flex flex-col items-center gap-2'>
+          <p className='text-sm text-blue-800 dark:text-blue-200'>
+            We're in{' '}
+            <span className='font-semibold'>Beta Firefighting mode</span>.
+          </p>
+          <Button asChild size='sm' variant='secondary'>
+            <Link href='/firefighter-mode'>
+              Learn more about our 3 day promise
+            </Link>
+          </Button>
         </div>
 
         {/* Problem Statement */}
