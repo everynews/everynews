@@ -118,34 +118,41 @@ export default async function AlertStoriesPage({
         <div className='flex flex-col items-center justify-center gap-4'>
           <h1 className='text-2xl font-bold'>{alertInfo.name}</h1>
           <div>
-
-          {user && (
-            <SubscribeAlertButton
-            className='text-muted-foreground text-sm text-bold'
-            alert={AlertSchema.parse(alertInfo)}
-            channels={userChannels}
-            subscription={userSubscription ?? undefined}
-            user={user}
-            />
-          )}
-          {
-            user && isOwner && (
-              <Link href={`/my/alerts/${id}`} >
-                <Button variant='ghost' className='text-muted-foreground text-sm text-bold' size='sm'>
+            {user && (
+              <SubscribeAlertButton
+                className='text-muted-foreground text-sm text-bold'
+                alert={AlertSchema.parse(alertInfo)}
+                channels={userChannels}
+                subscription={userSubscription ?? undefined}
+                user={user}
+              />
+            )}
+            {user && isOwner && (
+              <Link href={`/my/alerts/${id}`}>
+                <Button
+                  variant='ghost'
+                  className='text-muted-foreground text-sm text-bold'
+                  size='sm'
+                >
                   Edit
                 </Button>
               </Link>
-            )
-          }
-          {
-            !user && (
-              <Link href="/sign-in" target='_blank' className='text-muted-foreground text-sm text-bold'>
-                <Button variant='ghost' className='text-muted-foreground text-sm text-bold' size='sm'>
+            )}
+            {!user && (
+              <Link
+                href='/sign-in'
+                target='_blank'
+                className='text-muted-foreground text-sm text-bold'
+              >
+                <Button
+                  variant='ghost'
+                  className='text-muted-foreground text-sm text-bold'
+                  size='sm'
+                >
                   Sign in to subscribe
                 </Button>
               </Link>
-            )
-          }
+            )}
           </div>
         </div>
         {alertInfo.description && (

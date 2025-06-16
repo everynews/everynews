@@ -1,3 +1,4 @@
+import { Badge } from '@everynews/components/ui/badge'
 import {
   Tooltip,
   TooltipContent,
@@ -18,9 +19,12 @@ export default function FirefighterModePage() {
         <div className='flex flex-col gap-6 leading-relaxed'>
           <p>
             Everynews is in{' '}
-            <span className='inline-block rounded-md bg-orange-100 px-1.5 py-0.5 text-xs font-medium text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'>
+            <Badge
+              variant='outline'
+              className='-top-0.5 relative bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 border-orange-300 dark:border-orange-900'
+            >
               open beta
-            </span>{' '}
+            </Badge>{' '}
             and things are literally on{' '}
             <Tooltip>
               <TooltipTrigger>🔥</TooltipTrigger>
@@ -31,15 +35,21 @@ export default function FirefighterModePage() {
           </p>
           <p>
             So, I promise that if you report a{' '}
-            <span className='inline-block rounded-md bg-red-100 px-1.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900/30 dark:text-red-300'>
+            <Badge
+              variant='outline'
+              className='-top-0.5 relative bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-300 dark:border-red-900'
+            >
               bug
-            </span>{' '}
-            or{' '}
-            request a{' '}
-            <span className='inline-block rounded-md bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'>
+            </Badge>{' '}
+            or request a{' '}
+            <Badge
+              variant='outline'
+              className='-top-0.5 relative bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border-blue-300 dark:border-blue-900'
+            >
               feature
-            </span>{' '}
-            that's reasonably sized, I will personally fix it <strong>tomorrow</strong>.
+            </Badge>{' '}
+            that's reasonably sized, I will personally fix it{' '}
+            <strong>today</strong> and ship it <strong>tomorrow</strong>.
           </p>
           <p>
             You'll get a personal response from me (yes, the actual founder)

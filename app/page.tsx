@@ -52,14 +52,14 @@ export default async function Page() {
 
         <div className='mx-auto max-w-xl p-4 rounded-lg flex flex-col items-center gap-2'>
           <p className='text-sm text-orange-800 dark:text-orange-200 text-center'>
-            We're in firefighting mode.
+            If you ask something today, we ship it tomorrow.
           </p>
           <Button
             asChild
             className='bg-orange-700 text-white hover:bg-orange-900 text-center'
           >
             <Link href='/firefighter-mode'>
-              You ask. We ship in tomorrow.
+              Everynews is in Firefighting Mode
             </Link>
           </Button>
         </div>
