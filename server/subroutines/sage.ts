@@ -89,6 +89,7 @@ export const summarizeContent = async ({
     return {
       alertId: news.id,
       contentId: content.id,
+      irrelevant: false,
       keyFindings,
       languageCode,
       promptId: news.promptId,

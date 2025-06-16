@@ -119,6 +119,7 @@ export const AlertRouter = new Hono<WithAuth>()
         language,
         promptId,
         active,
+        threshold,
       } = await c.req.json()
       const user = c.get('user')
       if (!user) {
@@ -141,6 +142,7 @@ export const AlertRouter = new Hono<WithAuth>()
           name,
           promptId,
           strategy,
+          threshold,
           userId: user.id,
           wait,
         })

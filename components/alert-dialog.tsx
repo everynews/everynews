@@ -92,6 +92,7 @@ export const AlertDialog = ({
     name: humanId({ capitalize: false, separator: '-' }),
     promptId: null,
     strategy: { provider: 'hnbest' },
+    threshold: 70,
     wait: { type: 'count', value: 10 },
   }
 
@@ -107,6 +108,7 @@ export const AlertDialog = ({
             name: original?.name || '',
             promptId: original?.promptId || null,
             strategy: original?.strategy || { provider: 'hnbest' },
+            threshold: original?.threshold ?? 70,
             wait: original?.wait || { type: 'count', value: 10 },
           },
     resolver: zodResolver(AlertDtoSchema),
@@ -126,6 +128,7 @@ export const AlertDialog = ({
           values.strategy.provider === 'exa'
             ? { provider: 'exa', query: values.strategy.query || '' }
             : { provider: 'hnbest' },
+        threshold: values.threshold,
         wait: values.wait,
       }
       let res: Response
