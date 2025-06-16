@@ -275,8 +275,10 @@ export const AlertRouter = new Hono<WithAuth>()
       // Soft delete by setting deletedAt
       const result = await db
         .update(alert)
-        .set({ deletedAt: new Date() })
-        .where(and(eq(alert.id, id), isNull(alert.deletedAt)))
+        .set({ deletedAt: new Date(), updatedAt: new Date() })
+        .where(
+          and(eq(alert.id, id), eq(alert.userId, user.id), isNull(alert.deletedAt)),
+        )
         .returning()
 
       await track({
