@@ -120,8 +120,8 @@ export default async function AlertStoriesPage({
   const hasPrevPage = currentPage > 1
 
   return (
-    <>
-      <div className='flex flex-col text-center gap-2 mb-6'>
+    <div className='flex flex-col gap-6'>
+      <div className='flex flex-col text-center gap-2'>
         <div className='flex flex-col items-center justify-center gap-4'>
           <h1 className='text-2xl font-bold'>{alertInfo.name}</h1>
           <div>
@@ -227,7 +227,7 @@ export default async function AlertStoriesPage({
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className='flex justify-center gap-2 mt-8'>
+              <div className='flex justify-center gap-2'>
                 {hasPrevPage && (
                   <Link href={`/alerts/${id}?page=${currentPage - 1}`}>
                     <Button variant='outline'>Previous</Button>
@@ -267,6 +267,6 @@ export default async function AlertStoriesPage({
           </>
         )}
       </div>
-    </>
+    </div>
   )
 }

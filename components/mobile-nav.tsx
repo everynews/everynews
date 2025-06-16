@@ -14,15 +14,13 @@ import {
 } from '@everynews/components/ui/sheet'
 import { Logo } from '@everynews/public/logo'
 import type { User } from 'better-auth'
-import { Menu } from 'lucide-react'
 import Link from 'next/link'
 
 export const MobileNav = ({ user }: { user?: User | null }) => (
   <Sheet>
     <SheetTrigger asChild>
-      <Button variant='ghost' size='icon' className='md:hidden'>
-        <Menu className='size-4' />
-        <span className='sr-only'>Open menu</span>
+      <Button variant='ghost' size='sm' className='md:hidden'>
+        Menu
       </Button>
     </SheetTrigger>
     <SheetContent side='left' className='flex flex-col'>
@@ -37,7 +35,7 @@ export const MobileNav = ({ user }: { user?: User | null }) => (
           </Link>
         </SheetClose>
       </SheetHeader>
-      <nav className='flex flex-col gap-2 p-4 flex-1 overflow-y-auto'>
+      <nav className='flex flex-col gap-4 p-4 flex-1 overflow-y-auto'>
         <SheetClose asChild>
           <Link
             href={user ? '/home' : '/'}
@@ -47,9 +45,9 @@ export const MobileNav = ({ user }: { user?: User | null }) => (
           </Link>
         </SheetClose>
 
-        <Separator className='my-2' />
+        <Separator />
 
-        <div className='space-y-1'>
+        <div className='flex flex-col gap-1'>
           <p className='px-3 text-xs font-semibold text-muted-foreground'>
             Alerts
           </p>
@@ -93,9 +91,9 @@ export const MobileNav = ({ user }: { user?: User | null }) => (
 
         {user && (
           <>
-            <Separator className='my-2' />
+            <Separator />
 
-            <div className='space-y-1'>
+            <div className='flex flex-col gap-1'>
               <p className='px-3 text-xs font-semibold text-muted-foreground'>
                 My Workspace
               </p>
@@ -133,7 +131,7 @@ export const MobileNav = ({ user }: { user?: User | null }) => (
               </SheetClose>
             </div>
 
-            <Separator className='my-2' />
+            <Separator />
 
             <SheetClose asChild>
               <Link

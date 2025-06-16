@@ -38,7 +38,7 @@ export default async function Page() {
     .limit(8)
 
   return (
-    <div className='min-h-screen bg-background container'>
+    <div className='min-h-dvh bg-background container'>
       {/* Hero Section */}
       <div className='container mx-auto px-6 pt-20 pb-16 flex flex-col gap-20'>
         <div className='text-center max-w-6xl mx-auto flex flex-col gap-6 w-full'>
@@ -148,15 +148,15 @@ export default async function Page() {
                 </h3>
                 <ul className='flex flex-col gap-2 text-sm text-muted-foreground'>
                   <li className='flex items-start gap-2'>
-                    <CheckCircle className='w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0' />
+                    <CheckCircle className='w-4 h-4 text-orange-500 flex-shrink-0' />
                     <span>LLM-powered context understanding</span>
                   </li>
                   <li className='flex items-start gap-2'>
-                    <CheckCircle className='w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0' />
+                    <CheckCircle className='w-4 h-4 text-orange-500 flex-shrink-0' />
                     <span>Vector-based semantic matching</span>
                   </li>
                   <li className='flex items-start gap-2'>
-                    <CheckCircle className='w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0' />
+                    <CheckCircle className='w-4 h-4 text-orange-500 flex-shrink-0' />
                     <span>Domain-specific intelligence</span>
                   </li>
                 </ul>
@@ -173,15 +173,15 @@ export default async function Page() {
                 </h3>
                 <ul className='flex flex-col gap-2 text-sm text-muted-foreground'>
                   <li className='flex items-start gap-2'>
-                    <CheckCircle className='w-4 h-4 text-green-500 mt-0.5 flex-shrink-0' />
+                    <CheckCircle className='w-4 h-4 text-green-500 flex-shrink-0' />
                     <span>Time-based batching (8 AM Seoul time)</span>
                   </li>
                   <li className='flex items-start gap-2'>
-                    <CheckCircle className='w-4 h-4 text-green-500 mt-0.5 flex-shrink-0' />
+                    <CheckCircle className='w-4 h-4 text-green-500 flex-shrink-0' />
                     <span>Volume-based triggers</span>
                   </li>
                   <li className='flex items-start gap-2'>
-                    <CheckCircle className='w-4 h-4 text-green-500 mt-0.5 flex-shrink-0' />
+                    <CheckCircle className='w-4 h-4 text-green-500 flex-shrink-0' />
                     <span>Email, Slack, webhooks & APIs</span>
                   </li>
                 </ul>
@@ -197,15 +197,15 @@ export default async function Page() {
                 </h3>
                 <ul className='flex flex-col gap-2 text-sm text-muted-foreground'>
                   <li className='flex items-start gap-2'>
-                    <CheckCircle className='w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0' />
+                    <CheckCircle className='w-4 h-4 text-purple-500 flex-shrink-0' />
                     <span>Feedback-driven improvements</span>
                   </li>
                   <li className='flex items-start gap-2'>
-                    <CheckCircle className='w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0' />
+                    <CheckCircle className='w-4 h-4 text-purple-500 flex-shrink-0' />
                     <span>Relevance scoring</span>
                   </li>
                   <li className='flex items-start gap-2'>
-                    <CheckCircle className='w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0' />
+                    <CheckCircle className='w-4 h-4 text-purple-500 flex-shrink-0' />
                     <span>Continuous optimization</span>
                   </li>
                 </ul>
