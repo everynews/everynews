@@ -145,8 +145,7 @@ export default function OnboardingPage() {
   }
 
   const handleChipClick = (interest: string) => {
-    const currentQuery = form.getValues('strategy.query') || ''
-    const newQuery = currentQuery ? `${currentQuery}, ${interest}` : interest
+    const newQuery = `New companies in ${interest}`
     form.setValue('strategy.query', newQuery, {
       shouldDirty: true,
       shouldTouch: true,
@@ -205,7 +204,7 @@ export default function OnboardingPage() {
 
             {testResults && testResults.length > 0 && (
               <div className='mt-6 p-4 bg-muted/50 rounded-lg'>
-                <h3 className='text-sm font-semibold mb-4'>Preview Results</h3>
+                <h3 className='text-sm font-semibold mb-4 text-muted-foreground'>It may feel a bit generic if you just randomly clicked on some chips. Now, try to refine your input and rerun...</h3>
                 <AlertPreview stories={testResults} />
               </div>
             )}
@@ -219,7 +218,7 @@ export default function OnboardingPage() {
                 Skip for now
               </Button>
               <div className='flex gap-2'>
-                {!testResults && (
+                
                   <SubmitButton
                     variant='outline'
                     loading={isTesting}
@@ -227,11 +226,10 @@ export default function OnboardingPage() {
                   >
                     Test Alert
                   </SubmitButton>
-                )}
+                
                 {testResults && testResults.length > 0 && (
                   <SubmitButton
                     loading={isSubmitting}
-                    size='lg'
                     onClick={() => form.handleSubmit(onSubmit)}
                   >
                     Looks Good
