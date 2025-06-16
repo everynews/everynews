@@ -196,7 +196,14 @@ export const AlertRouter = new Hono<WithAuth>()
       const existing = await db
         .select()
         .from(alert)
-        .where(and(eq(alert.id, id), isNull(alert.deletedAt)))
+-       .where(and(eq(alert.id, id), isNull(alert.deletedAt)))
++       .where(
++         and(
++           eq(alert.id, id),
++           eq(alert.userId, user.id),   // enforce ownership
++           isNull(alert.deletedAt),
++         ),
++       )
       if (existing.length === 0) {
         await track({
           channel: 'alerts',
@@ -210,7 +217,6 @@ export const AlertRouter = new Hono<WithAuth>()
         })
         return c.json({ error: 'Alert not found' }, 404)
       }
-
       const result = await db
         .update(alert)
         .set({ ...request, updatedAt: new Date() })
