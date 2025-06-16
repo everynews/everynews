@@ -1,3 +1,4 @@
+import { FooterStats } from '@everynews/components/footer-stats'
 import { ThemeToggle } from '@everynews/components/theme/toggle'
 import {
   Footer,
@@ -43,6 +44,7 @@ export const AppFooter = ({
     {
       links: [
         { href: 'https://github.com/everynews/everynews', text: 'GitHub' },
+        { href: 'https://x.com/everydotnews', text: 'X' },
       ],
       title: 'Connect',
     },
@@ -80,6 +82,10 @@ export const AppFooter = ({
                 ))}
               </FooterColumn>
             ))}
+            <FooterColumn>
+              <h3 className='text-md pt-1 font-semibold'>Stats</h3>
+              <FooterStats />
+            </FooterColumn>
           </FooterContent>
           <FooterBottom className='p-2'>
             <div className='text-sm text-muted-foreground'>{copyright}</div>
