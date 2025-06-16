@@ -20,7 +20,7 @@ export default function FirefighterModePage() {
         <div className='flex flex-col gap-6 leading-relaxed'>
           <p>
             We are in{' '}
-            <span className='inline-block rounded-md bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'>
+            <span className='inline-block rounded-md bg-orange-100 px-1.5 py-0.5 text-xs font-medium text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'>
               beta
             </span>{' '}
             and things are literally on{' '}
@@ -45,7 +45,7 @@ export default function FirefighterModePage() {
             within hours. I'll fix it, and I'll personally let you know it's
             done. People say this is{' '}
             <Link
-              className='text-blue-500'
+              className='text-orange-500'
               href='https://paulgraham.com/foundermode.html'
             >
               founder mode
@@ -57,12 +57,12 @@ export default function FirefighterModePage() {
 
           <p>
             So, found something broken? Or want a new feature?{' '}
-            <Link className='text-blue-500' href='mailto:sunghyun@every.news'>
+            <Link className='text-orange-500' href='mailto:sunghyun@every.news'>
               Email me
             </Link>{' '}
             or{' '}
             <Link
-              className='text-blue-500'
+              className='text-orange-500'
               href='https://github.com/everynews/everynews/issues'
             >
               leave an issue

@@ -24,7 +24,7 @@ export const Alert = ({ stories }: { stories: Story[] }) => {
                     <div key={story.id}>
                       <Link
                         href={`https://${story.url}`}
-                        className='text-blue-500 no-underline'
+                        className='text-orange-500 no-underline'
                       >
                         <Heading as='h2' className='text-lg font-semibold'>
                           {story.title}

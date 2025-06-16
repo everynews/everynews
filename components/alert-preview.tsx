@@ -14,7 +14,7 @@ export const AlertPreview = ({ stories }: { stories: Story[] }) => {
             href={`https://${story.url}`}
             target='_blank'
             rel='noopener noreferrer'
-            className='text-blue-500 no-underline hover:underline'
+            className='text-orange-500 no-underline hover:underline'
           >
             <h2 className='text-lg font-semibold'>{story.title}</h2>
           </Link>

@@ -14,7 +14,7 @@ export const MagicLinkEmail = ({ signinLink }: { signinLink: string }) => {
       <Body className='bg-white px-2 font-sans'>
         <Preview>Verify your notification channel</Preview>
         <Container className='my-10 mx-auto rounded border border-gray-200 p-5 text-center'>
-          <Link href={signinLink} className='text-blue-600 no-underline'>
+          <Link href={signinLink} className='text-orange-600 no-underline'>
             <div className='flex justify-center'>
               <Button
                 className='mx-auto rounded bg-black px-6 py-3 text-lg font-semibold text-white'

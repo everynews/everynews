@@ -9,6 +9,7 @@ import { stories } from '@everynews/schema/story'
 import { desc, eq } from 'drizzle-orm'
 import {
   AlertCircle,
+  Blocks,
   CheckCircle,
   Globe,
   HelpCircle,
@@ -51,12 +52,12 @@ export default async function Page() {
           </p>
         </div>
 
-        <div className='mx-auto max-w-xl bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg flex flex-col items-center gap-2'>
-          <p className='text-sm text-blue-800 dark:text-blue-200'>
+        <div className='mx-auto max-w-xl p-4 rounded-lg flex flex-col items-center gap-2'>
+          <p className='text-sm text-orange-800 dark:text-orange-200'>
             We're in{' '}
-            <span className='font-semibold'>Beta Firefighting mode</span>.
+            <strong>Beta Firefighting mode</strong>.
           </p>
-          <Button asChild size='sm' variant='secondary'>
+          <Button asChild className='bg-orange-500 text-white hover:bg-orange-600'>
             <Link href='/firefighter-mode'>
               Learn more about our 3 day promise
             </Link>
@@ -137,9 +138,9 @@ export default async function Page() {
           </div>
 
           <div className='grid md:grid-cols-3 gap-8'>
-            <Card className='border-blue-200 bg-blue-50/50 dark:border-blue-800 dark:bg-blue-950/20 w-full'>
+            <Card className='border-orange-200 bg-orange-50/50 dark:border-orange-800 dark:bg-orange-950/20 w-full'>
               <CardContent className='p-6 flex flex-col gap-4'>
-                <div className='text-blue-600'>
+                <div className='text-orange-600'>
                   <Zap className='w-8 h-8' />
                 </div>
                 <h3 className='font-semibold text-foreground'>
@@ -147,15 +148,15 @@ export default async function Page() {
                 </h3>
                 <ul className='flex flex-col gap-2 text-sm text-muted-foreground'>
                   <li className='flex items-start gap-2'>
-                    <CheckCircle className='w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0' />
+                    <CheckCircle className='w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0' />
                     <span>LLM-powered context understanding</span>
                   </li>
                   <li className='flex items-start gap-2'>
-                    <CheckCircle className='w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0' />
+                    <CheckCircle className='w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0' />
                     <span>Vector-based semantic matching</span>
                   </li>
                   <li className='flex items-start gap-2'>
-                    <CheckCircle className='w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0' />
+                    <CheckCircle className='w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0' />
                     <span>Domain-specific intelligence</span>
                   </li>
                 </ul>
@@ -186,11 +187,10 @@ export default async function Page() {
                 </ul>
               </CardContent>
             </Card>
-
             <Card className='border-purple-200 bg-purple-50/50 dark:border-purple-800 dark:bg-purple-950/20 w-full'>
               <CardContent className='p-6 flex flex-col gap-4'>
                 <div className='text-purple-600'>
-                  <CheckCircle className='w-8 h-8' />
+                  <Blocks className='w-8 h-8' />
                 </div>
                 <h3 className='font-semibold text-foreground'>
                   Learning System

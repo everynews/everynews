@@ -76,7 +76,7 @@ export default function SignInPage() {
           <CardTitle>Welcome to every.news</CardTitle>
           <CardDescription>
             By logging in, you agree to our{' '}
-            <Link href='/terms' className='text-blue-500'>
+            <Link href='/terms' className='text-orange-500'>
               terms of service
             </Link>
             .

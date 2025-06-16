@@ -30,7 +30,7 @@ export const MobileNav = ({ user }: { user?: User | null }) => (
           <Link href='/' className='flex items-center gap-2'>
             <Logo />
             <span className='font-bold'>Everynews</span>
-            <span className='rounded-md bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'>
+            <span className='rounded-md bg-orange-100 px-1.5 py-0.5 text-xs font-medium text-orange-800 dark:bg-orange-900/30 dark:text-orange-300'>
               beta
             </span>
           </Link>

@@ -31,7 +31,7 @@ export default function PrivacyPage() {
             processed under this Policy. Contact{' '}
             <Link
               href='mailto:privacy@every.news'
-              className='text-blue-500 hover:underline'
+              className='text-orange-500 hover:underline'
             >
               privacy@every.news
             </Link>
@@ -142,7 +142,7 @@ export default function PrivacyPage() {
             portability, objection, withdrawal of consent. Exercise via{' '}
             <Link
               href='mailto:privacy@every.news'
-              className='text-blue-500 hover:underline'
+              className='text-orange-500 hover:underline'
             >
               privacy@every.news
             </Link>

@@ -115,7 +115,7 @@ export default async function AlertsPage() {
                   <div className='flex items-start justify-between'>
                     <div className='flex-1'>
                       <Link href={`/alerts/${alertInfo.id}`}>
-                        <CardTitle className='text-lg line-clamp-2 hover:text-blue-600 cursor-pointer'>
+                        <CardTitle className='text-lg line-clamp-2 hover:text-orange-600 cursor-pointer'>
                           {alertInfo.name}
                         </CardTitle>
                       </Link>

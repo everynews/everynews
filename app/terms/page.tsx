@@ -154,7 +154,7 @@ export default function TermsPage() {
             Contact us at{' '}
             <Link
               href='mailto:legal@every.news'
-              className='text-blue-500 hover:underline'
+              className='text-orange-500 hover:underline'
             >
               legal@every.news
             </Link>
