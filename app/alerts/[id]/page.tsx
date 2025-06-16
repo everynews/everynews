@@ -115,16 +115,38 @@ export default async function AlertStoriesPage({
   return (
     <>
       <div className='flex flex-col text-center gap-2 mb-6'>
-        <div className='flex items-center justify-center gap-4'>
+        <div className='flex flex-col items-center justify-center gap-4'>
           <h1 className='text-2xl font-bold'>{alertInfo.name}</h1>
-          {user && !isOwner && userChannels.length > 0 && (
+          <div>
+
+          {user && (
             <SubscribeAlertButton
-              alert={AlertSchema.parse(alertInfo)}
-              channels={userChannels}
-              subscription={userSubscription ?? undefined}
-              user={user}
+            className='text-muted-foreground text-sm text-bold'
+            alert={AlertSchema.parse(alertInfo)}
+            channels={userChannels}
+            subscription={userSubscription ?? undefined}
+            user={user}
             />
           )}
+          {
+            user && isOwner && (
+              <Link href={`/my/alerts/${id}`} >
+                <Button variant='ghost' className='text-muted-foreground text-sm text-bold' size='sm'>
+                  Edit
+                </Button>
+              </Link>
+            )
+          }
+          {
+            !user && (
+              <Link href="/sign-in" target='_blank' className='text-muted-foreground text-sm text-bold'>
+                <Button variant='ghost' className='text-muted-foreground text-sm text-bold' size='sm'>
+                  Sign in to subscribe
+                </Button>
+              </Link>
+            )
+          }
+          </div>
         </div>
         {alertInfo.description && (
           <p className='text-muted-foreground'>{alertInfo.description}</p>

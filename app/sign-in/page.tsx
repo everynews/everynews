@@ -60,12 +60,12 @@ export default function SignInPage() {
           window.open(`https://${contact.split('@')[1]}`, '_blank')
         }
       }
+      toast.success('Magic Link Sent!')
     } catch (e) {
       toastNetworkError(e as Error)
     } finally {
       setIsLoading(false)
       setIsFeelingLuckyLoading(false)
-      toast.success('Magic Link Sent!')
     }
   }
 
