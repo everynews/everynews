@@ -4,7 +4,13 @@ import { api } from '@everynews/app/api'
 import { AlertPreview } from '@everynews/components/alert-preview'
 import { SubmitButton } from '@everynews/components/submit-button'
 import { Button } from '@everynews/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@everynews/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@everynews/components/ui/card'
 import {
   Form,
   FormControl,
@@ -63,7 +69,7 @@ export default function OnboardingPage() {
 
   const onTest = async () => {
     const values = form.getValues()
-    
+
     if (!values.strategy.query?.trim()) {
       form.setError('strategy.query', {
         message: 'Please enter what you are interested in',
@@ -85,12 +91,16 @@ export default function OnboardingPage() {
             }
           : values.strategy,
       }
-      
+
       const res = await api.drill.$post({ json: apiData })
-      
+
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({ error: 'Unknown error' }))
-        toast.error('Failed to test alert', {description: JSON.stringify(errorData)})
+        const errorData = await res
+          .json()
+          .catch(() => ({ error: 'Unknown error' }))
+        toast.error('Failed to test alert', {
+          description: JSON.stringify(errorData),
+        })
         return
       }
 
@@ -163,62 +173,62 @@ export default function OnboardingPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
-            <div className='space-y-4'>
-              
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+              <div className='space-y-4'>
+                <div className='flex flex-wrap gap-2 mb-4'>
+                  {INTEREST_CHIPS.map((interest) => (
+                    <Button
+                      key={interest}
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => handleChipClick(interest)}
+                      className='rounded-full'
+                    >
+                      {interest}
+                    </Button>
+                  ))}
+                </div>
 
-              <div className='flex flex-wrap gap-2 mb-4'>
-                {INTEREST_CHIPS.map((interest) => (
-                  <Button
-                    key={interest}
-                    type='button'
-                    variant='outline'
-                    size='sm'
-                    onClick={() => handleChipClick(interest)}
-                    className='rounded-full'
-                  >
-                    {interest}
-                  </Button>
-                ))}
+                <FormField
+                  control={form.control}
+                  name='strategy.query'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className='sr-only'>Your interests</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder='What are you interested in?'
+                          className='min-h-24'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
-              <FormField
-                control={form.control}
-                name='strategy.query'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className='sr-only'>Your interests</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder='What are you interested in?'
-                        className='min-h-24'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+              {testResults && testResults.length > 0 && (
+                <div className='mt-6 p-4 bg-muted/50 rounded-lg'>
+                  <h3 className='text-sm font-semibold mb-4 text-muted-foreground'>
+                    It may feel a bit generic if you just randomly clicked on
+                    some chips. Now, try to refine your input and rerun...
+                  </h3>
+                  <AlertPreview stories={testResults} />
+                </div>
+              )}
 
-            {testResults && testResults.length > 0 && (
-              <div className='mt-6 p-4 bg-muted/50 rounded-lg'>
-                <h3 className='text-sm font-semibold mb-4 text-muted-foreground'>It may feel a bit generic if you just randomly clicked on some chips. Now, try to refine your input and rerun...</h3>
-                <AlertPreview stories={testResults} />
-              </div>
-            )}
-
-            <div className='flex justify-between gap-4'>
-              <Button
-                type='button'
-                variant='ghost'
-                onClick={() => router.push('/')}
-              >
-                Skip for now
-              </Button>
-              <div className='flex gap-2'>
-                
+              <div className='flex justify-between gap-4'>
+                <Button
+                  type='button'
+                  variant='ghost'
+                  onClick={() => router.push('/')}
+                >
+                  Skip for now
+                </Button>
+                <div className='flex gap-2'>
                   <SubmitButton
                     variant='outline'
                     loading={isTesting}
@@ -226,20 +236,20 @@ export default function OnboardingPage() {
                   >
                     Test Alert
                   </SubmitButton>
-                
-                {testResults && testResults.length > 0 && (
-                  <SubmitButton
-                    loading={isSubmitting}
-                    onClick={() => form.handleSubmit(onSubmit)}
-                  >
-                    Looks Good
-                  </SubmitButton>
-                )}
+
+                  {testResults && testResults.length > 0 && (
+                    <SubmitButton
+                      loading={isSubmitting}
+                      onClick={() => form.handleSubmit(onSubmit)}
+                    >
+                      Looks Good
+                    </SubmitButton>
+                  )}
+                </div>
               </div>
-            </div>
-          </form>
-        </Form>
-        </CardContent>  
+            </form>
+          </Form>
+        </CardContent>
       </Card>
     </div>
   )

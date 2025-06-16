@@ -53,7 +53,8 @@ export default function SignInSuccessPage() {
             <XCircle className='mx-auto h-16 w-16 text-red-700 dark:text-red-400 my-2' />
             <CardTitle>Invalid or Expired Link</CardTitle>
             <CardDescription>
-              The sign-in link you used is invalid or has expired. Please request a new sign-in link.
+              The sign-in link you used is invalid or has expired. Please
+              request a new sign-in link.
             </CardDescription>
           </CardHeader>
           <CardContent>

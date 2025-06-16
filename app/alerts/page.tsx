@@ -110,9 +110,9 @@ export default async function AlertsPage() {
                   <CardHeader>
                     <div className='flex items-start justify-between'>
                       <div className='flex-1'>
-                          <CardTitle className='text-lg line-clamp-2 cursor-pointer'>
-                            {alertInfo.name}
-                          </CardTitle>
+                        <CardTitle className='text-lg line-clamp-2 cursor-pointer'>
+                          {alertInfo.name}
+                        </CardTitle>
                       </div>
                       <Badge
                         variant={alertInfo.active ? 'default' : 'secondary'}

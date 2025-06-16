@@ -42,8 +42,9 @@ export const HnBestCurator: Curator = async (
       )
       const item = await HackerNewsStorySchema.parse(await response.json())
       return {
-        url: item.url || `https://news.ycombinator.com/item?id=${String(item.id)}`,
         time: item.time,
+        url:
+          item.url || `https://news.ycombinator.com/item?id=${String(item.id)}`,
       }
     }),
   )
@@ -51,7 +52,7 @@ export const HnBestCurator: Curator = async (
   // Sort by time (most recent first) and extract URLs
   const sortedUrls = itemsWithMetadata
     .sort((a, b) => b.time - a.time)
-    .map(item => item.url)
+    .map((item) => item.url)
     .filter((url): url is string => Boolean(url))
 
   return sortedUrls
