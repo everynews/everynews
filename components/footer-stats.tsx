@@ -16,9 +16,9 @@ export const FooterStats = async () => {
 
   return (
     <div className='text-sm text-muted-foreground flex gap-2 flex-col'>
-      <span>{userCount[0].count.toLocaleString()} happy users</span>
-      <span>{alertCount[0].count.toLocaleString()} timely alerts</span>
-      <span>{storyCount[0].count.toLocaleString()} surprising stories</span>
+      <span>{Number(userCount[0].count).toLocaleString()} happy users</span>
+      <span>{Number(alertCount[0].count).toLocaleString()} timely alerts</span>
+      <span>{Number(storyCount[0].count).toLocaleString()} surprising stories</span>
     </div>
   )
 }
