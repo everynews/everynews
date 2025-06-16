@@ -59,6 +59,7 @@ export default function SignInSuccessPage() {
           </CardHeader>
           <CardContent>
             <SubmitButton
+              loading={isPending}
               onClick={() => {
                 startTransition(() => {
                   router.push('/sign-in')

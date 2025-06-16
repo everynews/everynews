@@ -26,6 +26,7 @@ CREATE TABLE "alert" (
 	"next_run" timestamp DEFAULT now(),
 	"prompt_id" text,
 	"strategy" json NOT NULL,
+	"threshold" integer DEFAULT 70 NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"user_id" text NOT NULL,
 	"wait" json NOT NULL
@@ -91,6 +92,7 @@ CREATE TABLE "stories" (
 	"content_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"id" text PRIMARY KEY NOT NULL,
+	"irrelevant" boolean,
 	"key_findings" json,
 	"language_code" text DEFAULT 'en' NOT NULL,
 	"prompt_id" text,
