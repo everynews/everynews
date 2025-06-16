@@ -110,3 +110,4 @@ The application follows a hybrid approach for data handling:
 - For submitting Hono RPC actions, try to use <SubmitButton /> Component.
 - Do not use arrow directly as unicode. Use Lucide icons such as <ArrowLeft />.
 - Inside a button, do not use an icon. Only put plain text in it.
+- Prefer Tailwind shorthand notations, such as `size-`.
