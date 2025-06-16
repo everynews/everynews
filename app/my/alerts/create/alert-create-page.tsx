@@ -95,22 +95,7 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
   const onSubmit = async (values: AlertDto) => {
     setIsSubmitting(true)
     try {
-      const apiData: AlertDto = {
-        active: values.active,
-        description: values.description,
-        isPublic: values.isPublic,
-        language: values.language,
-        name: values.name,
-        promptId: values.promptId,
-        strategy:
-          values.strategy.provider === 'exa'
-            ? { provider: 'exa', query: values.strategy.query || '' }
-            : { provider: 'hnbest' },
-        threshold: values.threshold,
-        wait: values.wait,
-      }
-
-      const res = await api.alerts.$post({ json: apiData })
+      const res = await api.alerts.$post({ json: values })
 
       if (!res.ok) {
         toast.error('Failed to create alert')
@@ -132,22 +117,7 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
     setTestResults(null)
 
     try {
-      const apiData: AlertDto = {
-        active: values.active,
-        description: values.description,
-        isPublic: values.isPublic,
-        language: values.language,
-        name: values.name,
-        promptId: values.promptId,
-        strategy:
-          values.strategy.provider === 'exa'
-            ? { provider: 'exa', query: values.strategy.query || '' }
-            : { provider: 'hnbest' },
-        threshold: values.threshold,
-        wait: values.wait,
-      }
-
-      const res = await api.drill.$post({ json: apiData })
+      const res = await api.drill.$post({ json: values })
 
       if (!res.ok) {
         toast.error('Failed to test alert')

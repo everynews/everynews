@@ -35,6 +35,8 @@ const INTEREST_CHIPS = [
   'Quantum Computing',
 ]
 
+const searchableProviders = ['exa']
+
 export default function OnboardingPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -56,8 +58,8 @@ export default function OnboardingPage() {
   const onSubmit = async (values: AlertDto) => {
     if (!values.strategy.query?.trim()) {
       form.setError('strategy.query', {
-        type: 'manual',
         message: 'Please enter what you are interested in',
+        type: 'manual',
       })
       return
     }
@@ -66,7 +68,12 @@ export default function OnboardingPage() {
     try {
       const apiData: AlertDto = {
         ...values,
-        strategy: { provider: 'exa', query: values.strategy.query },
+        strategy: searchableProviders.includes(values.strategy.provider)
+          ? {
+              provider: values.strategy.provider,
+              query: values.strategy.query,
+            }
+          : values.strategy,
       }
 
       const res = await api.alerts.$post({ json: apiData })
@@ -87,9 +94,7 @@ export default function OnboardingPage() {
 
   const handleChipClick = (interest: string) => {
     const currentQuery = form.getValues('strategy.query') || ''
-    const newQuery = currentQuery
-      ? `${currentQuery}, ${interest}`
-      : interest
+    const newQuery = currentQuery ? `${currentQuery}, ${interest}` : interest
     form.setValue('strategy.query', newQuery, {
       shouldDirty: true,
       shouldTouch: true,
@@ -103,13 +108,11 @@ export default function OnboardingPage() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
             <div className='space-y-4'>
-            
               <h1 className='text-4xl font-bold mb-2'>Welcome to Everynews</h1>
-        <p className='text-lg text-muted-foreground'>
-          Let's create your personalized AI newsletter in seconds!
-        </p>
+              <p className='text-lg text-muted-foreground'>
+                Let's create your personalized AI newsletter in seconds!
+              </p>
 
-              
               <div className='flex flex-wrap gap-2 mb-4'>
                 {INTEREST_CHIPS.map((interest) => (
                   <Button
@@ -152,7 +155,11 @@ export default function OnboardingPage() {
               >
                 Skip for now
               </Button>
-              <SubmitButton loading={isSubmitting} size='lg' onClick={() => form.handleSubmit(onSubmit)}>
+              <SubmitButton
+                loading={isSubmitting}
+                size='lg'
+                onClick={() => form.handleSubmit(onSubmit)}
+              >
                 Create My Newsletter
               </SubmitButton>
             </div>

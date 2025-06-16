@@ -148,12 +148,11 @@ export default async function AlertsPage() {
                         </span>
                       </div>
                     </div>
-                    {alertInfo.strategy.provider === 'exa' &&
-                      alertInfo.strategy.query && (
-                        <Badge className='text-muted-foreground'>
-                          {alertInfo.strategy.query}
-                        </Badge>
-                      )}
+                    {alertInfo.strategy.query && (
+                      <Badge className='text-muted-foreground'>
+                        {alertInfo.strategy.query}
+                      </Badge>
+                    )}
                     <div className='flex items-center justify-end'>
                       {user &&
                         userChannels.length > 0 &&

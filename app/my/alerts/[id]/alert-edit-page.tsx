@@ -48,8 +48,6 @@ import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-const STRATEGY_WITH_QUERY = ['exa']
-
 const DAYS_OF_WEEK = [
   'Monday',
   'Tuesday',
@@ -120,23 +118,8 @@ export const AlertEditPage = ({
   const onSubmit = async (values: AlertDto) => {
     setIsSubmitting(true)
     try {
-      const apiData: AlertDto = {
-        active: values.active,
-        description: values.description,
-        isPublic: values.isPublic,
-        language: values.language,
-        name: values.name,
-        promptId: values.promptId,
-        strategy:
-          values.strategy.provider === 'exa'
-            ? { provider: 'exa', query: values.strategy.query || '' }
-            : { provider: 'hnbest' },
-        threshold: values.threshold,
-        wait: values.wait,
-      }
-
       const res = await api.alerts[':id'].$put({
-        json: apiData,
+        json: values,
         param: { id: alert.id },
       })
 
@@ -160,23 +143,7 @@ export const AlertEditPage = ({
     setTestResults(null)
 
     try {
-      const apiData: AlertDto = {
-        active: values.active,
-        description: values.description,
-        isPublic: values.isPublic,
-        language: values.language,
-        name: values.name,
-        promptId: values.promptId,
-        strategy:
-          values.strategy.provider === 'exa'
-            ? { provider: 'exa', query: values.strategy.query || '' }
-            : { provider: 'hnbest' },
-        threshold: values.threshold,
-        wait: values.wait,
-      }
-
-      const res = await api.drill.$post({ json: apiData })
-
+      const res = await api.drill.$post({ json: values })
       if (!res.ok) {
         toast.error('Failed to test alert')
         return
@@ -195,7 +162,6 @@ export const AlertEditPage = ({
     }
   }
 
-  const strategyProvider = form.watch('strategy.provider')
   const waitType = form.watch('wait.type')
   const selectedPromptId = form.watch('promptId')
 
@@ -367,9 +333,7 @@ export const AlertEditPage = ({
                   </FormItem>
                 )}
               />
-
               <Separator />
-
               <FormField
                 control={form.control}
                 name='strategy.provider'
@@ -436,31 +400,24 @@ export const AlertEditPage = ({
                   </FormItem>
                 )}
               />
-
-              {STRATEGY_WITH_QUERY.includes(strategyProvider) && (
-                <>
-                  <Separator />
-                  <FormField
-                    control={form.control}
-                    name='strategy.query'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Search Query</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder='artificial intelligence'
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </>
-              )}
-
               <Separator />
-
+              <FormField
+                control={form.control}
+                name='strategy.query'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Search Query</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder='artificial intelligence'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Separator />
               <FormField
                 control={form.control}
                 name='wait.type'

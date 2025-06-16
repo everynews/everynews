@@ -117,30 +117,16 @@ export const AlertDialog = ({
   const onSubmit = async (values: AlertDto) => {
     setIsSubmitting(true)
     try {
-      const apiData: AlertDto = {
-        active: values.active,
-        description: values.description,
-        isPublic: values.isPublic,
-        language: values.language,
-        name: values.name,
-        promptId: values.promptId,
-        strategy:
-          values.strategy.provider === 'exa'
-            ? { provider: 'exa', query: values.strategy.query || '' }
-            : { provider: 'hnbest' },
-        threshold: values.threshold,
-        wait: values.wait,
-      }
       let res: Response
       if (mode === 'create') {
-        res = await api.alerts.$post({ json: apiData })
+        res = await api.alerts.$post({ json: values })
       } else {
         if (!original?.id) {
           toast.error('Missing alert ID for update')
           return
         }
         res = await api.alerts[':id'].$put({
-          json: apiData,
+          json: values,
           param: { id: original.id },
         })
       }

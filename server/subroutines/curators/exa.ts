@@ -13,6 +13,10 @@ export const ExaCurator: Curator = async (alert: Alert): Promise<string[]> => {
     throw new Error(`ExaCurator got Alert Strategy ${alert.strategy.provider}`)
   }
 
+  if (!alert.strategy.query) {
+    throw new Error('ExaCurator got Alert Strategy with no query')
+  }
+
   const { results } = await exa.searchAndContents(alert.strategy.query)
 
   return results.map((doc) => doc.url)
