@@ -210,7 +210,7 @@ export default async function Page({
                             .map((finding, index) => (
                               <div
                                 key={`${story.id}-finding-${index}`}
-                                className='flex items-start gap-2'
+                                className='flex items-center gap-2'
                               >
                                 <Badge
                                   variant='outline'
