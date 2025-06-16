@@ -71,10 +71,11 @@ export const aspirant = async (alert: Alert): Promise<Story[]> => {
     const stories: Story[] = []
     for (const summary of summaryResults) {
       if (summary) {
+        const now = new Date()
         stories.push({
           alertId: summary.alertId,
           contentId: summary.contentId,
-          createdAt: new Date(),
+          createdAt: now,
           deletedAt: null,
           id: nanoid(),
           irrelevant: null,
@@ -82,7 +83,7 @@ export const aspirant = async (alert: Alert): Promise<Story[]> => {
           languageCode: summary.languageCode,
           promptId: summary.promptId,
           title: summary.title,
-          updatedAt: new Date(),
+          updatedAt: now,
           url: summary.url,
         })
       }
