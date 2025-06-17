@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { db } from '@everynews/database'
 import {
   parsePromptResponse,
@@ -23,6 +24,10 @@ const client = new OpenAI()
 
 const model = 'gpt-4o'
 
+const hashPrompt = (promptContent: string): string => {
+  return createHash('sha256').update(promptContent).digest('hex')
+}
+
 const input = async ({ content, news }: { content: Content; news: Alert }) => {
   let userPrompt = getDefaultPromptContent()
 
@@ -34,7 +39,10 @@ const input = async ({ content, news }: { content: Content; news: Alert }) => {
       userPrompt = customPrompt.content
     }
   }
-  return `${userPrompt}\n\n$TEXT: """\n${await prepareContentInput(content)}\n"""`
+  return {
+    fullPrompt: `${userPrompt}\n\n$TEXT: """\n${await prepareContentInput(content)}\n"""`,
+    promptContent: userPrompt,
+  }
 }
 
 // Pure function that only does summarization without database operations
@@ -46,8 +54,9 @@ export const summarizeContent = async ({
   news: Alert
 }): Promise<Omit<Story, 'id' | 'createdAt' | 'updatedAt'> | null> => {
   try {
+    const { fullPrompt, promptContent } = await input({ content, news })
     const response = await client.responses.create({
-      input: await input({ content, news }),
+      input: fullPrompt,
       instructions: getSystemPromptContent(news.language),
       model,
     })
@@ -93,6 +102,7 @@ export const summarizeContent = async ({
       irrelevant: false,
       keyFindings,
       languageCode,
+      promptHash: hashPrompt(promptContent),
       promptId: news.promptId,
       title,
       url: normalizeUrl(content.url, {
@@ -132,14 +142,23 @@ const summarizeWithCache = async ({
     stripWWW: true,
   })
 
-  // Check for existing story with same URL and same prompt
-  const currentPromptId = news.promptId
+  // Get the prompt content to calculate hash
+  let userPrompt = getDefaultPromptContent()
+  if (news.promptId) {
+    const customPrompt = await db.query.prompt.findFirst({
+      where: and(eq(prompt.id, news.promptId), isNull(prompt.deletedAt)),
+    })
+    if (customPrompt) {
+      userPrompt = customPrompt.content
+    }
+  }
+  const promptHash = hashPrompt(userPrompt)
+
+  // Check for existing story with same URL and same prompt hash
   const existingStory = await db.query.stories.findFirst({
     where: and(
       eq(stories.url, url),
-      currentPromptId
-        ? eq(stories.promptId, currentPromptId)
-        : isNull(stories.promptId),
+      eq(stories.promptHash, promptHash),
       isNull(stories.deletedAt),
     ),
   })
@@ -147,43 +166,19 @@ const summarizeWithCache = async ({
   if (existingStory) {
     await track({
       channel: 'sage',
-      description: `Found existing summary for: ${content.title} (same prompt)`,
+      description: `Found existing summary for: ${content.title} (same prompt content)`,
       event: 'Story Cache Hit',
       icon: '💾',
       tags: {
         content_id: content.id,
-        prompt_id: currentPromptId || 'default',
+        prompt_hash: promptHash.slice(0, 8),
+        prompt_id: news.promptId || 'default',
         title: content.title.slice(0, 160),
         type: 'info',
         url: content.url.slice(0, 160),
       },
     })
     return StorySchema.parse(existingStory)
-  }
-
-  // Check if there's an existing story with same URL but different prompt
-  const existingDifferentPrompt = await db.query.stories.findFirst({
-    where: and(eq(stories.url, url), isNull(stories.deletedAt)),
-  })
-
-  if (
-    existingDifferentPrompt &&
-    existingDifferentPrompt.promptId !== currentPromptId
-  ) {
-    await track({
-      channel: 'sage',
-      description: `Found existing story but different prompt - regenerating: ${content.title}`,
-      event: 'Story Cache Miss (Different Prompt)',
-      icon: '🔄',
-      tags: {
-        content_id: content.id,
-        current_prompt_id: currentPromptId || 'default',
-        existing_prompt_id: existingDifferentPrompt.promptId || 'default',
-        title: content.title.slice(0, 160),
-        type: 'info',
-        url: content.url.slice(0, 160),
-      },
-    })
   }
 
   // Get the summary without database operations
@@ -200,6 +195,7 @@ const summarizeWithCache = async ({
       contentId: summary.contentId,
       keyFindings: summary.keyFindings,
       languageCode: summary.languageCode,
+      promptHash: summary.promptHash,
       promptId: summary.promptId,
       title: summary.title,
       url: summary.url,

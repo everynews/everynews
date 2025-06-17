@@ -32,6 +32,7 @@ export const stories = pgTable(
     languageCode: text('language_code', { enum: LANGUAGE_CODES })
       .notNull()
       .default('en'),
+    promptHash: text('prompt_hash').notNull(),
     promptId: text('prompt_id').references(() => prompt.id, {
       onDelete: 'set null',
     }),
@@ -40,9 +41,9 @@ export const stories = pgTable(
     url: text('url').notNull(),
   },
   (table) => ({
-    // Unique constraint on URL + promptId combination
-    // This allows multiple stories for the same URL but with different prompts
-    urlPromptUnique: unique().on(table.url, table.promptId),
+    // Unique constraint on URL + promptHash combination
+    // This allows multiple stories for the same URL but with different prompt content
+    urlPromptHashUnique: unique().on(table.url, table.promptHash),
   }),
 )
 
@@ -61,6 +62,7 @@ export const StorySchema = z
         example: ['Key finding 1', 'Key finding 2', 'Key finding 3'],
       }),
     languageCode: LanguageSchema,
+    promptHash: z.string().openapi({ example: 'hash123' }),
     promptId: z.coerce.string().nullable().openapi({ example: 'prompt123' }),
     title: z.string().openapi({ example: 'Title' }),
     updatedAt: z.coerce.date().openapi({ example: new Date() }),
