@@ -39,14 +39,14 @@ export const AppFooter = ({
         { href: 'https://antiagile.every.news/', text: 'The Story Behind' },
         { href: '/firefighter-mode', text: 'Firefighter Mode' },
       ],
-      title: 'About',
+      title: 'Story',
     },
     {
       links: [
         { href: 'https://github.com/everynews/everynews', text: 'GitHub' },
-        { href: 'https://x.com/everydotnews', text: 'X' },
+        { href: 'https://x.com/everydotnews', text: 'Twitter' },
       ],
-      title: 'Connect',
+      title: 'Socials',
     },
   ],
   copyright = '© 2025 Everynews. All rights reserved.',
@@ -68,6 +68,10 @@ export const AppFooter = ({
                 <h3 className='text-xl font-bold'>{name}</h3>
               </div>
             </FooterColumn>
+            <FooterColumn>
+              <h3 className='text-md pt-1 font-semibold'>Stats</h3>
+              <FooterStats />
+            </FooterColumn>
             {columns.map((column) => (
               <FooterColumn key={column.title}>
                 <h3 className='text-md pt-1 font-semibold'>{column.title}</h3>
@@ -82,10 +86,6 @@ export const AppFooter = ({
                 ))}
               </FooterColumn>
             ))}
-            <FooterColumn>
-              <h3 className='text-md pt-1 font-semibold'>Stats</h3>
-              <FooterStats />
-            </FooterColumn>
           </FooterContent>
           <FooterBottom className='p-2'>
             <div className='text-sm text-muted-foreground'>{copyright}</div>
