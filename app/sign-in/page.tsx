@@ -12,6 +12,8 @@ import {
 } from '@everynews/components/ui/card'
 import { Input } from '@everynews/components/ui/input'
 import { toastNetworkError } from '@everynews/lib/error'
+import MetaKeyIcon from '@everynews/lib/meta-key'
+import { CornerDownLeft } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -109,7 +111,13 @@ export default function SignInPage() {
             onClick={() => handleSubmit({ contact, isFeelingLucky: true })}
             loading={isFeelingLuckyLoading}
           >
-            I&apos;m feeling lucky
+            <div className='flex items-center gap-1'>
+              I&apos;m feeling lucky
+              <span className='flex items-center'>
+                <MetaKeyIcon className='size-3' />
+                <CornerDownLeft className='size-3' />
+              </span>
+            </div>
           </SubmitButton>
         </CardFooter>
       </Card>

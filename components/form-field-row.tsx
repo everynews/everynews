@@ -2,7 +2,7 @@ import { FormItem, FormLabel } from '@everynews/components/ui/form'
 import { cn } from '@everynews/lib/utils'
 import type { ReactNode } from 'react'
 
-interface FormFieldRowProps {
+type FormFieldRowProps = {
   label: ReactNode
   children: ReactNode
   labelWidth?: '1/2' | '1/3' | '1/4'

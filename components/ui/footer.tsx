@@ -1,22 +1,22 @@
 import { cn } from '@everynews/lib/utils'
 import type { ReactNode } from 'react'
 
-interface FooterProps {
+type FooterProps = {
   children: ReactNode
   className?: string
 }
 
-interface FooterContentProps {
+type FooterContentProps = {
   children: ReactNode
   className?: string
 }
 
-interface FooterColumnProps {
+type FooterColumnProps = {
   children: ReactNode
   className?: string
 }
 
-interface FooterBottomProps {
+type FooterBottomProps = {
   children: ReactNode
   className?: string
 }

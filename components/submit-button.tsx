@@ -2,7 +2,7 @@ import { Button } from '@everynews/components/ui/button'
 import { cn } from '@everynews/lib/utils'
 import { Loader2 } from 'lucide-react'
 
-interface SubmitButtonProps {
+type SubmitButtonProps = {
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost'
   size?: 'default' | 'sm' | 'lg' | 'icon'
   onClick: () => void

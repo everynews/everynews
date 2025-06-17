@@ -10,17 +10,17 @@ import { cn } from '@everynews/lib/utils'
 import { Logo } from '@everynews/public/logo'
 import type { ReactNode } from 'react'
 
-interface FooterLink {
+type FooterLink = {
   text: string
   href: string
 }
 
-interface FooterColumnProps {
+type FooterColumnProps = {
   title: string
   links: FooterLink[]
 }
 
-interface FooterProps {
+type FooterProps = {
   logo?: ReactNode
   name?: string
   columns?: FooterColumnProps[]

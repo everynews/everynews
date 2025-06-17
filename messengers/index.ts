@@ -1,5 +1,5 @@
-import { ChannelVerificationEmail } from '../emails/channel-verification'
 import { sendEmailWithTemplate } from '../emails'
+import { ChannelVerificationEmail } from '../emails/channel-verification'
 import { MagicLinkEmail } from '../emails/magic-link'
 
 export const sendMagicLink = async ({
@@ -12,7 +12,7 @@ export const sendMagicLink = async ({
   await sendEmailWithTemplate(
     email,
     'Sign in to Everynews',
-    MagicLinkEmail({ signinLink: url })
+    MagicLinkEmail({ signinLink: url }),
   )
 }
 
@@ -28,6 +28,6 @@ export const sendChannelVerification = async ({
   await sendEmailWithTemplate(
     email,
     `Verify your notification channel "${channelName}"`,
-    ChannelVerificationEmail({ channelName, verificationLink })
+    ChannelVerificationEmail({ channelName, verificationLink }),
   )
 }

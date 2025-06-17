@@ -1,6 +1,6 @@
 import { db } from '@everynews/database'
-import { Alert } from '@everynews/emails/alert'
 import { sendEmailWithTemplate } from '@everynews/emails'
+import { Alert } from '@everynews/emails/alert'
 import { track } from '@everynews/logs'
 import { ChannelSchema, channels, type Story } from '@everynews/schema'
 import { and, eq, isNull } from 'drizzle-orm'
@@ -14,7 +14,7 @@ const sendAlertEmail = async (parcel: {
     await sendEmailWithTemplate(
       parcel.destination,
       parcel.stories[0].title ?? parcel.alertName,
-      Alert({ stories: parcel.stories })
+      Alert({ stories: parcel.stories }),
     )
 
     await track({

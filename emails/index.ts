@@ -1,24 +1,29 @@
 import { render } from '@react-email/components'
 
-interface SendEmailParams {
+type SendEmailParams = {
   to: string
   subject: string
   body?: string
   html?: string
 }
 
-export async function sendEmail({ to, subject, body, html }: SendEmailParams) {
+export const sendEmail = async ({
+  to,
+  subject,
+  body,
+  html,
+}: SendEmailParams) => {
   const response = await fetch('https://api.useplunk.com/v1/send', {
-    method: 'POST',
     body: JSON.stringify({
-      to,
-      subject,
       body: body || html || '',
+      subject,
+      to,
     }),
     headers: {
-      'Content-Type': 'application/json',
       Authorization: `Bearer ${process.env.PLUNK_API_KEY}`,
+      'Content-Type': 'application/json',
     },
+    method: 'POST',
   })
 
   if (!response.ok) {
@@ -29,11 +34,11 @@ export async function sendEmail({ to, subject, body, html }: SendEmailParams) {
   return response.json()
 }
 
-export async function sendEmailWithTemplate(
+export const sendEmailWithTemplate = async (
   to: string,
   subject: string,
-  template: React.ReactElement
-) {
+  template: React.ReactElement,
+) => {
   const html = await render(template)
-  return sendEmail({ to, subject, html })
+  return sendEmail({ html, subject, to })
 }

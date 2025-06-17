@@ -23,7 +23,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 import { toast } from 'sonner'
 
-interface PromptDialogProps {
+type PromptDialogProps = {
   mode: 'create' | 'edit'
   prompt?: Prompt
   open: boolean
