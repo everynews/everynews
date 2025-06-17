@@ -34,7 +34,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Backend**: Hono Stacks (Hono RPC) API with OpenAPI documentation
 - **Database**: PostgreSQL with Drizzle ORM
 - **Authentication**: Better Auth with magic link support
-- **Email**: React Email with Resend
+- **Email**: React Email with Plunk
 - **Deployment**: Vercel (with Analytics and Speed Insights)
 - **Code Quality**: Biome for formatting/linting, Lefthook for git hooks
 

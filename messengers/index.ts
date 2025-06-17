@@ -1,12 +1,6 @@
-import { Resend } from 'resend'
 import { ChannelVerificationEmail } from '../emails/channel-verification'
+import { sendEmailWithTemplate } from '../emails'
 import { MagicLinkEmail } from '../emails/magic-link'
-
-if (!process.env.RESEND_API_KEY) {
-  throw new Error('RESEND_API_KEY is not defined')
-}
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const sendMagicLink = async ({
   email,
@@ -15,16 +9,11 @@ export const sendMagicLink = async ({
   email: string
   url: string
 }): Promise<void> => {
-  const { error } = await resend.emails.send({
-    from: 'Everynews <no-reply@app.every.news>',
-    react: MagicLinkEmail({ signinLink: url }),
-    subject: 'Sign in to Everynews',
-    to: [email],
-  })
-
-  if (error) {
-    throw new Error(`Failed to send magic link: ${error.message}`)
-  }
+  await sendEmailWithTemplate(
+    email,
+    'Sign in to Everynews',
+    MagicLinkEmail({ signinLink: url })
+  )
 }
 
 export const sendChannelVerification = async ({
@@ -36,14 +25,9 @@ export const sendChannelVerification = async ({
   email: string
   verificationLink: string
 }): Promise<void> => {
-  const { error } = await resend.emails.send({
-    from: 'Everynews <no-reply@app.every.news>',
-    react: ChannelVerificationEmail({ channelName, verificationLink }),
-    subject: `Verify your notification channel "${channelName}"`,
-    to: [email],
-  })
-
-  if (error) {
-    throw new Error(`Failed to send channel verification: ${error.message}`)
-  }
+  await sendEmailWithTemplate(
+    email,
+    `Verify your notification channel "${channelName}"`,
+    ChannelVerificationEmail({ channelName, verificationLink })
+  )
 }

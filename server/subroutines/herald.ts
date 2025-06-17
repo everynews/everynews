@@ -1,11 +1,9 @@
 import { db } from '@everynews/database'
 import { Alert } from '@everynews/emails/alert'
+import { sendEmailWithTemplate } from '@everynews/emails'
 import { track } from '@everynews/logs'
 import { ChannelSchema, channels, type Story } from '@everynews/schema'
 import { and, eq, isNull } from 'drizzle-orm'
-import { Resend } from 'resend'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 const sendAlertEmail = async (parcel: {
   destination: string
@@ -13,12 +11,11 @@ const sendAlertEmail = async (parcel: {
   stories: Story[]
 }) => {
   try {
-    await resend.emails.send({
-      from: 'Everynews <onboarding@resend.dev>',
-      react: Alert({ stories: parcel.stories }),
-      subject: parcel.stories[0].title ?? parcel.alertName,
-      to: parcel.destination,
-    })
+    await sendEmailWithTemplate(
+      parcel.destination,
+      parcel.stories[0].title ?? parcel.alertName,
+      Alert({ stories: parcel.stories })
+    )
 
     await track({
       channel: 'herald',
