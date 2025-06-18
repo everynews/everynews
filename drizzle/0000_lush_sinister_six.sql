@@ -97,14 +97,16 @@ CREATE TABLE "stories" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp,
 	"id" text PRIMARY KEY NOT NULL,
-	"irrelevant" boolean,
 	"key_findings" json,
 	"language_code" text DEFAULT 'en' NOT NULL,
+	"prompt_hash" text NOT NULL,
 	"prompt_id" text,
+	"system_marked_irrelevant" boolean DEFAULT false,
 	"title" text NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"url" text NOT NULL,
-	CONSTRAINT "stories_url_prompt_id_unique" UNIQUE("url","prompt_id")
+	"user_marked_irrelevant" boolean DEFAULT false,
+	CONSTRAINT "stories_url_prompt_hash_unique" UNIQUE("url","prompt_hash")
 );
 --> statement-breakpoint
 CREATE TABLE "subscriptions" (
