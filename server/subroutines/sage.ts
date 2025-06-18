@@ -21,7 +21,7 @@ import { z } from 'zod'
 
 const client = new OpenAI()
 
-const model = 'gpt-4o-2024-08-06'
+const model = 'gpt-4o'
 
 const SummaryResponseSchema = z.object({
   importance: z
