@@ -207,8 +207,12 @@ export const CronRouter = new Hono().get(
         const contents: Content[] = await reaper(urls)
         const stories = await sage({ contents, news: item })
 
-        // Filter stories to only include those created since lastRun
+        // Filter stories to only include those created since lastRun and not marked as irrelevant
         const filteredStories = stories.filter((story) => {
+          // Filter out both user-marked and system-marked irrelevant stories
+          if (story.userMarkedIrrelevant || story.systemMarkedIrrelevant) {
+            return false
+          }
           if (!item.lastRun) return true // If no lastRun, include all stories
           return story.createdAt > item.lastRun
         })

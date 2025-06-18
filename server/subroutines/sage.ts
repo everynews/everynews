@@ -64,11 +64,13 @@ export const summarizeContent = async ({
     const { title, keyFindings, importance, languageCode } =
       parsePromptResponse(response.output_text)
 
-    if (importance === 0) {
+    const isSystemIrrelevant = importance === 0
+
+    if (isSystemIrrelevant) {
       await track({
         channel: 'sage',
-        description: `Skipped irrelevant content: ${content.title}`,
-        event: 'Irrelevant Content Skipped',
+        description: `Marked as irrelevant by system: ${content.title}`,
+        event: 'System Marked Irrelevant',
         icon: '⏭️',
         tags: {
           content_id: content.id,
@@ -78,37 +80,37 @@ export const summarizeContent = async ({
           url: content.url.slice(0, 160),
         },
       })
-      return null
+    } else {
+      await track({
+        channel: 'sage',
+        description: keyFindings.join('\n'),
+        event: title,
+        icon: '✅',
+        tags: {
+          content_id: content.id,
+          model,
+          original_title: content.title.slice(0, 160),
+          type: 'info',
+          url: content.url.slice(0, 160),
+        },
+      })
     }
-
-    await track({
-      channel: 'sage',
-      description: keyFindings.join('\n'),
-      event: title,
-      icon: '✅',
-      tags: {
-        content_id: content.id,
-        model,
-        original_title: content.title.slice(0, 160),
-        type: 'info',
-        url: content.url.slice(0, 160),
-      },
-    })
 
     return {
       alertId: news.id,
       contentId: content.id,
       deletedAt: null,
-      irrelevant: false,
       keyFindings,
       languageCode,
       promptHash: hashPrompt(promptContent),
       promptId: news.promptId,
+      systemMarkedIrrelevant: isSystemIrrelevant,
       title,
       url: normalizeUrl(content.url, {
         stripProtocol: true,
         stripWWW: true,
       }),
+      userMarkedIrrelevant: false,
     }
   } catch (error) {
     await track({
@@ -171,8 +173,11 @@ const summarizeWithCache = async ({
       icon: '💾',
       tags: {
         content_id: content.id,
+        existing_prompt_hash: existingStory.promptHash.slice(0, 8),
+        normalized_url: url,
         prompt_hash: promptHash.slice(0, 8),
         prompt_id: news.promptId || 'default',
+        story_id: existingStory.id,
         title: content.title.slice(0, 160),
         type: 'info',
         url: content.url.slice(0, 160),
@@ -181,6 +186,23 @@ const summarizeWithCache = async ({
     return StorySchema.parse(existingStory)
   }
 
+  // Track cache miss
+  await track({
+    channel: 'sage',
+    description: `Cache miss - processing new content: ${content.title}`,
+    event: 'Story Cache Miss',
+    icon: '🔄',
+    tags: {
+      content_id: content.id,
+      normalized_url: url,
+      prompt_hash: promptHash.slice(0, 8),
+      prompt_id: news.promptId || 'default',
+      title: content.title.slice(0, 160),
+      type: 'info',
+      url: content.url.slice(0, 160),
+    },
+  })
+
   // Get the summary without database operations
   const summary = await summarizeContent({ content, news })
   if (!summary) {
@@ -188,21 +210,60 @@ const summarizeWithCache = async ({
   }
 
   // Insert into database
-  const [story] = await db
-    .insert(stories)
-    .values({
-      alertId: summary.alertId,
-      contentId: summary.contentId,
-      keyFindings: summary.keyFindings,
-      languageCode: summary.languageCode,
-      promptHash: summary.promptHash,
-      promptId: summary.promptId,
-      title: summary.title,
-      url: summary.url,
-    })
-    .returning()
+  try {
+    const [story] = await db
+      .insert(stories)
+      .values({
+        alertId: summary.alertId,
+        contentId: summary.contentId,
+        keyFindings: summary.keyFindings,
+        languageCode: summary.languageCode,
+        promptHash: summary.promptHash,
+        promptId: summary.promptId,
+        systemMarkedIrrelevant: summary.systemMarkedIrrelevant,
+        title: summary.title,
+        url: summary.url,
+        userMarkedIrrelevant: summary.userMarkedIrrelevant,
+      })
+      .returning()
 
-  return StorySchema.parse(story)
+    return StorySchema.parse(story)
+  } catch (error: any) {
+    // If we hit a unique constraint violation, it means another process
+    // inserted the same story between our check and insert
+    if (
+      error.code === '23505' &&
+      error.constraint === 'stories_url_prompt_hash_unique'
+    ) {
+      await track({
+        channel: 'sage',
+        description: `Race condition detected - story was inserted by another process: ${content.title}`,
+        event: 'Story Insert Race Condition',
+        icon: '🏁',
+        tags: {
+          content_id: content.id,
+          normalized_url: url,
+          prompt_hash: promptHash.slice(0, 8),
+          title: content.title.slice(0, 160),
+          type: 'warning',
+        },
+      })
+
+      // Try to fetch the story that was just inserted
+      const existingStory = await db.query.stories.findFirst({
+        where: and(
+          eq(stories.url, url),
+          eq(stories.promptHash, promptHash),
+          isNull(stories.deletedAt),
+        ),
+      })
+
+      if (existingStory) {
+        return StorySchema.parse(existingStory)
+      }
+    }
+    throw error
+  }
 }
 
 export const sage = async ({

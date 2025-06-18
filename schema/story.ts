@@ -27,7 +27,6 @@ export const stories = pgTable(
     createdAt: timestamp('created_at').notNull().defaultNow(),
     deletedAt: timestamp('deleted_at'),
     id: text('id').primaryKey().$defaultFn(nanoid),
-    irrelevant: boolean('irrelevant'),
     keyFindings: json('key_findings'),
     languageCode: text('language_code', { enum: LANGUAGE_CODES })
       .notNull()
@@ -36,9 +35,11 @@ export const stories = pgTable(
     promptId: text('prompt_id').references(() => prompt.id, {
       onDelete: 'set null',
     }),
+    systemMarkedIrrelevant: boolean('system_marked_irrelevant').default(false),
     title: text('title').notNull(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
     url: text('url').notNull(),
+    userMarkedIrrelevant: boolean('user_marked_irrelevant').default(false),
   },
   (table) => ({
     // Unique constraint on URL + promptHash combination
@@ -54,7 +55,6 @@ export const StorySchema = z
     createdAt: z.coerce.date().openapi({ example: new Date() }),
     deletedAt: z.date().nullable().openapi({ example: null }),
     id: z.coerce.string().openapi({ example: '123' }),
-    irrelevant: z.boolean().nullable().openapi({ example: false }),
     keyFindings: z
       .array(z.string())
       .nullable()
@@ -64,9 +64,11 @@ export const StorySchema = z
     languageCode: LanguageSchema,
     promptHash: z.string().openapi({ example: 'hash123' }),
     promptId: z.coerce.string().nullable().openapi({ example: 'prompt123' }),
+    systemMarkedIrrelevant: z.boolean().nullable().openapi({ example: false }),
     title: z.string().openapi({ example: 'Title' }),
     updatedAt: z.coerce.date().openapi({ example: new Date() }),
     url: z.string().openapi({ example: 'https://example.com' }),
+    userMarkedIrrelevant: z.boolean().nullable().openapi({ example: false }),
   })
   .openapi({ ref: 'StorySchema' })
 
@@ -76,9 +78,10 @@ export const StoryDtoSchema = StorySchema.omit({
   createdAt: true,
   deletedAt: true,
   id: true,
-  irrelevant: true,
   promptId: true,
+  systemMarkedIrrelevant: true,
   updatedAt: true,
+  userMarkedIrrelevant: true,
 }).openapi({ ref: 'StoryDtoSchema' })
 
 export type Story = z.infer<typeof StorySchema>

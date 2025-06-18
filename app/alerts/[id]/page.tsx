@@ -104,7 +104,14 @@ export default async function AlertStoriesPage({
       contents,
       and(eq(stories.contentId, contents.id), isNull(contents.deletedAt)),
     )
-    .where(and(eq(stories.alertId, id), isNull(stories.deletedAt)))
+    .where(
+      and(
+        eq(stories.alertId, id),
+        isNull(stories.deletedAt),
+        eq(stories.userMarkedIrrelevant, false),
+        eq(stories.systemMarkedIrrelevant, false),
+      ),
+    )
     .orderBy(desc(stories.createdAt))
     .limit(itemsPerPage)
     .offset(offset)
@@ -113,7 +120,14 @@ export default async function AlertStoriesPage({
   const totalStories = await db
     .select({ count: stories.id })
     .from(stories)
-    .where(and(eq(stories.alertId, id), isNull(stories.deletedAt)))
+    .where(
+      and(
+        eq(stories.alertId, id),
+        isNull(stories.deletedAt),
+        eq(stories.userMarkedIrrelevant, false),
+        eq(stories.systemMarkedIrrelevant, false),
+      ),
+    )
 
   const totalPages = Math.ceil(totalStories.length / itemsPerPage)
   const hasNextPage = currentPage < totalPages
