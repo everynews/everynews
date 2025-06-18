@@ -21,7 +21,7 @@ import { z } from 'zod'
 
 const client = new OpenAI()
 
-const model = 'gpt-4o'
+const model = 'gpt-4o-2024-08-06'
 
 const SummaryResponseSchema = z.object({
   importance: z
@@ -285,6 +285,7 @@ const summarizeWithCache = async ({
     .values({
       alertId: summary.alertId,
       contentId: summary.contentId,
+      deletedAt: summary.deletedAt,
       keyFindings: summary.keyFindings,
       languageCode: summary.languageCode,
       promptHash: summary.promptHash,
