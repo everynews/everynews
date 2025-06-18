@@ -9,7 +9,7 @@ import {
   users,
 } from '@everynews/schema'
 import { WorkerStatusSchema } from '@everynews/schema/worker-status'
-import { and, eq, lt } from 'drizzle-orm'
+import { and, asc, eq, lt } from 'drizzle-orm'
 import { type Context, Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver } from 'hono-openapi/zod'
@@ -176,6 +176,7 @@ export const CronRouter = new Hono().get(
 
       const found = AlertSchema.array().parse(
         await db.query.alert.findMany({
+          orderBy: asc(alert.lastRun),
           where: and(eq(alert.active, true), lt(alert.nextRun, new Date())),
         }),
       )
