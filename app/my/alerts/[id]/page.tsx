@@ -1,7 +1,7 @@
 import { whoami } from '@everynews/auth/session'
 import { db } from '@everynews/database'
 import { AlertSchema, alert, prompt } from '@everynews/schema'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { notFound, redirect } from 'next/navigation'
 import { AlertEditPage } from './alert-edit-page'
 
@@ -40,3 +40,6 @@ export default async function EditAlertPage({
 
   return <AlertEditPage alert={alertData} prompts={prompts} />
 }
+
+export const generateStaticParams = async () =>
+  await db.select().from(alert).where(isNull(alert.deletedAt))

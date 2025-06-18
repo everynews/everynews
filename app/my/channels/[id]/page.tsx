@@ -1,7 +1,7 @@
 import { whoami } from '@everynews/auth/session'
 import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { notFound, redirect } from 'next/navigation'
 import { ChannelEditPage } from './channel-edit-page'
 
@@ -34,3 +34,6 @@ export default async function EditChannelPage({
 
   return <ChannelEditPage channel={channelData} />
 }
+
+export const generateStaticParams = async () =>
+  await db.select().from(channels).where(isNull(channels.deletedAt))

@@ -1,7 +1,7 @@
 import { whoami } from '@everynews/auth/session'
 import { db } from '@everynews/database'
 import { prompt } from '@everynews/schema'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { notFound, unauthorized } from 'next/navigation'
 import { PromptDetailPage } from './prompt-detail-page'
 
@@ -31,3 +31,6 @@ export default async function PromptPage({
 
   return <PromptDetailPage prompt={promptData} />
 }
+
+export const generateStaticParams = async () =>
+  await db.select().from(prompt).where(isNull(prompt.deletedAt))
