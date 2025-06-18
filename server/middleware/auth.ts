@@ -23,21 +23,6 @@ export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
       c.set('session', null)
       return next()
     }
-
-    await track({
-      channel: 'auth',
-      description: `${c.req.method} ${c.req.path}`,
-      event: 'Authenticated Request',
-      icon: '✅',
-      tags: {
-        method: c.req.method,
-        path: c.req.path,
-        type: 'info',
-        user_email: session.user.email,
-      },
-      user_id: session.user.id,
-    })
-
     c.set('user', session.user)
     c.set('session', session.session)
     return next()

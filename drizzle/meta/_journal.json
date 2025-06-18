@@ -7,6 +7,13 @@
       "tag": "0000_special_tarantula",
       "version": "7",
       "when": 1750096132336
+    },
+    {
+      "breakpoints": true,
+      "idx": 1,
+      "tag": "0001_furry_storm",
+      "version": "7",
+      "when": 1750209866267
     }
   ],
   "version": "7"

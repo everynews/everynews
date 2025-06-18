@@ -26,12 +26,7 @@ const Footer = ({ children, className }: FooterProps) => (
 )
 
 const FooterContent = ({ children, className }: FooterContentProps) => (
-  <div
-    className={cn(
-      'grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5',
-      className,
-    )}
-  >
+  <div className={cn('grid grid-cols-2 gap-8 md:grid-cols-4', className)}>
     {children}
   </div>
 )
