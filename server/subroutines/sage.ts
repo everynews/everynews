@@ -12,6 +12,7 @@ import {
   type Story,
   StorySchema,
   stories,
+  LANGUAGE_LABELS,
 } from '@everynews/schema'
 import { and, eq, isNull } from 'drizzle-orm'
 import normalizeUrl from 'normalize-url'
@@ -102,19 +103,19 @@ export const summarizeContent = async ({
                 type: 'integer',
               },
               keyFindings: {
-                description: 'Array of key findings in plain text',
+                description: `Array of key findings in plain text in ${LANGUAGE_LABELS[news.language]} (${news.language})`,
                 items: {
                   type: 'string',
                 },
                 type: 'array',
               },
               languageCode: {
-                description: 'Language code for the summary',
+                description: `Language code for the summary`,
                 enum: LANGUAGE_CODES as unknown as string[],
                 type: 'string',
               },
               title: {
-                description: 'The summarized title in plain text (no markdown)',
+                description: `The summarized title in plain text (no markdown) in ${LANGUAGE_LABELS[news.language]} (${news.language})`,
                 type: 'string',
               },
             },
