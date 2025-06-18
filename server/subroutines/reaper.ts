@@ -16,7 +16,7 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
       },
     })
 
-    const queue = new PQueue({ concurrency: 8 })
+    const queue = new PQueue({ concurrency: 16 })
     const results = await Promise.all(
       urls.map(async (url) => {
         try {

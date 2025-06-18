@@ -15,6 +15,7 @@ import { toastNetworkError } from '@everynews/lib/error'
 import MetaKeyIcon from '@everynews/lib/meta-key'
 import { CornerDownLeft } from 'lucide-react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -22,6 +23,8 @@ export default function SignInPage() {
   const [contact, setContact] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isFeelingLuckyLoading, setIsFeelingLuckyLoading] = useState(false)
+  const searchParams = useSearchParams()
+  const callback = searchParams.get('callback')
 
   const handleSubmit = useCallback(
     async ({
@@ -39,7 +42,7 @@ export default function SignInPage() {
           setIsLoading(true)
         }
         await auth.signIn.magicLink({
-          callbackURL: '/sign-in/success',
+          callbackURL: callback || '/sign-in/success',
           email: contact,
         })
         if (isFeelingLucky) {
@@ -55,7 +58,7 @@ export default function SignInPage() {
         setIsFeelingLuckyLoading(false)
       }
     },
-    [],
+    [callback],
   )
 
   useEffect(() => {

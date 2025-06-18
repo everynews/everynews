@@ -60,7 +60,7 @@ export const aspirant = async (alert: Alert): Promise<Story[]> => {
     })
 
     // Step 3: Summarize content using summarizeContent (without DB operations)
-    const queue = new PQueue({ concurrency: 3 })
+    const queue = new PQueue({ concurrency: 16 })
     const summaryPromises = contents.map((content) =>
       queue.add(async () => summarizeContent({ content, news: alert })),
     )

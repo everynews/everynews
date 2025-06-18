@@ -1,8 +1,9 @@
 import { whoami } from '@everynews/auth/session'
 import { db } from '@everynews/database'
+import { redirectToSignIn } from '@everynews/lib/auth-redirect'
 import { AlertSchema, alert, prompt } from '@everynews/schema'
 import { and, eq, isNull } from 'drizzle-orm'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { AlertEditPage } from './alert-edit-page'
 
 export const metadata = {
@@ -18,7 +19,7 @@ export default async function EditAlertPage({
   const { id } = await params
   const user = await whoami()
   if (!user) {
-    redirect('/sign-in')
+    return redirectToSignIn(`/my/alerts/${id}`)
   }
 
   // Get the alert and verify ownership

@@ -249,7 +249,7 @@ export const sage = async ({
       },
     })
 
-    const queue = new PQueue({ concurrency: 8 })
+    const queue = new PQueue({ concurrency: 16 })
     const results = await Promise.all(
       contents.map((content) =>
         queue.add(async () => summarizeWithCache({ content, news })),

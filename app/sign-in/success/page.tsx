@@ -17,6 +17,7 @@ export default function SignInSuccessPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
+  const callback = searchParams.get('callback')
   const [isPending, startTransition] = useTransition()
   const [loadingButton, setLoadingButton] = useState<
     'home' | 'onboarding' | null
@@ -28,7 +29,7 @@ export default function SignInSuccessPage() {
         event.preventDefault()
         setLoadingButton('onboarding')
         startTransition(() => {
-          router.push('/onboarding')
+          router.push(callback || '/onboarding')
         })
       }
 
@@ -36,13 +37,13 @@ export default function SignInSuccessPage() {
         event.preventDefault()
         setLoadingButton('home')
         startTransition(() => {
-          router.push('/home')
+          router.push(callback || '/home')
         })
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [router])
+  }, [router, callback])
 
   // Handle error cases
   if (error === 'INVALID_TOKEN') {
@@ -81,43 +82,63 @@ export default function SignInSuccessPage() {
         <CardHeader className='text-center'>
           <CheckCircle className='mx-auto h-16 w-16 text-green-700 dark:text-green-400 my-2' />
           <CardTitle>Signed In</CardTitle>
-          <CardDescription>Now, let&apos;s get you onboarded.</CardDescription>
+          <CardDescription>
+            {callback
+              ? 'You can now continue to your destination.'
+              : 'Now, let&apos;s get you onboarded.'}
+          </CardDescription>
         </CardHeader>
-        <CardContent className='grid grid-cols-2 gap-2'>
-          <SubmitButton
-            loading={loadingButton === 'home' && isPending}
-            onClick={() => {
-              setLoadingButton('home')
-              startTransition(() => {
-                router.push('/home')
-              })
-            }}
-            variant='outline'
-            className='w-full'
-          >
-            <div className='flex items-center gap-1'>
-              Bring Me Home
-              <Delete className='size-3' />
-            </div>
-          </SubmitButton>
-          <SubmitButton
-            loading={loadingButton === 'onboarding' && isPending}
-            onClick={() => {
-              setLoadingButton('onboarding')
-              startTransition(() => {
-                router.push('/onboarding')
-              })
-            }}
-            className='w-full'
-          >
-            <div className='flex items-center gap-1'>
-              Onboard Me
-              <span className='flex items-center'>
-                <MetaKeyIcon className='size-3' />
-                <CornerDownLeft className='size-3' />
-              </span>
-            </div>
-          </SubmitButton>
+        <CardContent className={callback ? '' : 'grid grid-cols-2 gap-2'}>
+          {callback ? (
+            <SubmitButton
+              loading={isPending}
+              onClick={() => {
+                startTransition(() => {
+                  router.push(callback)
+                })
+              }}
+              className='w-full'
+            >
+              Continue
+            </SubmitButton>
+          ) : (
+            <>
+              <SubmitButton
+                loading={loadingButton === 'home' && isPending}
+                onClick={() => {
+                  setLoadingButton('home')
+                  startTransition(() => {
+                    router.push('/home')
+                  })
+                }}
+                variant='outline'
+                className='w-full'
+              >
+                <div className='flex items-center gap-1'>
+                  Bring Me Home
+                  <Delete className='size-3' />
+                </div>
+              </SubmitButton>
+              <SubmitButton
+                loading={loadingButton === 'onboarding' && isPending}
+                onClick={() => {
+                  setLoadingButton('onboarding')
+                  startTransition(() => {
+                    router.push('/onboarding')
+                  })
+                }}
+                className='w-full'
+              >
+                <div className='flex items-center gap-1'>
+                  Onboard Me
+                  <span className='flex items-center'>
+                    <MetaKeyIcon className='size-3' />
+                    <CornerDownLeft className='size-3' />
+                  </span>
+                </div>
+              </SubmitButton>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
