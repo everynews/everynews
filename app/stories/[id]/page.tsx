@@ -6,12 +6,27 @@ import { ContentSchema, contents } from '@everynews/schema/content'
 import { StorySchema, stories } from '@everynews/schema/story'
 import { and, eq, isNull } from 'drizzle-orm'
 import { ArrowLeft, Calendar, Globe } from 'lucide-react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-export const metadata = {
-  description: 'Full story from a subscribed alert.',
-  title: 'Story Details',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const post = await db.query.stories.findFirst({
+    where: and(eq(stories.id, id), isNull(stories.deletedAt)),
+  })
+
+  return {
+    description:
+      Array.isArray(post?.keyFindings) && post.keyFindings.length > 0
+        ? post.keyFindings.join(', ')
+        : null,
+    title: post?.title ?? 'Story',
+  }
 }
 
 export default async function StoryPage({
