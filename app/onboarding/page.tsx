@@ -61,7 +61,7 @@ export default function OnboardingPage() {
       name: humanId({ capitalize: false, separator: '-' }),
       promptId: null,
       strategy: { provider: 'exa', query: '' },
-      threshold: 70,
+      threshold: 0,
       wait: { type: 'count', value: 10 },
     },
     resolver: zodResolver(AlertDtoSchema),
