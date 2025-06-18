@@ -209,24 +209,23 @@ const summarizeWithCache = async ({
     return null
   }
 
-    const [story] = await db
-      .insert(stories)
-      .values({
-        alertId: summary.alertId,
-        contentId: summary.contentId,
-        keyFindings: summary.keyFindings,
-        languageCode: summary.languageCode,
-        promptHash: summary.promptHash,
-        promptId: summary.promptId,
-        systemMarkedIrrelevant: summary.systemMarkedIrrelevant,
-        title: summary.title,
-        url: summary.url,
-        userMarkedIrrelevant: summary.userMarkedIrrelevant,
-      })
-      .returning()
+  const [story] = await db
+    .insert(stories)
+    .values({
+      alertId: summary.alertId,
+      contentId: summary.contentId,
+      keyFindings: summary.keyFindings,
+      languageCode: summary.languageCode,
+      promptHash: summary.promptHash,
+      promptId: summary.promptId,
+      systemMarkedIrrelevant: summary.systemMarkedIrrelevant,
+      title: summary.title,
+      url: summary.url,
+      userMarkedIrrelevant: summary.userMarkedIrrelevant,
+    })
+    .returning()
 
-    return StorySchema.parse(story)
-  
+  return StorySchema.parse(story)
 }
 
 export const sage = async ({
