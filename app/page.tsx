@@ -1,3 +1,5 @@
+'use cache'
+
 import { siteConfig } from '@everynews/app/site-config'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
