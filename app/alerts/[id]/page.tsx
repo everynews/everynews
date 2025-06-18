@@ -291,3 +291,6 @@ export default async function AlertStoriesPage({
     </div>
   )
 }
+
+export const generateStaticParams = async () =>
+  await db.select().from(alert).where(isNull(alert.deletedAt))

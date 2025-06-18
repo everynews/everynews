@@ -129,3 +129,6 @@ export default async function StoryPage({
     </div>
   )
 }
+
+export const generateStaticParams = async () =>
+  await db.select().from(stories).where(isNull(stories.deletedAt))
