@@ -8,11 +8,11 @@ import {
   type Alert,
   type Content,
   LANGUAGE_CODES,
+  LANGUAGE_LABELS,
   prompt,
   type Story,
   StorySchema,
   stories,
-  LANGUAGE_LABELS,
 } from '@everynews/schema'
 import { and, eq, isNull } from 'drizzle-orm'
 import normalizeUrl from 'normalize-url'
