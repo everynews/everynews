@@ -209,8 +209,6 @@ const summarizeWithCache = async ({
     return null
   }
 
-  // Insert into database
-  try {
     const [story] = await db
       .insert(stories)
       .values({
@@ -228,42 +226,7 @@ const summarizeWithCache = async ({
       .returning()
 
     return StorySchema.parse(story)
-  } catch (error: any) {
-    // If we hit a unique constraint violation, it means another process
-    // inserted the same story between our check and insert
-    if (
-      error.code === '23505' &&
-      error.constraint === 'stories_url_prompt_hash_unique'
-    ) {
-      await track({
-        channel: 'sage',
-        description: `Race condition detected - story was inserted by another process: ${content.title}`,
-        event: 'Story Insert Race Condition',
-        icon: '🏁',
-        tags: {
-          content_id: content.id,
-          normalized_url: url,
-          prompt_hash: promptHash.slice(0, 8),
-          title: content.title.slice(0, 160),
-          type: 'warning',
-        },
-      })
-
-      // Try to fetch the story that was just inserted
-      const existingStory = await db.query.stories.findFirst({
-        where: and(
-          eq(stories.url, url),
-          eq(stories.promptHash, promptHash),
-          isNull(stories.deletedAt),
-        ),
-      })
-
-      if (existingStory) {
-        return StorySchema.parse(existingStory)
-      }
-    }
-    throw error
-  }
+  
 }
 
 export const sage = async ({
