@@ -64,11 +64,11 @@ export const StorySchema = z
     languageCode: LanguageSchema,
     promptHash: z.string().openapi({ example: 'hash123' }),
     promptId: z.coerce.string().nullable().openapi({ example: 'prompt123' }),
-    systemMarkedIrrelevant: z.boolean().nullable().openapi({ example: false }),
+    systemMarkedIrrelevant: z.boolean().openapi({ example: false }),
     title: z.string().openapi({ example: 'Title' }),
     updatedAt: z.coerce.date().openapi({ example: new Date() }),
     url: z.string().openapi({ example: 'https://example.com' }),
-    userMarkedIrrelevant: z.boolean().nullable().openapi({ example: false }),
+    userMarkedIrrelevant: z.boolean().openapi({ example: false }),
   })
   .openapi({ ref: 'StorySchema' })
 

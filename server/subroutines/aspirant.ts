@@ -82,11 +82,11 @@ export const aspirant = async (alert: Alert): Promise<Story[]> => {
           languageCode: summary.languageCode,
           promptHash: summary.promptHash,
           promptId: summary.promptId,
-          systemMarkedIrrelevant: null,
+          systemMarkedIrrelevant: false,
           title: summary.title,
           updatedAt: now,
           url: summary.url,
-          userMarkedIrrelevant: null,
+          userMarkedIrrelevant: false,
         })
       }
     }

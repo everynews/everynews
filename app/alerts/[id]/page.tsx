@@ -17,7 +17,7 @@ import {
   SubscriptionSchema,
   subscriptions,
 } from '@everynews/schema/subscription'
-import { and, desc, eq, isNull } from 'drizzle-orm'
+import { and, count, desc, eq, isNull } from 'drizzle-orm'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -116,20 +116,19 @@ export default async function AlertStoriesPage({
     .limit(itemsPerPage)
     .offset(offset)
 
-  // Get total count for pagination
-  const totalStories = await db
-    .select({ count: stories.id })
+    const [{ total }] = await db
+    .select({ total: count() })
     .from(stories)
-    .where(
-      and(
-        eq(stories.alertId, id),
-        isNull(stories.deletedAt),
-        eq(stories.userMarkedIrrelevant, false),
-        eq(stories.systemMarkedIrrelevant, false),
-      ),
-    )
+       .where(
+         and(
+           eq(stories.alertId, id),
+           isNull(stories.deletedAt),
+           eq(stories.userMarkedIrrelevant, false),
+           eq(stories.systemMarkedIrrelevant, false),
+         ),
+       )
 
-  const totalPages = Math.ceil(totalStories.length / itemsPerPage)
+  const totalPages = Math.ceil(total / itemsPerPage)
   const hasNextPage = currentPage < totalPages
   const hasPrevPage = currentPage > 1
 
