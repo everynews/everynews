@@ -291,5 +291,11 @@ export default async function AlertStoriesPage({
   )
 }
 
-export const generateStaticParams = async () =>
-  await db.select().from(alert).where(isNull(alert.deletedAt))
+export const generateStaticParams = async () => {
+  const rows = await db
+    .select({ id: alert.id })
+    .from(alert)
+    .where(isNull(alert.deletedAt))
+
+  return rows.map(({ id }) => ({ id }))
+}
