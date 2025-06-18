@@ -116,17 +116,17 @@ export default async function AlertStoriesPage({
     .limit(itemsPerPage)
     .offset(offset)
 
-    const [{ total }] = await db
+  const [{ total }] = await db
     .select({ total: count() })
     .from(stories)
-       .where(
-         and(
-           eq(stories.alertId, id),
-           isNull(stories.deletedAt),
-           eq(stories.userMarkedIrrelevant, false),
-           eq(stories.systemMarkedIrrelevant, false),
-         ),
-       )
+    .where(
+      and(
+        eq(stories.alertId, id),
+        isNull(stories.deletedAt),
+        eq(stories.userMarkedIrrelevant, false),
+        eq(stories.systemMarkedIrrelevant, false),
+      ),
+    )
 
   const totalPages = Math.ceil(total / itemsPerPage)
   const hasNextPage = currentPage < totalPages
