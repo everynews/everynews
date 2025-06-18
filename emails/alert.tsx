@@ -16,7 +16,7 @@ export const Alert = ({ stories }: { stories: Story[] }) => {
       <Preview>{stories[0]?.keyFindings?.join(' ') ?? ''}</Preview>
       <Tailwind>
         <Body>
-          <Container className='bg-white max-w-2xl mx-auto p-1 font-sans'>
+          <Container className='max-w-2xl mx-auto p-1 font-sans'>
             <Section>
               {stories && stories.length > 0 ? (
                 <div>
