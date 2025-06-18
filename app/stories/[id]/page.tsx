@@ -130,5 +130,11 @@ export default async function StoryPage({
   )
 }
 
-export const generateStaticParams = async () =>
-  await db.select().from(stories).where(isNull(stories.deletedAt))
+export const generateStaticParams = async () => {
+  const rows = await db
+    .select({ id: stories.id })
+    .from(stories)
+    .where(isNull(stories.deletedAt))
+
+  return rows.map(({ id }) => ({ id }))
+}
