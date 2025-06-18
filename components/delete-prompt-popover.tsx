@@ -1,17 +1,9 @@
 'use client'
 
 import { api } from '@everynews/app/api'
-import { Button } from '@everynews/components/ui/button'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@everynews/components/ui/popover'
+import { DeletePopover } from '@everynews/components/delete-popover'
 import type { Prompt } from '@everynews/schema/prompt'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { SubmitButton } from './submit-button'
 
 export const DeletePromptPopover = ({
   prompt,
@@ -20,50 +12,22 @@ export const DeletePromptPopover = ({
   prompt: Prompt
   children?: React.ReactNode
 }) => {
-  const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   const handleDelete = async () => {
-    try {
-      setLoading(true)
-      await api.prompts[':id'].$delete({
-        param: {
-          id: prompt.id,
-        },
-      })
-      router.push('/my/prompts')
-      toast.success('Prompt deleted successfully')
-    } catch (error) {
-      toast.error('Failed to delete prompt', {
-        description: error instanceof Error ? error.message : 'Unknown error',
-      })
-    } finally {
-      setLoading(false)
-    }
+    await api.prompts[':id'].$delete({
+      param: { id: prompt.id },
+    })
+    router.push('/my/prompts')
   }
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className='flex flex-col gap-2'>
-        <h2 className='font-semibold text-lg'>Delete "{prompt.name}"?</h2>
-        <p className='text-muted-foreground'>This action cannot be undone.</p>
 
-        <footer className='flex justify-end gap-2'>
-          <Button variant='outline' size='sm' onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <SubmitButton
-            variant='destructive'
-            size='sm'
-            onClick={handleDelete}
-            disabled={loading}
-            loading={loading}
-          >
-            Delete
-          </SubmitButton>
-        </footer>
-      </PopoverContent>
-    </Popover>
+  return (
+    <DeletePopover
+      itemName={prompt.name}
+      onDelete={handleDelete}
+      successMessage='Prompt deleted successfully'
+    >
+      {children}
+    </DeletePopover>
   )
 }
