@@ -1,15 +1,13 @@
 import { createHash } from 'node:crypto'
 import { db } from '@everynews/database'
-import {
-  parsePromptResponse,
-  prepareContentInput,
-} from '@everynews/lib/prompts'
+import { prepareContentInput } from '@everynews/lib/prompts'
 import { getDefaultPromptContent } from '@everynews/lib/prompts/default-prompt'
-import { getSystemPromptContent } from '@everynews/lib/prompts/system-prompt'
+import { getSystemPromptContentForStructuredOutput } from '@everynews/lib/prompts/system-prompt'
 import { track } from '@everynews/logs'
 import {
   type Alert,
   type Content,
+  LANGUAGE_CODES,
   prompt,
   type Story,
   StorySchema,
@@ -19,10 +17,29 @@ import { and, eq, isNull } from 'drizzle-orm'
 import normalizeUrl from 'normalize-url'
 import OpenAI from 'openai'
 import PQueue from 'p-queue'
+import { z } from 'zod'
 
 const client = new OpenAI()
 
 const model = 'gpt-4o'
+
+const SummaryResponseSchema = z.object({
+  importance: z
+    .number()
+    .int()
+    .min(0)
+    .max(100)
+    .describe('Importance score from 0 to 100'),
+  keyFindings: z
+    .array(z.string())
+    .describe('Array of key findings in plain text'),
+  languageCode: z
+    .enum(LANGUAGE_CODES)
+    .describe('Language code for the summary'),
+  title: z
+    .string()
+    .describe('The summarized title in plain text (no markdown)'),
+})
 
 const hashPrompt = (promptContent: string): string => {
   return createHash('sha256').update(promptContent).digest('hex')
@@ -55,14 +72,66 @@ export const summarizeContent = async ({
 }): Promise<Omit<Story, 'id' | 'createdAt' | 'updatedAt'> | null> => {
   try {
     const { fullPrompt, promptContent } = await input({ content, news })
-    const response = await client.responses.create({
-      input: fullPrompt,
-      instructions: getSystemPromptContent(news.language),
+
+    const systemInstructions = getSystemPromptContentForStructuredOutput(
+      news.language,
+    )
+
+    const response = await client.chat.completions.create({
+      messages: [
+        {
+          content: systemInstructions,
+          role: 'system',
+        },
+        {
+          content: fullPrompt,
+          role: 'user',
+        },
+      ],
       model,
+      response_format: {
+        json_schema: {
+          name: 'content_summary',
+          schema: {
+            additionalProperties: false,
+            properties: {
+              importance: {
+                description: 'Importance score from 0 to 100',
+                maximum: 100,
+                minimum: 0,
+                type: 'integer',
+              },
+              keyFindings: {
+                description: 'Array of key findings in plain text',
+                items: {
+                  type: 'string',
+                },
+                type: 'array',
+              },
+              languageCode: {
+                description: 'Language code for the summary',
+                enum: LANGUAGE_CODES as unknown as string[],
+                type: 'string',
+              },
+              title: {
+                description: 'The summarized title in plain text (no markdown)',
+                type: 'string',
+              },
+            },
+            required: ['title', 'keyFindings', 'importance', 'languageCode'],
+            type: 'object',
+          },
+          strict: true,
+        },
+        type: 'json_schema',
+      },
     })
 
-    const { title, keyFindings, importance, languageCode } =
-      parsePromptResponse(response.output_text)
+    const parsedResponse = SummaryResponseSchema.parse(
+      JSON.parse(response.choices[0].message.content || '{}'),
+    )
+
+    const { title, keyFindings, importance, languageCode } = parsedResponse
 
     const isSystemIrrelevant = importance === 0
 
