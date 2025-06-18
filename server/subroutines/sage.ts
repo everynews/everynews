@@ -83,7 +83,7 @@ export const summarizeContent = async ({
     } else {
       await track({
         channel: 'sage',
-        description: keyFindings.join('\n'),
+        description: keyFindings?.length ? keyFindings.join('\n') : 'No key findings',
         event: title,
         icon: '✅',
         tags: {
