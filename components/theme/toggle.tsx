@@ -15,7 +15,7 @@ export const ThemeToggle = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' size='sm'>
+        <Button variant='outline' size='sm'>
           Theme
         </Button>
       </DropdownMenuTrigger>

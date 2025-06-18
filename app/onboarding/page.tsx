@@ -223,17 +223,13 @@ export default function OnboardingPage() {
               <div className='flex justify-between gap-4'>
                 <Button
                   type='button'
-                  variant='ghost'
+                  variant='outline'
                   onClick={() => router.push('/')}
                 >
                   Skip for now
                 </Button>
                 <div className='flex gap-2'>
-                  <SubmitButton
-                    variant='outline'
-                    loading={isTesting}
-                    onClick={onTest}
-                  >
+                  <SubmitButton loading={isTesting} onClick={onTest}>
                     Test Alert
                   </SubmitButton>
 

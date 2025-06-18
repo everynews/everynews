@@ -11,8 +11,13 @@ import { and, desc, eq, isNull, sql } from 'drizzle-orm'
 import { FileText } from 'lucide-react'
 import Link from 'next/link'
 
-export default async function Page() {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ alertId: string }>
+}) {
   const user = await whoami()
+  const { alertId: selectedAlertId } = await params
 
   if (!user) {
     return (
@@ -53,7 +58,7 @@ export default async function Page() {
     .groupBy(alert.id)
     .orderBy(desc(alert.updatedAt))
 
-  // Fetch stories for all user's alerts
+  // Fetch stories for the selected alert
   const storyQuery = db
     .select({
       alert: alert,
@@ -73,7 +78,13 @@ export default async function Page() {
       subscriptions,
       and(eq(subscriptions.alertId, alert.id), isNull(subscriptions.deletedAt)),
     )
-    .where(and(eq(subscriptions.userId, user.id), isNull(stories.deletedAt)))
+    .where(
+      and(
+        eq(subscriptions.userId, user.id),
+        isNull(stories.deletedAt),
+        eq(alert.id, selectedAlertId),
+      ),
+    )
     .orderBy(desc(stories.createdAt))
     .limit(20)
 
@@ -126,7 +137,10 @@ export default async function Page() {
 
         {/* Right content - Triggered stories */}
         <div className='lg:col-span-2'>
-          <h2 className='text-lg font-semibold mb-3'>Recent Stories</h2>
+          <h2 className='text-lg font-semibold mb-3'>
+            {userAlerts.find((a) => a.alert.id === selectedAlertId)?.alert.name}{' '}
+            Stories
+          </h2>
 
           <div className='grid grid-cols-1 gap-4'>
             {triggeredStories.map(({ story, alert: alertInfo }) => (
@@ -191,7 +205,7 @@ export default async function Page() {
                 <FileText className='size-12 mx-auto mb-3 opacity-50' />
                 <p>No stories found</p>
                 <p className='text-sm mt-1'>
-                  Subscribe to alerts to see stories here
+                  This alert has no triggered stories yet
                 </p>
               </Card>
             )}
@@ -200,4 +214,13 @@ export default async function Page() {
       </div>
     </div>
   )
+}
+
+export const generateStaticParams = async () => {
+  const rows = await db
+    .select({ id: alert.id })
+    .from(alert)
+    .where(isNull(alert.deletedAt))
+
+  return rows.map(({ id }) => ({ id }))
 }

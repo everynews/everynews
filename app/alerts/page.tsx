@@ -1,5 +1,5 @@
-import { whoami } from '@everynews/auth/session'
-import { SubscribeAlertButton } from '@everynews/components/subscribe-alert-button'
+'use cache'
+
 import { Badge } from '@everynews/components/ui/badge'
 import {
   Card,
@@ -9,17 +9,8 @@ import {
 } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
 import { AlertSchema, alert } from '@everynews/schema/alert'
-import {
-  type Channel,
-  ChannelSchema,
-  channels,
-} from '@everynews/schema/channel'
 import { stories } from '@everynews/schema/story'
-import {
-  type Subscription,
-  SubscriptionSchema,
-  subscriptions,
-} from '@everynews/schema/subscription'
+import { subscriptions } from '@everynews/schema/subscription'
 import { and, count, eq, isNull } from 'drizzle-orm'
 import { FileText, Users } from 'lucide-react'
 import Link from 'next/link'
@@ -30,30 +21,6 @@ export const metadata = {
 }
 
 export default async function AlertsPage() {
-  // Get current user and their data
-  const user = await whoami()
-
-  // Get user's channels if logged in
-  let userChannels: Channel[] = []
-  let userSubscriptions: Subscription[] = []
-
-  if (user) {
-    const channelsRes = await db
-      .select()
-      .from(channels)
-      .where(and(eq(channels.userId, user.id), isNull(channels.deletedAt)))
-    userChannels = ChannelSchema.array().parse(channelsRes)
-
-    const subscriptionsRes = await db
-      .select()
-      .from(subscriptions)
-      .where(
-        and(eq(subscriptions.userId, user.id), isNull(subscriptions.deletedAt)),
-      )
-    userSubscriptions = SubscriptionSchema.array().parse(subscriptionsRes)
-  }
-
-  // First get alert data with story counts
   const alertsWithStories = await db
     .select({
       alert: alert,
@@ -88,14 +55,10 @@ export default async function AlertsPage() {
   // Parse and combine the data
   const alertsData = alertsWithStories
     .map(({ alert: alertData, storyCount }) => {
-      const userSubscription = userSubscriptions.find(
-        (sub) => sub.alertId === alertData.id,
-      )
       return {
         alert: AlertSchema.parse(alertData),
         storyCount,
         subscriberCount: subscriberMap.get(alertData.id) || 0,
-        userSubscription,
       }
     })
     .sort((a, b) => b.subscriberCount - a.subscriberCount)
@@ -105,12 +68,7 @@ export default async function AlertsPage() {
       <div className='container mx-auto p-4'>
         <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
           {alertsData.map(
-            ({
-              alert: alertInfo,
-              storyCount,
-              subscriberCount,
-              userSubscription,
-            }) => (
+            ({ alert: alertInfo, storyCount, subscriberCount }) => (
               <Link href={`/alerts/${alertInfo.id}`} key={alertInfo.id}>
                 <Card className='h-full hover:shadow-md transition-shadow'>
                   <CardHeader>
@@ -161,18 +119,6 @@ export default async function AlertsPage() {
                           {alertInfo.strategy.query}
                         </Badge>
                       )}
-                      <div className='flex items-center justify-end'>
-                        {user &&
-                          userChannels.length > 0 &&
-                          alertInfo.userId !== user.id && (
-                            <SubscribeAlertButton
-                              alert={alertInfo}
-                              channels={userChannels}
-                              subscription={userSubscription ?? undefined}
-                              user={user}
-                            />
-                          )}
-                      </div>
                     </div>
                   </CardContent>
                 </Card>

@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { Suspense } from 'react'
 import { MainNavigation } from './main-navigation'
 import { MobileNav } from './mobile-nav'
-import { ThemeToggle } from './theme/toggle'
 
 export const AppNavbar = async () => {
   const user = await whoami()
@@ -27,7 +26,6 @@ export const AppNavbar = async () => {
       </div>
       <MobileNav user={user} />
       <div className='hidden items-center gap-2 md:flex'>
-        <ThemeToggle />
         <Suspense
           fallback={
             <div className='h-8 w-8 animate-pulse rounded-full bg-muted' />
