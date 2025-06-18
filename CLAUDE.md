@@ -96,7 +96,6 @@ The application follows a hybrid approach for data handling:
 
 ### Implementation Details
 - Hono client configured in `app/api/index.ts` with credentials and base URL
-- Server Components use `export const dynamic = 'force-dynamic'` for real-time data
 - Client Components marked with `'use client'` directive
 - Form handling uses React Hook Form with Zod validation matching server schemas
 

@@ -78,14 +78,15 @@ export const aspirant = async (alert: Alert): Promise<Story[]> => {
           createdAt: now,
           deletedAt: null,
           id: nanoid(),
-          irrelevant: null,
           keyFindings: summary.keyFindings,
           languageCode: summary.languageCode,
           promptHash: summary.promptHash,
           promptId: summary.promptId,
+          systemMarkedIrrelevant: false,
           title: summary.title,
           updatedAt: now,
           url: summary.url,
+          userMarkedIrrelevant: false,
         })
       }
     }

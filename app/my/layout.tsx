@@ -1,5 +1,4 @@
-'use client'
-
+import { SidebarLink } from '@everynews/components/sidebar-link'
 import { Button } from '@everynews/components/ui/button'
 import {
   Sheet,
@@ -7,10 +6,8 @@ import {
   SheetContent,
   SheetTrigger,
 } from '@everynews/components/ui/sheet'
-import { cn } from '@everynews/lib/utils'
 import { Menu } from 'lucide-react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 
 const sidebarItems = [
   {
@@ -73,23 +70,6 @@ const MyLayout = ({ children }: { children: React.ReactNode }) => {
         <main className='py-6'>{children}</main>
       </div>
     </div>
-  )
-}
-
-const SidebarLink = ({ href, title }: { href: string; title: string }) => {
-  const pathname = usePathname()
-  const isActive = pathname === href
-
-  return (
-    <Link
-      href={href}
-      className={cn(
-        'flex items-center rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
-        isActive ? 'bg-accent text-accent-foreground' : 'text-muted-foreground',
-      )}
-    >
-      {title}
-    </Link>
   )
 }
 

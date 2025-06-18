@@ -64,11 +64,13 @@ export const summarizeContent = async ({
     const { title, keyFindings, importance, languageCode } =
       parsePromptResponse(response.output_text)
 
-    if (importance === 0) {
+    const isSystemIrrelevant = importance === 0
+
+    if (isSystemIrrelevant) {
       await track({
         channel: 'sage',
-        description: `Skipped irrelevant content: ${content.title}`,
-        event: 'Irrelevant Content Skipped',
+        description: `Marked as irrelevant by system: ${content.title}`,
+        event: 'System Marked Irrelevant',
         icon: '⏭️',
         tags: {
           content_id: content.id,
@@ -78,37 +80,39 @@ export const summarizeContent = async ({
           url: content.url.slice(0, 160),
         },
       })
-      return null
+    } else {
+      await track({
+        channel: 'sage',
+        description: keyFindings?.length
+          ? keyFindings.join('\n')
+          : 'No key findings',
+        event: title,
+        icon: '✅',
+        tags: {
+          content_id: content.id,
+          model,
+          original_title: content.title.slice(0, 160),
+          type: 'info',
+          url: content.url.slice(0, 160),
+        },
+      })
     }
-
-    await track({
-      channel: 'sage',
-      description: keyFindings.join('\n'),
-      event: title,
-      icon: '✅',
-      tags: {
-        content_id: content.id,
-        model,
-        original_title: content.title.slice(0, 160),
-        type: 'info',
-        url: content.url.slice(0, 160),
-      },
-    })
 
     return {
       alertId: news.id,
       contentId: content.id,
       deletedAt: null,
-      irrelevant: false,
       keyFindings,
       languageCode,
       promptHash: hashPrompt(promptContent),
       promptId: news.promptId,
+      systemMarkedIrrelevant: isSystemIrrelevant,
       title,
       url: normalizeUrl(content.url, {
         stripProtocol: true,
         stripWWW: true,
       }),
+      userMarkedIrrelevant: false,
     }
   } catch (error) {
     await track({
@@ -171,8 +175,11 @@ const summarizeWithCache = async ({
       icon: '💾',
       tags: {
         content_id: content.id,
+        existing_prompt_hash: existingStory.promptHash.slice(0, 8),
+        normalized_url: url,
         prompt_hash: promptHash.slice(0, 8),
         prompt_id: news.promptId || 'default',
+        story_id: existingStory.id,
         title: content.title.slice(0, 160),
         type: 'info',
         url: content.url.slice(0, 160),
@@ -181,13 +188,29 @@ const summarizeWithCache = async ({
     return StorySchema.parse(existingStory)
   }
 
+  // Track cache miss
+  await track({
+    channel: 'sage',
+    description: `Cache miss - processing new content: ${content.title}`,
+    event: 'Story Cache Miss',
+    icon: '🔄',
+    tags: {
+      content_id: content.id,
+      normalized_url: url,
+      prompt_hash: promptHash.slice(0, 8),
+      prompt_id: news.promptId || 'default',
+      title: content.title.slice(0, 160),
+      type: 'info',
+      url: content.url.slice(0, 160),
+    },
+  })
+
   // Get the summary without database operations
   const summary = await summarizeContent({ content, news })
   if (!summary) {
     return null
   }
 
-  // Insert into database
   const [story] = await db
     .insert(stories)
     .values({
@@ -197,8 +220,10 @@ const summarizeWithCache = async ({
       languageCode: summary.languageCode,
       promptHash: summary.promptHash,
       promptId: summary.promptId,
+      systemMarkedIrrelevant: summary.systemMarkedIrrelevant,
       title: summary.title,
       url: summary.url,
+      userMarkedIrrelevant: summary.userMarkedIrrelevant,
     })
     .returning()
 
