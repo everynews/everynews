@@ -15,13 +15,48 @@ import { toastNetworkError } from '@everynews/lib/error'
 import MetaKeyIcon from '@everynews/lib/meta-key'
 import { CornerDownLeft } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 export default function SignInPage() {
   const [contact, setContact] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isFeelingLuckyLoading, setIsFeelingLuckyLoading] = useState(false)
+
+  const handleSubmit = useCallback(
+    async ({
+      contact,
+      isFeelingLucky,
+    }: {
+      contact: string
+      isFeelingLucky: boolean
+    }) => {
+      if (!contact) return
+      try {
+        if (isFeelingLucky) {
+          setIsFeelingLuckyLoading(true)
+        } else {
+          setIsLoading(true)
+        }
+        await auth.signIn.magicLink({
+          callbackURL: '/sign-in/success',
+          email: contact,
+        })
+        if (isFeelingLucky) {
+          if (window) {
+            window.open(`https://${contact.split('@')[1]}`, '_blank')
+          }
+        }
+        toast.success('Magic Link Sent!')
+      } catch (e) {
+        toastNetworkError(e as Error)
+      } finally {
+        setIsLoading(false)
+        setIsFeelingLuckyLoading(false)
+      }
+    },
+    [],
+  )
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -35,39 +70,7 @@ export default function SignInPage() {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [contact])
-
-  const handleSubmit = async ({
-    contact,
-    isFeelingLucky,
-  }: {
-    contact: string
-    isFeelingLucky: boolean
-  }) => {
-    if (!contact) return
-    try {
-      if (isFeelingLucky) {
-        setIsFeelingLuckyLoading(true)
-      } else {
-        setIsLoading(true)
-      }
-      await auth.signIn.magicLink({
-        callbackURL: '/sign-in/success',
-        email: contact,
-      })
-      if (isFeelingLucky) {
-        if (window) {
-          window.open(`https://${contact.split('@')[1]}`, '_blank')
-        }
-      }
-      toast.success('Magic Link Sent!')
-    } catch (e) {
-      toastNetworkError(e as Error)
-    } finally {
-      setIsLoading(false)
-      setIsFeelingLuckyLoading(false)
-    }
-  }
+  }, [contact, handleSubmit])
 
   return (
     <div className='flex items-center justify-center bg-background p-4'>
