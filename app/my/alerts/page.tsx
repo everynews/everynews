@@ -73,6 +73,7 @@ export default async function MyAlertsPage() {
               <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
               <TableHead>Updated</TableHead>
+              <TableHead>Threshold</TableHead>
               <TableHead className='text-right'>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -112,25 +113,28 @@ export default async function MyAlertsPage() {
                     <TableCell className='text-muted-foreground'>
                       {new Date(item.updatedAt).toLocaleDateString()}
                     </TableCell>
+                    <TableCell className='text-muted-foreground'>
+                      {item.threshold}
+                    </TableCell>
                     <TableCell className='flex items-center gap-1 justify-end'>
-                      <DeleteAlertPopover alert={item}>
-                        <Button variant='ghost' className='text-destructive'>
-                          Delete
-                        </Button>
-                      </DeleteAlertPopover>
-
-                      <Button asChild size='sm' variant='ghost'>
-                        <Link href={`/alerts/${item.id}`}>View</Link>
-                      </Button>
                       <SubscribeAlertButton
                         alert={item}
                         channels={userChannels}
                         subscription={subscription}
                         user={user}
                       />
+
+                      <Button asChild size='sm' variant='ghost'>
+                        <Link href={`/alerts/${item.id}`}>View</Link>
+                      </Button>
                       <Button asChild size='sm' variant='ghost'>
                         <Link href={`/my/alerts/${item.id}`}>Edit</Link>
                       </Button>
+                      <DeleteAlertPopover alert={item}>
+                        <Button variant='ghost' className='text-destructive'>
+                          Delete
+                        </Button>
+                      </DeleteAlertPopover>
                     </TableCell>
                   </TableRow>
                 )
