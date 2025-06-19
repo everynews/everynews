@@ -1,9 +1,8 @@
 name: Hourly Cron Job
 
 on:
-  schedule:
-    # Aim to run every hour, GitHub has a delay
-    - cron: '59 * * * *'  # Runs at minute 59 of every hour
+  # schedule:
+  #   - cron: '59 * * * *'  # Runs at minute 59 of every hour
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
