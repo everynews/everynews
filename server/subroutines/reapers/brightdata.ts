@@ -55,7 +55,7 @@ export async function brightdata(url: string): Promise<Content> {
     const html = await response.text()
 
     // Parse with Defuddle
-    const defuddleResult = await Defuddle(html, normalized, {
+    const defuddleResult = await Defuddle(html, `https://${normalized}`, {
       markdown: true,
     })
 
