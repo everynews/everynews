@@ -9,6 +9,7 @@ import { Calendar, Globe } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { ShareButton } from './share-button'
 
 export async function generateMetadata({
   params,
@@ -116,7 +117,7 @@ export default async function StoryPage({
         </Card>
       )}
       <div className='mt-8 pt-6'>
-        <div className='flex justify-end items-center'>
+        <div className='flex justify-between items-center'>
           <Link
             href={storyData.originalUrl}
             target='_blank'
@@ -125,6 +126,10 @@ export default async function StoryPage({
           >
             View Original Source ↗
           </Link>
+          <ShareButton
+            title={storyData.title}
+            url={`${process.env.NEXT_PUBLIC_SITE_URL || ''}/stories/${storyData.id}`}
+          />
         </div>
       </div>
     </div>
