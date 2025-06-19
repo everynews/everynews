@@ -1,4 +1,5 @@
 import { Badge } from '@everynews/components/ui/badge'
+import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
 import { AlertSchema, alerts } from '@everynews/schema/alert'
@@ -10,7 +11,6 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ShareButton } from './share-button'
-import { Button } from '@everynews/components/ui/button'
 
 export async function generateMetadata({
   params,
