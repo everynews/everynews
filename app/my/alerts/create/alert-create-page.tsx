@@ -82,7 +82,7 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
       active: true,
       description: '',
       isPublic: true,
-      language: 'en',
+      languageCode: 'en',
       name: humanId({ capitalize: false, separator: '-' }),
       promptId: null,
       strategy: { provider: 'hnbest' },
@@ -216,7 +216,7 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
 
               <FormField
                 control={form.control}
-                name='language'
+                name='languageCode'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Language</FormLabel>

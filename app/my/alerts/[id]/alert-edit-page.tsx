@@ -101,17 +101,7 @@ export const AlertEditPage = ({
   }, [alert.wait])
 
   const form = useForm<AlertDto>({
-    defaultValues: {
-      active: alert.active,
-      description: alert.description || '',
-      isPublic: alert.isPublic,
-      language: alert.language,
-      name: alert.name,
-      promptId: alert.promptId,
-      strategy: alert.strategy,
-      threshold: alert.threshold,
-      wait: alert.wait,
-    },
+    defaultValues: alert,
     resolver: zodResolver(AlertDtoSchema),
   })
 
@@ -240,13 +230,13 @@ export const AlertEditPage = ({
 
               <FormField
                 control={form.control}
-                name='language'
+                name='languageCode'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Language</FormLabel>
                     <FormControl>
                       <Select
-                        value={field.value}
+                        value={field.value || 'en'}
                         onValueChange={field.onChange}
                       >
                         <SelectTrigger>

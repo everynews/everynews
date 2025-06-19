@@ -30,11 +30,7 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<ChannelDto>({
-    defaultValues: {
-      config: channel.config,
-      name: channel.name,
-      type: channel.type,
-    },
+    defaultValues: channel,
     resolver: zodResolver(ChannelDtoSchema),
   })
 

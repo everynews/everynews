@@ -57,7 +57,7 @@ export default function OnboardingPage() {
       active: true,
       description: 'Your personalized AI-curated alert',
       isPublic: false,
-      language: 'en',
+      languageCode: 'en',
       name: humanId({ capitalize: false, separator: '-' }),
       promptId: null,
       strategy: { provider: 'google', query: '' },
