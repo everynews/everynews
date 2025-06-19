@@ -45,7 +45,11 @@ export const stories = pgTable(
   (table) => ({
     // Unique constraint on URL + promptHash + languageCode combination
     // This allows multiple stories for the same URL with different prompts or languages
-    urlPromptHashLangUnique: unique().on(table.url, table.promptHash, table.languageCode),
+    urlPromptHashLangUnique: unique().on(
+      table.url,
+      table.promptHash,
+      table.languageCode,
+    ),
   }),
 )
 
