@@ -1,3 +1,5 @@
+import { db } from '@everynews/database'
+import { stories } from '@everynews/schema/story'
 import { ImageResponse } from 'next/og'
 
 const google = async (font: string, text: string) => {
@@ -155,4 +157,14 @@ export const GET = async (request: Request) => {
       width: 1600,
     },
   )
+}
+
+export const generateStaticParams = async () => {
+  const all = await db.select().from(stories)
+  return all.map((story) => ({
+    description: Array.isArray(story.keyFindings)
+      ? story.keyFindings.join(' ')
+      : story.keyFindings,
+    title: story.title,
+  }))
 }
