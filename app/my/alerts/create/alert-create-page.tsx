@@ -2,6 +2,7 @@
 
 import { api } from '@everynews/app/api'
 import { AlertPreview } from '@everynews/components/alert-preview'
+import { DadJokes } from '@everynews/components/dad-jokes'
 import { PromptDialog } from '@everynews/components/prompt-dialog'
 import { SubmitButton } from '@everynews/components/submit-button'
 import { Button } from '@everynews/components/ui/button'
@@ -43,7 +44,6 @@ import { getLanguageOptions } from '@everynews/schema/language'
 import type { Prompt } from '@everynews/schema/prompt'
 import { type Story, StorySchema } from '@everynews/schema/story'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { humanId } from 'human-id'
 import { useRouter } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -63,12 +63,18 @@ const DAYS_OF_WEEK = [
 
 const HOURS_2_INTERVAL = Array.from({ length: 12 }, (_, i) => i * 2) // 0-22
 
-export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
+export const AlertCreatePage = ({
+  name,
+  prompts,
+}: {
+  name: string
+  prompts: Prompt[]
+}) => {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isTesting, setIsTesting] = useState(false)
   const [testResults, setTestResults] = useState<Story[] | null>(null)
-  const [countdown, setCountdown] = useState(30)
+  const [countdown, setCountdown] = useState(60)
   const [promptDialogOpen, setPromptDialogOpen] = useState(false)
   const [promptDialogMode, setPromptDialogMode] = useState<'create' | 'edit'>(
     'create',
@@ -88,7 +94,7 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
       description: '',
       isPublic: true,
       languageCode: 'en',
-      name: humanId({ capitalize: false, separator: '-' }),
+      name,
       promptId: null,
       strategy: { provider: 'hnbest' },
       threshold: 70,
@@ -120,7 +126,7 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
     const values = form.getValues()
     setIsTesting(true)
     setTestResults(null)
-    setCountdown(30)
+    setCountdown(60)
 
     try {
       const res = await api.drill.$post({ json: values })
@@ -185,7 +191,24 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
   return (
     <div className='container mx-auto'>
       <div className='mb-6'>
-        <h1 className='text-3xl font-bold'>Create Alert</h1>
+        <h1 className='text-3xl font-bold flex items-center gap-2 justify-between'>
+          Create Alert
+          <div className='flex gap-2'>
+            <SubmitButton
+              variant='outline'
+              onClick={onTest}
+              loading={isTesting}
+            >
+              Test
+            </SubmitButton>
+            <SubmitButton
+              onClick={form.handleSubmit(onSubmit)}
+              loading={isSubmitting}
+            >
+              Create
+            </SubmitButton>
+          </div>
+        </h1>
         <p className='text-muted-foreground mt-1'>
           Configure a new AI-powered alert for content monitoring
         </p>
@@ -667,31 +690,30 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
         </div>
 
         <div className='space-y-4'>
-          <Card>
+          <Card className='min-h-64'>
             <CardHeader>
-              <CardTitle>{form.watch('name')}</CardTitle>
+              <CardTitle className='flex items-center justify-between'>
+                {form.watch('name')}
+                <div className='tabular-nums text-muted-foreground text-sm'>
+                  {isTesting && countdown > 0 ? (
+                    <>
+                      will be ready in {Math.floor(countdown / 60)}:
+                      {(countdown % 60).toString().padStart(2, '0')}...
+                    </>
+                  ) : null}
+                </div>
+              </CardTitle>
             </CardHeader>
             <CardContent>
               {isTesting ? (
                 <div className='flex flex-col items-center justify-center py-12 space-y-4'>
-                  <div className='tabular-nums text-muted-foreground text-sm'>
-                    {countdown > 0 ? (
-                      <>
-                        Demo will be ready in {Math.floor(countdown / 60)}:
-                        {(countdown % 60).toString().padStart(2, '0')}...
-                      </>
-                    ) : (
-                      <span className='text-muted-foreground text-sm'>
-                        Ready to preview!
-                      </span>
-                    )}
-                  </div>
+                  <DadJokes />
                 </div>
               ) : testResults && testResults.length > 0 ? (
                 <AlertPreview stories={testResults} />
               ) : (
-                <div className='text-center text-muted-foreground py-12 text-sm'>
-                  <p>Click "Test" to preview your alert</p>
+                <div className='text-muted-foreground text-sm'>
+                  <p>Ready to test your alert?</p>
                 </div>
               )}
             </CardContent>

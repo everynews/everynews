@@ -3,6 +3,7 @@ import { db } from '@everynews/database'
 import { redirectToSignIn } from '@everynews/lib/auth-redirect'
 import { prompt } from '@everynews/schema/prompt'
 import { and, eq, isNull } from 'drizzle-orm'
+import { humanId } from 'human-id'
 import { AlertCreatePage } from './alert-create-page'
 
 export const metadata = {
@@ -22,5 +23,6 @@ export default async function CreateAlertPage() {
     .from(prompt)
     .where(and(eq(prompt.userId, user.id), isNull(prompt.deletedAt)))
 
-  return <AlertCreatePage prompts={prompts} />
+  const name = humanId({ capitalize: false, separator: '-' })
+  return <AlertCreatePage name={name} prompts={prompts} />
 }
