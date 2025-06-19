@@ -130,12 +130,3 @@ export default async function StoryPage({
     </div>
   )
 }
-
-export const generateStaticParams = async () => {
-  const rows = await db
-    .select({ id: stories.id })
-    .from(stories)
-    .where(isNull(stories.deletedAt))
-
-  return rows.map(({ id }) => ({ id }))
-}
