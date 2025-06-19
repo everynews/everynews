@@ -38,7 +38,7 @@ export const GET = async ({
 }) => {
   'use cache'
   const { title, description } = await searchParams
-    "Semantic Monitoring. Context Understanding. Granular Delivery. Everynews keeps up with the industry so you don't have to."
+  ;("Semantic Monitoring. Context Understanding. Granular Delivery. Everynews keeps up with the industry so you don't have to.")
   return new ImageResponse(
     <div tw='flex flex-col w-full items-start justify-start'>
       <div
