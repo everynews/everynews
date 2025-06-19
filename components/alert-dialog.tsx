@@ -88,7 +88,7 @@ export const AlertDialog = ({
     active: true,
     description: '',
     isPublic: true,
-    language: 'en',
+    languageCode: 'en',
     name: humanId({ capitalize: false, separator: '-' }),
     promptId: null,
     strategy: { provider: 'hnbest' },
@@ -104,7 +104,7 @@ export const AlertDialog = ({
             active: original?.active ?? true,
             description: original?.description || '',
             isPublic: original?.isPublic ?? true,
-            language: original?.language || 'en',
+            languageCode: original?.languageCode || 'en',
             name: original?.name || '',
             promptId: original?.promptId || null,
             strategy: original?.strategy || { provider: 'hnbest' },
@@ -220,7 +220,7 @@ export const AlertDialog = ({
 
             <FormField
               control={form.control}
-              name='language'
+              name='languageCode'
               render={({ field }) => (
                 <FormItem className='md:flex md:items-center md:justify-between'>
                   <div className='md:w-1/3'>
@@ -231,7 +231,7 @@ export const AlertDialog = ({
                   <div className='md:w-2/3'>
                     <FormControl>
                       <Select
-                        value={field.value}
+                        value={field.value || 'en'}
                         onValueChange={field.onChange}
                       >
                         <SelectTrigger>
@@ -339,24 +339,24 @@ export const AlertDialog = ({
                         </label>
 
                         <label
-                          htmlFor={`${id}-exa`}
+                          htmlFor={`${id}-google`}
                           className=' border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'
                         >
                           <RadioGroupItem
-                            value='exa'
-                            id={`${id}-exa`}
-                            aria-describedby={`${id}-exa-description`}
+                            value='google'
+                            id={`${id}-google`}
+                            aria-describedby={`${id}-google-description`}
                             className='order-1 after:absolute after:inset-0 cursor-pointer'
                           />
                           <div className='flex grow items-start gap-3'>
                             <div className='grid grow gap-2'>
-                              <span>Online Search</span>
+                              <span>Google Search</span>
                               <p
-                                id={`${id}-exa-description`}
+                                id={`${id}-google-description`}
                                 className='text-muted-foreground text-sm'
                               >
-                                Search on a specific query. Everynews uses Exa
-                                AI to search the web.
+                                Search on a specific query. Everynews uses
+                                Google Search to search the web.
                               </p>
                             </div>
                           </div>

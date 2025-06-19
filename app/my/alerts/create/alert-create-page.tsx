@@ -45,7 +45,7 @@ import { useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
-const STRATEGY_WITH_QUERY = ['exa']
+const STRATEGY_WITH_QUERY = ['google']
 
 const DAYS_OF_WEEK = [
   'Monday',
@@ -350,24 +350,24 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
                         </label>
 
                         <label
-                          htmlFor={`${id}-exa`}
+                          htmlFor={`${id}-google`}
                           className=' border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'
                         >
                           <RadioGroupItem
-                            value='exa'
-                            id={`${id}-exa`}
-                            aria-describedby={`${id}-exa-description`}
+                            value='google'
+                            id={`${id}-google`}
+                            aria-describedby={`${id}-google-description`}
                             className='order-1 after:absolute after:inset-0 cursor-pointer'
                           />
                           <div className='flex grow items-start gap-3'>
                             <div className='grid grow gap-2'>
                               <span>Online Search</span>
                               <p
-                                id={`${id}-exa-description`}
+                                id={`${id}-google-description`}
                                 className='text-muted-foreground text-sm'
                               >
-                                Search on a specific query. Everynews uses Exa
-                                AI to search the web.
+                                Search on a specific query. Everynews uses
+                                Google AI to search the web.
                               </p>
                             </div>
                           </div>

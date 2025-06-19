@@ -1,11 +1,11 @@
 import { track } from '@everynews/logs'
 import type { Alert } from '@everynews/schema'
-import { ExaCurator } from './curators/exa'
+import { GoogleCurator } from './curators/google'
 import { HnBestCurator } from './curators/hnbest'
 import type { Curator } from './curators/type'
 
 const curators = {
-  exa: ExaCurator,
+  google: GoogleCurator,
   hnbest: HnBestCurator,
 }
 

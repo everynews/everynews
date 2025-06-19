@@ -21,7 +21,7 @@ CREATE TABLE "alerts" (
 	"description" text,
 	"id" text PRIMARY KEY NOT NULL,
 	"is_public" boolean DEFAULT true NOT NULL,
-	"language" text DEFAULT 'en' NOT NULL,
+	"language_code" text DEFAULT 'en' NOT NULL,
 	"last_run" timestamp DEFAULT now(),
 	"name" text NOT NULL,
 	"next_run" timestamp DEFAULT now(),

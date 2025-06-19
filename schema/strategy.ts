@@ -9,7 +9,7 @@ export const strategySchema = z
       query: z.string().optional().openapi({ example: 'News' }),
     }),
     z.object({
-      provider: z.literal('exa').openapi({ example: 'exa' }),
+      provider: z.literal('google').openapi({ example: 'google' }),
       query: z.string().optional().openapi({ example: 'News' }),
     }),
   ])

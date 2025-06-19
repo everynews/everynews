@@ -6,7 +6,7 @@
   },
   "dialect": "postgresql",
   "enums": {},
-  "id": "35c52386-4747-436a-aed0-a3d703fa93d0",
+  "id": "d3b8eb30-4a09-4380-8e9f-39cbe09bb087",
   "policies": {},
   "prevId": "00000000-0000-0000-0000-000000000000",
   "roles": {},
@@ -156,9 +156,9 @@
           "primaryKey": false,
           "type": "boolean"
         },
-        "language": {
+        "language_code": {
           "default": "'en'",
-          "name": "language",
+          "name": "language_code",
           "notNull": true,
           "primaryKey": false,
           "type": "text"

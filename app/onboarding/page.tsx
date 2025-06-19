@@ -44,7 +44,7 @@ const INTEREST_CHIPS = [
   'Quantum Computing',
 ]
 
-const searchableProviders = ['exa']
+const searchableProviders = ['google']
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -60,7 +60,7 @@ export default function OnboardingPage() {
       language: 'en',
       name: humanId({ capitalize: false, separator: '-' }),
       promptId: null,
-      strategy: { provider: 'exa', query: '' },
+      strategy: { provider: 'google', query: '' },
       threshold: 0,
       wait: { type: 'count', value: 10 },
     },

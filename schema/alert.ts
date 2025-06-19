@@ -25,7 +25,7 @@ export const alerts = pgTable(
     description: text('description'),
     id: text('id').primaryKey().$defaultFn(nanoid),
     isPublic: boolean('is_public').notNull().default(true),
-    language: text('language', { enum: LANGUAGE_CODES })
+    languageCode: text('language_code', { enum: LANGUAGE_CODES })
       .notNull()
       .default('en'),
     lastRun: timestamp('last_run').defaultNow(),
