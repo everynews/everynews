@@ -1,5 +1,3 @@
-import { db } from '@everynews/database'
-import { stories } from '@everynews/schema/story'
 import { ImageResponse } from 'next/og'
 
 const google = async (font: string, text: string) => {
@@ -31,13 +29,11 @@ const japanese = async () =>
     ),
   ).then((res) => res.arrayBuffer())
 
-export const GET = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{ title: string; description: string }>
-}) => {
+export const GET = async (request: Request) => {
   'use cache'
-  const { title, description } = await searchParams
+  const { searchParams } = new URL(request.url)
+  const title = searchParams.get('title') || ''
+  const description = searchParams.get('description') || ''
   ;("Semantic Monitoring. Context Understanding. Granular Delivery. Everynews keeps up with the industry so you don't have to.")
   return new ImageResponse(
     <div tw='flex flex-col w-full items-start justify-start'>
@@ -162,12 +158,3 @@ export const GET = async ({
   )
 }
 
-export const generateStaticParams = async () => {
-  const all = await db.select().from(stories)
-  return all.map((story) => ({
-    description: Array.isArray(story.keyFindings)
-      ? story.keyFindings.join(' ')
-      : story.keyFindings,
-    title: story.title,
-  }))
-}
