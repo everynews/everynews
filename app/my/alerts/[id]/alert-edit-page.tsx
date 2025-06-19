@@ -642,7 +642,6 @@ export const AlertEditPage = ({
                           </div>
 
                           <div className='flex flex-col gap-2'>
-                          
                             <div className='grid grid-cols-2 gap-2'>
                               {HOURS_2_INTERVAL.map((h) => (
                                 <div
@@ -673,7 +672,7 @@ export const AlertEditPage = ({
                             </div>
                           </div>
                         </div>
-             
+
                         <FormMessage />
                       </FormItem>
                     )}

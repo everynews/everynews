@@ -598,11 +598,10 @@ export const AlertCreatePage = ({
                     name='wait.value'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Schedule
-                        </FormLabel>
+                        <FormLabel>Schedule</FormLabel>
                         <div className='text-muted-foreground text-xs mb-2'>
-                              Times shown in your local timezone
-                            </div>
+                          Times shown in your local timezone
+                        </div>
                         <div className='grid grid-cols-2 gap-8'>
                           <div className='flex flex-col gap-2'>
                             {DAYS_OF_WEEK.map((day) => (
@@ -634,7 +633,6 @@ export const AlertCreatePage = ({
                           </div>
 
                           <div className='flex flex-col gap-2'>
-
                             <div className='grid grid-cols-2 gap-2'>
                               {HOURS_2_INTERVAL.map((h) => (
                                 <div
@@ -663,7 +661,6 @@ export const AlertCreatePage = ({
                                 </div>
                               ))}
                             </div>
-
                           </div>
                         </div>
                         <FormMessage />
