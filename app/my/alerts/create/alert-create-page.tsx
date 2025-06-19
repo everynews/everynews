@@ -63,6 +63,28 @@ const DAYS_OF_WEEK = [
 
 const HOURS_2_INTERVAL = Array.from({ length: 12 }, (_, i) => i * 2) // 0-22
 
+// Convert UTC hour to local hour
+const utcToLocal = (utcHour: number): number => {
+  const now = new Date()
+  now.setUTCHours(utcHour, 0, 0, 0)
+  return now.getHours()
+}
+
+// Convert local hour to UTC hour
+const localToUtc = (localHour: number): number => {
+  const now = new Date()
+  now.setHours(localHour, 0, 0, 0)
+  return now.getUTCHours()
+}
+
+// Get display label for hour in local time
+const getHourLabel = (utcHour: number): string => {
+  const localHour = utcToLocal(utcHour)
+  const period = localHour < 12 ? 'AM' : 'PM'
+  const displayHour = localHour % 12 === 0 ? 12 : localHour % 12
+  return `${displayHour} ${period}`
+}
+
 export const AlertCreatePage = ({
   name,
   prompts,
@@ -106,7 +128,26 @@ export const AlertCreatePage = ({
   const onSubmit = async (values: AlertDto) => {
     setIsSubmitting(true)
     try {
-      const res = await api.alerts.$post({ json: values })
+      // Convert schedule hours from local to UTC if using schedule wait type
+      const processedValues = { ...values }
+      if (
+        values.wait.type === 'schedule' &&
+        typeof values.wait.value === 'string'
+      ) {
+        const schedule = JSON.parse(values.wait.value)
+        if (schedule.hours) {
+          // Convert each hour from local to UTC
+          const utcHours = schedule.hours.map((hour: number) =>
+            localToUtc(hour),
+          )
+          processedValues.wait = {
+            ...values.wait,
+            value: JSON.stringify({ ...schedule, hours: utcHours }),
+          }
+        }
+      }
+
+      const res = await api.alerts.$post({ json: processedValues })
 
       if (!res.ok) {
         toast.error('Failed to create alert')
@@ -129,7 +170,26 @@ export const AlertCreatePage = ({
     setCountdown(60)
 
     try {
-      const res = await api.drill.$post({ json: values })
+      // Convert schedule hours from local to UTC if using schedule wait type
+      const processedValues = { ...values }
+      if (
+        values.wait.type === 'schedule' &&
+        typeof values.wait.value === 'string'
+      ) {
+        const schedule = JSON.parse(values.wait.value)
+        if (schedule.hours) {
+          // Convert each hour from local to UTC
+          const utcHours = schedule.hours.map((hour: number) =>
+            localToUtc(hour),
+          )
+          processedValues.wait = {
+            ...values.wait,
+            value: JSON.stringify({ ...schedule, hours: utcHours }),
+          }
+        }
+      }
+
+      const res = await api.drill.$post({ json: processedValues })
 
       if (!res.ok) {
         toast.error('Failed to test alert')
@@ -538,7 +598,11 @@ export const AlertCreatePage = ({
                     name='wait.value'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Schedule</FormLabel>
+                        <FormLabel>Schedule
+                        </FormLabel>
+                        <div className='text-muted-foreground text-xs mb-2'>
+                              Times shown in your local timezone
+                            </div>
                         <div className='grid grid-cols-2 gap-8'>
                           <div className='flex flex-col gap-2'>
                             {DAYS_OF_WEEK.map((day) => (
@@ -570,6 +634,7 @@ export const AlertCreatePage = ({
                           </div>
 
                           <div className='flex flex-col gap-2'>
+
                             <div className='grid grid-cols-2 gap-2'>
                               {HOURS_2_INTERVAL.map((h) => (
                                 <div
@@ -592,12 +657,13 @@ export const AlertCreatePage = ({
                                       )
                                     }}
                                   />
-                                  <label
-                                    htmlFor={`${id}-hour-${h}`}
-                                  >{`${h % 12 === 0 ? 12 : h % 12} ${h < 12 ? 'AM' : 'PM'}`}</label>
+                                  <label htmlFor={`${id}-hour-${h}`}>
+                                    {getHourLabel(h)}
+                                  </label>
                                 </div>
                               ))}
                             </div>
+
                           </div>
                         </div>
                         <FormMessage />
