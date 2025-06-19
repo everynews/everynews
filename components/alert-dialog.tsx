@@ -50,7 +50,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { SubmitButton } from './submit-button'
 
-const STRATEGY_WITH_QUERY = ['exa']
+const STRATEGY_WITH_QUERY = ['google']
 
 const DAYS_OF_WEEK = [
   'Monday',
