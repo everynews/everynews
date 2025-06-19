@@ -2,7 +2,7 @@ import { Badge } from '@everynews/components/ui/badge'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
 import { AlertSchema, alerts } from '@everynews/schema/alert'
-import { contents, ContentSchema } from '@everynews/schema/content'
+import { ContentSchema, contents } from '@everynews/schema/content'
 import { StorySchema, stories } from '@everynews/schema/story'
 import { and, eq, isNull } from 'drizzle-orm'
 import { Calendar, Globe } from 'lucide-react'
@@ -92,7 +92,9 @@ export default async function StoryPage({
             </time>
           </div>
 
-          <h1 className='text-3xl font-bold leading-tight'>{storyData.title}</h1>
+          <h1 className='text-3xl font-bold leading-tight'>
+            {storyData.title}
+          </h1>
         </div>
       </div>
       {storyData.keyFindings && storyData.keyFindings.length > 0 && (
