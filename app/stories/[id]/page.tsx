@@ -5,11 +5,12 @@ import { AlertSchema, alerts } from '@everynews/schema/alert'
 import { contents } from '@everynews/schema/content'
 import { StorySchema, stories } from '@everynews/schema/story'
 import { and, eq, isNull } from 'drizzle-orm'
-import { Calendar, Globe } from 'lucide-react'
+import { Calendar, ExternalLink, Globe } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ShareButton } from './share-button'
+import { Button } from '@everynews/components/ui/button'
 
 export async function generateMetadata({
   params,
@@ -116,15 +117,18 @@ export default async function StoryPage({
           </CardContent>
         </Card>
       )}
-      <div className='mt-8 pt-6'>
+      <div className='pt-6'>
         <div className='flex justify-between items-center'>
           <Link
-            href={storyData.originalUrl}
+            href={storyData.originalUrl + '?utm_source=every.news'}
             target='_blank'
             rel='noopener noreferrer'
-            className='text-sm text-muted-foreground hover:text-foreground'
+            className='text-sm text-muted-foreground hover:text-foreground flex items-center gap-2'
           >
-            View Original Source ↗
+            <Button variant='outline' className='text-sm'>
+              <ExternalLink className='size-4' />
+              Source
+            </Button>
           </Link>
           <ShareButton
             title={storyData.title}
