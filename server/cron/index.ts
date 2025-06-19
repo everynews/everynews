@@ -163,7 +163,8 @@ export const CronRouter = new Hono().get(
       })
 
       // Process all alerts concurrently with error handling
-      const queue = new PQueue({ concurrency: 16 })
+      // for now, we'll process one alert at a time
+      const queue = new PQueue({ concurrency: 1 })
       const results = await Promise.allSettled(
         found.map((item) => queue.add(async () => processAlert(item))),
       )
