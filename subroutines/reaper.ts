@@ -1,7 +1,7 @@
 import { track } from '@everynews/logs'
 import type { Content } from '@everynews/schema'
 import PQueue from 'p-queue'
-import { brightdata } from './reapers/brightdata'
+import { reap } from './reapers'
 
 export const reaper = async (urls: string[]): Promise<Content[]> => {
   try {
@@ -20,7 +20,7 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
     const results = await Promise.all(
       urls.map(async (url) => {
         try {
-          return await queue.add(() => brightdata(url))
+          return await queue.add(() => reap(url))
         } catch (error) {
           console.error(`Failed to process URL: ${url}`, error)
           await track({
@@ -39,8 +39,7 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
     )
 
     const filteredResults = results.filter(
-      (result): result is Awaited<ReturnType<typeof brightdata>> =>
-        result !== null,
+      (result): result is Awaited<ReturnType<typeof reap>> => result !== null,
     )
 
     await track({
