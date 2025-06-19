@@ -17,6 +17,13 @@ import Link from 'next/link'
 
 export const metadata = {
   description: 'Browse public alerts.',
+  openGraph: {
+    images: [
+      {
+        url: '/api/og?title=Alerts&description=Browse public alerts.',
+      },
+    ],
+  },
   title: 'Alerts',
 }
 

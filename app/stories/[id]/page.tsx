@@ -23,8 +23,15 @@ export async function generateMetadata({
   return {
     description:
       Array.isArray(post?.keyFindings) && post.keyFindings.length > 0
-        ? post.keyFindings.join(', ')
+        ? post.keyFindings.join(' ')
         : null,
+    openGraph: {
+      images: [
+        {
+          url: `/api/og?title=${post?.title}&description=${Array.isArray(post?.keyFindings) && post.keyFindings.length > 0 ? post.keyFindings.join(' ') : ''}`,
+        },
+      ],
+    },
     title: post?.title ?? 'Story',
   }
 }
