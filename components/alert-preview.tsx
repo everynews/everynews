@@ -11,7 +11,7 @@ export const AlertPreview = ({ stories }: { stories: Story[] }) => {
       {stories.map((story) => (
         <div key={story.id} className='gap-2'>
           <Link
-            href={`https://${story.url}`}
+            href={story.originalUrl}
             target='_blank'
             rel='noopener noreferrer'
             className='text-orange-500 no-underline hover:underline'

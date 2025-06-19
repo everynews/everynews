@@ -18,7 +18,7 @@ export const reap = async (url: string): Promise<Content> => {
 
     await track({
       channel: 'brightdata',
-      description: url,
+      description: normalized,
       event: 'Scraping URL',
       icon: '🔍',
       tags: {
@@ -35,7 +35,7 @@ export const reap = async (url: string): Promise<Content> => {
       return existing as Content
     }
 
-    const dom = await JSDOM.fromURL(`https://${normalized}`)
+    const dom = await JSDOM.fromURL(url)
     const title = dom.window.document.title
 
     let markdown = await markdownify(url, dom)
@@ -62,16 +62,17 @@ export const reap = async (url: string): Promise<Content> => {
       }),
     ])
 
-    // Save to database
-    const row = {
-      htmlBlobUrl: htmlBlob.url,
-      markdownBlobUrl: markdownBlob.url,
-      title,
-      url: normalized,
-    }
-
     const [content] = ContentSchema.array().parse(
-      await db.insert(contents).values(row).returning(),
+      await db
+        .insert(contents)
+        .values({
+          htmlBlobUrl: htmlBlob.url,
+          markdownBlobUrl: markdownBlob.url,
+          originalUrl: url,
+          title,
+          url: normalized,
+        })
+        .returning(),
     )
 
     await track({

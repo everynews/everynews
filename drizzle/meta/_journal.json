@@ -1,13 +1,13 @@
 {
+  "version": "7",
   "dialect": "postgresql",
   "entries": [
     {
-      "breakpoints": true,
       "idx": 0,
-      "tag": "0000_rainy_rhino",
       "version": "7",
-      "when": 1750302564081
+      "when": 1750302845152,
+      "tag": "0000_glorious_impossible_man",
+      "breakpoints": true
     }
-  ],
-  "version": "7"
+  ]
 }

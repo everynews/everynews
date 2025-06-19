@@ -63,6 +63,7 @@ CREATE TABLE "contents" (
 	"html_blob_url" text NOT NULL,
 	"id" text PRIMARY KEY NOT NULL,
 	"markdown_blob_url" text NOT NULL,
+	"original_url" text NOT NULL,
 	"title" text NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"url" text NOT NULL,
@@ -99,13 +100,13 @@ CREATE TABLE "stories" (
 	"id" text PRIMARY KEY NOT NULL,
 	"key_findings" json,
 	"language_code" text DEFAULT 'en' NOT NULL,
+	"original_url" text NOT NULL,
 	"prompt_hash" text NOT NULL,
 	"prompt_id" text,
 	"system_marked_irrelevant" boolean DEFAULT false,
 	"title" text NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"url" text NOT NULL,
-	"original_url" text NOT NULL,
 	"user_marked_irrelevant" boolean DEFAULT false,
 	CONSTRAINT "stories_url_prompt_hash_unique" UNIQUE("url","prompt_hash")
 );

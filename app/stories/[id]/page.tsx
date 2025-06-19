@@ -2,7 +2,7 @@ import { Badge } from '@everynews/components/ui/badge'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
 import { AlertSchema, alert } from '@everynews/schema/alert'
-import { ContentSchema, contents } from '@everynews/schema/content'
+import { contents } from '@everynews/schema/content'
 import { StorySchema, stories } from '@everynews/schema/story'
 import { and, eq, isNull } from 'drizzle-orm'
 import { ArrowLeft, Calendar, Globe } from 'lucide-react'
@@ -67,11 +67,9 @@ export default async function StoryPage({
 
   // Parse with Zod schemas
   const story = StorySchema.parse(rawStory)
-  const content = ContentSchema.parse(rawContent)
   const alertInfo = AlertSchema.parse(rawAlert)
   return (
     <div className='container mx-auto max-w-4xl p-4'>
-      {/* Header */}
       <div className='mb-6'>
         <Link
           href={`/alerts/${alertInfo.id}`}
@@ -132,7 +130,7 @@ export default async function StoryPage({
           </Link>
 
           <Link
-            href={`https://${content.url}`}
+            href={story.originalUrl}
             target='_blank'
             rel='noopener noreferrer'
             className='text-sm text-muted-foreground hover:text-foreground'

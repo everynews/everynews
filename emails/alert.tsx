@@ -23,7 +23,7 @@ export const Alert = ({ stories }: { stories: Story[] }) => {
                   {stories.map((story) => (
                     <div key={story.id}>
                       <Link
-                        href={`https://${story.url}`}
+                        href={story.originalUrl}
                         className='text-orange-500 no-underline'
                       >
                         <Heading as='h2' className='text-lg font-semibold'>

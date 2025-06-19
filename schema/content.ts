@@ -10,6 +10,7 @@ export const contents = pgTable('contents', {
   htmlBlobUrl: text('html_blob_url').notNull(),
   id: text('id').primaryKey().$defaultFn(nanoid),
   markdownBlobUrl: text('markdown_blob_url').notNull(),
+  originalUrl: text('original_url').notNull(),
   title: text('title').notNull(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   url: text('url').notNull().unique(),
@@ -25,6 +26,7 @@ export const ContentSchema = z
     title: z.string().openapi({ example: 'Title' }),
     updatedAt: z.coerce.date().openapi({ example: new Date() }),
     url: z.string().openapi({ example: 'https://example.com' }),
+    originalUrl: z.string().openapi({ example: 'https://example.com' }),
   })
   .openapi({ ref: 'ContentSchema' })
 
