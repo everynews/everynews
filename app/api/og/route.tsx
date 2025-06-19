@@ -30,7 +30,6 @@ const japanese = async () =>
   ).then((res) => res.arrayBuffer())
 
 export const GET = async (request: Request) => {
-  'use cache'
   const { searchParams } = new URL(request.url)
   const title = searchParams.get('title') || ''
   const description = searchParams.get('description') || ''
@@ -157,3 +156,4 @@ export const GET = async (request: Request) => {
     },
   )
 }
+
