@@ -1,3 +1,5 @@
+import { db } from '@everynews/database'
+import { stories } from '@everynews/schema/story'
 import { ImageResponse } from 'next/og'
 
 const google = async (font: string, text: string) => {
@@ -30,6 +32,7 @@ const japanese = async () =>
   ).then((res) => res.arrayBuffer())
 
 export const GET = async (request: Request) => {
+  'use cache'
   const { searchParams } = new URL(request.url)
   const title = searchParams.get('title') || 'Agentic Google Alerts'
   const description =
@@ -51,8 +54,12 @@ export const GET = async (request: Request) => {
         <div tw='flex flex-col w-full p-24 pt-16'>
           <h2 tw='items-center text-7xl text-slate-400 text-left flex flex-row gap-20'>
             <span tw='mr-4'>
-              <svg width='80' viewBox='0 0 40 40'>
-                <title>Kite</title>
+              <svg
+                width='80'
+                viewBox='0 0 40 40'
+                role='img'
+                aria-label='Everynews'
+              >
                 <g>
                   <polygon
                     points='24.41602 24.2041 15.26074 16.16406 15.58105 15.79785 24.73633 23.83789 24.41602 24.2041'
@@ -152,4 +159,14 @@ export const GET = async (request: Request) => {
       width: 1600,
     },
   )
+}
+
+export const generateStaticParams = async () => {
+  const all = await db.select().from(stories)
+  return all.map((story) => ({
+    description: Array.isArray(story.keyFindings)
+      ? story.keyFindings.join(' ')
+      : story.keyFindings,
+    title: story.title,
+  }))
 }

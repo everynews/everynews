@@ -2,7 +2,7 @@ import { Badge } from '@everynews/components/ui/badge'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
 import { AlertSchema, alerts } from '@everynews/schema/alert'
-import { ContentSchema, contents } from '@everynews/schema/content'
+import { contents } from '@everynews/schema/content'
 import { StorySchema, stories } from '@everynews/schema/story'
 import { and, eq, isNull } from 'drizzle-orm'
 import { Calendar, Globe } from 'lucide-react'
@@ -65,11 +65,10 @@ export default async function StoryPage({
     notFound()
   }
   const [raw] = rawResponse
-  const { alert, content, story } = raw
+  const { alert, story } = raw
 
   const storyData = StorySchema.parse(story)
   const alertData = AlertSchema.parse(alert)
-  const contentData = ContentSchema.parse(content)
   return (
     <div className='container mx-auto max-w-4xl p-4'>
       <div className='mb-6'>
