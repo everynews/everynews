@@ -2,10 +2,16 @@
 
 import { api } from '@everynews/app/api'
 import { AlertPreview } from '@everynews/components/alert-preview'
+import { DadJokes } from '@everynews/components/dad-jokes'
 import { PromptDialog } from '@everynews/components/prompt-dialog'
 import { SubmitButton } from '@everynews/components/submit-button'
 import { Button } from '@everynews/components/ui/button'
-import { Card } from '@everynews/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@everynews/components/ui/card'
 import { Checkbox } from '@everynews/components/ui/checkbox'
 import {
   Form,
@@ -46,6 +52,8 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+
+const STRATEGY_WITH_QUERY = ['google']
 
 const DAYS_OF_WEEK = [
   'Monday',
@@ -153,6 +161,7 @@ export const AlertEditPage = ({
     }
   }
 
+  const strategyProvider = form.watch('strategy.provider')
   const waitType = form.watch('wait.type')
   const selectedPromptId = form.watch('promptId')
 
@@ -194,7 +203,24 @@ export const AlertEditPage = ({
   return (
     <div className='container mx-auto'>
       <div className='mb-6'>
-        <h1 className='text-3xl font-bold'>Edit Alert</h1>
+        <h1 className='text-3xl font-bold flex items-center gap-2 justify-between'>
+          Edit Alert
+          <div className='flex gap-2'>
+            <SubmitButton
+              variant='outline'
+              onClick={onTest}
+              loading={isTesting}
+            >
+              Test
+            </SubmitButton>
+            <SubmitButton
+              onClick={form.handleSubmit(onSubmit)}
+              loading={isSubmitting}
+            >
+              Update
+            </SubmitButton>
+          </div>
+        </h1>
         <p className='text-muted-foreground mt-1'>
           Update your alert configuration
         </p>
@@ -400,23 +426,29 @@ export const AlertEditPage = ({
                   </FormItem>
                 )}
               />
-              <Separator />
-              <FormField
-                control={form.control}
-                name='strategy.query'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Search Query</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder='artificial intelligence'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
+              {STRATEGY_WITH_QUERY.includes(strategyProvider) && (
+                <>
+                  <Separator />
+                  <FormField
+                    control={form.control}
+                    name='strategy.query'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Search Query</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder='artificial intelligence'
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+
               <Separator />
               <FormField
                 control={form.control}
@@ -668,29 +700,33 @@ export const AlertEditPage = ({
           </Form>
         </div>
         <div className='space-y-4'>
-          <Card className='p-6 bg-background'>
-            {isTesting ? (
-              <div className='flex flex-col items-center justify-center py-12 space-y-4'>
-                <div className='text-2xl font-mono font-bold tabular-nums'>
-                  {countdown > 0 ? (
+          <Card className='min-h-64'>
+            <CardHeader>
+              <CardTitle className='flex items-center justify-between'>
+                {form.watch('name')}
+                <div className='tabular-nums text-muted-foreground text-sm'>
+                  {isTesting && countdown > 0 ? (
                     <>
-                      {Math.floor(countdown / 60)}:
-                      {(countdown % 60).toString().padStart(2, '0')}
+                      will be ready in {Math.floor(countdown / 60)}:
+                      {(countdown % 60).toString().padStart(2, '0')}...
                     </>
-                  ) : (
-                    <span className='text-base font-normal'>
-                      Just a few more seconds...
-                    </span>
-                  )}
+                  ) : null}
                 </div>
-              </div>
-            ) : testResults && testResults.length > 0 ? (
-              <AlertPreview stories={testResults} />
-            ) : (
-              <div className='text-center text-muted-foreground py-12'>
-                <p>Click "Test" to preview your alert</p>
-              </div>
-            )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isTesting ? (
+                <div className='flex flex-col items-center justify-center py-12 space-y-4'>
+                  <DadJokes />
+                </div>
+              ) : testResults && testResults.length > 0 ? (
+                <AlertPreview stories={testResults} />
+              ) : (
+                <div className='text-muted-foreground text-sm'>
+                  <p>Ready to test your alert?</p>
+                </div>
+              )}
+            </CardContent>
           </Card>
         </div>
       </div>
