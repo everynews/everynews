@@ -6,6 +6,9 @@ import { custodian } from '@everynews/subroutines/custodian'
 import { and, asc, eq, lt } from 'drizzle-orm'
 import PQueue from 'p-queue'
 
+console.log('Cron started')
+console.log('process.env.NODE_ENV:', process.env.NODE_ENV)
+
 await track({
   channel: 'cron',
   event: 'Alert Processing Started',
