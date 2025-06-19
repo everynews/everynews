@@ -154,7 +154,9 @@ export const AlertCreatePage = ({
         return
       }
 
-      toast.success(`Alert "${form.watch('name')}" created.`)
+      toast.success(
+        `Alert "${form.watch('name')}" created and subscribed to your default email.`,
+      )
       router.push('/my/alerts')
     } catch (e) {
       toastNetworkError(e as Error)

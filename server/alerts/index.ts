@@ -1,6 +1,6 @@
 import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
-import { alerts } from '@everynews/schema'
+import { alerts, subscriptions } from '@everynews/schema'
 import { AlertDtoSchema, AlertSchema } from '@everynews/schema/alert'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
@@ -156,14 +156,22 @@ export const AlertRouter = new Hono<WithAuth>()
         })
         .returning()
 
+      // Automatically create a subscription with default channel (email)
+      await db.insert(subscriptions).values({
+        alertId: inserted.id,
+        channelId: null, // null means default email channel
+        userId: user.id,
+      })
+
       await track({
         channel: 'alerts',
-        description: `Created alert: ${name}`,
+        description: `Created alert: ${name} with default subscription`,
         event: 'Alert Created',
         icon: '✅',
         tags: {
           alert_id: inserted.id,
           alert_name: name,
+          auto_subscribed: 'true',
           is_public: isPublic,
           strategy_provider: strategy.provider,
           type: 'info',
