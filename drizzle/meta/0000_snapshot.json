@@ -6,7 +6,7 @@
   },
   "dialect": "postgresql",
   "enums": {},
-  "id": "b41079d6-cbd8-4ee5-b44d-aef4d96cb02a",
+  "id": "35c52386-4747-436a-aed0-a3d703fa93d0",
   "policies": {},
   "prevId": "00000000-0000-0000-0000-000000000000",
   "roles": {},
@@ -114,7 +114,7 @@
       "schema": "",
       "uniqueConstraints": {}
     },
-    "public.alert": {
+    "public.alerts": {
       "checkConstraints": {},
       "columns": {
         "active": {
@@ -224,27 +224,27 @@
       },
       "compositePrimaryKeys": {},
       "foreignKeys": {
-        "alert_prompt_id_prompt_id_fk": {
+        "alerts_prompt_id_prompt_id_fk": {
           "columnsFrom": ["prompt_id"],
           "columnsTo": ["id"],
-          "name": "alert_prompt_id_prompt_id_fk",
+          "name": "alerts_prompt_id_prompt_id_fk",
           "onDelete": "set null",
           "onUpdate": "no action",
-          "tableFrom": "alert",
+          "tableFrom": "alerts",
           "tableTo": "prompt"
         },
-        "alert_user_id_users_id_fk": {
+        "alerts_user_id_users_id_fk": {
           "columnsFrom": ["user_id"],
           "columnsTo": ["id"],
-          "name": "alert_user_id_users_id_fk",
+          "name": "alerts_user_id_users_id_fk",
           "onDelete": "cascade",
           "onUpdate": "no action",
-          "tableFrom": "alert",
+          "tableFrom": "alerts",
           "tableTo": "users"
         }
       },
       "indexes": {
-        "alert_user_id_deleted_at_idx": {
+        "alerts_user_id_deleted_at_idx": {
           "columns": [
             {
               "asc": true,
@@ -262,12 +262,12 @@
           "concurrently": false,
           "isUnique": false,
           "method": "btree",
-          "name": "alert_user_id_deleted_at_idx",
+          "name": "alerts_user_id_deleted_at_idx",
           "with": {}
         }
       },
       "isRLSEnabled": false,
-      "name": "alert",
+      "name": "alerts",
       "policies": {},
       "schema": "",
       "uniqueConstraints": {}
@@ -752,14 +752,14 @@
       },
       "compositePrimaryKeys": {},
       "foreignKeys": {
-        "stories_alert_id_alert_id_fk": {
+        "stories_alert_id_alerts_id_fk": {
           "columnsFrom": ["alert_id"],
           "columnsTo": ["id"],
-          "name": "stories_alert_id_alert_id_fk",
+          "name": "stories_alert_id_alerts_id_fk",
           "onDelete": "cascade",
           "onUpdate": "no action",
           "tableFrom": "stories",
-          "tableTo": "alert"
+          "tableTo": "alerts"
         },
         "stories_content_id_contents_id_fk": {
           "columnsFrom": ["content_id"],
@@ -843,14 +843,14 @@
       },
       "compositePrimaryKeys": {},
       "foreignKeys": {
-        "subscriptions_alert_id_alert_id_fk": {
+        "subscriptions_alert_id_alerts_id_fk": {
           "columnsFrom": ["alert_id"],
           "columnsTo": ["id"],
-          "name": "subscriptions_alert_id_alert_id_fk",
+          "name": "subscriptions_alert_id_alerts_id_fk",
           "onDelete": "cascade",
           "onUpdate": "no action",
           "tableFrom": "subscriptions",
-          "tableTo": "alert"
+          "tableTo": "alerts"
         },
         "subscriptions_channel_id_channels_id_fk": {
           "columnsFrom": ["channel_id"],

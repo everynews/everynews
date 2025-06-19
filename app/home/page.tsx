@@ -3,7 +3,7 @@ import { SidebarLinkWithBadge } from '@everynews/components/sidebar-link-with-ba
 import { Badge } from '@everynews/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
-import { alert } from '@everynews/schema/alert'
+import { alerts } from '@everynews/schema/alert'
 import { contents } from '@everynews/schema/content'
 import { stories } from '@everynews/schema/story'
 import { subscriptions } from '@everynews/schema/subscription'
@@ -35,28 +35,28 @@ export default async function Page() {
   // Fetch user's subscribed alerts with story counts
   const userAlerts = await db
     .select({
-      alert: alert,
+      alert: alerts,
       storyCount: sql<number>`count(distinct ${stories.id})`,
     })
     .from(subscriptions)
     .innerJoin(
-      alert,
-      and(eq(subscriptions.alertId, alert.id), isNull(alert.deletedAt)),
+      alerts,
+      and(eq(subscriptions.alertId, alerts.id), isNull(alerts.deletedAt)),
     )
     .leftJoin(
       stories,
-      and(eq(stories.alertId, alert.id), isNull(stories.deletedAt)),
+      and(eq(stories.alertId, alerts.id), isNull(stories.deletedAt)),
     )
     .where(
       and(eq(subscriptions.userId, user.id), isNull(subscriptions.deletedAt)),
     )
-    .groupBy(alert.id)
-    .orderBy(desc(alert.updatedAt))
+    .groupBy(alerts.id)
+    .orderBy(desc(alerts.updatedAt))
 
   // Fetch stories for all user's alerts
   const storyQuery = db
     .select({
-      alert: alert,
+      alert: alerts,
       content: contents,
       story: stories,
     })
@@ -66,12 +66,15 @@ export default async function Page() {
       and(eq(stories.contentId, contents.id), isNull(contents.deletedAt)),
     )
     .innerJoin(
-      alert,
-      and(eq(stories.alertId, alert.id), isNull(alert.deletedAt)),
+      alerts,
+      and(eq(stories.alertId, alerts.id), isNull(alerts.deletedAt)),
     )
     .innerJoin(
       subscriptions,
-      and(eq(subscriptions.alertId, alert.id), isNull(subscriptions.deletedAt)),
+      and(
+        eq(subscriptions.alertId, alerts.id),
+        isNull(subscriptions.deletedAt),
+      ),
     )
     .where(and(eq(subscriptions.userId, user.id), isNull(stories.deletedAt)))
     .orderBy(desc(stories.createdAt))

@@ -1,7 +1,7 @@
 import { whoami } from '@everynews/auth/session'
 import { db } from '@everynews/database'
 import { redirectToSignIn } from '@everynews/lib/auth-redirect'
-import { AlertSchema, alert, prompt } from '@everynews/schema'
+import { AlertSchema, alerts, prompt } from '@everynews/schema'
 import { and, eq, isNull } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import { AlertEditPage } from './alert-edit-page'
@@ -24,8 +24,8 @@ export default async function EditAlertPage({
 
   // Get the alert and verify ownership
   const alertData = AlertSchema.parse(
-    await db.query.alert.findFirst({
-      where: and(eq(alert.id, id), eq(alert.userId, user.id)),
+    await db.query.alerts.findFirst({
+      where: and(eq(alerts.id, id), eq(alerts.userId, user.id)),
     }),
   )
 

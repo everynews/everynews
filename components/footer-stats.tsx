@@ -1,5 +1,5 @@
 import { db } from '@everynews/database'
-import { alert } from '@everynews/schema/alert'
+import { alerts } from '@everynews/schema/alert'
 import { stories } from '@everynews/schema/story'
 import { users } from '@everynews/schema/user'
 import { count, isNull } from 'drizzle-orm'
@@ -7,7 +7,7 @@ import { count, isNull } from 'drizzle-orm'
 export const FooterStats = async () => {
   const [userCount, alertCount, storyCount] = await Promise.all([
     db.select({ count: count() }).from(users),
-    db.select({ count: count() }).from(alert).where(isNull(alert.deletedAt)),
+    db.select({ count: count() }).from(alerts).where(isNull(alerts.deletedAt)),
     db
       .select({ count: count() })
       .from(stories)

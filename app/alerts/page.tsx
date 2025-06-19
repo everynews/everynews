@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
-import { AlertSchema, alert } from '@everynews/schema/alert'
+import { AlertSchema, alerts } from '@everynews/schema/alert'
 import { stories } from '@everynews/schema/story'
 import { subscriptions } from '@everynews/schema/subscription'
 import { and, count, eq, isNull } from 'drizzle-orm'
@@ -23,16 +23,16 @@ export const metadata = {
 export default async function AlertsPage() {
   const alertsWithStories = await db
     .select({
-      alert: alert,
+      alert: alerts,
       storyCount: count(stories.id),
     })
-    .from(alert)
+    .from(alerts)
     .leftJoin(
       stories,
-      and(eq(alert.id, stories.alertId), isNull(stories.deletedAt)),
+      and(eq(alerts.id, stories.alertId), isNull(stories.deletedAt)),
     )
-    .where(and(eq(alert.isPublic, true), isNull(alert.deletedAt)))
-    .groupBy(alert.id)
+    .where(and(eq(alerts.isPublic, true), isNull(alerts.deletedAt)))
+    .groupBy(alerts.id)
 
   // Then get subscriber counts for each alert
   const subscriberCounts = await db

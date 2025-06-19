@@ -2,14 +2,14 @@ import { z } from 'zod'
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
-import { alert } from './alert'
+import { alerts } from './alert'
 import { channels } from './channel'
 import { users } from './user'
 
 export const subscriptions = pgTable('subscriptions', {
   alertId: text('alert_id')
     .notNull()
-    .references(() => alert.id, { onDelete: 'cascade' }),
+    .references(() => alerts.id, { onDelete: 'cascade' }),
   channelId: text('channel_id').references(() => channels.id, {
     onDelete: 'cascade',
   }),

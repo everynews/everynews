@@ -14,12 +14,16 @@ export const MainNavigation = ({ user }: { user?: User | null }) => {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <Link href={user ? '/home' : '/'}>Home</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-
+        {user && (
+          <NavigationMenuItem>
+            <NavigationMenuLink
+              asChild
+              className={navigationMenuTriggerStyle()}
+            >
+              <Link href='/home'>Home</Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        )}
         <NavigationMenuItem>
           <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
             <Link href='/alerts'>Alert Marketplace</Link>

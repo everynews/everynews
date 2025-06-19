@@ -1,6 +1,6 @@
 import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
-import { alert, subscriptions } from '@everynews/schema'
+import { alerts, subscriptions } from '@everynews/schema'
 import {
   SubscriptionDtoSchema,
   SubscriptionSchema,
@@ -63,8 +63,8 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         })
         return c.json({ error: 'Missing alertId' }, 400)
       }
-      const found = await db.query.alert.findFirst({
-        where: and(eq(alert.id, alertId), isNull(alert.deletedAt)),
+      const found = await db.query.alerts.findFirst({
+        where: and(eq(alerts.id, alertId), isNull(alerts.deletedAt)),
       })
       if (!found || (!found.isPublic && found.userId !== user.id)) {
         await track({

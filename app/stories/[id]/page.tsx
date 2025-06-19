@@ -1,11 +1,11 @@
 import { Badge } from '@everynews/components/ui/badge'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
-import { AlertSchema, alert } from '@everynews/schema/alert'
+import { AlertSchema, alerts } from '@everynews/schema/alert'
 import { contents } from '@everynews/schema/content'
 import { StorySchema, stories } from '@everynews/schema/story'
 import { and, eq, isNull } from 'drizzle-orm'
-import { ArrowLeft, Calendar, Globe } from 'lucide-react'
+import { Calendar, Globe } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -38,7 +38,7 @@ export default async function StoryPage({
 
   const [{ story: rawStory, alert: rawAlert }] = await db
     .select({
-      alert: alert,
+      alert: alerts,
       content: contents,
       story: stories,
     })
@@ -48,8 +48,8 @@ export default async function StoryPage({
       and(eq(stories.contentId, contents.id), isNull(contents.deletedAt)),
     )
     .innerJoin(
-      alert,
-      and(eq(stories.alertId, alert.id), isNull(alert.deletedAt)),
+      alerts,
+      and(eq(stories.alertId, alerts.id), isNull(alerts.deletedAt)),
     )
     .where(and(eq(stories.id, id), isNull(stories.deletedAt)))
     .limit(1)
@@ -63,14 +63,6 @@ export default async function StoryPage({
   return (
     <div className='container mx-auto max-w-4xl p-4'>
       <div className='mb-6'>
-        <Link
-          href={`/alerts/${alertInfo.id}`}
-          className='inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4'
-        >
-          <ArrowLeft className='size-4 mr-1' />
-          Back to {alertInfo.name}
-        </Link>
-
         <div className='flex flex-col gap-4'>
           <div className='flex items-center gap-2 text-sm text-muted-foreground'>
             <Globe className='size-4' />
@@ -112,15 +104,8 @@ export default async function StoryPage({
           </CardContent>
         </Card>
       )}
-      <div className='mt-8 pt-6 border-t'>
-        <div className='flex justify-between items-center'>
-          <Link
-            href={`/alerts/${alertInfo.id}`}
-            className='text-sm text-muted-foreground hover:text-foreground'
-          >
-            ← Back to Alerts
-          </Link>
-
+      <div className='mt-8 pt-6'>
+        <div className='flex justify-end items-center'>
           <Link
             href={story.originalUrl}
             target='_blank'

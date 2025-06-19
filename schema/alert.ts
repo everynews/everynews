@@ -16,8 +16,8 @@ import { strategySchema } from './strategy'
 import { users } from './user'
 import { WaitSchema } from './wait'
 
-export const alert = pgTable(
-  'alert',
+export const alerts = pgTable(
+  'alerts',
   {
     active: boolean('active').notNull().default(true),
     createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -43,7 +43,7 @@ export const alert = pgTable(
     wait: json('wait').notNull(),
   },
   (table) => ({
-    userIdDeletedAtIdx: index('alert_user_id_deleted_at_idx').on(
+    userIdDeletedAtIdx: index('alerts_user_id_deleted_at_idx').on(
       table.userId,
       table.deletedAt,
     ),

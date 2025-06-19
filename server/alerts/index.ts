@@ -1,6 +1,6 @@
 import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
-import { alert } from '@everynews/schema'
+import { alerts } from '@everynews/schema'
 import { AlertDtoSchema, AlertSchema } from '@everynews/schema/alert'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
@@ -43,8 +43,8 @@ export const AlertRouter = new Hono<WithAuth>()
 
       const result = await db
         .select()
-        .from(alert)
-        .where(isNull(alert.deletedAt))
+        .from(alerts)
+        .where(isNull(alerts.deletedAt))
 
       await track({
         channel: 'alerts',
@@ -82,8 +82,8 @@ export const AlertRouter = new Hono<WithAuth>()
 
       const result = await db
         .select()
-        .from(alert)
-        .where(and(eq(alert.id, id), isNull(alert.deletedAt)))
+        .from(alerts)
+        .where(and(eq(alerts.id, id), isNull(alerts.deletedAt)))
 
       await track({
         channel: 'alerts',
@@ -141,7 +141,7 @@ export const AlertRouter = new Hono<WithAuth>()
       }
 
       const [inserted] = await db
-        .insert(alert)
+        .insert(alerts)
         .values({
           active,
           description,
@@ -211,12 +211,12 @@ export const AlertRouter = new Hono<WithAuth>()
       // Check if alert exists and is not soft-deleted
       const existing = await db
         .select()
-        .from(alert)
+        .from(alerts)
         .where(
           and(
-            eq(alert.id, id),
-            eq(alert.userId, user.id), // enforce ownership
-            isNull(alert.deletedAt),
+            eq(alerts.id, id),
+            eq(alerts.userId, user.id), // enforce ownership
+            isNull(alerts.deletedAt),
           ),
         )
       if (existing.length === 0) {
@@ -234,13 +234,13 @@ export const AlertRouter = new Hono<WithAuth>()
         return c.json({ error: 'Alert not found' }, 404)
       }
       const result = await db
-        .update(alert)
+        .update(alerts)
         .set({ ...request, updatedAt: new Date() })
         .where(
           and(
-            eq(alert.id, id),
-            eq(alert.userId, user.id),
-            isNull(alert.deletedAt),
+            eq(alerts.id, id),
+            eq(alerts.userId, user.id),
+            isNull(alerts.deletedAt),
           ),
         )
         .returning()
@@ -295,13 +295,13 @@ export const AlertRouter = new Hono<WithAuth>()
 
       // Soft delete by setting deletedAt
       const result = await db
-        .update(alert)
+        .update(alerts)
         .set({ deletedAt: new Date(), updatedAt: new Date() })
         .where(
           and(
-            eq(alert.id, id),
-            eq(alert.userId, user.id),
-            isNull(alert.deletedAt),
+            eq(alerts.id, id),
+            eq(alerts.userId, user.id),
+            isNull(alerts.deletedAt),
           ),
         )
         .returning()

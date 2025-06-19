@@ -12,7 +12,7 @@ import {
   TableRow,
 } from '@everynews/components/ui/table'
 import { db } from '@everynews/database'
-import { AlertSchema, alert } from '@everynews/schema/alert'
+import { AlertSchema, alerts } from '@everynews/schema/alert'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { subscriptions } from '@everynews/schema/subscription'
 import { and, eq, isNull } from 'drizzle-orm'
@@ -31,9 +31,9 @@ export default async function MyAlertsPage() {
   // Get user's alerts
   const res = await db
     .select()
-    .from(alert)
-    .where(and(eq(alert.userId, user.id), isNull(alert.deletedAt)))
-  const alerts = AlertSchema.array().parse(res)
+    .from(alerts)
+    .where(and(eq(alerts.userId, user.id), isNull(alerts.deletedAt)))
+  const userAlerts = AlertSchema.array().parse(res)
 
   // Get user's channels
   const channelsRes = await db
@@ -77,7 +77,7 @@ export default async function MyAlertsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {alerts.length === 0 ? (
+            {userAlerts.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={5}
@@ -87,7 +87,7 @@ export default async function MyAlertsPage() {
                 </TableCell>
               </TableRow>
             ) : (
-              alerts.map((item) => {
+              userAlerts.map((item) => {
                 const subscription = userSubscriptions.find(
                   (sub) => sub.alertId === item.id,
                 )

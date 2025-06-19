@@ -5,7 +5,7 @@ import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
-import { alert } from '@everynews/schema/alert'
+import { alerts } from '@everynews/schema/alert'
 import { contents } from '@everynews/schema/content'
 import { stories } from '@everynews/schema/story'
 import { desc, eq } from 'drizzle-orm'
@@ -28,14 +28,14 @@ export const metadata = {
 export default async function Page() {
   const recentStories = await db
     .select({
-      alert: alert,
+      alert: alerts,
       content: contents,
       story: stories,
     })
     .from(stories)
     .innerJoin(contents, eq(stories.contentId, contents.id))
-    .innerJoin(alert, eq(stories.alertId, alert.id))
-    .where(eq(alert.isPublic, true))
+    .innerJoin(alerts, eq(stories.alertId, alerts.id))
+    .where(eq(alerts.isPublic, true))
     .orderBy(desc(stories.createdAt))
     .limit(8)
 
@@ -44,11 +44,15 @@ export default async function Page() {
       {/* Hero Section */}
       <div className='container mx-auto px-6 pt-20 pb-16 flex flex-col gap-20'>
         <div className='text-center max-w-6xl mx-auto flex flex-col gap-6 w-full'>
-          <h1 className='text-6xl font-bold tracking-tight text-foreground w-full'>
-            Agentic Google Alerts
+          <h1 className='text-6xl font-bold tracking-tight text-foreground w-full flex flex-col md:flex-row gap-2 justify-center'>
+            <span>Agentic</span>
+            <span>Google</span>
+            <span>Alerts</span>
           </h1>
-          <p className='text-xl text-muted-foreground leading-relaxed w-full  mx-auto'>
-            Semantic Monitoring. Context Understanding. Granular Delivery.
+          <p className='text-muted-foreground leading-relaxed w-full mx-auto text-balance text-center flex flex-col md:flex-row gap-1 justify-center'>
+            <span>Semantic Monitoring.</span>
+            <span>Context Understanding.</span>
+            <span>Granular Delivery.</span>
           </p>
         </div>
 

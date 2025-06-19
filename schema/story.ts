@@ -9,7 +9,7 @@ import {
   unique,
 } from 'drizzle-orm/pg-core'
 import { z } from 'zod'
-import { alert } from './alert'
+import { alerts } from './alert'
 import { prompt } from './prompt'
 import 'zod-openapi/extend'
 import { contents } from './content'
@@ -20,7 +20,7 @@ export const stories = pgTable(
   {
     alertId: text('alert_id')
       .notNull()
-      .references(() => alert.id, { onDelete: 'cascade' }),
+      .references(() => alerts.id, { onDelete: 'cascade' }),
     contentId: text('content_id')
       .notNull()
       .references(() => contents.id, { onDelete: 'cascade' }),

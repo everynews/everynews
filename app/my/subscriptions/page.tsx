@@ -11,7 +11,7 @@ import {
   TableRow,
 } from '@everynews/components/ui/table'
 import { db } from '@everynews/database'
-import { AlertSchema, alert } from '@everynews/schema/alert'
+import { AlertSchema, alerts } from '@everynews/schema/alert'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import {
   SubscriptionSchema,
@@ -34,14 +34,14 @@ export default async function MySubscriptionsPage() {
   // Get user's subscriptions with related alert and channel data
   const subscriptionsRes = await db
     .select({
-      alert: alert,
+      alert: alerts,
       channel: channels,
       subscription: subscriptions,
     })
     .from(subscriptions)
     .innerJoin(
-      alert,
-      and(eq(subscriptions.alertId, alert.id), isNull(alert.deletedAt)),
+      alerts,
+      and(eq(subscriptions.alertId, alerts.id), isNull(alerts.deletedAt)),
     )
     .leftJoin(
       channels,

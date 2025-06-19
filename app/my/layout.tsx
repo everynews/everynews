@@ -8,7 +8,7 @@ import {
   SheetTrigger,
 } from '@everynews/components/ui/sheet'
 import { db } from '@everynews/database'
-import { alert } from '@everynews/schema/alert'
+import { alerts } from '@everynews/schema/alert'
 import { channels } from '@everynews/schema/channel'
 import { prompt } from '@everynews/schema/prompt'
 import { subscriptions } from '@everynews/schema/subscription'
@@ -61,8 +61,8 @@ const MyLayout = async ({ children }: { children: React.ReactNode }) => {
       user
         ? db
             .select({ count: count() })
-            .from(alert)
-            .where(and(eq(alert.userId, user.id), isNull(alert.deletedAt)))
+            .from(alerts)
+            .where(and(eq(alerts.userId, user.id), isNull(alerts.deletedAt)))
             .then((r) => r[0]?.count ?? 0)
         : 0,
       user

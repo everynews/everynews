@@ -4,7 +4,7 @@ import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
-import { AlertSchema, alert } from '@everynews/schema/alert'
+import { AlertSchema, alerts } from '@everynews/schema/alert'
 import {
   type Channel,
   ChannelSchema,
@@ -27,8 +27,8 @@ export const generateMetadata = async ({
   params: Promise<{ id: string }>
 }) => {
   const { id } = await params
-  const alertData = await db.query.alert.findFirst({
-    where: eq(alert.id, id),
+  const alertData = await db.query.alerts.findFirst({
+    where: eq(alerts.id, id),
   })
   return {
     description: alertData?.description ?? 'Recent stories from this alert.',
@@ -50,8 +50,8 @@ export default async function AlertStoriesPage({
   // Get alert details
   const alertData = await db
     .select()
-    .from(alert)
-    .where(and(eq(alert.id, id), isNull(alert.deletedAt)))
+    .from(alerts)
+    .where(and(eq(alerts.id, id), isNull(alerts.deletedAt)))
     .limit(1)
 
   if (!alertData.length) {
@@ -300,9 +300,9 @@ export default async function AlertStoriesPage({
 
 export const generateStaticParams = async () => {
   const rows = await db
-    .select({ id: alert.id })
-    .from(alert)
-    .where(isNull(alert.deletedAt))
+    .select({ id: alerts.id })
+    .from(alerts)
+    .where(isNull(alerts.deletedAt))
 
   const params: { id: string; pageId: string }[] = []
 

@@ -2,7 +2,7 @@ import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
 import {
   type Alert,
-  alert,
+  alerts,
   type Content,
   subscriptions,
   users,
@@ -62,16 +62,16 @@ export const processAlert = async (item: Alert) => {
   if (item.wait.type === 'count') {
     nextRun = new Date(Date.now() + 60 * 60 * 1000)
     await db
-      .update(alert)
+      .update(alerts)
       .set({ lastRun: currentTime, nextRun })
-      .where(eq(alert.id, item.id))
+      .where(eq(alerts.id, item.id))
   }
   if (item.wait.type === 'schedule') {
     nextRun = findNextRunDateBasedOnSchedule(item.wait.value)
     await db
-      .update(alert)
+      .update(alerts)
       .set({ lastRun: currentTime, nextRun })
-      .where(eq(alert.id, item.id))
+      .where(eq(alerts.id, item.id))
   }
 
   // Only send alert if there are new stories since lastRun
