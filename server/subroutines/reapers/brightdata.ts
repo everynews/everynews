@@ -61,20 +61,16 @@ export async function brightdata(url: string): Promise<Content> {
     }
 
     // Store HTML
-    const htmlBlob = await put(`brightdata/${normalized}.html`, html, {
+    const [htmlBlob, markdownBlob] = await Promise.all([
+      put(`brightdata/${normalized}.html`, html, {
       access: 'public',
       contentType: 'text/html',
-    })
-
-    // Store Markdown
-    const markdownBlob = await put(
-      `brightdata/${normalized}.md`,
-      defuddleResult.content,
-      {
+    }),
+      put(`brightdata/${normalized}.md`, defuddleResult.content, {
         access: 'public',
         contentType: 'text/markdown',
-      },
-    )
+      }),
+    ])
 
     // Prepare the title
     const title = defuddleResult.title || 'Untitled'
