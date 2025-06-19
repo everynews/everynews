@@ -27,7 +27,6 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           EXASEARCH_API_KEY: ${{ secrets.EXASEARCH_API_KEY }}
           BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
-          BRIGHTDATA_API_KEY: ${{ secrets.BRIGHTDATA_API_KEY }}
           PLUNK_API_KEY: ${{ secrets.PLUNK_API_KEY }}
           LOGSNAG_PROJECT_TOKEN: ${{ secrets.LOGSNAG_PROJECT_TOKEN }}
           LOGSNAG_PROJECT_ID: ${{ secrets.LOGSNAG_PROJECT_ID }}
