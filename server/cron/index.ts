@@ -7,6 +7,7 @@ import { and, asc, eq, lt } from 'drizzle-orm'
 import { type Context, Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver } from 'hono-openapi/zod'
+import PQueue from 'p-queue'
 import { processAlert } from '../subroutines/cron'
 import { custodian } from '../subroutines/custodian'
 
@@ -162,41 +163,22 @@ export const CronRouter = new Hono().get(
       })
 
       // Process all alerts concurrently with error handling
+      const queue = new PQueue({ concurrency: 16 })
       const results = await Promise.allSettled(
-        found.map((item) => processAlert(item)),
+        found.map((item) => queue.add(async () => processAlert(item))),
       )
 
-      // Track any failed alert processing
-      const failedAlerts = results.filter(
-        (result): result is PromiseRejectedResult =>
-          result.status === 'rejected',
-      )
+      // Run custodian to clean up stories with empty titles
+      const custodianResult = await custodian()
+
       const successfulAlerts = results.filter(
         (result): result is PromiseFulfilledResult<void> =>
           result.status === 'fulfilled',
       )
-
-      if (failedAlerts.length > 0) {
-        for (let i = 0; i < failedAlerts.length; i++) {
-          const failedAlert = failedAlerts[i]
-          const alertItem = found[i]
-          await track({
-            channel: 'cron',
-            description: `Failed to process alert "${alertItem.name}": ${String(failedAlert.reason)}`,
-            event: 'Alert Processing Failed',
-            icon: '❌',
-            tags: {
-              alert_id: alertItem.id,
-              alert_name: alertItem.name,
-              error: String(failedAlert.reason),
-              type: 'error',
-            },
-          })
-        }
-      }
-
-      // Run custodian to clean up stories with empty titles
-      const custodianResult = await custodian()
+      const failedAlerts = results.filter(
+        (result): result is PromiseRejectedResult =>
+          result.status === 'rejected',
+      )
 
       await track({
         channel: 'cron',
