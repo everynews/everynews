@@ -68,10 +68,12 @@ export async function brightdata(url: string): Promise<Content> {
       put(`brightdata/${normalized}.html`, html, {
         access: 'public',
         contentType: 'text/html',
+        allowOverwrite: true,
       }),
       put(`brightdata/${normalized}.md`, defuddleResult.content, {
         access: 'public',
         contentType: 'text/markdown',
+        allowOverwrite: true,
       }),
     ])
 
