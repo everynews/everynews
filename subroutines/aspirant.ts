@@ -73,20 +73,10 @@ export const aspirant = async (alert: Alert): Promise<Story[]> => {
       if (summary) {
         const now = new Date()
         stories.push({
-          alertId: summary.alertId,
-          contentId: summary.contentId,
           createdAt: now,
-          deletedAt: null,
           id: nanoid(),
-          keyFindings: summary.keyFindings,
-          languageCode: summary.languageCode,
-          promptHash: summary.promptHash,
-          promptId: summary.promptId,
-          systemMarkedIrrelevant: false,
-          title: summary.title,
           updatedAt: now,
-          url: summary.url,
-          userMarkedIrrelevant: false,
+          ...summary,
         })
       }
     }
