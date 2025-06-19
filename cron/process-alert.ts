@@ -74,8 +74,17 @@ export const processAlert = async (item: Alert) => {
       .where(eq(alerts.id, item.id))
   }
 
-  // Only send alert if there are new stories since lastRun
-  if (filteredStories.length > 0) {
+  // Determine if we should send based on wait conditions
+  let shouldSend = false
+  if (item.wait.type === 'count') {
+    // For count type, only send when we have enough stories
+    shouldSend = filteredStories.length >= item.wait.value
+  } else {
+    // For schedule type, send if there are any new stories
+    shouldSend = filteredStories.length > 0
+  }
+
+  if (shouldSend) {
     // Send email to the all subscribers of the alert
     const subscribers = await db.query.subscriptions.findMany({
       where: eq(subscriptions.alertId, item.id),
@@ -95,14 +104,19 @@ export const processAlert = async (item: Alert) => {
   } else {
     await track({
       channel: 'worker',
-      description: `No new stories since last run - skipping alert delivery`,
+      description:
+        item.wait.type === 'count'
+          ? `Found ${filteredStories.length} stories, waiting for ${item.wait.value} - skipping alert delivery`
+          : `No new stories since last run - skipping alert delivery`,
       event: 'Alert Delivery Skipped',
       icon: '⏭️',
       tags: {
         alert_id: item.id,
         alert_name: item.name,
         last_run: item.lastRun?.toISOString() || 'null',
+        stories_found: filteredStories.length,
         type: 'info',
+        wait_threshold: item.wait.type === 'count' ? item.wait.value : 'n/a',
       },
     })
   }
