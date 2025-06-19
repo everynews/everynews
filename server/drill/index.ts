@@ -5,8 +5,8 @@ import { authMiddleware } from '@everynews/server/middleware/auth'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
-import type { WithAuth } from '../bindings/auth'
-import { aspirant } from '../subroutines/aspirant'
+import type { WithAuth } from '@everynews/server/bindings/auth'
+import { aspirant } from '@everynews/subroutines/aspirant'
 
 export const DrillRouter = new Hono<WithAuth>().use(authMiddleware).post(
   '/',

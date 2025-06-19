@@ -3,8 +3,8 @@ import { PromptDtoSchema, PromptSchema, prompt } from '@everynews/schema'
 import { zValidator } from '@hono/zod-validator'
 import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
-import type { WithAuth } from '../bindings/auth'
-import { authMiddleware } from '../middleware/auth'
+import type { WithAuth } from '@everynews/server/bindings/auth'
+import { authMiddleware } from '@everynews/server/middleware/auth'
 
 export const PromptsRouter = new Hono<WithAuth>()
   .use(authMiddleware)

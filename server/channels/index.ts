@@ -9,7 +9,7 @@ import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
 import { z } from 'zod'
-import type { WithAuth } from '../bindings/auth'
+import type { WithAuth } from '@everynews/server/bindings/auth'
 
 export const ChannelRouter = new Hono<WithAuth>()
   .use(authMiddleware)

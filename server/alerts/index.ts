@@ -7,7 +7,7 @@ import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
-import type { WithAuth } from '../bindings/auth'
+import type { WithAuth } from '@everynews/server/bindings/auth'
 
 export const AlertRouter = new Hono<WithAuth>()
   .use(authMiddleware)
@@ -78,6 +78,7 @@ export const AlertRouter = new Hono<WithAuth>()
     }),
     async (c) => {
       const { id } = c.req.param()
+      const user = c.get('user')
 
       const result = await db
         .select()
@@ -94,6 +95,7 @@ export const AlertRouter = new Hono<WithAuth>()
           found: String(result.length > 0),
           type: 'info',
         },
+        user_id: user?.id ? user.id : undefined,
       })
 
       return c.json(result)
@@ -227,6 +229,7 @@ export const AlertRouter = new Hono<WithAuth>()
             alert_id: id,
             type: 'error',
           },
+          user_id: user?.id ? user.id : undefined,
         })
         return c.json({ error: 'Alert not found' }, 404)
       }
@@ -252,6 +255,7 @@ export const AlertRouter = new Hono<WithAuth>()
           fields_updated: Object.keys(request).join(', '),
           type: 'info',
         },
+        user_id: user?.id ? user.id : undefined,
       })
 
       return c.json(result)

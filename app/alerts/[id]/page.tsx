@@ -21,9 +21,19 @@ import { and, count, desc, eq, isNull } from 'drizzle-orm'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-export const metadata = {
-  description: 'Recent stories from this alert.',
-  title: 'Alert Stories',
+export const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) => {
+  const { id } = await params
+  const alertData = await db.query.alert.findFirst({
+    where: eq(alert.id, id),
+  })
+  return {
+    title: alertData?.name ?? 'Alert',
+    description: alertData?.description ?? 'Recent stories from this alert.',
+  }
 }
 
 export default async function AlertStoriesPage({

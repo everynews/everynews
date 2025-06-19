@@ -4,17 +4,16 @@ import type { WithAuth } from '@everynews/server/bindings/auth'
 import { Scalar } from '@scalar/hono-api-reference'
 import { Hono } from 'hono'
 import { generateSpecs } from 'hono-openapi'
-import { AlertRouter } from './alerts'
-import { ChannelRouter } from './channels'
-import { CronRouter } from './cron'
-import { DrillRouter } from './drill'
-import { PromptsRouter } from './prompts'
-import { SubscriptionRouter } from './subscriptions'
+import { AlertRouter } from '@everynews/server/alerts'
+import { ChannelRouter } from '@everynews/server/channels'
+import { DrillRouter } from '@everynews/server/drill'
+import { PromptsRouter } from '@everynews/server/prompts'
+import { SubscriptionRouter } from '@everynews/server/subscriptions'
+
 
 const app = new Hono<WithAuth>()
   .basePath('/api')
   .on(['POST', 'GET'], '/auth/*', (c) => auth.handler(c.req.raw))
-  .route('/cron', CronRouter)
   .route('/alerts', AlertRouter)
   .route('/channels', ChannelRouter)
   .route('/drill', DrillRouter)

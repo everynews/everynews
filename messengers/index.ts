@@ -1,6 +1,6 @@
-import { sendEmailWithTemplate } from '../emails'
-import { ChannelVerificationEmail } from '../emails/channel-verification'
-import { MagicLinkEmail } from '../emails/magic-link'
+import { sendEmailWithTemplate } from '@everynews/emails'
+import { ChannelVerificationEmail } from '@everynews/emails/channel-verification'
+import { MagicLinkEmail } from '@everynews/emails/magic-link'
 
 export const sendMagicLink = async ({
   email,

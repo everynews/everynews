@@ -8,10 +8,10 @@ import {
   users,
 } from '@everynews/schema'
 import { eq } from 'drizzle-orm'
-import { curator } from './curator'
-import { herald } from './herald'
-import { reaper } from './reaper'
-import { sage } from './sage'
+import { curator } from '@everynews/subroutines/curator'
+import { herald } from '@everynews/subroutines/herald'
+import { reaper } from '@everynews/subroutines/reaper'
+import { sage } from '@everynews/subroutines/sage'
 
 export const processAlert = async (item: Alert) => {
   await track({
