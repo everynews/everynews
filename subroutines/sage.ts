@@ -226,11 +226,12 @@ const summarizeWithCache = async ({
   }
   const promptHash = hashPrompt(userPrompt)
 
-  // Check for existing story with same URL and same prompt hash
+  // Check for existing story with same URL, same prompt hash, and same language
   const existingStory = await db.query.stories.findFirst({
     where: and(
       eq(stories.url, url),
       eq(stories.promptHash, promptHash),
+      eq(stories.languageCode, news.language),
       isNull(stories.deletedAt),
     ),
   })

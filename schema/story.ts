@@ -43,9 +43,9 @@ export const stories = pgTable(
     userMarkedIrrelevant: boolean('user_marked_irrelevant').default(false),
   },
   (table) => ({
-    // Unique constraint on URL + promptHash combination
-    // This allows multiple stories for the same URL but with different prompt content
-    urlPromptHashUnique: unique().on(table.url, table.promptHash),
+    // Unique constraint on URL + promptHash + languageCode combination
+    // This allows multiple stories for the same URL with different prompts or languages
+    urlPromptHashLangUnique: unique().on(table.url, table.promptHash, table.languageCode),
   }),
 )
 

@@ -108,7 +108,7 @@ CREATE TABLE "stories" (
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"url" text NOT NULL,
 	"user_marked_irrelevant" boolean DEFAULT false,
-	CONSTRAINT "stories_url_prompt_hash_unique" UNIQUE("url","prompt_hash")
+	CONSTRAINT "stories_url_prompt_hash_language_code_unique" UNIQUE("url","prompt_hash","language_code")
 );
 --> statement-breakpoint
 CREATE TABLE "subscriptions" (
