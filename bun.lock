@@ -26,7 +26,7 @@
         "@radix-ui/react-tooltip": "^1.2.7",
         "@react-email/components": "0.0.41",
         "@react-email/tailwind": "1.0.5",
-        "@scalar/hono-api-reference": "^0.9.4",
+        "@scalar/hono-api-reference": "^0.9.5",
         "@tanstack/react-query": "^5.80.10",
         "@types/turndown": "^5.0.5",
         "@vercel/analytics": "^1.5.0",
@@ -452,7 +452,7 @@
 
     "@scalar/core": ["@scalar/core@0.3.3", "", { "dependencies": { "@scalar/types": "0.2.3" } }, "sha512-OedH8YQriBsE7JnCN2ly4p3u7iobjzAoDkxD/o1hiF55m6WRicvtklEdByHlceu9UnJ/znikZ50ymo98uG3aqA=="],
 
-    "@scalar/hono-api-reference": ["@scalar/hono-api-reference@0.9.4", "", { "dependencies": { "@scalar/core": "0.3.3" }, "peerDependencies": { "hono": "^4.0.0" } }, "sha512-pAUWS8MRGcS5VjMjAVd6DrhST63NpVXGel2BbYsKPQAaONwwA3hU30fAFxSs3PUGA8M7q+e76F6w4ALBtHxLRA=="],
+    "@scalar/hono-api-reference": ["@scalar/hono-api-reference@0.9.5", "", { "dependencies": { "@scalar/core": "0.3.3" }, "peerDependencies": { "hono": "^4.0.0" } }, "sha512-mh8cgrgYURVtyYOGFkmKdu5BNWZW1gKuTL0xbCJF6P/2iH8F33LLZ6+sP9s1qoXRj2lAszGUwVUX+WMs6OL4Gw=="],
 
     "@scalar/openapi-types": ["@scalar/openapi-types@0.3.3", "", { "dependencies": { "zod": "3.24.1" } }, "sha512-mr3OvbCyvuzSDgv9gR9D3pJAsl82BRNBp1P8ldgRgKF4Wiswfa7nQeKibpX0kHSGXLgiyvxWJULUFwgdWMXNNA=="],
 
