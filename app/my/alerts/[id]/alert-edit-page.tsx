@@ -42,7 +42,6 @@ import { getLanguageOptions } from '@everynews/schema/language'
 import type { Prompt } from '@everynews/schema/prompt'
 import { type Story, StorySchema } from '@everynews/schema/story'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -71,6 +70,7 @@ export const AlertEditPage = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isTesting, setIsTesting] = useState(false)
   const [testResults, setTestResults] = useState<Story[] | null>(null)
+  const [countdown, setCountdown] = useState(60)
   const [promptDialogOpen, setPromptDialogOpen] = useState(false)
   const [promptDialogMode, setPromptDialogMode] = useState<'create' | 'edit'>(
     'create',
@@ -131,6 +131,7 @@ export const AlertEditPage = ({
     const values = form.getValues()
     setIsTesting(true)
     setTestResults(null)
+    setCountdown(60)
 
     try {
       const res = await api.drill.$post({ json: values })
@@ -154,6 +155,15 @@ export const AlertEditPage = ({
 
   const waitType = form.watch('wait.type')
   const selectedPromptId = form.watch('promptId')
+
+  useEffect(() => {
+    if (isTesting && countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown((prev) => prev - 1)
+      }, 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [isTesting, countdown])
 
   const handlePromptCreated = (newPrompt: Prompt) => {
     setLocalPrompts([...localPrompts, newPrompt])
@@ -661,7 +671,18 @@ export const AlertEditPage = ({
           <Card className='p-6 bg-background'>
             {isTesting ? (
               <div className='flex flex-col items-center justify-center py-12 space-y-4'>
-                <Loader2 className='size-4 animate-spin' />
+                <div className='text-2xl font-mono font-bold tabular-nums'>
+                  {countdown > 0 ? (
+                    <>
+                      {Math.floor(countdown / 60)}:
+                      {(countdown % 60).toString().padStart(2, '0')}
+                    </>
+                  ) : (
+                    <span className='text-base font-normal'>
+                      Just a few more seconds...
+                    </span>
+                  )}
+                </div>
               </div>
             ) : testResults && testResults.length > 0 ? (
               <AlertPreview stories={testResults} />

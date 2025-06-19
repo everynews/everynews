@@ -27,9 +27,8 @@ export const aspirant = async (alert: Alert): Promise<Story[]> => {
       },
     })
 
-    // Step 1: Get URLs from curator (limited to 3)
     const urls = await curator(alert)
-    const limitedUrls = urls.slice(0, 3)
+    const limitedUrls = urls.slice(0, 10)
 
     await track({
       channel: 'aspirant',
@@ -44,7 +43,6 @@ export const aspirant = async (alert: Alert): Promise<Story[]> => {
       },
     })
 
-    // Step 2: Fetch content using reaper
     const contents = await reaper(limitedUrls)
 
     await track({
@@ -59,7 +57,6 @@ export const aspirant = async (alert: Alert): Promise<Story[]> => {
       },
     })
 
-    // Step 3: Summarize content using summarizeContent (without DB operations)
     const queue = new PQueue({ concurrency: 16 })
     const summaryPromises = contents.map((content) =>
       queue.add(async () => summarizeContent({ content, news: alert })),
@@ -67,7 +64,6 @@ export const aspirant = async (alert: Alert): Promise<Story[]> => {
 
     const summaryResults = await Promise.all(summaryPromises)
 
-    // Filter out null/undefined results and create temporary Story objects
     const stories: Story[] = []
     for (const summary of summaryResults) {
       if (summary) {

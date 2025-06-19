@@ -5,7 +5,12 @@ import { AlertPreview } from '@everynews/components/alert-preview'
 import { PromptDialog } from '@everynews/components/prompt-dialog'
 import { SubmitButton } from '@everynews/components/submit-button'
 import { Button } from '@everynews/components/ui/button'
-import { Card } from '@everynews/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@everynews/components/ui/card'
 import { Checkbox } from '@everynews/components/ui/checkbox'
 import {
   Form,
@@ -39,9 +44,8 @@ import type { Prompt } from '@everynews/schema/prompt'
 import { type Story, StorySchema } from '@everynews/schema/story'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
-import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useId, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -64,6 +68,7 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isTesting, setIsTesting] = useState(false)
   const [testResults, setTestResults] = useState<Story[] | null>(null)
+  const [countdown, setCountdown] = useState(30)
   const [promptDialogOpen, setPromptDialogOpen] = useState(false)
   const [promptDialogMode, setPromptDialogMode] = useState<'create' | 'edit'>(
     'create',
@@ -115,6 +120,7 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
     const values = form.getValues()
     setIsTesting(true)
     setTestResults(null)
+    setCountdown(30)
 
     try {
       const res = await api.drill.$post({ json: values })
@@ -140,6 +146,15 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
   const strategyProvider = form.watch('strategy.provider')
   const waitType = form.watch('wait.type')
   const selectedPromptId = form.watch('promptId')
+
+  useEffect(() => {
+    if (isTesting && countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown((prev) => prev - 1)
+      }, 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [isTesting, countdown])
 
   const handlePromptCreated = (newPrompt: Prompt) => {
     setLocalPrompts([...localPrompts, newPrompt])
@@ -652,18 +667,34 @@ export const AlertCreatePage = ({ prompts }: { prompts: Prompt[] }) => {
         </div>
 
         <div className='space-y-4'>
-          <Card className='p-6 bg-background'>
-            {isTesting ? (
-              <div className='flex flex-col items-center justify-center py-12 space-y-4'>
-                <Loader2 className='size-4 animate-spin' />
-              </div>
-            ) : testResults && testResults.length > 0 ? (
-              <AlertPreview stories={testResults} />
-            ) : (
-              <div className='text-center text-muted-foreground py-12'>
-                <p>Click "Test" to preview your alert</p>
-              </div>
-            )}
+          <Card>
+            <CardHeader>
+              <CardTitle>{form.watch('name')}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isTesting ? (
+                <div className='flex flex-col items-center justify-center py-12 space-y-4'>
+                  <div className='tabular-nums text-muted-foreground text-sm'>
+                    {countdown > 0 ? (
+                      <>
+                        Demo will be ready in {Math.floor(countdown / 60)}:
+                        {(countdown % 60).toString().padStart(2, '0')}...
+                      </>
+                    ) : (
+                      <span className='text-muted-foreground text-sm'>
+                        Ready to preview!
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ) : testResults && testResults.length > 0 ? (
+                <AlertPreview stories={testResults} />
+              ) : (
+                <div className='text-center text-muted-foreground py-12 text-sm'>
+                  <p>Click "Test" to preview your alert</p>
+                </div>
+              )}
+            </CardContent>
           </Card>
         </div>
       </div>
