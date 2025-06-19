@@ -9,10 +9,7 @@ import normalizeUrl from 'normalize-url'
 
 export async function brightdata(url: string): Promise<Content> {
   try {
-    const normalized = normalizeUrl(url, {
-      stripProtocol: true,
-      stripWWW: true,
-    })
+    const normalized = normalizeUrl(url)
 
     await track({
       channel: 'brightdata',
@@ -48,7 +45,7 @@ export async function brightdata(url: string): Promise<Content> {
 
     if (!response.ok) {
       throw new Error(
-        `BrightData API error: ${response.status} ${response.statusText}`,
+        `BrightData API error: ${response.status} ${response.statusText} ${await response.text()}`,
       )
     }
 
