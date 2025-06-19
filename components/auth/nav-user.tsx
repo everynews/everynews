@@ -55,17 +55,17 @@ export const NavUser = ({ user }: { user: User }) => {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href='/my/alerts'>
+            <Link href='/my/alerts' className='cursor-pointer'>
               <span>My Alerts</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href='/my/channels'>
+            <Link href='/my/channels' className='cursor-pointer'>
               <span>My Channels</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href='/my/subscriptions'>
+            <Link href='/my/subscriptions' className='cursor-pointer'>
               <span>My Subscriptions</span>
             </Link>
           </DropdownMenuItem>
