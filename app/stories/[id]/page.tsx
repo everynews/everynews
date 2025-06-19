@@ -80,7 +80,11 @@ export default async function StoryPage({
         <div className='flex flex-col gap-4'>
           <div className='flex items-center gap-2 text-sm text-muted-foreground'>
             <Globe className='size-4' />
-            <Link href={`/alerts/${alertData.id}`} className='hover:underline'>
+            <Link
+              href={`/alerts/${alertData.id}`}
+              className='hover:underline'
+              lang={alertData.languageCode}
+            >
               {alertData.name}
             </Link>
             <span>•</span>
@@ -123,7 +127,7 @@ export default async function StoryPage({
       <div className='pt-6'>
         <div className='flex justify-between items-center'>
           <Link
-            href={storyData.originalUrl + '?utm_source=every.news'}
+            href={`${storyData.originalUrl}${storyData.originalUrl.includes('?') ? '&' : '?'}utm_source=every.news`}
             target='_blank'
             rel='noopener noreferrer'
             className='text-sm text-muted-foreground hover:text-foreground flex items-center gap-2'

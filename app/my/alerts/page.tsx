@@ -93,7 +93,14 @@ export default async function MyAlertsPage() {
                 )
                 return (
                   <TableRow key={item.id}>
-                    <TableCell className='font-medium'>{item.name}</TableCell>
+                    <TableCell className='font-medium'>
+                      <Link
+                        href={`/my/alerts/${item.id}`}
+                        lang={item.languageCode}
+                      >
+                        {item.name}
+                      </Link>
+                    </TableCell>
                     <TableCell>
                       <Badge variant={item.active ? 'default' : 'outline'}>
                         {item.active ? 'Active' : 'Inactive'}

@@ -76,7 +76,11 @@ export default async function AlertsPage() {
         <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
           {alertsData.map(
             ({ alert: alertInfo, storyCount, subscriberCount }) => (
-              <Link href={`/alerts/${alertInfo.id}`} key={alertInfo.id}>
+              <Link
+                href={`/alerts/${alertInfo.id}`}
+                key={alertInfo.id}
+                lang={alertInfo.languageCode}
+              >
                 <Card className='h-full hover:shadow-md transition-shadow'>
                   <CardHeader>
                     <div className='flex items-start justify-between'>

@@ -13,7 +13,7 @@ import { alerts } from './alert'
 import { prompt } from './prompt'
 import 'zod-openapi/extend'
 import { contents } from './content'
-import { LANGUAGE_CODES, LanguageSchema } from './language'
+import { LANGUAGE_CODES, LanguageCodeSchema } from './language'
 
 export const stories = pgTable(
   'stories',
@@ -66,7 +66,7 @@ export const StorySchema = z
       .openapi({
         example: ['Key finding 1', 'Key finding 2', 'Key finding 3'],
       }),
-    languageCode: LanguageSchema,
+    languageCode: LanguageCodeSchema,
     originalUrl: z.string().openapi({ example: 'https://example.com' }),
     promptHash: z.string().openapi({ example: 'hash123' }),
     promptId: z.coerce.string().nullable().openapi({ example: 'prompt123' }),

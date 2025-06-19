@@ -1,5 +1,3 @@
-import { z } from 'zod'
-import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
 import {
   boolean,
@@ -10,7 +8,9 @@ import {
   text,
   timestamp,
 } from 'drizzle-orm/pg-core'
-import { LANGUAGE_CODES, LanguageSchema } from './language'
+import { z } from 'zod'
+import 'zod-openapi/extend'
+import { LANGUAGE_CODES, LanguageCodeSchema } from './language'
 import { prompt } from './prompt'
 import { strategySchema } from './strategy'
 import { users } from './user'
@@ -61,7 +61,7 @@ export const AlertSchema = z
       .openapi({ example: 'A brief description of the alert' }),
     id: z.coerce.string().openapi({ example: '123' }),
     isPublic: z.coerce.boolean().openapi({ example: true }),
-    language: LanguageSchema,
+    languageCode: LanguageCodeSchema,
     lastRun: z.coerce.date().nullable().openapi({ example: new Date() }),
     name: z.coerce
       .string()

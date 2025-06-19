@@ -307,14 +307,14 @@ export const LANGUAGE_LABELS: Record<LanguageCode, string> = {
   zu: 'Zulu',
 }
 
-export const LanguageSchema = z.enum(LANGUAGE_CODES).openapi({
+export const LanguageCodeSchema = z.enum(LANGUAGE_CODES).openapi({
   description: 'ISO language code',
   example: 'en',
 })
 
 export const LanguageSelectSchema = z
   .object({
-    code: LanguageSchema,
+    code: LanguageCodeSchema,
     label: z.string(),
   })
   .openapi({

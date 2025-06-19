@@ -279,7 +279,11 @@ export default async function Page() {
 
           <div className='grid md:grid-cols-2 gap-6'>
             {recentStories.map(({ story, alert: alertInfo }) => (
-              <Link key={story.id} href={`/stories/${story.id}`}>
+              <Link
+                key={story.id}
+                href={`/stories/${story.id}`}
+                lang={story.languageCode}
+              >
                 <Card className='hover:shadow-lg transition-all duration-200 cursor-pointer bg-card w-full'>
                   <CardHeader className='pb-3 flex flex-col gap-2'>
                     <div className='flex items-center gap-2 text-sm text-muted-foreground'>

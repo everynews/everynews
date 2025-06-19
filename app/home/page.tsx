@@ -133,7 +133,11 @@ export default async function Page() {
 
           <div className='grid grid-cols-1 gap-4'>
             {triggeredStories.map(({ story, alert: alertInfo }) => (
-              <Link key={story.id} href={`/stories/${story.id}`}>
+              <Link
+                key={story.id}
+                href={`/stories/${story.id}`}
+                lang={story.languageCode}
+              >
                 <Card className='hover:shadow-lg transition-all duration-200 cursor-pointer'>
                   <CardHeader className='pb-3'>
                     <div className='flex items-center gap-2 text-sm text-muted-foreground mb-2'>
