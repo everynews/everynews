@@ -174,14 +174,12 @@ export const summarizeContent = async ({
       deletedAt: null,
       keyFindings,
       languageCode,
+      originalUrl: content.originalUrl,
       promptHash: hashPrompt(promptContent),
       promptId: news.promptId,
       systemMarkedIrrelevant: isSystemIrrelevant,
       title,
-      url: normalizeUrl(content.url, {
-        stripProtocol: true,
-        stripWWW: true,
-      }),
+      url: content.url,
       userMarkedIrrelevant: false,
     }
   } catch (error) {
@@ -285,22 +283,7 @@ const summarizeWithCache = async ({
     return null
   }
 
-  const [story] = await db
-    .insert(stories)
-    .values({
-      alertId: summary.alertId,
-      contentId: summary.contentId,
-      deletedAt: summary.deletedAt,
-      keyFindings: summary.keyFindings,
-      languageCode: summary.languageCode,
-      promptHash: summary.promptHash,
-      promptId: summary.promptId,
-      systemMarkedIrrelevant: summary.systemMarkedIrrelevant,
-      title: summary.title,
-      url: summary.url,
-      userMarkedIrrelevant: summary.userMarkedIrrelevant,
-    })
-    .returning()
+  const [story] = await db.insert(stories).values(summary).returning()
   return StorySchema.parse(story)
 }
 
