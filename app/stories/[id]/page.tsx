@@ -36,8 +36,7 @@ export default async function StoryPage({
 }) {
   const { id } = await params
 
-  // Get story with content and alert information
-  const rawStoryData = await db
+  const [{ story: rawStory, alert: rawAlert }] = await db
     .select({
       alert: alert,
       content: contents,
@@ -55,17 +54,10 @@ export default async function StoryPage({
     .where(and(eq(stories.id, id), isNull(stories.deletedAt)))
     .limit(1)
 
-  if (!rawStoryData.length) {
+  if (!rawStory) {
     notFound()
   }
 
-  const {
-    story: rawStory,
-    content: rawContent,
-    alert: rawAlert,
-  } = rawStoryData[0]
-
-  // Parse with Zod schemas
   const story = StorySchema.parse(rawStory)
   const alertInfo = AlertSchema.parse(rawAlert)
   return (
