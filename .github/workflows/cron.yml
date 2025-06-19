@@ -1,4 +1,6 @@
-name: Hourly Cron Job
+name: Hourly
+
+concurrency: hourly
 
 on:
   schedule:
@@ -6,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  cron:
+  Workflows:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
