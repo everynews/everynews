@@ -67,13 +67,13 @@ export async function brightdata(url: string): Promise<Content> {
     const [htmlBlob, markdownBlob] = await Promise.all([
       put(`brightdata/${normalized}.html`, html, {
         access: 'public',
-        contentType: 'text/html',
         allowOverwrite: true,
+        contentType: 'text/html',
       }),
       put(`brightdata/${normalized}.md`, defuddleResult.content, {
         access: 'public',
-        contentType: 'text/markdown',
         allowOverwrite: true,
+        contentType: 'text/markdown',
       }),
     ])
 
