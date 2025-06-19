@@ -75,7 +75,7 @@ export const summarizeContent = async ({
     const { fullPrompt, promptContent } = await input({ content, news })
 
     const systemInstructions = getSystemPromptContentForStructuredOutput(
-      news.language,
+      news.languageCode,
     )
 
     const response = await client.chat.completions.create({
@@ -103,7 +103,7 @@ export const summarizeContent = async ({
                 type: 'integer',
               },
               keyFindings: {
-                description: `Array of key findings in plain text in ${LANGUAGE_LABELS[news.language]} (${news.language})`,
+                description: `Array of key findings in plain text in ${LANGUAGE_LABELS[news.languageCode]} (${news.languageCode})`,
                 items: {
                   type: 'string',
                 },
@@ -115,7 +115,7 @@ export const summarizeContent = async ({
                 type: 'string',
               },
               title: {
-                description: `The summarized title in plain text (no markdown) in ${LANGUAGE_LABELS[news.language]} (${news.language})`,
+                description: `The summarized title in plain text (no markdown) in ${LANGUAGE_LABELS[news.languageCode]} (${news.languageCode})`,
                 type: 'string',
               },
             },
@@ -231,7 +231,7 @@ const summarizeWithCache = async ({
     where: and(
       eq(stories.url, url),
       eq(stories.promptHash, promptHash),
-      eq(stories.languageCode, news.language),
+      eq(stories.languageCode, news.languageCode),
       isNull(stories.deletedAt),
     ),
   })
