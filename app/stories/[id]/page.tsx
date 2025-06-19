@@ -10,6 +10,7 @@ import { Calendar, ExternalLink, Globe } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { CopyMarkdownButton } from './copy-markdown-button'
 import { ShareButton } from './share-button'
 
 export async function generateMetadata({
@@ -137,10 +138,16 @@ export default async function StoryPage({
               Source
             </Button>
           </Link>
-          <ShareButton
-            title={storyData.title}
-            url={`${process.env.NEXT_PUBLIC_SITE_URL || ''}/stories/${storyData.id}`}
-          />
+          <div className='flex gap-2'>
+            <CopyMarkdownButton
+              title={storyData.title}
+              url={`${process.env.NEXT_PUBLIC_SITE_URL || ''}/stories/${storyData.id}`}
+            />
+            <ShareButton
+              title={storyData.title}
+              url={`${process.env.NEXT_PUBLIC_SITE_URL || ''}/stories/${storyData.id}`}
+            />
+          </div>
         </div>
       </div>
     </div>
