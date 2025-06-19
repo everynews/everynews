@@ -23,10 +23,10 @@ export const ContentSchema = z
     htmlBlobUrl: z.string().openapi({ example: 'articles/example.com.html' }),
     id: z.coerce.string().openapi({ example: '123' }),
     markdownBlobUrl: z.string().openapi({ example: 'articles/example.com.md' }),
+    originalUrl: z.string().openapi({ example: 'https://example.com' }),
     title: z.string().openapi({ example: 'Title' }),
     updatedAt: z.coerce.date().openapi({ example: new Date() }),
     url: z.string().openapi({ example: 'https://example.com' }),
-    originalUrl: z.string().openapi({ example: 'https://example.com' }),
   })
   .openapi({ ref: 'ContentSchema' })
 
