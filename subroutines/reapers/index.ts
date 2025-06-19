@@ -3,13 +3,16 @@ import { markdownify } from '@everynews/lib/dom'
 import { track } from '@everynews/logs'
 import type { Content } from '@everynews/schema'
 import { ContentSchema, contents } from '@everynews/schema'
-import { brightdata } from '@everynews/subroutines/reapers/brightdata'
+import {
+  brightdataHosted,
+  brightdataWss,
+} from '@everynews/subroutines/reapers/brightdata'
 import { put } from '@vercel/blob'
 import { eq } from 'drizzle-orm'
-import { JSDOM } from 'jsdom'
 import normalizeUrl from 'normalize-url'
+import { chromium } from 'playwright'
 
-export const reap = async (url: string): Promise<Content> => {
+export const reap = async (url: string): Promise<Content | null> => {
   try {
     const normalized = normalizeUrl(url, {
       stripProtocol: true,
@@ -35,22 +38,44 @@ export const reap = async (url: string): Promise<Content> => {
       return existing as Content
     }
 
-    const dom = await JSDOM.fromURL(url)
-    const title = dom.window.document.title
-
-    let markdown = await markdownify(url, dom)
-
-    if (!markdown) {
-      const html = await brightdata(url)
-      markdown = await markdownify(url, html)
-
-      if (!markdown) {
-        throw new Error('Failed to extract content from BrightData')
-      }
+    let html: string = ''
+    let title: string = ''
+    try {
+      const browser = await chromium.launch()
+      const page = await browser.newPage()
+      await page.goto(url)
+      html = await page.content()
+      title = await page.title()
+      await browser.close()
+    } catch (error) {
+      await track({
+        channel: 'brightdata',
+        description: url,
+        event: 'Scraping Failed',
+        icon: '❌',
+        tags: {
+          error: String(error),
+          type: 'error',
+          url,
+        },
+      })
     }
 
+    if (!html && process.env.BRIGHTDATA_PLAYWRIGHT_WSS) {
+      const { html: h, title: t } = await brightdataWss(url)
+      html = h
+      title = t
+    }
+
+    if (!html && process.env.BRIGHTDATA_API_KEY) {
+      html = await brightdataHosted(url)
+      title = html.match(/<title>(.*?)<\/title>/)?.[1] ?? ''
+    }
+
+    const markdown = await markdownify(url, html)
+
     const [htmlBlob, markdownBlob] = await Promise.all([
-      put(`brightdata/${normalized}.html`, dom.window.document.body.innerHTML, {
+      put(`brightdata/${normalized}.html`, html, {
         access: 'public',
         allowOverwrite: true,
         contentType: 'text/html',
@@ -103,6 +128,6 @@ export const reap = async (url: string): Promise<Content> => {
         url,
       },
     })
-    throw error
+    return null
   }
 }

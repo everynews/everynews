@@ -40,7 +40,7 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
 
     const filteredResults = results.filter(
       (result): result is Awaited<ReturnType<typeof reap>> => result !== null,
-    )
+    ) as Content[]
 
     await track({
       channel: 'reaper',
