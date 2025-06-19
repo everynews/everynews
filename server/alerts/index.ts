@@ -2,12 +2,12 @@ import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
 import { alert } from '@everynews/schema'
 import { AlertDtoSchema, AlertSchema } from '@everynews/schema/alert'
+import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
-import type { WithAuth } from '@everynews/server/bindings/auth'
 
 export const AlertRouter = new Hono<WithAuth>()
   .use(authMiddleware)

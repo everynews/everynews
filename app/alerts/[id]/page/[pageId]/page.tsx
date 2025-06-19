@@ -31,8 +31,8 @@ export const generateMetadata = async ({
     where: eq(alert.id, id),
   })
   return {
-    title: alertData?.name ?? 'Alert',
     description: alertData?.description ?? 'Recent stories from this alert.',
+    title: alertData?.name ?? 'Alert',
   }
 }
 

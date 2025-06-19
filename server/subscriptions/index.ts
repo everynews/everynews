@@ -5,13 +5,13 @@ import {
   SubscriptionDtoSchema,
   SubscriptionSchema,
 } from '@everynews/schema/subscription'
+import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
 import { z } from 'zod'
-import type { WithAuth } from '@everynews/server/bindings/auth'
 
 export const SubscriptionRouter = new Hono<WithAuth>()
   .use(authMiddleware)

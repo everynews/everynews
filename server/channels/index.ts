@@ -3,13 +3,13 @@ import { track } from '@everynews/logs'
 import { sendChannelVerification } from '@everynews/messengers'
 import { channels, channelVerifications } from '@everynews/schema'
 import { ChannelDtoSchema, ChannelSchema } from '@everynews/schema/channel'
+import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { and, eq, gt, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
 import { z } from 'zod'
-import type { WithAuth } from '@everynews/server/bindings/auth'
 
 export const ChannelRouter = new Hono<WithAuth>()
   .use(authMiddleware)

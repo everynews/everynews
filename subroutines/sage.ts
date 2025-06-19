@@ -300,8 +300,8 @@ const summarizeWithCache = async ({
       url: summary.url,
       userMarkedIrrelevant: summary.userMarkedIrrelevant,
     })
-      .returning()
-    return StorySchema.parse(story)
+    .returning()
+  return StorySchema.parse(story)
 }
 
 export const sage = async ({

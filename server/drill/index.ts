@@ -1,12 +1,12 @@
 import { track } from '@everynews/logs'
 import { StorySchema } from '@everynews/schema'
 import { AlertDtoSchema } from '@everynews/schema/alert'
+import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
+import { aspirant } from '@everynews/subroutines/aspirant'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
-import type { WithAuth } from '@everynews/server/bindings/auth'
-import { aspirant } from '@everynews/subroutines/aspirant'
 
 export const DrillRouter = new Hono<WithAuth>().use(authMiddleware).post(
   '/',

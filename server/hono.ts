@@ -1,15 +1,14 @@
 import { auth } from '@everynews/auth'
 import { url } from '@everynews/lib/url'
-import type { WithAuth } from '@everynews/server/bindings/auth'
-import { Scalar } from '@scalar/hono-api-reference'
-import { Hono } from 'hono'
-import { generateSpecs } from 'hono-openapi'
 import { AlertRouter } from '@everynews/server/alerts'
+import type { WithAuth } from '@everynews/server/bindings/auth'
 import { ChannelRouter } from '@everynews/server/channels'
 import { DrillRouter } from '@everynews/server/drill'
 import { PromptsRouter } from '@everynews/server/prompts'
 import { SubscriptionRouter } from '@everynews/server/subscriptions'
-
+import { Scalar } from '@scalar/hono-api-reference'
+import { Hono } from 'hono'
+import { generateSpecs } from 'hono-openapi'
 
 const app = new Hono<WithAuth>()
   .basePath('/api')
