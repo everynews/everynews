@@ -281,6 +281,10 @@ const summarizeWithCache = async ({
     return null
   }
 
+  if (summary.title.length === 0 || summary.keyFindings?.length === 0) {
+    return null
+  }
+
   const [story] = await db
     .insert(stories)
     .values({
@@ -296,9 +300,8 @@ const summarizeWithCache = async ({
       url: summary.url,
       userMarkedIrrelevant: summary.userMarkedIrrelevant,
     })
-    .returning()
-
-  return StorySchema.parse(story)
+      .returning()
+    return StorySchema.parse(story)
 }
 
 export const sage = async ({
