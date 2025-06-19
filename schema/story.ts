@@ -31,6 +31,7 @@ export const stories = pgTable(
     languageCode: text('language_code', { enum: LANGUAGE_CODES })
       .notNull()
       .default('en'),
+    originalUrl: text('original_url').notNull(),
     promptHash: text('prompt_hash').notNull(),
     promptId: text('prompt_id').references(() => prompt.id, {
       onDelete: 'set null',
@@ -62,6 +63,10 @@ export const StorySchema = z
         example: ['Key finding 1', 'Key finding 2', 'Key finding 3'],
       }),
     languageCode: LanguageSchema,
+    originalUrl: z
+      .string()
+      .nullable()
+      .openapi({ example: 'https://example.com' }),
     promptHash: z.string().openapi({ example: 'hash123' }),
     promptId: z.coerce.string().nullable().openapi({ example: 'prompt123' }),
     systemMarkedIrrelevant: z.boolean().openapi({ example: false }),
