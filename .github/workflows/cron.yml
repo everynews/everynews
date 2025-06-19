@@ -1,9 +1,9 @@
 name: Hourly Cron Job
 
 on:
-  # schedule:
-  #   - cron: '59 * * * *'  # Runs at minute 59 of every hour
-  workflow_dispatch:  # Allows manual triggering
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
 jobs:
   cron:
