@@ -9,7 +9,10 @@ import normalizeUrl from 'normalize-url'
 
 export async function brightdata(url: string): Promise<Content> {
   try {
-    const normalized = normalizeUrl(url)
+    const normalized = normalizeUrl(url, {
+      stripProtocol: true,
+      stripWWW: true,
+    })
 
     await track({
       channel: 'brightdata',
@@ -33,7 +36,7 @@ export async function brightdata(url: string): Promise<Content> {
     const response = await fetch('https://api.brightdata.com/request', {
       body: JSON.stringify({
         format: 'raw',
-        url: normalized,
+        url: `https://${normalized}`,
         zone: 'everynews',
       }),
       headers: {
