@@ -2,7 +2,7 @@ import { Badge } from '@everynews/components/ui/badge'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
 import { AlertSchema, alerts } from '@everynews/schema/alert'
-import { contents } from '@everynews/schema/content'
+import { contents, ContentSchema } from '@everynews/schema/content'
 import { StorySchema, stories } from '@everynews/schema/story'
 import { and, eq, isNull } from 'drizzle-orm'
 import { Calendar, Globe } from 'lucide-react'
@@ -43,7 +43,7 @@ export default async function StoryPage({
 }) {
   const { id } = await params
 
-  const [{ story: rawStory, alert: rawAlert }] = await db
+  const rawResponse = await db
     .select({
       alert: alerts,
       content: contents,
@@ -61,25 +61,28 @@ export default async function StoryPage({
     .where(and(eq(stories.id, id), isNull(stories.deletedAt)))
     .limit(1)
 
-  if (!rawStory) {
+  if (!rawResponse || rawResponse.length === 0) {
     notFound()
   }
+  const [raw] = rawResponse
+  const { alert, content, story } = raw
 
-  const story = StorySchema.parse(rawStory)
-  const alertInfo = AlertSchema.parse(rawAlert)
+  const storyData = StorySchema.parse(story)
+  const alertData = AlertSchema.parse(alert)
+  const contentData = ContentSchema.parse(content)
   return (
     <div className='container mx-auto max-w-4xl p-4'>
       <div className='mb-6'>
         <div className='flex flex-col gap-4'>
           <div className='flex items-center gap-2 text-sm text-muted-foreground'>
             <Globe className='size-4' />
-            <Link href={`/alerts/${alertInfo.id}`} className='hover:underline'>
-              {alertInfo.name}
+            <Link href={`/alerts/${alertData.id}`} className='hover:underline'>
+              {alertData.name}
             </Link>
             <span>•</span>
             <Calendar className='size-4' />
-            <time dateTime={story.createdAt.toISOString()}>
-              {story.createdAt.toLocaleDateString('en-US', {
+            <time dateTime={storyData.createdAt.toISOString()}>
+              {storyData.createdAt.toLocaleDateString('en-US', {
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
@@ -89,16 +92,16 @@ export default async function StoryPage({
             </time>
           </div>
 
-          <h1 className='text-3xl font-bold leading-tight'>{story.title}</h1>
+          <h1 className='text-3xl font-bold leading-tight'>{storyData.title}</h1>
         </div>
       </div>
-      {story.keyFindings && story.keyFindings.length > 0 && (
+      {storyData.keyFindings && storyData.keyFindings.length > 0 && (
         <Card>
           <CardContent className='p-4'>
             <div className='flex flex-col gap-2'>
-              {story.keyFindings.map((finding, index) => (
+              {storyData.keyFindings.map((finding, index) => (
                 <div
-                  key={`${story.id}-finding-${index}`}
+                  key={`${storyData.id}-finding-${index}`}
                   className='flex items-center gap-2'
                 >
                   <Badge variant='secondary' className='text-xs px-2 py-1'>
@@ -114,7 +117,7 @@ export default async function StoryPage({
       <div className='mt-8 pt-6'>
         <div className='flex justify-end items-center'>
           <Link
-            href={story.originalUrl}
+            href={storyData.originalUrl}
             target='_blank'
             rel='noopener noreferrer'
             className='text-sm text-muted-foreground hover:text-foreground'
