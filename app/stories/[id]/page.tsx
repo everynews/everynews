@@ -72,7 +72,10 @@ export default async function StoryPage({
   const storyData = StorySchema.parse(story)
   const alertData = AlertSchema.parse(alert)
   return (
-    <div className='container mx-auto max-w-4xl p-4'>
+    <div
+      className='container mx-auto max-w-4xl p-4'
+      lang={storyData.languageCode}
+    >
       <div className='mb-6'>
         <div className='flex flex-col gap-4'>
           <div className='flex items-center gap-2 text-sm text-muted-foreground'>
