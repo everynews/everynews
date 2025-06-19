@@ -105,6 +105,7 @@ CREATE TABLE "stories" (
 	"title" text NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"url" text NOT NULL,
+	"original_url" text NOT NULL,
 	"user_marked_irrelevant" boolean DEFAULT false,
 	CONSTRAINT "stories_url_prompt_hash_unique" UNIQUE("url","prompt_hash")
 );

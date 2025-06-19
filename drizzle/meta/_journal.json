@@ -1,13 +1,13 @@
 {
+  "version": "7",
   "dialect": "postgresql",
   "entries": [
     {
-      "breakpoints": true,
       "idx": 0,
-      "tag": "0000_lush_sinister_six",
       "version": "7",
-      "when": 1750254758305
+      "when": 1750302564081,
+      "tag": "0000_rainy_rhino",
+      "breakpoints": true
     }
-  ],
-  "version": "7"
+  ]
 }
