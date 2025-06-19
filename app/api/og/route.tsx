@@ -33,9 +33,10 @@ const japanese = async () =>
 
 export const GET = async (request: Request) => {
   const { searchParams } = new URL(request.url)
-  const title = searchParams.get('title') || ''
-  const description = searchParams.get('description') || ''
-  ;("Semantic Monitoring. Context Understanding. Granular Delivery. Everynews keeps up with the industry so you don't have to.")
+  const title = searchParams.get('title') || 'Agentic Google Alerts'
+  const description =
+    searchParams.get('description') ||
+    "Semantic Monitoring. Context Understanding. Granular Delivery. Everynews keeps up with the industry so you don't have to."
   return new ImageResponse(
     <div tw='flex flex-col w-full items-start justify-start'>
       <div
