@@ -28,7 +28,8 @@ export const track = async (options: LogEventOptions) => {
     const isDev = process.env.NODE_ENV === 'development'
     const channel = isDev ? `dev-${options.channel}` : `prod-${options.channel}`
     if (isDev) {
-      console.log('LogSnag:', options)
+      console.log(options)
+      return
     }
     await logsnag.track({
       ...options,
