@@ -2,6 +2,7 @@ import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
+import { url } from '@everynews/lib/url'
 import { AlertSchema, alerts } from '@everynews/schema/alert'
 import { contents } from '@everynews/schema/content'
 import { StorySchema, stories } from '@everynews/schema/story'
@@ -12,7 +13,6 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { CopyMarkdownButton } from './copy-markdown-button'
 import { ShareButton } from './share-button'
-import { url } from '@everynews/lib/url'
 
 export async function generateMetadata({
   params,

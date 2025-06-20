@@ -12,7 +12,7 @@ export default function PrivacyPage() {
 
       <div className='prose prose-gray max-w-none dark:prose-invert'>
         <p className='text-lg text-muted-foreground mb-8'>
-          Last updated June 14, 2025
+          Last updated June 20, 2025
         </p>
 
         <section className='mb-8'>
@@ -65,6 +65,11 @@ export default function PrivacyPage() {
           <p className='mb-4'>
             Session tokens, preference cookies, analytics identifiers.
           </p>
+          <h3 className='text-xl font-semibold mb-2'>Phone Numbers</h3>
+          <p className='mb-4'>
+            Phone numbers for SMS notifications when voluntarily provided during
+            onboarding.
+          </p>
         </section>
 
         <section className='mb-8'>
@@ -87,6 +92,11 @@ export default function PrivacyPage() {
             Marketing Communications
           </h3>
           <p className='mb-4'>Only with opt-in consent.</p>
+          <h3 className='text-xl font-semibold mb-2'>SMS Notifications</h3>
+          <p className='mb-4'>
+            Training reminders and updates via SMS with opt-in consent. Standard
+            messaging rates may apply.
+          </p>
         </section>
 
         <section className='mb-8'>
@@ -114,6 +124,11 @@ export default function PrivacyPage() {
           </p>
           <h3 className='text-xl font-semibold mb-2'>Legal Requests</h3>
           <p className='mb-4'>Disclosed only when legally required.</p>
+          <h3 className='text-xl font-semibold mb-2'>SMS Provider</h3>
+          <p className='mb-4'>
+            Phone numbers shared with our SMS provider for message delivery,
+            subject to their privacy policy.
+          </p>
         </section>
 
         <section className='mb-8'>
@@ -166,6 +181,15 @@ export default function PrivacyPage() {
           <p>
             Service not directed to minors under 16. Accounts for minors
             prohibited.
+          </p>
+        </section>
+
+        <section className='mb-8'>
+          <h2 className='text-2xl font-semibold mb-4'>SMS Opt-Out</h2>
+          <p>
+            To stop receiving SMS messages, text STOP to any message. After
+            opting out, we will not send further SMS messages or sell/transfer
+            your phone number.
           </p>
         </section>
 
