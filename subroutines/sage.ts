@@ -67,7 +67,7 @@ export const summarizeContent = async ({
   news: Alert
 }): Promise<Omit<Story, 'id' | 'createdAt' | 'updatedAt'> | null> => {
   try {
-    const { fullPrompt, promptContent } = await input({ content, news })
+    const { fullPrompt } = await input({ content, news })
 
     const systemInstructions = getSystemPromptContentForStructuredOutput(
       news.languageCode,
@@ -212,7 +212,7 @@ const summarizeWithCache = async ({
   const existingStory = await db.query.stories.findFirst({
     where: and(
       eq(stories.url, url),
-      eq(stories.promptId, news.promptId),
+      eq(stories.promptId, news.promptId || ''),
       eq(stories.languageCode, news.languageCode),
       isNull(stories.deletedAt),
     ),
