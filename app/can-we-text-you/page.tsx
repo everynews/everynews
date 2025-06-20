@@ -14,8 +14,8 @@ export default function CanWeTextYouPage() {
         <section className='mb-8'>
           <h2 className='text-2xl font-semibold mb-4'>SMS Notifications</h2>
           <p className='mb-4'>
-            We'd like to send you important updates and training reminders via
-            SMS. Before we can do that, we need your consent.
+            We'd like to send you important updates via SMS. Before we can do
+            that, we need your consent.
           </p>
         </section>
 
@@ -79,11 +79,11 @@ export default function CanWeTextYouPage() {
           <h2 className='text-2xl font-semibold mb-4'>Consent Language</h2>
           <div className='rounded-lg bg-muted p-6'>
             <p className='text-sm'>
-              By submitting, you authorize Everynews to text the number you
-              provided with offers & other information, possibly using automated
-              means. Message/data rates apply. Message frequency varies. Text
-              HELP for help or STOP to opt out. Consent is not a condition of
-              purchase. See{' '}
+              By <strong>verifying your number on this service</strong>, you authorize Everynews
+              to text the number you provided with offers & other information,
+              possibly using automated means. Message/data rates apply. Message
+              frequency varies. Text HELP for help or STOP to opt out. Consent
+              is not a condition of purchase. See{' '}
               <Link href='/privacy' className='text-orange-500 hover:underline'>
                 privacy policy
               </Link>
