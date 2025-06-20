@@ -1,17 +1,11 @@
 import { whoami } from '@everynews/auth/session'
+import { ClickableCard } from '@everynews/components/clickable-card'
 import { DeletePromptPopover } from '@everynews/components/delete-prompt-popover'
 import { Button } from '@everynews/components/ui/button'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@everynews/components/ui/table'
 import { db } from '@everynews/database'
 import { prompt } from '@everynews/schema'
 import { and, eq, isNull } from 'drizzle-orm'
+import { Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -32,7 +26,7 @@ export default async function PromptsPage() {
   })
 
   return (
-    <div className='container mx-auto max-w-6xl'>
+    <div className='container mx-auto max-w-6xl px-4 sm:px-6'>
       <div className='flex items-center justify-between gap-4 mb-6'>
         <div className='flex-1'>
           <h1 className='text-3xl font-bold'>Prompts</h1>
@@ -45,51 +39,44 @@ export default async function PromptsPage() {
         </Button>
       </div>
 
-      <div className='border rounded-lg'>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead>Updated</TableHead>
-              <TableHead className='text-right'>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {prompts.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className='text-center text-muted-foreground py-8'
-                >
-                  No prompts yet. Create your first custom prompt to get
-                  started.
-                </TableCell>
-              </TableRow>
-            ) : (
-              prompts.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className='font-medium'>{item.name}</TableCell>
-                  <TableCell className='text-muted-foreground'>
-                    {new Date(item.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className='text-muted-foreground'>
-                    {new Date(item.updatedAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <div className='flex items-center gap-1 justify-end'>
-                      <Button asChild variant='ghost' size='sm'>
-                        <Link href={`/my/prompts/${item.id}`}>Edit</Link>
-                      </Button>
-                      <DeletePromptPopover prompt={item} />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      {prompts.length === 0 ? (
+        <div className='text-center text-muted-foreground py-16 border rounded-lg'>
+          No prompts yet. Create your first custom prompt to get started.
+        </div>
+      ) : (
+        <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+          {prompts.map((item) => (
+            <ClickableCard
+              key={item.id}
+              href={`/my/prompts/${item.id}`}
+              actions={
+                <div className='flex items-center justify-start'>
+                  <DeletePromptPopover prompt={item}>
+                    <Button size='icon' variant='destructive'>
+                      <Trash2 className='size-4' />
+                    </Button>
+                  </DeletePromptPopover>
+                </div>
+              }
+            >
+              <h3 className='font-semibold text-lg mb-3 line-clamp-2'>
+                {item.name}
+              </h3>
+
+              <div className='space-y-2 text-sm text-muted-foreground mb-4'>
+                <div className='flex justify-between'>
+                  <span>Created</span>
+                  <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+                </div>
+                <div className='flex justify-between'>
+                  <span>Updated</span>
+                  <span>{new Date(item.updatedAt).toLocaleDateString()}</span>
+                </div>
+              </div>
+            </ClickableCard>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

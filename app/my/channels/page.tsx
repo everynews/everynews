@@ -1,19 +1,13 @@
 import { whoami } from '@everynews/auth/session'
+import { ClickableCard } from '@everynews/components/clickable-card'
 import { DeleteChannelPopover } from '@everynews/components/delete-channel-popover'
 import { SendVerificationButton } from '@everynews/components/send-verification-button'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@everynews/components/ui/table'
 import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { and, eq, isNull } from 'drizzle-orm'
+import { Mail, MessageSquare, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -33,7 +27,7 @@ export default async function MyChannelsPage() {
   const channelList = ChannelSchema.array().parse(res)
 
   return (
-    <div className='container mx-auto max-w-6xl'>
+    <div className='container mx-auto max-w-6xl px-4 sm:px-6'>
       <div className='flex items-center justify-between gap-4 mb-6'>
         <div className='flex-1'>
           <h1 className='text-3xl font-bold'>Channels</h1>
@@ -46,95 +40,101 @@ export default async function MyChannelsPage() {
         </Button>
       </div>
 
-      <div className='border rounded-lg'>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Destination</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead className='text-right'>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell className='font-medium'>
-                Default Channel
-                <Badge variant='secondary' className='ml-2'>
-                  Sign-in Email
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <Badge variant='outline' className='capitalize'>
-                  email
-                </Badge>
-              </TableCell>
-              <TableCell className='text-sm text-muted-foreground'>
+      <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+        {/* Default channel card */}
+        <div className='border rounded-lg p-4 bg-card'>
+          <h3 className='font-semibold text-lg mb-3'>Default Channel</h3>
+
+          <div className='space-y-2 text-sm text-muted-foreground mb-4'>
+            <div className='flex justify-between'>
+              <span>Status</span>
+              <span className='text-muted-foreground'>Verified</span>
+            </div>
+            <div className='flex justify-between'>
+              <span>Type</span>
+              <div className='flex items-center gap-2'>
+                <Mail className='size-4' />
+                <span className='capitalize'>email</span>
+              </div>
+            </div>
+            <div className='flex justify-between'>
+              <span>Destination</span>
+              <span className='text-muted-foreground truncate max-w-[150px]'>
                 {user.email}
-              </TableCell>
-              <TableCell>
-                <Badge variant='default'>Verified</Badge>
-              </TableCell>
-              <TableCell className='text-muted-foreground'>
-                {new Date(user.createdAt).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                <div className='text-sm text-muted-foreground'>Default</div>
-              </TableCell>
-            </TableRow>
-            {channelList.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={6}
-                  className='text-center text-muted-foreground py-8'
-                >
-                  You can create additional delivery channels to get your alerts
-                  sent to different destinations.
-                </TableCell>
-              </TableRow>
-            ) : (
-              channelList.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className='font-medium'>{item.name}</TableCell>
-                  <TableCell>
-                    <Badge variant='outline' className='capitalize'>
-                      {item.type}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className='text-sm text-muted-foreground'>
-                    {item.config.destination}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={item.verified ? 'default' : 'destructive'}>
-                      {item.verified ? 'Verified' : 'Pending'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className='text-muted-foreground'>
-                    {new Date(item.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <div className='flex items-center gap-1 justify-between'>
-                      <DeleteChannelPopover channel={item}>
-                        <Button variant='destructive'>Delete</Button>
-                      </DeleteChannelPopover>
-                      <div className='flex items-center gap-1'>
-                        <Button asChild size='sm' variant='ghost'>
-                          <Link href={`/my/channels/${item.id}`}>Edit</Link>
-                        </Button>
-                        {!item.verified && (
-                          <SendVerificationButton channel={item} />
-                        )}
-                      </div>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              </span>
+            </div>
+            <div className='flex justify-between'>
+              <span>Created</span>
+              <span>{new Date(user.createdAt).toLocaleDateString()}</span>
+            </div>
+          </div>
+
+          <div className='flex items-center justify-center'>
+            <Badge variant='secondary'>Sign-in Email</Badge>
+          </div>
+        </div>
+
+        {/* User-created channels */}
+        {channelList.map((item) => (
+          <ClickableCard
+            key={item.id}
+            href={`/my/channels/${item.id}`}
+            actions={
+              <div className='flex items-center justify-between'>
+                <DeleteChannelPopover channel={item}>
+                  <Button size='icon' variant='destructive'>
+                    <Trash2 className='size-4' />
+                  </Button>
+                </DeleteChannelPopover>
+                <div className='flex items-center gap-2'>
+                  {!item.verified && <SendVerificationButton channel={item} />}
+                </div>
+              </div>
+            }
+          >
+            <h3 className='font-semibold text-lg line-clamp-1 mb-3'>
+              {item.name}
+            </h3>
+
+            <div className='space-y-2 text-sm text-muted-foreground mb-4'>
+              <div className='flex justify-between'>
+                <span>Status</span>
+                <span className='text-muted-foreground'>
+                  {item.verified ? 'Verified' : 'Pending'}
+                </span>
+              </div>
+              <div className='flex justify-between'>
+                <span>Type</span>
+                <div className='flex items-center gap-2'>
+                  {item.type === 'email' ? (
+                    <Mail className='size-4' />
+                  ) : (
+                    <MessageSquare className='size-4' />
+                  )}
+                  <span className='capitalize'>{item.type}</span>
+                </div>
+              </div>
+              <div className='flex justify-between'>
+                <span>Destination</span>
+                <span className='text-muted-foreground truncate max-w-[150px]'>
+                  {item.config.destination}
+                </span>
+              </div>
+              <div className='flex justify-between'>
+                <span>Created</span>
+                <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+              </div>
+            </div>
+          </ClickableCard>
+        ))}
       </div>
+
+      {channelList.length === 0 && (
+        <div className='text-center text-muted-foreground mt-8'>
+          You can create additional delivery channels to get your alerts sent to
+          different destinations.
+        </div>
+      )}
     </div>
   )
 }

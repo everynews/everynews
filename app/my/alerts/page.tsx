@@ -1,21 +1,15 @@
 import { whoami } from '@everynews/auth/session'
+import { ClickableCard } from '@everynews/components/clickable-card'
 import { DeleteAlertPopover } from '@everynews/components/delete-alert-popover'
 import { SubscribeAlertButton } from '@everynews/components/subscribe-alert-button'
-import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@everynews/components/ui/table'
 import { db } from '@everynews/database'
 import { AlertSchema, alerts } from '@everynews/schema/alert'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
+import { LANGUAGE_LABELS } from '@everynews/schema/language'
 import { subscriptions } from '@everynews/schema/subscription'
 import { and, eq, isNull } from 'drizzle-orm'
+import { Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -52,7 +46,7 @@ export default async function MyAlertsPage() {
   const userSubscriptions = subscriptionsRes
 
   return (
-    <div className='container mx-auto max-w-6xl'>
+    <div className='container mx-auto max-w-6xl px-4 sm:px-6'>
       <div className='flex items-center justify-between gap-4 mb-6'>
         <div className='flex-1'>
           <h1 className='text-3xl font-bold'>Alerts</h1>
@@ -65,84 +59,81 @@ export default async function MyAlertsPage() {
         </Button>
       </div>
 
-      <div className='border rounded-lg'>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead>Updated</TableHead>
-              <TableHead>Threshold</TableHead>
-              <TableHead className='text-right'>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {userAlerts.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className='text-center text-muted-foreground py-8'
-                >
-                  No alerts yet. Create your first alert to get started.
-                </TableCell>
-              </TableRow>
-            ) : (
-              userAlerts.map((item) => {
-                const subscription = userSubscriptions.find(
-                  (sub) => sub.alertId === item.id,
-                )
-                return (
-                  <TableRow key={item.id}>
-                    <TableCell className='font-medium'>
-                      <Link
-                        href={`/my/alerts/${item.id}`}
-                        lang={item.languageCode}
-                      >
-                        {item.name}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={item.active ? 'default' : 'outline'}>
-                        {item.active ? 'Active' : 'Inactive'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className='text-muted-foreground'>
-                      {new Date(item.createdAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className='text-muted-foreground'>
-                      {new Date(item.updatedAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className='text-muted-foreground'>
-                      {item.threshold}
-                    </TableCell>
-                    <TableCell className='flex items-center gap-1 justify-end'>
+      {userAlerts.length === 0 ? (
+        <div className='text-center text-muted-foreground py-16 border rounded-lg'>
+          No alerts yet. Create your first alert to get started.
+        </div>
+      ) : (
+        <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+          {userAlerts.map((item) => {
+            const subscription = userSubscriptions.find(
+              (sub) => sub.alertId === item.id,
+            )
+            return (
+              <ClickableCard
+                key={item.id}
+                href={`/alerts/${item.id}`}
+                lang={item.languageCode}
+                actions={
+                  <div className='flex items-center justify-between'>
+                    <DeleteAlertPopover alert={item}>
+                      <Button size='icon' variant='destructive'>
+                        <Trash2 className='size-4' />
+                      </Button>
+                    </DeleteAlertPopover>
+                    <div className='flex items-center gap-2'>
                       <SubscribeAlertButton
                         alert={item}
                         channels={userChannels}
                         subscription={subscription}
                         user={user}
                       />
-
-                      <Button asChild size='sm' variant='ghost'>
-                        <Link href={`/alerts/${item.id}`}>View</Link>
-                      </Button>
-                      <Button asChild size='sm' variant='ghost'>
+                      <Button asChild size='sm' variant='outline'>
                         <Link href={`/my/alerts/${item.id}`}>Edit</Link>
                       </Button>
-                      <DeleteAlertPopover alert={item}>
-                        <Button variant='ghost' className='text-destructive'>
-                          Delete
-                        </Button>
-                      </DeleteAlertPopover>
-                    </TableCell>
-                  </TableRow>
-                )
-              })
-            )}
-          </TableBody>
-        </Table>
-      </div>
+                    </div>
+                  </div>
+                }
+              >
+                <h3 className='font-semibold text-lg line-clamp-1 mb-3'>
+                  {item.name}
+                </h3>
+
+                <div className='space-y-2 text-sm text-muted-foreground mb-4'>
+                  <div className='flex justify-between'>
+                    <span>Status</span>
+                    <span className='text-muted-foreground'>
+                      {item.active ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+                  <div className='flex justify-between'>
+                    <span>Language</span>
+                    <span className='text-muted-foreground truncate max-w-[150px]'>
+                      {LANGUAGE_LABELS[
+                        item.languageCode as keyof typeof LANGUAGE_LABELS
+                      ] || item.languageCode}
+                    </span>
+                  </div>
+                  <div className='flex justify-between'>
+                    <span>Threshold</span>
+                    <span className='text-muted-foreground'>
+                      {item.threshold}
+                    </span>
+                  </div>
+                  <div className='flex justify-between'>
+                    <span>Created</span>
+                    <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <div className='flex justify-between'>
+                    <span>Updated</span>
+                    <span>{new Date(item.updatedAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </ClickableCard>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

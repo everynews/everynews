@@ -1,20 +1,13 @@
 import { whoami } from '@everynews/auth/session'
+import { MobileSidebarLink } from '@everynews/components/mobile-sidebar-link'
+import { MobileSidebarShell } from '@everynews/components/mobile-sidebar-shell'
 import { SidebarLinkWithBadge } from '@everynews/components/sidebar-link-with-badge'
-import { Button } from '@everynews/components/ui/button'
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetTrigger,
-} from '@everynews/components/ui/sheet'
 import { db } from '@everynews/database'
 import { alerts } from '@everynews/schema/alert'
 import { channels } from '@everynews/schema/channel'
 import { prompt } from '@everynews/schema/prompt'
 import { subscriptions } from '@everynews/schema/subscription'
 import { and, count, eq, isNull } from 'drizzle-orm'
-import { Menu } from 'lucide-react'
-import Link from 'next/link'
 
 type SidebarItem = {
   href: string
@@ -23,33 +16,13 @@ type SidebarItem = {
 }
 
 const MobileSidebar = ({ items }: { items: SidebarItem[] }) => (
-  <Sheet>
-    <SheetTrigger asChild>
-      <Button variant='ghost' size='icon' className='md:hidden'>
-        <Menu className='size-4' />
-        <span className='sr-only'>Open menu</span>
-      </Button>
-    </SheetTrigger>
-    <SheetContent side='left'>
-      <nav className='flex flex-col gap-2 p-4'>
-        {items.map((item) => (
-          <SheetClose asChild key={item.href}>
-            <Link
-              href={item.href}
-              className='flex items-center justify-between text-sm font-medium text-muted-foreground hover:text-foreground'
-            >
-              <span>{item.title}</span>
-              {item.count !== undefined && (
-                <span className='text-xs text-muted-foreground'>
-                  {item.count}
-                </span>
-              )}
-            </Link>
-          </SheetClose>
-        ))}
-      </nav>
-    </SheetContent>
-  </Sheet>
+  <MobileSidebarShell title='My Workspace'>
+    {items.map((item) => (
+      <MobileSidebarLink key={item.href} href={item.href} badge={item.count}>
+        {item.title}
+      </MobileSidebarLink>
+    ))}
+  </MobileSidebarShell>
 )
 
 const MyLayout = async ({ children }: { children: React.ReactNode }) => {

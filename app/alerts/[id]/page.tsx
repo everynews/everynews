@@ -146,7 +146,7 @@ export default async function AlertStoriesPage({
       <div className='flex flex-col text-center gap-2'>
         <div className='flex flex-col items-center justify-center gap-4'>
           <h1 className='text-2xl font-bold'>{alertInfo.name}</h1>
-          <div>
+          <div className='flex items-center justify-center gap-2'>
             {user && (
               <SubscribeAlertButton
                 className='text-muted-foreground text-sm text-bold'
@@ -159,7 +159,7 @@ export default async function AlertStoriesPage({
             {user && isOwner && (
               <Link href={`/my/alerts/${id}`}>
                 <Button
-                  variant='ghost'
+                  variant='outline'
                   className='text-muted-foreground text-sm text-bold'
                   size='sm'
                 >
@@ -174,7 +174,7 @@ export default async function AlertStoriesPage({
                 className='text-muted-foreground text-sm text-bold'
               >
                 <Button
-                  variant='ghost'
+                  variant='outline'
                   className='text-muted-foreground text-sm text-bold'
                   size='sm'
                 >

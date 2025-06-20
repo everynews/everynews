@@ -54,7 +54,7 @@ export const SubscribeAlertButton = ({
   if (subscription) {
     return (
       <SubmitButton
-        variant='ghost'
+        variant='outline'
         size='sm'
         onClick={handleUnsubscribe}
         loading={loading}

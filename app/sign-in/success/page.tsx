@@ -85,7 +85,7 @@ export default function SignInSuccessPage() {
           <CardDescription>
             {callback
               ? 'You can now continue to your destination.'
-              : 'Now, let&apos;s get you onboarded.'}
+              : "Now, let's get you onboarded."}
           </CardDescription>
         </CardHeader>
         <CardContent className={callback ? '' : 'grid grid-cols-2 gap-2'}>

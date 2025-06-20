@@ -24,8 +24,10 @@ export const AppNavbar = async () => {
           <MainNavigation user={user} />
         </div>
       </div>
-      <MobileNav user={user} />
-      <div className='hidden items-center gap-2 md:flex'>
+      <div className='flex items-center gap-2'>
+        <div className='md:hidden'>
+          <MobileNav user={user} />
+        </div>
         <Suspense
           fallback={
             <div className='h-8 w-8 animate-pulse rounded-full bg-muted' />
@@ -34,7 +36,7 @@ export const AppNavbar = async () => {
           {user ? (
             <NavUser user={user} />
           ) : (
-            <Button asChild>
+            <Button asChild size='sm' className='md:size-md'>
               <Link href='/sign-in'>Sign In</Link>
             </Button>
           )}

@@ -1,18 +1,11 @@
 import { whoami } from '@everynews/auth/session'
+import { ClickableCard } from '@everynews/components/clickable-card'
 import { SubscribeAlertButton } from '@everynews/components/subscribe-alert-button'
-import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@everynews/components/ui/table'
 import { db } from '@everynews/database'
 import { AlertSchema, alerts } from '@everynews/schema/alert'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
+import { LANGUAGE_LABELS } from '@everynews/schema/language'
 import {
   SubscriptionSchema,
   subscriptions,
@@ -66,7 +59,7 @@ export default async function MySubscriptionsPage() {
   const userChannels = ChannelSchema.array().parse(userChannelsRes)
 
   return (
-    <div className='container mx-auto max-w-6xl'>
+    <div className='container mx-auto max-w-6xl px-4 sm:px-6'>
       <div className='flex items-center justify-between gap-4 mb-6'>
         <div className='flex-1'>
           <h1 className='text-3xl font-bold'>Subscriptions</h1>
@@ -79,87 +72,88 @@ export default async function MySubscriptionsPage() {
         </Button>
       </div>
 
-      <div className='border rounded-lg'>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Alert</TableHead>
-              <TableHead>Channel</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Subscribed</TableHead>
-              <TableHead className='text-right'>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {userSubscriptions.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className='text-center text-muted-foreground py-8'
-                >
-                  No subscriptions yet. Browse alerts to subscribe to one.
-                </TableCell>
-              </TableRow>
-            ) : (
-              userSubscriptions.map(({ subscription, alert, channel }) => (
-                <TableRow key={subscription.id}>
-                  <TableCell className='font-medium'>{alert.name}</TableCell>
-                  <TableCell>
-                    <div className='flex items-center gap-2'>
-                      {channel ? (
-                        <>
-                          {channel.type === 'email' ? (
-                            <Mail className='size-4' />
-                          ) : (
-                            <MessageSquare className='size-4' />
-                          )}
-                          <span className='capitalize'>{channel.type}</span>
-                          <span className='text-muted-foreground text-sm'>
-                            ({channel.config.destination})
-                          </span>
-                        </>
-                      ) : (
-                        <>
+      {userSubscriptions.length === 0 ? (
+        <div className='text-center text-muted-foreground py-16 border rounded-lg'>
+          No subscriptions yet. Browse alerts to subscribe to one.
+        </div>
+      ) : (
+        <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+          {userSubscriptions.map(({ subscription, alert, channel }) => (
+            <ClickableCard
+              key={subscription.id}
+              href={`/alerts/${alert.id}`}
+              lang={alert.languageCode}
+              actions={
+                <div className='flex items-center justify-between'>
+                  <SubscribeAlertButton
+                    alert={alert}
+                    channels={userChannels}
+                    subscription={subscription}
+                    user={user}
+                  />
+                </div>
+              }
+            >
+              <h3 className='font-semibold text-lg line-clamp-1 mb-3'>
+                {alert.name}
+              </h3>
+
+              <div className='space-y-2 text-sm text-muted-foreground mb-4'>
+                <div className='flex justify-between'>
+                  <span>Status</span>
+                  <span className='text-muted-foreground'>
+                    {alert.active ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+                <div className='flex justify-between'>
+                  <span>Language</span>
+                  <span className='text-muted-foreground truncate max-w-[150px]'>
+                    {LANGUAGE_LABELS[
+                      alert.languageCode as keyof typeof LANGUAGE_LABELS
+                    ] || alert.languageCode}
+                  </span>
+                </div>
+                <div className='flex justify-between'>
+                  <span>Channel</span>
+                  <div className='flex items-center gap-2'>
+                    {channel ? (
+                      <>
+                        {channel.type === 'email' ? (
                           <Mail className='size-4' />
-                          <span>Email</span>
-                          <span className='text-muted-foreground text-sm'>
-                            ({user.email})
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={alert.active ? 'default' : 'outline'}>
-                      {alert.active ? 'Active' : 'Inactive'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className='text-muted-foreground'>
+                        ) : (
+                          <MessageSquare className='size-4' />
+                        )}
+                        <span className='capitalize'>{channel.type}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Mail className='size-4' />
+                        <span>Email</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className='flex justify-between'>
+                  <span>Destination</span>
+                  <span className='text-muted-foreground truncate max-w-[150px]'>
+                    {channel ? channel.config.destination : user.email}
+                  </span>
+                </div>
+                <div className='flex justify-between'>
+                  <span>Subscribed</span>
+                  <span>
                     {subscription.createdAt.toLocaleDateString('en-US', {
                       day: 'numeric',
                       month: 'short',
                       year: 'numeric',
                     })}
-                  </TableCell>
-                  <TableCell>
-                    <div className='flex items-center gap-1 justify-end'>
-                      <Button asChild size='sm' variant='ghost'>
-                        <Link href={`/alerts/${alert.id}`}>View</Link>
-                      </Button>
-                      <SubscribeAlertButton
-                        alert={alert}
-                        channels={userChannels}
-                        subscription={subscription}
-                        user={user}
-                      />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+                  </span>
+                </div>
+              </div>
+            </ClickableCard>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
