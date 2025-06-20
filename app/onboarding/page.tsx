@@ -2,6 +2,7 @@
 
 import { api } from '@everynews/app/api'
 import { AlertPreview } from '@everynews/components/alert-preview'
+import { DadJokes } from '@everynews/components/dad-jokes'
 import { SubmitButton } from '@everynews/components/submit-button'
 import { Button } from '@everynews/components/ui/button'
 import {
@@ -27,7 +28,7 @@ import { StorySchema } from '@everynews/schema/story'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -51,6 +52,7 @@ export default function OnboardingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isTesting, setIsTesting] = useState(false)
   const [testResults, setTestResults] = useState<Story[] | null>(null)
+  const [countdown, setCountdown] = useState(60)
 
   const form = useForm<AlertDto>({
     defaultValues: {
@@ -80,6 +82,7 @@ export default function OnboardingPage() {
 
     setIsTesting(true)
     setTestResults(null)
+    setCountdown(60)
 
     try {
       const apiData: AlertDto = {
@@ -163,6 +166,15 @@ export default function OnboardingPage() {
     })
   }
 
+  useEffect(() => {
+    if (isTesting && countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown((prev) => prev - 1)
+      }, 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [isTesting, countdown])
+
   return (
     <div className='container max-w-3xl mx-auto py-12'>
       <Card className='p-8'>
@@ -210,7 +222,17 @@ export default function OnboardingPage() {
                 />
               </div>
 
-              {testResults && testResults.length > 0 && (
+              {isTesting ? (
+                <div className='mt-6 p-4 bg-muted/50 rounded-lg min-h-64 relative flex items-center justify-center'>
+                  {countdown > 0 && (
+                    <div className='absolute top-4 right-4 tabular-nums text-muted-foreground text-sm'>
+                      will be ready in {Math.floor(countdown / 60)}:
+                      {(countdown % 60).toString().padStart(2, '0')}
+                    </div>
+                  )}
+                  <DadJokes />
+                </div>
+              ) : testResults && testResults.length > 0 ? (
                 <div className='mt-6 p-4 bg-muted/50 rounded-lg'>
                   <h3 className='text-sm font-semibold mb-4 text-muted-foreground'>
                     It may feel a bit generic if you just randomly clicked on
@@ -218,7 +240,7 @@ export default function OnboardingPage() {
                   </h3>
                   <AlertPreview stories={testResults} />
                 </div>
-              )}
+              ) : null}
 
               <div className='flex justify-between gap-4'>
                 <Button
