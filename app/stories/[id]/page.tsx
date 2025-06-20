@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { CopyMarkdownButton } from './copy-markdown-button'
 import { ShareButton } from './share-button'
+import { url } from '@everynews/lib/url'
 
 export async function generateMetadata({
   params,
@@ -141,11 +142,11 @@ export default async function StoryPage({
           <div className='flex gap-2'>
             <CopyMarkdownButton
               title={storyData.title}
-              url={`${process.env.NEXT_PUBLIC_SITE_URL || ''}/stories/${storyData.id}`}
+              url={`${url}/stories/${storyData.id}`}
             />
             <ShareButton
               title={storyData.title}
-              url={`${process.env.NEXT_PUBLIC_SITE_URL || ''}/stories/${storyData.id}`}
+              url={`${url}/stories/${storyData.id}`}
             />
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { db } from '@everynews/database'
+import { url } from '@everynews/lib/url'
 import { track } from '@everynews/logs'
 import { sendChannelVerification } from '@everynews/messengers'
 import { channels, channelVerifications } from '@everynews/schema'
@@ -382,7 +383,7 @@ export const ChannelRouter = new Hono<WithAuth>()
         token,
       })
 
-      const verificationLink = `${process.env.NEXT_PUBLIC_SITE_URL}/verify/channel/${token}`
+      const verificationLink = `${url}/verify/channel/${token}`
 
       await sendChannelVerification({
         channelName: channel.name,
