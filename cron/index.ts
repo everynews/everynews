@@ -37,7 +37,7 @@ await track({
   },
 })
 
-const queue = new PQueue({ concurrency: 1 })
+const queue = new PQueue({ concurrency: 16 })
 const results = await Promise.allSettled(
   found.map((item) => queue.add(async () => processAlert(item))),
 )
