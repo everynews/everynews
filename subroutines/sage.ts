@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto'
 import { db } from '@everynews/database'
 import { prepareContentInput } from '@everynews/lib/prompts'
 import { getDefaultPromptContent } from '@everynews/lib/prompts/default-prompt'
@@ -41,10 +40,6 @@ const SummaryResponseSchema = z.object({
     .string()
     .describe('The summarized title in plain text (no markdown)'),
 })
-
-const hashPrompt = (promptContent: string): string => {
-  return createHash('sha256').update(promptContent).digest('hex')
-}
 
 const input = async ({ content, news }: { content: Content; news: Alert }) => {
   let userPrompt = getDefaultPromptContent()
@@ -175,7 +170,6 @@ export const summarizeContent = async ({
       keyFindings,
       languageCode,
       originalUrl: content.originalUrl,
-      promptHash: hashPrompt(promptContent),
       promptId: news.promptId,
       systemMarkedIrrelevant: isSystemIrrelevant,
       title,
@@ -214,23 +208,11 @@ const summarizeWithCache = async ({
     stripWWW: true,
   })
 
-  // Get the prompt content to calculate hash
-  let userPrompt = getDefaultPromptContent()
-  if (news.promptId) {
-    const customPrompt = await db.query.prompt.findFirst({
-      where: and(eq(prompt.id, news.promptId), isNull(prompt.deletedAt)),
-    })
-    if (customPrompt) {
-      userPrompt = customPrompt.content
-    }
-  }
-  const promptHash = hashPrompt(userPrompt)
-
-  // Check for existing story with same URL, same prompt hash, and same language
+  // Check for existing story with same URL, same prompt ID, and same language
   const existingStory = await db.query.stories.findFirst({
     where: and(
       eq(stories.url, url),
-      eq(stories.promptHash, promptHash),
+      eq(stories.promptId, news.promptId),
       eq(stories.languageCode, news.languageCode),
       isNull(stories.deletedAt),
     ),
@@ -239,14 +221,12 @@ const summarizeWithCache = async ({
   if (existingStory) {
     await track({
       channel: 'sage',
-      description: `Found existing summary for: ${content.title} (same prompt content)`,
+      description: `Found existing summary for: ${content.title} (same prompt)`,
       event: 'Story Cache Hit',
       icon: '💾',
       tags: {
         content_id: content.id,
-        existing_prompt_hash: existingStory.promptHash.slice(0, 8),
         normalized_url: url,
-        prompt_hash: promptHash.slice(0, 8),
         prompt_id: news.promptId || 'default',
         story_id: existingStory.id,
         title: content.title.slice(0, 160),
@@ -266,7 +246,6 @@ const summarizeWithCache = async ({
     tags: {
       content_id: content.id,
       normalized_url: url,
-      prompt_hash: promptHash.slice(0, 8),
       prompt_id: news.promptId || 'default',
       title: content.title.slice(0, 160),
       type: 'info',

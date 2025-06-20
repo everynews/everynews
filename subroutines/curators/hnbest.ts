@@ -52,6 +52,7 @@ export const HnBestCurator: Curator = async (
   // Sort by time (most recent first) and extract URLs
   const sortedUrls = itemsWithMetadata
     .sort((a, b) => b.time - a.time)
+    .slice(0, 10)
     .map((item) => item.url)
     .filter((url): url is string => Boolean(url))
 
