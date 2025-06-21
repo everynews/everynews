@@ -1,4 +1,4 @@
-import type { Story } from '@everynews/schema'
+import type { Story, Strategy, WaitSchema } from '@everynews/schema'
 import {
   Body,
   Container,
@@ -8,9 +8,25 @@ import {
   Preview,
   Section,
   Tailwind,
+  Text,
 } from '@react-email/components'
+import type { z } from 'zod'
 
-export const Alert = ({ stories }: { stories: Story[] }) => {
+type Wait = z.infer<typeof WaitSchema>
+
+export const Alert = ({
+  alertName,
+  readerCount,
+  stories,
+  strategy,
+  wait,
+}: {
+  alertName: string
+  readerCount: number
+  stories: Story[]
+  strategy: Strategy
+  wait: Wait
+}) => {
   return (
     <Html lang='en' dir='ltr'>
       <Preview>{stories[0]?.keyFindings?.join(' ') ?? ''}</Preview>
@@ -18,29 +34,43 @@ export const Alert = ({ stories }: { stories: Story[] }) => {
         <Body>
           <Container className='max-w-2xl mx-auto p-1 font-sans'>
             <Section>
-              {stories && stories.length > 0 ? (
-                <div>
-                  {stories.map((story) => (
-                    <div key={story.id}>
-                      <Link
-                        href={story.originalUrl}
-                        className='text-orange-500 no-underline'
-                      >
-                        <Heading as='h2' className='text-lg font-semibold'>
-                          {story.title}
-                        </Heading>
-                      </Link>
-                      {story.keyFindings && story.keyFindings.length > 0 && (
-                        <ul className='text-gray-700 list-disc pl-4 leading-relaxed'>
-                          {story.keyFindings.map((finding) => (
-                            <li key={finding}>{finding}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  ))}
+              <div className='flex flex-col gap-2'>
+                <div className='flex flex-col gap-1'>
+                  <Heading as='h1' className='text-xl font-bold'>
+                    {alertName}
+                  </Heading>
+                  <Text className='text-xs text-gray-500'>
+                    {strategy.provider} ·{' '}
+                    {wait.type === 'count'
+                      ? `after ${wait.value} stories`
+                      : wait.value}{' '}
+                    · {readerCount} readers
+                  </Text>
                 </div>
-              ) : null}
+                {stories && stories.length > 0 ? (
+                  <div className='flex flex-col gap-1'>
+                    {stories.map((story) => (
+                      <div key={story.id}>
+                        <Link
+                          href={story.originalUrl}
+                          className='text-orange-500 no-underline'
+                        >
+                          <Heading as='h2' className='text-lg font-semibold'>
+                            {story.title}
+                          </Heading>
+                        </Link>
+                        {story.keyFindings && story.keyFindings.length > 0 && (
+                          <ul className='text-gray-700 list-disc pl-4 leading-relaxed'>
+                            {story.keyFindings.map((finding) => (
+                              <li key={finding}>{finding}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
             </Section>
           </Container>
         </Body>
@@ -50,6 +80,8 @@ export const Alert = ({ stories }: { stories: Story[] }) => {
 }
 
 Alert.PreviewProps = {
+  alertName: 'Tech Digest',
+  readerCount: 123,
   stories: [
     {
       alertId: '6JTQMD8N8BMD',
@@ -83,4 +115,9 @@ Alert.PreviewProps = {
       url: 'https://simonwillison.net/2025/May/27/llm-tools',
     },
   ],
+  strategy: {
+    provider: 'google',
+    query: 'latest tech news',
+  },
+  wait: { type: 'schedule', value: '0 0 * * *' },
 }
