@@ -2,19 +2,37 @@ import { db } from '@everynews/database'
 import { sendEmailWithTemplate } from '@everynews/emails'
 import { Alert } from '@everynews/emails/alert'
 import { track } from '@everynews/logs'
-import { ChannelSchema, channels, type Story } from '@everynews/schema'
+import {
+  ChannelSchema,
+  channels,
+  type Story,
+  type Strategy,
+  type WaitSchema,
+} from '@everynews/schema'
 import { and, eq, isNull } from 'drizzle-orm'
+import type { z } from 'zod'
+
+type Wait = z.infer<typeof WaitSchema>
 
 const sendAlertEmail = async (parcel: {
-  destination: string
   alertName: string
+  destination: string
+  readerCount: number
   stories: Story[]
+  strategy: Strategy
+  wait: Wait
 }) => {
   try {
     await sendEmailWithTemplate(
       parcel.destination,
       parcel.stories[0].title ?? parcel.alertName,
-      Alert({ stories: parcel.stories }),
+      Alert({
+        alertName: parcel.alertName,
+        readerCount: parcel.readerCount,
+        stories: parcel.stories,
+        strategy: parcel.strategy,
+        wait: parcel.wait,
+      }),
     )
 
     await track({
@@ -47,9 +65,12 @@ const sendAlertEmail = async (parcel: {
 }
 
 const sendAlertSlack = async (parcel: {
-  destination: string
   alertName: string
+  destination: string
+  readerCount: number
   stories: Story[]
+  strategy: Strategy
+  wait: Wait
 }) => {
   try {
     console.log(
@@ -88,12 +109,18 @@ const sendAlertSlack = async (parcel: {
 export const herald = async ({
   channelId,
   alertName,
+  readerCount,
   stories,
+  strategy,
+  wait,
   user,
 }: {
   channelId: string | null
   alertName: string
+  readerCount: number
   stories: Story[]
+  strategy: Strategy
+  wait: Wait
   user?: { id: string; email: string }
 }) => {
   try {
@@ -110,7 +137,14 @@ export const herald = async ({
       },
     })
 
-    let parcel: { alertName: string; destination: string; stories: Story[] }
+    let parcel: {
+      alertName: string
+      destination: string
+      readerCount: number
+      stories: Story[]
+      strategy: Strategy
+      wait: Wait
+    }
     let channelType: 'email' | 'slack' = 'email'
 
     if (!channelId) {
@@ -131,7 +165,10 @@ export const herald = async ({
       parcel = {
         alertName,
         destination: user.email,
+        readerCount,
         stories,
+        strategy,
+        wait,
       }
     } else {
       // Handle regular channel
@@ -158,7 +195,10 @@ export const herald = async ({
       parcel = {
         alertName,
         destination: channel.config.destination,
+        readerCount,
         stories,
+        strategy,
+        wait,
       }
       channelType = channel.type as 'email' | 'slack'
     }

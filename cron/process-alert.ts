@@ -90,6 +90,8 @@ export const processAlert = async (item: Alert) => {
       where: eq(subscriptions.alertId, item.id),
     })
 
+    const readerCount = subscribers.length
+
     for (const subscriber of subscribers) {
       const user = await db.query.users.findFirst({
         where: eq(users.id, subscriber.userId),
@@ -97,8 +99,11 @@ export const processAlert = async (item: Alert) => {
       await herald({
         alertName: item.name,
         channelId: subscriber.channelId,
+        readerCount,
         stories: filteredStories,
+        strategy: item.strategy,
         user,
+        wait: item.wait,
       })
     }
   } else {
