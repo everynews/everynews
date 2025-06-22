@@ -21,7 +21,7 @@ export const GoogleCurator: Curator = async (
   const response = await fetch('https://api.brightdata.com/request', {
     body: JSON.stringify({
       format: 'raw',
-      url: `https://www.google.com/search?q=${encodeURIComponent(alert.strategy.query)}&tbm=nws&tbs=qdr:m`,
+      url: `https://www.google.com/search?q=${encodeURIComponent(alert.strategy.query)}&tbm=nws&tbs=qdr:d`,
       zone: 'everynews_serp',
     }),
     headers: {
