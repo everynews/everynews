@@ -58,10 +58,12 @@ const MyLayout = async ({ children }: { children: React.ReactNode }) => {
         ? db
             .select({ count: count() })
             .from(subscriptions)
+            .innerJoin(alerts, eq(subscriptions.alertId, alerts.id))
             .where(
               and(
                 eq(subscriptions.userId, user.id),
                 isNull(subscriptions.deletedAt),
+                isNull(alerts.deletedAt),
               ),
             )
             .then((r) => r[0]?.count ?? 0)
