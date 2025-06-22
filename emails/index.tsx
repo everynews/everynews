@@ -10,11 +10,3 @@ export const sendSignInEmail = async (params: SendSignInEmailParams) =>
 
 export const sendTemplateEmail = async (params: SendTemplateEmailParams) =>
   emailProvider.template(params)
-
-export const sendEmailWithTemplate = async (
-  to: string,
-  subject: string,
-  template: React.ReactElement,
-) => {
-  return emailProvider.template({ subject, template, to })
-}
