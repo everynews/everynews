@@ -1,37 +1,14 @@
 import { render } from '@react-email/components'
+import { plunkProvider } from './providers/plunk'
+import { resendProvider } from './providers/resend'
+import type { SendEmailParams } from './types'
 
-type SendEmailParams = {
-  to: string
-  subject: string
-  body?: string
-  html?: string
-}
+// Default to Resend provider
+const emailProvider =
+  process.env.EMAIL_PROVIDER === 'plunk' ? plunkProvider : resendProvider
 
-export const sendEmail = async ({
-  to,
-  subject,
-  body,
-  html,
-}: SendEmailParams) => {
-  const response = await fetch('https://api.useplunk.com/v1/send', {
-    body: JSON.stringify({
-      body: body || html || '',
-      subject,
-      to,
-    }),
-    headers: {
-      Authorization: `Bearer ${process.env.PLUNK_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    method: 'POST',
-  })
-
-  if (!response.ok) {
-    const error = await response.text()
-    throw new Error(`Failed to send email: ${error}`)
-  }
-
-  return response.json()
+export const sendEmail = async (params: SendEmailParams) => {
+  return emailProvider.sendEmail(params)
 }
 
 export const sendEmailWithTemplate = async (
