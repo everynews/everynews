@@ -1,8 +1,11 @@
-export type SendEmailParams = {
+export type SendSignInEmailParams = {
+  to: string
+}
+
+export type SendTemplateEmailParams = {
   to: string
   subject: string
-  body?: string
-  html?: string
+  template: React.ReactElement
 }
 
 export type EmailResponse = {
@@ -11,5 +14,6 @@ export type EmailResponse = {
 }
 
 export type EmailProvider = {
-  sendEmail: (params: SendEmailParams) => Promise<EmailResponse>
+  signIn: (params: SendSignInEmailParams) => Promise<EmailResponse>
+  template: (params: SendTemplateEmailParams) => Promise<EmailResponse>
 }

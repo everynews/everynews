@@ -1,25 +1,58 @@
-import type { EmailProvider, SendEmailParams } from '../types'
+import { render } from '@react-email/components'
+import { MagicLinkEmail } from '../magic-link'
+import type {
+  EmailProvider,
+  SendSignInEmailParams,
+  SendTemplateEmailParams,
+} from '../types'
+
+if (!process.env.PLUNK_API_KEY) {
+  throw new Error('PLUNK_API_KEY is not set')
+}
+
+if (!process.env.PLUNK_FROM_EMAIL) {
+  throw new Error('PLUNK_FROM_EMAIL is not set')
+}
+
+if (!process.env.NEXT_PUBLIC_APP_URL) {
+  throw new Error('NEXT_PUBLIC_APP_URL is not set')
+}
+
+const sendPlunkEmail = async (
+  to: string,
+  subject: string,
+  body: string,
+  html?: string,
+) => {
+  const response = await fetch('https://api.useplunk.com/v1/send', {
+    body: JSON.stringify({
+      body: body || html || '',
+      subject,
+      to,
+    }),
+    headers: {
+      Authorization: `Bearer ${process.env.PLUNK_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+  })
+
+  if (!response.ok) {
+    const error = await response.text()
+    throw new Error(`Failed to send email: ${error}`)
+  }
+
+  return response.json()
+}
 
 export const plunkProvider: EmailProvider = {
-  sendEmail: async ({ to, subject, body, html }: SendEmailParams) => {
-    const response = await fetch('https://api.useplunk.com/v1/send', {
-      body: JSON.stringify({
-        body: body || html || '',
-        subject,
-        to,
-      }),
-      headers: {
-        Authorization: `Bearer ${process.env.PLUNK_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-    })
-
-    if (!response.ok) {
-      const error = await response.text()
-      throw new Error(`Failed to send email: ${error}`)
-    }
-
-    return response.json()
+  signIn: async ({ to }: SendSignInEmailParams) => {
+    const signinLink = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/verify-email`
+    const html = await render(MagicLinkEmail({ signinLink }))
+    return sendPlunkEmail(to, 'Sign in to Everynews', '', html)
+  },
+  template: async ({ to, subject, template }: SendTemplateEmailParams) => {
+    const html = await render(template)
+    return sendPlunkEmail(to, subject, '', html)
   },
 }
