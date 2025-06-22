@@ -1,3 +1,4 @@
+import { url } from '@everynews/lib/url'
 import { render } from '@react-email/components'
 import { MagicLinkEmail } from '../magic-link'
 import type {
@@ -12,10 +13,6 @@ if (!process.env.PLUNK_API_KEY) {
 
 if (!process.env.PLUNK_FROM_EMAIL) {
   throw new Error('PLUNK_FROM_EMAIL is not set')
-}
-
-if (!process.env.NEXT_PUBLIC_APP_URL) {
-  throw new Error('NEXT_PUBLIC_APP_URL is not set')
 }
 
 const sendPlunkEmail = async (
@@ -47,7 +44,7 @@ const sendPlunkEmail = async (
 
 export const plunkProvider: EmailProvider = {
   signIn: async ({ to }: SendSignInEmailParams) => {
-    const signinLink = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/verify-email`
+    const signinLink = `${url}/api/auth/verify-email`
     const html = await render(MagicLinkEmail({ signinLink }))
     return sendPlunkEmail(to, 'Sign in to Everynews', '', html)
   },

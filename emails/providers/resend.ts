@@ -1,3 +1,4 @@
+import { url } from '@everynews/lib/url'
 import { Resend } from 'resend'
 import { MagicLinkEmail } from '../magic-link'
 import type {
@@ -6,11 +7,18 @@ import type {
   SendTemplateEmailParams,
 } from '../types'
 
+if (!process.env.RESEND_API_KEY) {
+  throw new Error('RESEND_API_KEY is not set')
+}
+if (!process.env.RESEND_FROM_EMAIL) {
+  throw new Error('RESEND_FROM_EMAIL is not set')
+}
+
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const resendProvider: EmailProvider = {
   signIn: async ({ to }: SendSignInEmailParams) => {
-    const signinLink = `${process.env.NEXT_PUBLIC_APP_URL || 'https://every.news'}/api/auth/verify-email`
+    const signinLink = `${url}/api/auth/verify-email`
     const result = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || 'noreply@every.news',
       react: MagicLinkEmail({ signinLink }),
