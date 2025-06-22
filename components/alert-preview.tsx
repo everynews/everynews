@@ -1,3 +1,4 @@
+import { url } from '@everynews/lib/url'
 import type { Story } from '@everynews/schema/story'
 import Link from 'next/link'
 
@@ -11,9 +12,7 @@ export const AlertPreview = ({ stories }: { stories: Story[] }) => {
       {stories.map((story) => (
         <div key={story.id} className='gap-2'>
           <Link
-            href={story.originalUrl}
-            target='_blank'
-            rel='noopener noreferrer'
+            href={`${url}/stories/${story.id}`}
             className='text-orange-500 no-underline hover:underline'
           >
             <h2 className='text-lg font-semibold'>{story.title}</h2>

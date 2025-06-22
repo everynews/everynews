@@ -1,3 +1,4 @@
+import { url } from '@everynews/lib/url'
 import type { Story, Strategy, WaitSchema } from '@everynews/schema'
 import {
   Body,
@@ -52,7 +53,7 @@ export const Alert = ({
                     {stories.map((story) => (
                       <div key={story.id}>
                         <Link
-                          href={story.originalUrl}
+                          href={`${url}/stories/${story.id}`}
                           className='text-orange-500 no-underline'
                         >
                           <Heading as='h2' className='text-lg font-semibold'>
