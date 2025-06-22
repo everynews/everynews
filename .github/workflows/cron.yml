@@ -23,7 +23,7 @@ jobs:
       - name: Install Playwright browsers
         run: bunx playwright install --with-deps
       - name: Run cron job
-        run: NODE_ENV=development bun run cron/index.ts
+        run: bun run cron/index.ts
         env:
           NODE_ENV: production
           BRIGHTDATA_API_KEY: ${{ secrets.BRIGHTDATA_API_KEY }}
