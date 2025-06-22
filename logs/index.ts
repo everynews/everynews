@@ -19,7 +19,7 @@ type LogEventOptions = {
   description?: string
   icon?: string
   user_id?: string
-  tags?: Record<string, string | number>
+  tags?: Record<string, string | number | boolean>
   notify?: boolean
 }
 
@@ -37,7 +37,7 @@ export const track = async (options: LogEventOptions) => {
         ? Object.fromEntries(
             Object.entries(options.tags).map(([key, value]) => [
               // LogSnag has a limit of 160 characters for tags, we truncate to 150
-              key.slice(0, 150),
+              String(key).slice(0, 150),
               String(value).slice(0, 150),
             ]),
           )
