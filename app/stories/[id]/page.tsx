@@ -143,6 +143,7 @@ export default async function StoryPage({
             <CopyMarkdownButton
               title={storyData.title}
               url={`${url}/stories/${storyData.id}`}
+              content={storyData.keyFindings ?? []}
             />
             <ShareButton
               title={storyData.title}

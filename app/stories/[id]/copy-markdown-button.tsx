@@ -7,14 +7,19 @@ import { useState } from 'react'
 export const CopyMarkdownButton = ({
   title,
   url,
+  content,
 }: {
   title: string
   url: string
+  content: string[]
 }) => {
   const [isCopied, setIsCopied] = useState(false)
 
   const handleCopyMarkdown = () => {
-    const markdown = `[${title}](${url})`
+    let markdown = `[${title}](${url})`
+    if (content.length > 1) {
+      markdown += `\n\n${content.map((c) => `- ${c}`).join('\n')}`
+    }
     navigator.clipboard.writeText(markdown)
     setIsCopied(true)
     setTimeout(() => {
@@ -29,7 +34,7 @@ export const CopyMarkdownButton = ({
       variant='outline'
     >
       {isCopied ? <Check className='size-4' /> : <Link className='size-4' />}
-      {isCopied ? 'Copied!' : 'Copy as Markdown'}
+      {isCopied ? 'Copied!' : 'Markdown'}
     </Button>
   )
 }
