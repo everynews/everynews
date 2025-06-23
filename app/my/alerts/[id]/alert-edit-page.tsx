@@ -39,6 +39,7 @@ import { Switch } from '@everynews/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
+import { getHourLabel, localToUtc, utcToLocal } from '@everynews/lib/timezone'
 import {
   type Alert,
   type AlertDto,
@@ -66,28 +67,6 @@ const DAYS_OF_WEEK = [
 ] as const
 
 const HOURS_2_INTERVAL = Array.from({ length: 12 }, (_, i) => i * 2) // 0-22
-
-// Convert UTC hour to local hour
-const utcToLocal = (utcHour: number): number => {
-  const now = new Date()
-  now.setUTCHours(utcHour, 0, 0, 0)
-  return now.getHours()
-}
-
-// Convert local hour to UTC hour
-const localToUtc = (localHour: number): number => {
-  const now = new Date()
-  now.setHours(localHour, 0, 0, 0)
-  return now.getUTCHours()
-}
-
-// Get display label for hour in local time
-const getHourLabel = (utcHour: number): string => {
-  const localHour = utcToLocal(utcHour)
-  const period = localHour < 12 ? 'AM' : 'PM'
-  const displayHour = localHour % 12 === 0 ? 12 : localHour % 12
-  return `${displayHour} ${period}`
-}
 
 export const AlertEditPage = ({
   alert,
@@ -123,7 +102,11 @@ export const AlertEditPage = ({
       try {
         const parsed = JSON.parse(alert.wait.value)
         setScheduleDays(parsed.days || [])
-        setScheduleHours(parsed.hours || [])
+        // Convert UTC hours to local hours for display
+        const localHours = (parsed.hours || []).map((utcHour: number) =>
+          utcToLocal(utcHour),
+        )
+        setScheduleHours(localHours)
       } catch (e) {
         console.error('Failed to parse schedule data:', e)
       }
