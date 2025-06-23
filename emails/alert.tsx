@@ -1,3 +1,4 @@
+import { formatSchedule } from '@everynews/lib/format-schedule'
 import { url } from '@everynews/lib/url'
 import type { Story, Strategy, WaitSchema } from '@everynews/schema'
 import {
@@ -41,11 +42,16 @@ export const Alert = ({
                     {alertName}
                   </Heading>
                   <Text className='text-xs text-gray-500'>
-                    {strategy.provider} ·{' '}
+                    {strategy.provider === 'hnbest'
+                      ? 'Hacker News Best'
+                      : strategy.provider === 'google'
+                        ? 'Google Search'
+                        : 'Unknown Data Source'}
+                    ·{' '}
                     {wait.type === 'count'
                       ? `after ${wait.value} stories`
-                      : wait.value}{' '}
-                    · {readerCount} readers
+                      : formatSchedule(wait.value)}{' '}
+                    · {readerCount} {readerCount !== 1 ? 'readers' : 'reader'}
                   </Text>
                 </div>
                 {stories && stories.length > 0 ? (
