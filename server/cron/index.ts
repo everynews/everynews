@@ -9,6 +9,7 @@ import { describeRoute } from 'hono-openapi'
 import { resolver } from 'hono-openapi/zod'
 import PQueue from 'p-queue'
 import { z } from 'zod'
+import crypto from 'node:crypto'
 
 const CronResponseSchema = z.object({
   alerts_failed: z.number(),
@@ -37,9 +38,16 @@ export const CronRouter = new Hono().get(
     console.log('process.env.NODE_ENV:', process.env.NODE_ENV)
 
     if (
-      crypto.timingSafeEqual(
-        Buffer.from(c.req.header('Authorization') ?? ''),
+      (c.req.header('Authorization') ?? '').length !==
+      `Bearer ${process.env.CRON_SECRET}`.length
+    ) {
+      return c.json({ error: 'Unauthorized' }, 401)
+    }
+
+    if (
+      !crypto.timingSafeEqual(
         Buffer.from(`Bearer ${process.env.CRON_SECRET}`),
+        Buffer.from(c.req.header('Authorization') ?? ''),
       )
     ) {
       return c.json({ error: 'Unauthorized' }, 401)
