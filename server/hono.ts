@@ -3,6 +3,7 @@ import { url } from '@everynews/lib/url'
 import { AlertRouter } from '@everynews/server/alerts'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { ChannelRouter } from '@everynews/server/channels'
+import { CronRouter } from '@everynews/server/cron'
 import { DrillRouter } from '@everynews/server/drill'
 import { PromptsRouter } from '@everynews/server/prompts'
 import { SubscriptionRouter } from '@everynews/server/subscriptions'
@@ -12,6 +13,7 @@ import { generateSpecs } from 'hono-openapi'
 
 const app = new Hono<WithAuth>()
   .basePath('/api')
+  .route('/cron', CronRouter)
   .on(['POST', 'GET'], '/auth/*', (c) => auth.handler(c.req.raw))
   .route('/alerts', AlertRouter)
   .route('/channels', ChannelRouter)
