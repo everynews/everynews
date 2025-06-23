@@ -74,23 +74,29 @@ export const processAlert = async (item: Alert) => {
       .where(eq(alerts.id, item.id))
   }
 
-  // Determine if we should send based on wait conditions
-  let shouldSend = false
-  if (item.wait.type === 'count') {
-    // For count type, only send when we have enough stories
-    shouldSend = filteredStories.length >= item.wait.value
-  } else {
-    // For schedule type, send if there are any new stories
-    shouldSend = filteredStories.length > 0
-  }
+  const shouldSend =
+    item.wait.type === 'count'
+      ? filteredStories.length >= item.wait.value
+      : filteredStories.length > 0
 
   if (shouldSend) {
-    // Send email to the all subscribers of the alert
     const subscribers = await db.query.subscriptions.findMany({
       where: eq(subscriptions.alertId, item.id),
     })
 
-    const readerCount = subscribers.length
+    if (subscribers.length === 0) {
+      await track({
+        channel: 'worker',
+        description: `No subscribers found for alert "${item.name}"`,
+        event: 'No Subscribers Found',
+        icon: '🔍',
+        tags: {
+          alert_id: item.id,
+          alert_name: item.name,
+          type: 'info',
+        },
+      })
+    }
 
     for (const subscriber of subscribers) {
       const user = await db.query.users.findFirst({
@@ -99,7 +105,7 @@ export const processAlert = async (item: Alert) => {
       await herald({
         alertName: item.name,
         channelId: subscriber.channelId,
-        readerCount,
+        readerCount: subscribers.length,
         stories: filteredStories,
         strategy: item.strategy,
         user,

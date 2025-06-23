@@ -1,4 +1,5 @@
 import { sendTemplateEmail } from '@everynews/emails'
+import { MagicLinkEmail } from '@everynews/emails/magic-link'
 
 export const sendMagicLink = async ({
   email,
@@ -7,8 +8,6 @@ export const sendMagicLink = async ({
   email: string
   url: string
 }): Promise<void> => {
-  const { MagicLinkEmail } = await import('@everynews/emails/magic-link')
-
   const template = MagicLinkEmail({ signinLink: url })
 
   await sendTemplateEmail({

@@ -1,5 +1,6 @@
 import { db } from '@everynews/database'
 import { sendTemplateEmail } from '@everynews/emails'
+import { Alert } from '@everynews/emails/alert'
 import { track } from '@everynews/logs'
 import {
   ChannelSchema,
@@ -22,8 +23,6 @@ const sendAlertEmail = async (parcel: {
   wait: Wait
 }) => {
   try {
-    const { Alert } = await import('@everynews/emails/alert')
-
     await sendTemplateEmail({
       subject: parcel.stories[0].title ?? parcel.alertName,
       template: Alert({

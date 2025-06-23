@@ -1,0 +1,43 @@
+name: EVERY
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+on:
+  schedule:
+    # Runs every hour at minute 0
+    - cron: '0 * * * *'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  NEWS:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+      
+      - name: Install Playwright
+        run: bunx playwright install --with-deps
+
+      - name: Run cron job
+        run: bun run cron/index.ts
+        env:
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          EXASEARCH_API_KEY: ${{ secrets.EXASEARCH_API_KEY }}
+          LOGSNAG_PROJECT_ID: ${{ secrets.LOGSNAG_PROJECT_ID }}
+          LOGSNAG_PROJECT_TOKEN: ${{ secrets.LOGSNAG_PROJECT_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PLUNK_API_KEY: ${{ secrets.PLUNK_API_KEY }}
+          PLUNK_FROM_EMAIL: ${{ secrets.PLUNK_FROM_EMAIL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}

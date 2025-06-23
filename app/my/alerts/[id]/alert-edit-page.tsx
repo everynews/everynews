@@ -665,7 +665,7 @@ export const AlertEditPage = ({
                                     }}
                                   />
                                   <label htmlFor={`${id}-hour-${h}`}>
-                                    {getHourLabel(h)}
+                                    {getHourLabel(h)} - {getHourLabel(h + 1)}
                                   </label>
                                 </div>
                               ))}
