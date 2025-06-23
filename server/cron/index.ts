@@ -36,6 +36,15 @@ export const CronRouter = new Hono().post(
     console.log('Cron API called')
     console.log('process.env.NODE_ENV:', process.env.NODE_ENV)
 
+    if (
+      crypto.timingSafeEqual(
+        Buffer.from(c.req.header('Authorization') ?? ''),
+        Buffer.from(`Bearer ${process.env.CRON_SECRET}`),
+      )
+    ) {
+      return c.json({ error: 'Unauthorized' }, 401)
+    }
+
     await track({
       channel: 'cron',
       event: 'Alert Processing Started',
