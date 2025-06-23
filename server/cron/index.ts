@@ -17,7 +17,7 @@ const CronResponseSchema = z.object({
   empty_stories_deleted: z.number(),
 })
 
-export const CronRouter = new Hono().post(
+export const CronRouter = new Hono().get(
   '/',
   describeRoute({
     description: 'Process scheduled alerts',
