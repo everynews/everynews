@@ -40,25 +40,41 @@ export const reap = async (url: string): Promise<Content | null> => {
 
     let html: string = ''
     let title: string = ''
-    try {
-      const browser = await chromium.launch()
-      const page = await browser.newPage()
-      await page.goto(url)
-      html = await page.content()
-      title = await page.title()
-      await browser.close()
-    } catch (error) {
-      await track({
-        channel: 'brightdata',
-        description: url,
-        event: 'Scraping Failed',
-        icon: '❌',
-        tags: {
-          error: String(error),
-          type: 'error',
-          url,
-        },
-      })
+
+    // Skip local Playwright in CI/GitHub Actions
+    const isCI =
+      process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true'
+
+    if (!isCI) {
+      let browser = null
+      try {
+        browser = await chromium.launch({
+          timeout: 10000, // 10 second launch timeout
+        })
+        const page = await browser.newPage()
+        await page.goto(url, {
+          timeout: 30000, // 30 second navigation timeout
+          waitUntil: 'domcontentloaded',
+        })
+        html = await page.content()
+        title = await page.title()
+      } catch (error) {
+        await track({
+          channel: 'brightdata',
+          description: url,
+          event: 'Local Playwright Failed',
+          icon: '⚠️',
+          tags: {
+            error: String(error),
+            type: 'warning',
+            url,
+          },
+        })
+      } finally {
+        if (browser) {
+          await browser.close()
+        }
+      }
     }
 
     if (!html && process.env.BRIGHTDATA_PLAYWRIGHT_WSS) {
@@ -70,6 +86,10 @@ export const reap = async (url: string): Promise<Content | null> => {
     if (!html && process.env.BRIGHTDATA_API_KEY) {
       html = await brightdataHosted(url)
       title = html.match(/<title>(.*?)<\/title>/)?.[1] ?? ''
+    }
+
+    if (!html) {
+      throw new Error(`Failed to fetch content for ${url}`)
     }
 
     const markdown = await markdownify(url, html)

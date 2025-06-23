@@ -6,6 +6,17 @@ import { custodian } from '@everynews/subroutines/custodian'
 import { and, asc, eq, lt } from 'drizzle-orm'
 import PQueue from 'p-queue'
 
+const withTimeout = async <T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  errorMessage: string,
+): Promise<T> => {
+  const timeout = new Promise<never>((_, reject) => {
+    setTimeout(() => reject(new Error(errorMessage)), timeoutMs)
+  })
+  return Promise.race([promise, timeout])
+}
+
 const main = async () => {
   await track({
     channel: 'cron',
@@ -37,7 +48,15 @@ const main = async () => {
 
   const queue = new PQueue({ concurrency: 16 })
   const results = await Promise.allSettled(
-    found.map((item) => queue.add(async () => processAlert(item))),
+    found.map((item) =>
+      queue.add(async () =>
+        withTimeout(
+          processAlert(item),
+          5 * 60 * 1000, // 5 minutes per alert
+          `Alert processing timeout for: ${item.name}`,
+        ),
+      ),
+    ),
   )
 
   const successfulAlerts = results.filter(
@@ -48,7 +67,11 @@ const main = async () => {
     (result): result is PromiseRejectedResult => result.status === 'rejected',
   )
 
-  const custodianResult = await custodian()
+  const custodianResult = await withTimeout(
+    custodian(),
+    2 * 60 * 1000, // 2 minutes for custodian
+    'Custodian timeout after 2 minutes',
+  )
 
   await track({
     channel: 'cron',
@@ -67,6 +90,25 @@ const main = async () => {
   })
 }
 
-main().then(() => {
-  process.exit(0)
-})
+// Global timeout for the entire cron job (30 minutes)
+const GLOBAL_TIMEOUT = 30 * 60 * 1000
+
+withTimeout(main(), GLOBAL_TIMEOUT, 'Global cron job timeout after 30 minutes')
+  .then(() => {
+    console.log('Cron job completed successfully')
+    process.exit(0)
+  })
+  .catch((error) => {
+    console.error('Cron job failed:', error)
+    track({
+      channel: 'cron',
+      event: 'Cron Job Failed',
+      icon: '💥',
+      tags: {
+        error: String(error),
+        type: 'error',
+      },
+    }).finally(() => {
+      process.exit(1)
+    })
+  })

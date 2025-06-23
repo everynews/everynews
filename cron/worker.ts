@@ -13,6 +13,17 @@ import { reaper } from '@everynews/subroutines/reaper'
 import { sage } from '@everynews/subroutines/sage'
 import { eq } from 'drizzle-orm'
 
+const withTimeout = async <T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  errorMessage: string,
+): Promise<T> => {
+  const timeout = new Promise<never>((_, reject) => {
+    setTimeout(() => reject(new Error(errorMessage)), timeoutMs)
+  })
+  return Promise.race([promise, timeout])
+}
+
 export const processAlert = async (item: Alert) => {
   await track({
     channel: 'worker',
@@ -26,9 +37,21 @@ export const processAlert = async (item: Alert) => {
     },
   })
 
-  const urls = await curator(item)
-  const contents: Content[] = await reaper(urls)
-  const stories = await sage({ contents, news: item })
+  const urls = await withTimeout(
+    curator(item),
+    60 * 1000, // 1 minute for curator
+    `Curator timeout for alert: ${item.name}`,
+  )
+  const contents: Content[] = await withTimeout(
+    reaper(urls),
+    3 * 60 * 1000, // 3 minutes for reaper
+    `Reaper timeout for alert: ${item.name}`,
+  )
+  const stories = await withTimeout(
+    sage({ contents, news: item }),
+    60 * 1000, // 1 minute for sage
+    `Sage timeout for alert: ${item.name}`,
+  )
 
   // Filter stories to only include those created since lastRun and not marked as irrelevant
   const filteredStories = stories.filter((story) => {
@@ -102,15 +125,19 @@ export const processAlert = async (item: Alert) => {
       const user = await db.query.users.findFirst({
         where: eq(users.id, subscriber.userId),
       })
-      await herald({
-        alertName: item.name,
-        channelId: subscriber.channelId,
-        readerCount: subscribers.length,
-        stories: filteredStories,
-        strategy: item.strategy,
-        user,
-        wait: item.wait,
-      })
+      await withTimeout(
+        herald({
+          alertName: item.name,
+          channelId: subscriber.channelId,
+          readerCount: subscribers.length,
+          stories: filteredStories,
+          strategy: item.strategy,
+          user,
+          wait: item.wait,
+        }),
+        30 * 1000, // 30 seconds per herald call
+        `Herald timeout for user ${user?.email || 'unknown'}`,
+      )
     }
   } else {
     await track({

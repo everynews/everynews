@@ -29,22 +29,40 @@ export const HnBestCurator: Curator = async (
     )
   }
 
-  const response = await fetch(
-    'https://hacker-news.firebaseio.com/v0/beststories.json',
-  )
-  const ids = await HackerNewsStoriesSchema.parse(await response.json())
+  const controller1 = new AbortController()
+  const timeout1 = setTimeout(() => controller1.abort(), 15000) // 15 second timeout
+
+  let ids: number[]
+  try {
+    const response = await fetch(
+      'https://hacker-news.firebaseio.com/v0/beststories.json',
+      { signal: controller1.signal },
+    )
+    ids = await HackerNewsStoriesSchema.parse(await response.json())
+  } finally {
+    clearTimeout(timeout1)
+  }
 
   // Fetch all items with their metadata
   const itemsWithMetadata = await queue.addAll(
     ids.map((id: number) => async () => {
-      const response = await fetch(
-        `https://hacker-news.firebaseio.com/v0/item/${id}.json`,
-      )
-      const item = await HackerNewsStorySchema.parse(await response.json())
-      return {
-        time: item.time,
-        url:
-          item.url || `https://news.ycombinator.com/item?id=${String(item.id)}`,
+      const controller2 = new AbortController()
+      const timeout2 = setTimeout(() => controller2.abort(), 10000) // 10 second timeout per story
+
+      try {
+        const response = await fetch(
+          `https://hacker-news.firebaseio.com/v0/item/${id}.json`,
+          { signal: controller2.signal },
+        )
+        const item = await HackerNewsStorySchema.parse(await response.json())
+        return {
+          time: item.time,
+          url:
+            item.url ||
+            `https://news.ycombinator.com/item?id=${String(item.id)}`,
+        }
+      } finally {
+        clearTimeout(timeout2)
       }
     }),
   )

@@ -18,41 +18,52 @@ export const GoogleCurator: Curator = async (
     throw new Error('BRIGHTDATA_API_KEY is not set')
   }
 
-  const response = await fetch('https://api.brightdata.com/request', {
-    body: JSON.stringify({
-      format: 'raw',
-      url: `https://www.google.com/search?q=${encodeURIComponent(alert.strategy.query)}&tbm=nws&tbs=qdr:d`,
-      zone: 'everynews_serp',
-    }),
-    headers: {
-      Authorization: `Bearer ${process.env.BRIGHTDATA_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    method: 'POST',
-  })
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 30000) // 30 second timeout
 
-  if (!response.ok) {
-    throw new Error(
-      `BrightData API error: ${response.status} ${response.statusText} ${await response.text()}`,
-    )
-  }
+  try {
+    const response = await fetch('https://api.brightdata.com/request', {
+      body: JSON.stringify({
+        format: 'raw',
+        url: `https://www.google.com/search?q=${encodeURIComponent(alert.strategy.query)}&tbm=nws&tbs=qdr:d`,
+        zone: 'everynews_serp',
+      }),
+      headers: {
+        Authorization: `Bearer ${process.env.BRIGHTDATA_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      signal: controller.signal,
+    })
 
-  const html = await response.text()
-
-  // Extract URLs from Google search results
-  const urlRegex = /<a[^>]+href="(https?:\/\/[^"]+)"/g
-  const urls: string[] = []
-  let match = urlRegex.exec(html)
-
-  while (match !== null) {
-    const url = match[1]
-    // Filter out Google's own URLs and tracking URLs
-    if (!url.includes('google.com') && !url.includes('googleusercontent.com')) {
-      urls.push(url)
+    if (!response.ok) {
+      throw new Error(
+        `BrightData API error: ${response.status} ${response.statusText} ${await response.text()}`,
+      )
     }
-    match = urlRegex.exec(html)
-  }
 
-  // Return unique URLs
-  return [...new Set(urls)]
+    const html = await response.text()
+
+    // Extract URLs from Google search results
+    const urlRegex = /<a[^>]+href="(https?:\/\/[^"]+)"/g
+    const urls: string[] = []
+    let match = urlRegex.exec(html)
+
+    while (match !== null) {
+      const url = match[1]
+      // Filter out Google's own URLs and tracking URLs
+      if (
+        !url.includes('google.com') &&
+        !url.includes('googleusercontent.com')
+      ) {
+        urls.push(url)
+      }
+      match = urlRegex.exec(html)
+    }
+
+    // Return unique URLs
+    return [...new Set(urls)]
+  } finally {
+    clearTimeout(timeout)
+  }
 }
