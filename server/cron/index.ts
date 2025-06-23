@@ -1,3 +1,4 @@
+import crypto from 'node:crypto'
 import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
 import { AlertSchema, alerts } from '@everynews/schema'
@@ -9,7 +10,6 @@ import { describeRoute } from 'hono-openapi'
 import { resolver } from 'hono-openapi/zod'
 import PQueue from 'p-queue'
 import { z } from 'zod'
-import crypto from 'node:crypto'
 
 const CronResponseSchema = z.object({
   alerts_failed: z.number(),
