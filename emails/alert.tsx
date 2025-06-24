@@ -47,7 +47,7 @@ export const Alert = ({
                       : strategy.provider === 'google'
                         ? 'Google Search'
                         : 'Unknown Data Source'}
-                    ·{' '}
+                    {' '}·{' '}
                     {wait.type === 'count'
                       ? `after ${wait.value} stories`
                       : formatSchedule(wait.value)}{' '}
