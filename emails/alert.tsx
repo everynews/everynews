@@ -46,8 +46,8 @@ export const Alert = ({
                       ? 'Hacker News Best'
                       : strategy.provider === 'google'
                         ? 'Google Search'
-                        : 'Unknown Data Source'}
-                    {' '}·{' '}
+                        : 'Unknown Data Source'}{' '}
+                    ·{' '}
                     {wait.type === 'count'
                       ? `after ${wait.value} stories`
                       : formatSchedule(wait.value)}{' '}
