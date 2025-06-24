@@ -29,6 +29,7 @@ export const alerts = pgTable(
       .notNull()
       .default('en'),
     lastRun: timestamp('last_run').defaultNow(),
+    lastSent: timestamp('last_sent'),
     name: text('name').notNull(),
     nextRun: timestamp('next_run').defaultNow(),
     promptId: text('prompt_id').references(() => prompt.id, {
@@ -63,6 +64,7 @@ export const AlertSchema = z
     isPublic: z.coerce.boolean().openapi({ example: true }),
     languageCode: LanguageCodeSchema,
     lastRun: z.coerce.date().nullable().openapi({ example: new Date() }),
+    lastSent: z.coerce.date().nullable().openapi({ example: new Date() }),
     name: z.coerce
       .string()
       .min(1, 'Name is required')
@@ -82,6 +84,7 @@ export const AlertDtoSchema = AlertSchema.omit({
   deletedAt: true,
   id: true,
   lastRun: true,
+  lastSent: true,
   nextRun: true,
   updatedAt: true,
   userId: true,

@@ -53,25 +53,25 @@ export const processAlert = async (item: Alert) => {
     `Sage timeout for alert: ${item.name}`,
   )
 
-  // Filter stories to only include those created since lastRun and not marked as irrelevant
+  // Filter stories to only include those created since lastSent and not marked as irrelevant
   const filteredStories = stories.filter((story) => {
     // Filter out both user-marked and system-marked irrelevant stories
     if (story.userMarkedIrrelevant || story.systemMarkedIrrelevant) {
       return false
     }
-    if (!item.lastRun) return true // If no lastRun, include all stories
-    return story.createdAt > item.lastRun
+    if (!item.lastSent) return true // If no lastSent, include all stories
+    return story.createdAt > item.lastSent
   })
 
   await track({
     channel: 'worker',
-    description: `Filtered ${filteredStories.length}/${stories.length} stories created since last run`,
-    event: 'Stories Filtered by lastRun',
+    description: `Filtered ${filteredStories.length}/${stories.length} stories created since last sent`,
+    event: 'Stories Filtered by lastSent',
     icon: '🔍',
     tags: {
       alert_id: item.id,
       alert_name: item.name,
-      last_run: item.lastRun?.toISOString() || 'null',
+      last_sent: item.lastSent?.toISOString() || 'null',
       stories_filtered: filteredStories.length,
       stories_total: stories.length,
       type: 'info',
@@ -139,19 +139,26 @@ export const processAlert = async (item: Alert) => {
         `Herald timeout for user ${user?.email || 'unknown'}`,
       )
     }
+
+    // Update lastSent only when emails are actually sent
+    await db
+      .update(alerts)
+      .set({ lastSent: currentTime })
+      .where(eq(alerts.id, item.id))
   } else {
     await track({
       channel: 'worker',
       description:
         item.wait.type === 'count'
           ? `Found ${filteredStories.length} stories, waiting for ${item.wait.value} - skipping alert delivery`
-          : `No new stories since last run - skipping alert delivery`,
+          : `No new stories since last sent - skipping alert delivery`,
       event: 'Alert Delivery Skipped',
       icon: '⏭️',
       tags: {
         alert_id: item.id,
         alert_name: item.name,
         last_run: item.lastRun?.toISOString() || 'null',
+        last_sent: item.lastSent?.toISOString() || 'null',
         stories_found: filteredStories.length,
         type: 'info',
         wait_threshold: item.wait.type === 'count' ? item.wait.value : 'n/a',

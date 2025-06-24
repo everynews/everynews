@@ -14,6 +14,13 @@
       "tag": "0001_strange_mac_gargan",
       "version": "7",
       "when": 1750401854853
+    },
+    {
+      "breakpoints": true,
+      "idx": 2,
+      "tag": "0002_warm_bloodstorm",
+      "version": "7",
+      "when": 1750819627336
     }
   ],
   "version": "7"
