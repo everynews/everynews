@@ -48,6 +48,7 @@ export const DrillRouter = new Hono<WithAuth>().use(authMiddleware).post(
       isPublic: alertData.isPublic,
       languageCode: alertData.languageCode,
       lastRun: null,
+      lastSent: null,
       name: alertData.name,
       nextRun: null,
       promptId: alertData.promptId,
