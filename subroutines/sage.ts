@@ -212,7 +212,9 @@ const summarizeWithCache = async ({
   const existingStory = await db.query.stories.findFirst({
     where: and(
       eq(stories.url, url),
-      eq(stories.promptId, news.promptId || ''),
+      news.promptId === null
+        ? isNull(stories.promptId)
+        : eq(stories.promptId, news.promptId),
       eq(stories.languageCode, news.languageCode),
       isNull(stories.deletedAt),
     ),
