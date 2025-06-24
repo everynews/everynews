@@ -73,65 +73,55 @@ export const summarizeContent = async ({
       news.languageCode,
     )
 
-    // Create an AbortController with timeout
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 45000) // 45 second timeout for OpenAI
-
-    let response: OpenAI.Chat.Completions.ChatCompletion
-    try {
-      response = await client.chat.completions.create({
-        messages: [
-          {
-            content: systemInstructions,
-            role: 'system',
-          },
-          {
-            content: fullPrompt,
-            role: 'user',
-          },
-        ],
-        model,
-        response_format: {
-          json_schema: {
-            name: 'content_summary',
-            schema: {
-              additionalProperties: false,
-              properties: {
-                importance: {
-                  description: 'Importance score from 0 to 100',
-                  maximum: 100,
-                  minimum: 0,
-                  type: 'integer',
-                },
-                keyFindings: {
-                  description: `Array of key findings in plain text in ${LANGUAGE_LABELS[news.languageCode]} (${news.languageCode})`,
-                  items: {
-                    type: 'string',
-                  },
-                  type: 'array',
-                },
-                languageCode: {
-                  description: `Language code for the summary`,
-                  enum: LANGUAGE_CODES as unknown as string[],
-                  type: 'string',
-                },
-                title: {
-                  description: `The summarized title in plain text (no markdown) in ${LANGUAGE_LABELS[news.languageCode]} (${news.languageCode})`,
-                  type: 'string',
-                },
-              },
-              required: ['title', 'keyFindings', 'importance', 'languageCode'],
-              type: 'object',
-            },
-            strict: true,
-          },
-          type: 'json_schema',
+    const response = await client.chat.completions.create({
+      messages: [
+        {
+          content: systemInstructions,
+          role: 'system',
         },
-        signal: controller.signal as any, // OpenAI SDK may not have full AbortSignal support
-      })
-    } finally {
-      clearTimeout(timeout)
-    }
+        {
+          content: fullPrompt,
+          role: 'user',
+        },
+      ],
+      model,
+      response_format: {
+        json_schema: {
+          name: 'content_summary',
+          schema: {
+            additionalProperties: false,
+            properties: {
+              importance: {
+                description: 'Importance score from 0 to 100',
+                maximum: 100,
+                minimum: 0,
+                type: 'integer',
+              },
+              keyFindings: {
+                description: `Array of key findings in plain text in ${LANGUAGE_LABELS[news.languageCode]} (${news.languageCode})`,
+                items: {
+                  type: 'string',
+                },
+                type: 'array',
+              },
+              languageCode: {
+                description: `Language code for the summary`,
+                enum: LANGUAGE_CODES as unknown as string[],
+                type: 'string',
+              },
+              title: {
+                description: `The summarized title in plain text (no markdown) in ${LANGUAGE_LABELS[news.languageCode]} (${news.languageCode})`,
+                type: 'string',
+              },
+            },
+            required: ['title', 'keyFindings', 'importance', 'languageCode'],
+            type: 'object',
+          },
+          strict: true,
+        },
+        type: 'json_schema',
+      },
+    })
 
     const parsedResponse = SummaryResponseSchema.parse(
       JSON.parse(response.choices[0].message.content || '{}'),
