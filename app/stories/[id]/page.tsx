@@ -1,3 +1,5 @@
+import { whoami } from '@everynews/auth/session'
+import { SubscribeSimilarStories } from '@everynews/components/subscribe-similar-stories'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent } from '@everynews/components/ui/card'
@@ -73,6 +75,10 @@ export default async function StoryPage({
 
   const storyData = StorySchema.parse(story)
   const alertData = AlertSchema.parse(alert)
+
+  // Check if user is authenticated
+  const user = await whoami()
+
   return (
     <div
       className='container mx-auto max-w-4xl p-4'
@@ -152,6 +158,13 @@ export default async function StoryPage({
           </div>
         </div>
       </div>
+
+      {/* Subscribe to similar stories form - only show for non-authenticated users */}
+      {!user && (
+        <div className='pt-8'>
+          <SubscribeSimilarStories alert={alertData} />
+        </div>
+      )}
     </div>
   )
 }

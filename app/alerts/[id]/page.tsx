@@ -1,4 +1,5 @@
 import { whoami } from '@everynews/auth/session'
+import { OneClickSubscribeForm } from '@everynews/components/one-click-subscribe-form'
 import { SubscribeAlertButton } from '@everynews/components/subscribe-alert-button'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
@@ -168,19 +169,7 @@ export default async function AlertStoriesPage({
               </Link>
             )}
             {!user && (
-              <Link
-                href='/sign-in'
-                target='_blank'
-                className='text-muted-foreground text-sm text-bold'
-              >
-                <Button
-                  variant='outline'
-                  className='text-muted-foreground text-sm text-bold'
-                  size='sm'
-                >
-                  Sign in to subscribe
-                </Button>
-              </Link>
+              <OneClickSubscribeForm alert={AlertSchema.parse(alertInfo)} />
             )}
           </div>
         </div>
