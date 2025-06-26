@@ -1,4 +1,5 @@
 import { nanoid } from '@everynews/lib/id'
+import { relations } from 'drizzle-orm'
 import {
   boolean,
   index,
@@ -12,7 +13,9 @@ import { z } from 'zod'
 import 'zod-openapi/extend'
 import { LANGUAGE_CODES, LanguageCodeSchema } from './language'
 import { prompt } from './prompt'
+import { stories } from './story'
 import { strategySchema } from './strategy'
+import { subscriptions } from './subscription'
 import { users } from './user'
 import { WaitSchema } from './wait'
 
@@ -92,3 +95,16 @@ export const AlertDtoSchema = AlertSchema.omit({
 
 export type Alert = z.infer<typeof AlertSchema>
 export type AlertDto = z.infer<typeof AlertDtoSchema>
+
+export const alertsRelations = relations(alerts, ({ one, many }) => ({
+  prompt: one(prompt, {
+    fields: [alerts.promptId],
+    references: [prompt.id],
+  }),
+  stories: many(stories),
+  subscriptions: many(subscriptions),
+  user: one(users, {
+    fields: [alerts.userId],
+    references: [users.id],
+  }),
+}))

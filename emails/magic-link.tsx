@@ -12,7 +12,7 @@ const MagicLinkEmail = ({ signinLink }: { signinLink: string }) => {
   return (
     <Tailwind>
       <Body className='bg-white px-2 font-sans'>
-        <Preview>Verify your notification channel</Preview>
+        <Preview>Here is your Everynews sign-in link</Preview>
         <Container className='my-10 mx-auto rounded border border-gray-200 p-5 text-center'>
           <Link href={signinLink} className='text-orange-600 no-underline'>
             <div className='flex justify-center'>

@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
+import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { alerts } from './alert'
 import { channels } from './channel'
@@ -48,3 +49,18 @@ export const SubscriptionDtoSchema = SubscriptionSchema.omit({
 export type Subscription = z.infer<typeof SubscriptionSchema>
 
 export type SubscriptionDto = z.infer<typeof SubscriptionDtoSchema>
+
+export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
+  alert: one(alerts, {
+    fields: [subscriptions.alertId],
+    references: [alerts.id],
+  }),
+  channel: one(channels, {
+    fields: [subscriptions.channelId],
+    references: [channels.id],
+  }),
+  user: one(users, {
+    fields: [subscriptions.userId],
+    references: [users.id],
+  }),
+}))

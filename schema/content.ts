@@ -1,8 +1,9 @@
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
+import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { z } from 'zod'
-import 'zod-openapi/extend'
+import { stories } from './story'
 
 export const contents = pgTable('contents', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -40,3 +41,7 @@ export const ContentDtoSchema = ContentSchema.omit({
 export type Content = z.infer<typeof ContentSchema>
 
 export type ContentDto = z.infer<typeof ContentDtoSchema>
+
+export const contentsRelations = relations(contents, ({ many }) => ({
+  stories: many(stories),
+}))

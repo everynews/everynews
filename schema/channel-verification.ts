@@ -1,4 +1,5 @@
 import { nanoid } from '@everynews/lib/id'
+import { relations } from 'drizzle-orm'
 import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { z } from 'zod'
 import 'zod-openapi/extend'
@@ -29,3 +30,13 @@ export const ChannelVerificationSchema = z
   .openapi({ ref: 'ChannelVerificationSchema' })
 
 export type ChannelVerification = z.infer<typeof ChannelVerificationSchema>
+
+export const channelVerificationsRelations = relations(
+  channelVerifications,
+  ({ one }) => ({
+    channel: one(channels, {
+      fields: [channelVerifications.channelId],
+      references: [channels.id],
+    }),
+  }),
+)

@@ -235,8 +235,8 @@ export default function OnboardingPage() {
               ) : testResults && testResults.length > 0 ? (
                 <div className='mt-6 p-4 bg-muted/50 rounded-lg'>
                   <h3 className='text-sm font-semibold mb-4 text-muted-foreground'>
-                    It may feel a bit generic if you just randomly clicked on
-                    some chips. Now, try to refine your input and rerun...
+                    It may feel generic if you randomly clicked on some chips.
+                    Try to refine your query.
                   </h3>
                   <AlertPreview stories={testResults} />
                 </div>

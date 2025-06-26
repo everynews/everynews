@@ -1,29 +1,11 @@
 import { Button } from '@everynews/components/ui/button'
+import { Card, CardContent } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
-import { type Alert, type Subscription, subscriptions } from '@everynews/schema'
-import type { User } from 'better-auth'
+import { subscriptions } from '@everynews/schema'
 import { eq } from 'drizzle-orm'
+import { CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-
-type SubscriptionWithAlertAndUser = Subscription & {
-  alert: Alert
-  user: User
-}
-
-const getSubscriptionDetails = async (
-  subscriptionId: string,
-): Promise<SubscriptionWithAlertAndUser | undefined> => {
-  const subscription = await db.query.subscriptions.findFirst({
-    where: eq(subscriptions.id, subscriptionId),
-    with: {
-      alert: true,
-      user: true,
-    },
-  })
-
-  return subscription
-}
 
 const unsubscribe = async (subscriptionId: string) => {
   'use server'
@@ -41,7 +23,13 @@ export default async function UnsubscribePage({
 }) {
   const { subscriptionId } = await params
 
-  const subscription = await getSubscriptionDetails(subscriptionId)
+  const subscription = await db.query.subscriptions.findFirst({
+    where: eq(subscriptions.id, subscriptionId),
+    with: {
+      alert: true,
+      user: true,
+    },
+  })
 
   if (!subscription) {
     notFound()
@@ -52,27 +40,36 @@ export default async function UnsubscribePage({
   const alertName = subscription.alert?.name
 
   return (
-    <>
-      <main className='container mx-auto px-4 py-8 max-w-md'>
-        <div className='text-center'>
-          <h1 className='text-2xl font-bold mb-4'>
-            {isAlreadyUnsubscribed ? 'Unsubscribed' : 'Unsubscribe'}
-          </h1>
-
-          {isAlreadyUnsubscribed ? (
-            <div className='space-y-4'>
-              <p className='text-gray-600'>
-                {userName}, you have unsubscribed from "{alertName}".
+    <main className='container mx-auto px-4 py-8 max-w-md'>
+      {isAlreadyUnsubscribed ? (
+        <Card>
+          <CardContent className='pt-6'>
+            <div className='flex flex-col items-center text-center gap-4'>
+              <CheckCircle className='size-12 text-green-600' />
+              <h1 className='text-2xl font-bold'>Successfully Unsubscribed</h1>
+              <p className='text-muted-foreground'>
+                {userName}, you have been unsubscribed from "{alertName}".
               </p>
-              <Link href='/'>
-                <Button variant='outline'>Go to Home</Button>
+              <p className='text-sm text-muted-foreground'>
+                You will no longer receive notifications for this alert.
+              </p>
+              <Link href='/' className='mt-4'>
+                <Button variant='outline'>Back to Home</Button>
               </Link>
             </div>
-          ) : (
-            <div className='space-y-4'>
-              <p className='text-gray-600'>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className='pt-6'>
+            <div className='flex flex-col items-center text-center gap-4'>
+              <h1 className='text-2xl font-bold'>Confirm Unsubscription</h1>
+              <p className='text-muted-foreground'>
                 {userName}, are you sure you want to unsubscribe from "
                 {alertName}"?
+              </p>
+              <p className='text-sm text-muted-foreground'>
+                You will no longer receive notifications for this alert.
               </p>
 
               <form
@@ -80,21 +77,22 @@ export default async function UnsubscribePage({
                   'use server'
                   await unsubscribe(subscriptionId)
                 }}
+                className='w-full mt-4'
               >
                 <Button type='submit' variant='destructive' className='w-full'>
                   Yes, Unsubscribe
                 </Button>
               </form>
 
-              <Link href='/'>
+              <Link href='/' className='w-full'>
                 <Button variant='outline' className='w-full'>
                   Keep My Subscription
                 </Button>
               </Link>
             </div>
-          )}
-        </div>
-      </main>
-    </>
+          </CardContent>
+        </Card>
+      )}
+    </main>
   )
 }

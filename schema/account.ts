@@ -1,4 +1,5 @@
 import 'zod-openapi/extend'
+import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { users } from './user'
 
@@ -19,3 +20,10 @@ export const accounts = pgTable('accounts', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
 })
+
+export const accountsRelations = relations(accounts, ({ one }) => ({
+  user: one(users, {
+    fields: [accounts.userId],
+    references: [users.id],
+  }),
+}))

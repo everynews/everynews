@@ -1,5 +1,6 @@
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
+import { relations } from 'drizzle-orm'
 import {
   boolean,
   json,
@@ -10,10 +11,9 @@ import {
 } from 'drizzle-orm/pg-core'
 import { z } from 'zod'
 import { alerts } from './alert'
-import { prompt } from './prompt'
-import 'zod-openapi/extend'
 import { contents } from './content'
 import { LANGUAGE_CODES, LanguageCodeSchema } from './language'
+import { prompt } from './prompt'
 
 export const stories = pgTable(
   'stories',
@@ -91,3 +91,18 @@ export const StoryDtoSchema = StorySchema.omit({
 export type Story = z.infer<typeof StorySchema>
 
 export type StoryDto = z.infer<typeof StoryDtoSchema>
+
+export const storiesRelations = relations(stories, ({ one }) => ({
+  alert: one(alerts, {
+    fields: [stories.alertId],
+    references: [alerts.id],
+  }),
+  content: one(contents, {
+    fields: [stories.contentId],
+    references: [contents.id],
+  }),
+  prompt: one(prompt, {
+    fields: [stories.promptId],
+    references: [prompt.id],
+  }),
+}))

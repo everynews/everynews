@@ -1,7 +1,10 @@
 import { z } from 'zod'
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
+import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { alerts } from './alert'
+import { stories } from './story'
 import { users } from './user'
 
 export const prompt = pgTable('prompt', {
@@ -44,3 +47,12 @@ export const PromptDtoSchema = PromptSchema.omit({
 
 export type Prompt = z.infer<typeof PromptSchema>
 export type PromptDto = z.infer<typeof PromptDtoSchema>
+
+export const promptRelations = relations(prompt, ({ one, many }) => ({
+  alerts: many(alerts),
+  stories: many(stories),
+  user: one(users, {
+    fields: [prompt.userId],
+    references: [users.id],
+  }),
+}))

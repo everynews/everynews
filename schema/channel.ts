@@ -1,7 +1,10 @@
 import { z } from 'zod'
 import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
+import { relations } from 'drizzle-orm'
 import { boolean, json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { channelVerifications } from './channel-verification'
+import { subscriptions } from './subscription'
 import { users } from './user'
 
 export const channels = pgTable('channels', {
@@ -100,3 +103,12 @@ export const ChannelDtoSchema = z.discriminatedUnion('type', [
 
 export type Channel = z.infer<typeof ChannelSchema>
 export type ChannelDto = z.infer<typeof ChannelDtoSchema>
+
+export const channelsRelations = relations(channels, ({ one, many }) => ({
+  subscriptions: many(subscriptions),
+  user: one(users, {
+    fields: [channels.userId],
+    references: [users.id],
+  }),
+  verifications: many(channelVerifications),
+}))
