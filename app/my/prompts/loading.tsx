@@ -19,7 +19,7 @@ export default function Loading() {
       <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
         {Array.from({ length: 6 }, (_, i) => `prompt-${i}`).map((key) => (
           <Card key={key} className='overflow-hidden'>
-            <CardContent className='p-6'>
+            <CardContent className='p-4'>
               <Skeleton className='h-6 w-3/4 mb-3' />
 
               <div className='space-y-2 text-sm text-muted-foreground mb-4'>
