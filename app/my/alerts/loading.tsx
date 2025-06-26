@@ -51,7 +51,7 @@ export default function Loading() {
                 </Button>
                 <div className='flex items-center gap-2'>
                   <Button size='sm' disabled variant='outline'>
-                    Unubscribe
+                    Unsubscribe
                   </Button>
                   <Button size='sm' variant='outline' disabled>
                     Edit
