@@ -50,8 +50,8 @@ export default function Loading() {
         </div>
 
         {/* User-created channel skeletons */}
-        {Array.from({ length: 2 }).map((_, i) => (
-          <Card key={i} className='overflow-hidden'>
+        {Array.from({ length: 2 }, (_, i) => `channel-${i}`).map((key) => (
+          <Card key={key} className='overflow-hidden'>
             <CardContent className='p-4'>
               <Skeleton className='h-6 w-3/4 mb-3' />
 

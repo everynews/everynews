@@ -1,4 +1,4 @@
-import { Skeleton } from '@everynews/ui/skeleton'
+import { Skeleton } from '@everynews/components/ui/skeleton'
 
 export default function UnsubscribeLoading() {
   return (

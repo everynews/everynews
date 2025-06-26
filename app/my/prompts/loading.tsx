@@ -17,8 +17,8 @@ export default function Loading() {
       </div>
 
       <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Card key={i} className='overflow-hidden'>
+        {Array.from({ length: 6 }, (_, i) => `prompt-${i}`).map((key) => (
+          <Card key={key} className='overflow-hidden'>
             <CardContent className='p-6'>
               <Skeleton className='h-6 w-3/4 mb-3' />
 

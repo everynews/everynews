@@ -1,12 +1,19 @@
+import { Button } from '@everynews/components/ui/button'
 import { db } from '@everynews/database'
-import { Header } from '@everynews/lib/header'
-import { subscriptions } from '@everynews/schema'
-import { Button } from '@everynews/ui/button'
+import { type Alert, type Subscription, subscriptions } from '@everynews/schema'
+import type { User } from 'better-auth'
 import { eq } from 'drizzle-orm'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-const getSubscriptionDetails = async (subscriptionId: string) => {
+type SubscriptionWithAlertAndUser = Subscription & {
+  alert: Alert
+  user: User
+}
+
+const getSubscriptionDetails = async (
+  subscriptionId: string,
+): Promise<SubscriptionWithAlertAndUser | undefined> => {
   const subscription = await db.query.subscriptions.findFirst({
     where: eq(subscriptions.id, subscriptionId),
     with: {
@@ -41,12 +48,11 @@ export default async function UnsubscribePage({
   }
 
   const isAlreadyUnsubscribed = subscription.deletedAt !== null
-  const userName = subscription.user.name || subscription.user.email
-  const alertName = subscription.alert.name
+  const userName = subscription.user?.name || subscription.user?.email
+  const alertName = subscription.alert?.name
 
   return (
     <>
-      <Header />
       <main className='container mx-auto px-4 py-8 max-w-md'>
         <div className='text-center'>
           <h1 className='text-2xl font-bold mb-4'>

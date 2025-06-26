@@ -23,8 +23,8 @@ export default function Loading() {
 
       <div className='container mx-auto max-w-prose p-4 flex flex-col gap-6'>
         <div className='grid gap-4'>
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i}>
+          {Array.from({ length: 3 }, (_, i) => `card-${i}`).map((key) => (
+            <Card key={key}>
               <CardHeader className='pb-3'>
                 <Skeleton className='h-4 w-32 mb-2' />
                 <Skeleton className='h-6 w-full' />
@@ -32,13 +32,16 @@ export default function Loading() {
               </CardHeader>
               <CardContent className='pt-0'>
                 <div className='space-y-2'>
-                  {Array.from({ length: 3 }).map((_, j) => (
-                    <div key={j} className='flex items-center gap-2'>
+                  {Array.from({ length: 3 }, (_, j) => ({
+                    index: j + 1,
+                    key: `item-${j}`,
+                  })).map(({ key, index }) => (
+                    <div key={key} className='flex items-center gap-2'>
                       <Badge
                         variant='outline'
                         className='text-xs px-1.5 py-0.5 flex-shrink-0'
                       >
-                        {j + 1}
+                        {index}
                       </Badge>
                       <Skeleton className='h-4 w-full' />
                     </div>
@@ -51,9 +54,12 @@ export default function Loading() {
 
         <div className='flex justify-center gap-2'>
           <div className='flex items-center gap-2'>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Button key={i} variant='outline' size='sm' disabled>
-                {i + 1}
+            {Array.from({ length: 5 }, (_, i) => ({
+              key: `page-${i}`,
+              label: i + 1,
+            })).map(({ key, label }) => (
+              <Button key={key} variant='outline' size='sm' disabled>
+                {label}
               </Button>
             ))}
           </div>

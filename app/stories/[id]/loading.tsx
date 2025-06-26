@@ -25,10 +25,13 @@ export default function Loading() {
       <Card>
         <CardContent className='p-4'>
           <div className='flex flex-col gap-2'>
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className='flex items-center gap-2'>
+            {Array.from({ length: 3 }, (_, i) => ({
+              index: i + 1,
+              key: `item-${i}`,
+            })).map(({ key, index }) => (
+              <div key={key} className='flex items-center gap-2'>
                 <Badge variant='secondary' className='text-xs px-2 py-1'>
-                  {i + 1}
+                  {index}
                 </Badge>
                 <Skeleton className='h-4 flex-1' />
               </div>

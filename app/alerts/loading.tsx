@@ -12,8 +12,8 @@ export default function Loading() {
   return (
     <div className='container mx-auto p-4'>
       <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Card key={i} className='h-full'>
+        {Array.from({ length: 6 }, (_, i) => `alert-${i}`).map((key) => (
+          <Card key={key} className='h-full'>
             <CardHeader>
               <div className='flex items-start justify-between'>
                 <div className='flex-1'>
