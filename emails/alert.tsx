@@ -16,17 +16,19 @@ import type { z } from 'zod'
 
 type Wait = z.infer<typeof WaitSchema>
 
-export const Alert = ({
+const Alert = ({
   alertName,
   readerCount,
   stories,
   strategy,
+  subscriptionId,
   wait,
 }: {
   alertName: string
   readerCount: number
   stories: Story[]
   strategy: Strategy
+  subscriptionId?: string
   wait: Wait
 }) => {
   return (
@@ -34,14 +36,15 @@ export const Alert = ({
       <Preview>{stories[0]?.keyFindings?.join(' ') ?? ''}</Preview>
       <Tailwind>
         <Body>
-          <Container className='max-w-2xl mx-auto p-1 font-sans'>
+          <Container className='max-w-2xl mx-auto p-0.5 font-sans'>
             <Section>
-              <div className='flex flex-col gap-2'>
-                <div className='flex flex-col gap-1'>
-                  <Heading as='h1' className='text-xl font-bold'>
+              <div className='flex flex-col'>
+                <div className='flex flex-col'>
+                  <Heading as='h1' className='text-xl font-bold my-0.5'>
                     {alertName}
                   </Heading>
-                  <Text className='text-xs text-gray-500'>
+                  <Text className='text-xs text-gray-500 my-0.5'>
+                    Using{' '}
                     {strategy.provider === 'hnbest'
                       ? 'Hacker News Best'
                       : strategy.provider === 'google'
@@ -55,7 +58,7 @@ export const Alert = ({
                   </Text>
                 </div>
                 {stories && stories.length > 0 ? (
-                  <div className='flex flex-col gap-1'>
+                  <div className='flex flex-col'>
                     {stories.map((story) => (
                       <div key={story.id}>
                         <Link
@@ -79,6 +82,18 @@ export const Alert = ({
                 ) : null}
               </div>
             </Section>
+            {subscriptionId && (
+              <Section className='mt-4 pt-2 border-t border-gray-200'>
+                <Text className='text-xs text-gray-500 text-center my-0.5'>
+                  <Link
+                    href={`${url}/unsubscribe/${subscriptionId}`}
+                    className='text-gray-500 underline'
+                  >
+                    Unsubscribe
+                  </Link>
+                </Text>
+              </Section>
+            )}
           </Container>
         </Body>
       </Tailwind>
@@ -126,5 +141,8 @@ Alert.PreviewProps = {
     provider: 'google',
     query: 'latest tech news',
   },
+  subscriptionId: 'test-subscription-id',
   wait: { type: 'schedule', value: '0 0 * * *' },
 }
+
+export default Alert

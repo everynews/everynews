@@ -15,7 +15,7 @@ interface SubscriptionConfirmationEmailProps {
   alertName: string
 }
 
-export const SubscriptionConfirmationEmail = ({
+const SubscriptionConfirmationEmail = ({
   url,
   alertName,
 }: SubscriptionConfirmationEmailProps) => {

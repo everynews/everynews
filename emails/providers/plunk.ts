@@ -1,6 +1,6 @@
 import { url } from '@everynews/lib/url'
 import { render } from '@react-email/components'
-import { MagicLinkEmail } from '../magic-link'
+import MagicLinkEmail from '../magic-link'
 import type {
   EmailProvider,
   SendSignInEmailParams,

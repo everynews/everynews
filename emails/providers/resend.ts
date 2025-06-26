@@ -1,6 +1,6 @@
 import { url } from '@everynews/lib/url'
 import { Resend } from 'resend'
-import { MagicLinkEmail } from '../magic-link'
+import MagicLinkEmail from '../magic-link'
 import type {
   EmailProvider,
   SendSignInEmailParams,
