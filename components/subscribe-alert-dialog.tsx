@@ -126,7 +126,8 @@ export const SubscribeAlertDialog = ({
                         )}
                         {channels.map((channel) => (
                           <SelectItem key={channel.id} value={channel.id}>
-                            {channel.name} ({channel.type})
+                            {channel.name} ({channel.type}:{' '}
+                            {channel.config.destination})
                           </SelectItem>
                         ))}
                       </SelectContent>

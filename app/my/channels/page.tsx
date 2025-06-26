@@ -7,7 +7,7 @@ import { Button } from '@everynews/components/ui/button'
 import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { and, eq, isNull } from 'drizzle-orm'
-import { Mail, MessageSquare, Trash2 } from 'lucide-react'
+import { Mail, Phone, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -108,9 +108,9 @@ export default async function MyChannelsPage() {
                 <div className='flex items-center gap-2'>
                   {item.type === 'email' ? (
                     <Mail className='size-4' />
-                  ) : (
-                    <MessageSquare className='size-4' />
-                  )}
+                  ) : item.type === 'phone' ? (
+                    <Phone className='size-4' />
+                  ) : null}
                   <span className='capitalize'>{item.type}</span>
                 </div>
               </div>

@@ -12,32 +12,46 @@ import {
   FormMessage,
 } from '@everynews/components/ui/form'
 import { Input } from '@everynews/components/ui/input'
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from '@everynews/components/ui/radio-group'
 import { Separator } from '@everynews/components/ui/separator'
 import { toastNetworkError } from '@everynews/lib/error'
-import {
-  type ChannelDto,
-  ChannelDtoSchema,
-  ChannelSchema,
-} from '@everynews/schema/channel'
+import { type ChannelDto, ChannelDtoSchema } from '@everynews/schema/channel'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 export const ChannelCreatePage = () => {
   const router = useRouter()
+  const emailId = useId()
+  const phoneId = useId()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [channelType, setChannelType] = useState<'email' | 'phone'>('email')
+  const [verificationCode, setVerificationCode] = useState('')
+  const [showVerificationInput, setShowVerificationInput] = useState(false)
+  const [verificationChannelId, setVerificationChannelId] = useState<
+    string | null
+  >(null)
 
   const form = useForm<ChannelDto>({
     defaultValues: {
       config: { destination: '' },
       name: humanId({ capitalize: false, separator: '-' }),
-      type: 'email',
-    },
+      type: channelType,
+    } as ChannelDto,
     resolver: zodResolver(ChannelDtoSchema),
   })
+
+  // Update form when channel type changes
+  useEffect(() => {
+    form.setValue('type', channelType)
+    form.setValue('config.destination', '')
+  }, [channelType, form])
 
   const onSubmit = async (values: ChannelDto) => {
     setIsSubmitting(true)
@@ -51,22 +65,42 @@ export const ChannelCreatePage = () => {
         return
       }
 
-      const createdChannel = ChannelSchema.parse(await res.json())
+      const responseData = await res.json()
+      const createdChannel: any = Array.isArray(responseData)
+        ? responseData[0]
+        : responseData
       const channelId = createdChannel?.id
 
       if (channelId) {
-        // Automatically send verification email for new channels
+        // Automatically send verification for new channels
         try {
-          await api.channels[':id']['send-verification'].$post({
+          const verifyRes = await api.channels[':id'][
+            'send-verification'
+          ].$post({
             param: { id: channelId },
           })
-          toast.success(
-            `Channel "${form.watch('name')}" created! Verification email sent.`,
-          )
+          const verifyData = (await verifyRes.json()) as {
+            success: boolean
+            isPhone?: boolean
+          }
+
+          if (verifyData.isPhone) {
+            // Show verification code input for phone
+            setVerificationChannelId(channelId)
+            setShowVerificationInput(true)
+            toast.success(
+              `Channel "${form.watch('name')}" created! Verification code sent to ${form.watch('config.destination')}.`,
+            )
+            return // Don't navigate away yet
+          } else {
+            toast.success(
+              `Channel "${form.watch('name')}" created! Verification email sent.`,
+            )
+          }
         } catch (error) {
           toast.success(
-            `Channel "${form.watch('name')}" created, but failed to send verification email.
-            Please send verification email manually.`,
+            `Channel "${form.watch('name')}" created, but failed to send verification.
+            Please send verification manually.`,
             {
               description: JSON.stringify(error),
             },
@@ -84,6 +118,31 @@ export const ChannelCreatePage = () => {
     }
   }
 
+  const onVerifyPhone = async () => {
+    if (!verificationChannelId || !verificationCode) return
+
+    setIsSubmitting(true)
+    try {
+      const res = await api.channels[':id']['verify-phone'].$post({
+        json: { code: verificationCode },
+        param: { id: verificationChannelId },
+      })
+
+      if (!res.ok) {
+        const errorData = (await res.json()) as { error?: string }
+        toast.error(errorData?.error || 'Verification failed')
+        return
+      }
+
+      toast.success('Phone number verified successfully!')
+      router.push('/my/channels')
+    } catch (e) {
+      toastNetworkError(e as Error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
     <div className='container mx-auto'>
       <div className='mb-6'>
@@ -92,41 +151,23 @@ export const ChannelCreatePage = () => {
           Add a new delivery channel for your alerts
         </p>
       </div>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className='flex flex-col gap-6'
-        >
-          <FormField
-            control={form.control}
-            name='name'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input placeholder='My Email Channel' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+      {showVerificationInput ? (
+        <div className='flex flex-col gap-4'>
+          <p className='text-sm text-muted-foreground'>
+            Enter the 6-digit verification code sent to{' '}
+            {form.watch('config.destination')}
+          </p>
+          <Input
+            type='text'
+            inputMode='numeric'
+            pattern='[0-9]{6}'
+            maxLength={6}
+            placeholder='123456'
+            value={verificationCode}
+            onChange={(e) =>
+              setVerificationCode(e.target.value.replace(/\D/g, ''))
+            }
           />
-
-          <Separator />
-
-          <FormField
-            control={form.control}
-            name='config.destination'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email Address</FormLabel>
-                <FormControl>
-                  <Input placeholder='you@example.com' {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           <div className='flex justify-end gap-2'>
             <Button
               type='button'
@@ -136,14 +177,116 @@ export const ChannelCreatePage = () => {
               Cancel
             </Button>
             <SubmitButton
-              onClick={form.handleSubmit(onSubmit)}
+              onClick={onVerifyPhone}
               loading={isSubmitting}
+              disabled={verificationCode.length !== 6}
             >
-              Create
+              Verify
             </SubmitButton>
           </div>
-        </form>
-      </Form>
+        </div>
+      ) : (
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className='flex flex-col gap-6'
+          >
+            <FormField
+              control={form.control}
+              name='name'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder={
+                        channelType === 'phone'
+                          ? 'My SMS Channel'
+                          : 'My Email Channel'
+                      }
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Separator />
+
+            <FormItem className='space-y-3'>
+              <FormLabel>Channel Type</FormLabel>
+              <RadioGroup
+                value={channelType}
+                onValueChange={(value) =>
+                  setChannelType(value as 'email' | 'phone')
+                }
+              >
+                <div className='flex items-center space-x-2'>
+                  <RadioGroupItem value='email' id={emailId} />
+                  <label
+                    htmlFor={emailId}
+                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+                  >
+                    Email
+                  </label>
+                </div>
+                <div className='flex items-center space-x-2'>
+                  <RadioGroupItem value='phone' id={phoneId} />
+                  <label
+                    htmlFor={phoneId}
+                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+                  >
+                    SMS (Phone)
+                  </label>
+                </div>
+              </RadioGroup>
+            </FormItem>
+
+            <Separator />
+
+            <FormField
+              control={form.control}
+              name='config.destination'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {channelType === 'phone' ? 'Phone Number' : 'Email Address'}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder={
+                        channelType === 'phone'
+                          ? '+1234567890'
+                          : 'you@example.com'
+                      }
+                      type={channelType === 'phone' ? 'tel' : 'email'}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className='flex justify-end gap-2'>
+              <Button
+                type='button'
+                variant='outline'
+                onClick={() => router.push('/my/channels')}
+              >
+                Cancel
+              </Button>
+              <SubmitButton
+                onClick={form.handleSubmit(onSubmit)}
+                loading={isSubmitting}
+              >
+                Create
+              </SubmitButton>
+            </div>
+          </form>
+        </Form>
+      )}
     </div>
   )
 }

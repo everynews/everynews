@@ -1,7 +1,11 @@
 import { db } from '@everynews/database'
 import { url } from '@everynews/lib/url'
 import { track } from '@everynews/logs'
-import { sendChannelVerification } from '@everynews/messengers'
+import {
+  checkSurgeVerification,
+  sendChannelVerification,
+  sendSurgeVerification,
+} from '@everynews/messengers'
 import { channels, channelVerifications } from '@everynews/schema'
 import { ChannelDtoSchema, ChannelSchema } from '@everynews/schema/channel'
 import type { WithAuth } from '@everynews/server/bindings/auth'
@@ -116,7 +120,7 @@ export const ChannelRouter = new Hono<WithAuth>()
         )
       }
 
-      const inserted = await db
+      const [inserted] = await db
         .insert(channels)
         .values({
           config,
@@ -385,25 +389,51 @@ export const ChannelRouter = new Hono<WithAuth>()
 
       const verificationLink = `${url}/verify/channel/${token}`
 
-      await sendChannelVerification({
-        channelName: channel.name,
-        email: channel.config.destination,
-        verificationLink,
-      })
+      // Handle different channel types
+      if (channel.type === 'email') {
+        await sendChannelVerification({
+          channelName: channel.name,
+          email: channel.config.destination,
+          verificationLink,
+        })
 
-      await track({
-        channel: 'channels',
-        description: `Sent verification email for channel: ${channel.name}`,
-        event: 'Channel Verification Email Sent',
-        icon: '📧',
-        tags: {
-          channel_id: id,
-          channel_name: channel.name,
-        },
-        user_id: user.id,
-      })
+        await track({
+          channel: 'channels',
+          description: `Sent verification email for channel: ${channel.name}`,
+          event: 'Channel Verification Email Sent',
+          icon: '📧',
+          tags: {
+            channel_id: id,
+            channel_name: channel.name,
+          },
+          user_id: user.id,
+        })
+      } else if (channel.type === 'phone') {
+        // For phone, store the verification ID from Surge
+        const verificationId = await sendSurgeVerification({
+          phoneNumber: channel.config.destination,
+        })
 
-      return c.json({ success: true })
+        // Update the verification record with the Surge verification ID
+        await db
+          .update(channelVerifications)
+          .set({ token: verificationId }) // Store Surge verification ID as token
+          .where(eq(channelVerifications.token, token))
+
+        await track({
+          channel: 'channels',
+          description: `Sent verification SMS for channel: ${channel.name}`,
+          event: 'Channel Verification SMS Sent',
+          icon: '📱',
+          tags: {
+            channel_id: id,
+            channel_name: channel.name,
+          },
+          user_id: user.id,
+        })
+      }
+
+      return c.json({ isPhone: channel.type === 'phone', success: true })
     },
   )
   .get(
@@ -485,5 +515,109 @@ export const ChannelRouter = new Hono<WithAuth>()
       })
 
       return c.json({ channelName: channel.name, success: true })
+    },
+  )
+  .post(
+    '/:id/verify-phone',
+    describeRoute({
+      description: 'Verify phone channel with code',
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: resolver(z.object({ success: z.boolean() })),
+            },
+          },
+          description: 'Phone verified successfully',
+        },
+      },
+    }),
+    validator('json', z.object({ code: z.string().regex(/^[0-9]{6}$/) })),
+    async (c) => {
+      const { id } = c.req.param()
+      const { code } = await c.req.json()
+      const user = c.get('user')
+
+      if (!user) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      // Get the channel and verify ownership
+      const channel = ChannelSchema.parse(
+        await db.query.channels.findFirst({
+          where: and(
+            eq(channels.id, id),
+            eq(channels.userId, user.id),
+            isNull(channels.deletedAt),
+          ),
+        }),
+      )
+
+      if (!channel) {
+        return c.json({ error: 'Channel not found' }, 404)
+      }
+
+      if (channel.type !== 'phone') {
+        return c.json({ error: 'Not a phone channel' }, 400)
+      }
+
+      if (channel.verified) {
+        return c.json({ error: 'Channel already verified' }, 400)
+      }
+
+      // Find the most recent verification for this channel
+      const verification = await db.query.channelVerifications.findFirst({
+        orderBy: (channelVerifications, { desc }) => [
+          desc(channelVerifications.createdAt),
+        ],
+        where: and(
+          eq(channelVerifications.channelId, id),
+          eq(channelVerifications.used, false),
+          gt(channelVerifications.expiresAt, new Date()),
+        ),
+      })
+
+      if (!verification) {
+        return c.json({ error: 'No active verification found' }, 400)
+      }
+
+      // Check the code with Surge
+      const isValid = await checkSurgeVerification({
+        code, // We stored the Surge verification ID as token
+        verificationId: verification.token,
+      })
+
+      if (!isValid) {
+        return c.json({ error: 'Invalid verification code' }, 400)
+      }
+
+      // Update channel as verified
+      await db
+        .update(channels)
+        .set({
+          verified: true,
+          verifiedAt: new Date(),
+        })
+        .where(eq(channels.id, id))
+
+      // Mark verification as used
+      await db
+        .update(channelVerifications)
+        .set({ used: true })
+        .where(eq(channelVerifications.id, verification.id))
+
+      await track({
+        channel: 'channels',
+        description: `Phone channel verified: ${channel.name}`,
+        event: 'Phone Channel Verified',
+        icon: '✅',
+        tags: {
+          channel_id: channel.id,
+          channel_name: channel.name,
+        },
+        user_id: user.id,
+      })
+
+      return c.json({ success: true })
     },
   )

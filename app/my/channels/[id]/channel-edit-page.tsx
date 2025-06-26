@@ -49,14 +49,16 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
         return
       }
 
-      // Check if email was changed
-      const emailChanged =
+      // Check if destination was changed
+      const destinationChanged =
         channel.config.destination !== values.config.destination
       const wasVerified = channel.verified
 
-      if (emailChanged && wasVerified) {
+      if (destinationChanged && wasVerified) {
+        const destinationType =
+          channel.type === 'phone' ? 'phone number' : 'email address'
         toast.success(`Channel "${form.watch('name')}" updated!`, {
-          description: 'Please verify the new email address to receive alerts.',
+          description: `Please verify the new ${destinationType} to receive alerts.`,
         })
       } else {
         toast.success(`Channel "${form.watch('name')}" updated.`)
@@ -104,9 +106,19 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
             name='config.destination'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email Address</FormLabel>
+                <FormLabel>
+                  {channel.type === 'phone' ? 'Phone Number' : 'Email Address'}
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder='you@example.com' {...field} />
+                  <Input
+                    placeholder={
+                      channel.type === 'phone'
+                        ? '+1234567890'
+                        : 'you@example.com'
+                    }
+                    type={channel.type === 'phone' ? 'tel' : 'email'}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

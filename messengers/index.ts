@@ -3,6 +3,12 @@ import ChannelVerificationEmail from '@everynews/emails/channel-verification'
 import MagicLinkEmail from '@everynews/emails/magic-link'
 import SubscriptionConfirmationEmail from '@everynews/emails/subscription-confirmation'
 
+export {
+  checkSurgeVerification,
+  sendSurgeAlert,
+  sendSurgeVerification,
+} from './surge'
+
 export const sendMagicLink = async (
   {
     email,

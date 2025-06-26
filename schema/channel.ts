@@ -39,6 +39,18 @@ const EmailChannelSchema = BaseChannel.extend({
   type: z.literal('email').openapi({ example: 'email' }),
 }).openapi({ ref: 'EmailChannelSchema' })
 
+const PhoneChannelSchema = BaseChannel.extend({
+  config: z.object({
+    destination: z
+      .string()
+      .regex(/^\+[1-9]\d{6,14}$/, {
+        message: 'Phone number must be in E.164 format (e.g., +1234567890)',
+      })
+      .openapi({ example: '+18015551234' }),
+  }),
+  type: z.literal('phone').openapi({ example: 'phone' }),
+}).openapi({ ref: 'PhoneChannelSchema' })
+
 // const SlackChannelSchema = BaseChannel.extend({
 //   config: z.object({
 //     destination: z.string().openapi({
@@ -49,7 +61,10 @@ const EmailChannelSchema = BaseChannel.extend({
 //   type: z.literal('slack').openapi({ example: 'slack' }),
 // }).openapi({ ref: 'SlackChannelSchema' })
 
-export const ChannelSchema = EmailChannelSchema
+export const ChannelSchema = z.discriminatedUnion('type', [
+  EmailChannelSchema,
+  PhoneChannelSchema,
+])
 
 const EmailChannelDtoSchema = EmailChannelSchema.omit({
   createdAt: true,
@@ -61,6 +76,16 @@ const EmailChannelDtoSchema = EmailChannelSchema.omit({
   verifiedAt: true,
 }).openapi({ ref: 'EmailChannelDtoSchema' })
 
+const PhoneChannelDtoSchema = PhoneChannelSchema.omit({
+  createdAt: true,
+  deletedAt: true,
+  id: true,
+  updatedAt: true,
+  userId: true,
+  verified: true,
+  verifiedAt: true,
+}).openapi({ ref: 'PhoneChannelDtoSchema' })
+
 // const SlackChannelDtoSchema = SlackChannelSchema.omit({
 //   createdAt: true,
 //   id: true,
@@ -68,7 +93,10 @@ const EmailChannelDtoSchema = EmailChannelSchema.omit({
 //   userId: true,
 // }).openapi({ ref: 'SlackChannelDtoSchema' })
 
-export const ChannelDtoSchema = EmailChannelDtoSchema
+export const ChannelDtoSchema = z.discriminatedUnion('type', [
+  EmailChannelDtoSchema,
+  PhoneChannelDtoSchema,
+])
 
 export type Channel = z.infer<typeof ChannelSchema>
 export type ChannelDto = z.infer<typeof ChannelDtoSchema>
