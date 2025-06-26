@@ -3,6 +3,7 @@ import { track } from '@everynews/logs'
 import {
   type Alert,
   alerts,
+  channels,
   type Content,
   subscriptions,
   users,
@@ -11,7 +12,7 @@ import { curator } from '@everynews/subroutines/curator'
 import { herald } from '@everynews/subroutines/herald'
 import { reaper } from '@everynews/subroutines/reaper'
 import { sage } from '@everynews/subroutines/sage'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 
 const withTimeout = async <T>(
   promise: Promise<T>,
@@ -53,26 +54,65 @@ export const processAlert = async (item: Alert) => {
     `Sage timeout for alert: ${item.name}`,
   )
 
-  // Filter stories to only include those created since lastSent and not marked as irrelevant
-  const filteredStories = stories.filter((story) => {
-    // Filter out both user-marked and system-marked irrelevant stories
+  // Get all subscriptions and separate by channel type
+  const allSubscribers = await db.query.subscriptions.findMany({
+    where: and(eq(subscriptions.alertId, item.id), isNull(subscriptions.deletedAt)),
+  })
+
+  // Separate subscribers by channel speed type
+  const fastChannelSubscribers = []
+  const slowChannelSubscribers = []
+
+  for (const subscriber of allSubscribers) {
+    if (!subscriber.channelId) {
+      // No channel ID means default email channel (slow)
+      slowChannelSubscribers.push(subscriber)
+    } else {
+      const channel = await db.query.channels.findFirst({
+        where: and(eq(channels.id, subscriber.channelId), isNull(channels.deletedAt)),
+      })
+      // Fast channels: phone, push, slack, etc.
+      if (channel?.type === 'phone' || channel?.type === 'push' || channel?.type === 'slack') {
+        fastChannelSubscribers.push(subscriber)
+      } else {
+        // Slow channels: email
+        slowChannelSubscribers.push(subscriber)
+      }
+    }
+  }
+
+  // Filter stories for slow channels (since lastSent)
+  const slowChannelFilteredStories = stories.filter((story) => {
     if (story.userMarkedIrrelevant || story.systemMarkedIrrelevant) {
       return false
     }
-    if (!item.lastSent) return true // If no lastSent, include all stories
+    if (!item.lastSent) return true
     return story.createdAt > item.lastSent
+  })
+
+  // Filter stories for fast channels (since lastRun)
+  const fastChannelFilteredStories = stories.filter((story) => {
+    if (story.userMarkedIrrelevant || story.systemMarkedIrrelevant) {
+      return false
+    }
+    if (!item.lastRun) return true
+    return story.createdAt > item.lastRun
   })
 
   await track({
     channel: 'worker',
-    description: `Filtered ${filteredStories.length}/${stories.length} stories created since last sent`,
-    event: 'Stories Filtered by lastSent',
+    description: `Slow channels: ${slowChannelFilteredStories.length} new stories since lastSent. Fast channels: ${fastChannelFilteredStories.length} new stories since lastRun`,
+    event: 'Stories Filtered by Channel Speed',
     icon: '🔍',
     tags: {
       alert_id: item.id,
       alert_name: item.name,
+      fast_stories: fastChannelFilteredStories.length,
+      fast_subscribers: fastChannelSubscribers.length,
+      last_run: item.lastRun?.toISOString() || 'null',
       last_sent: item.lastSent?.toISOString() || 'null',
-      stories_filtered: filteredStories.length,
+      slow_stories: slowChannelFilteredStories.length,
+      slow_subscribers: slowChannelSubscribers.length,
       stories_total: stories.length,
       type: 'info',
     },
@@ -97,31 +137,34 @@ export const processAlert = async (item: Alert) => {
       .where(eq(alerts.id, item.id))
   }
 
-  const shouldSend =
+  // Calculate whether to send for each channel type
+  const shouldSendSlowChannels =
     item.wait.type === 'count'
-      ? filteredStories.length >= item.wait.value
-      : filteredStories.length > 0
+      ? slowChannelFilteredStories.length >= item.wait.value
+      : slowChannelFilteredStories.length > 0
 
-  if (shouldSend) {
-    const subscribers = await db.query.subscriptions.findMany({
-      where: eq(subscriptions.alertId, item.id),
+  // Fast channels always send immediately if there are new stories
+  const shouldSendFastChannels = fastChannelFilteredStories.length > 0
+
+  let anySent = false
+
+  // Send to slow channel subscribers if conditions are met
+  if (shouldSendSlowChannels && slowChannelSubscribers.length > 0) {
+    await track({
+      channel: 'worker',
+      description: `Sending ${slowChannelFilteredStories.length} stories to ${slowChannelSubscribers.length} slow channel subscribers`,
+      event: 'Slow Channel Alert Delivery Starting',
+      icon: '🐌',
+      tags: {
+        alert_id: item.id,
+        alert_name: item.name,
+        stories_count: slowChannelFilteredStories.length,
+        subscribers_count: slowChannelSubscribers.length,
+        type: 'info',
+      },
     })
 
-    if (subscribers.length === 0) {
-      await track({
-        channel: 'worker',
-        description: `No subscribers found for alert "${item.name}"`,
-        event: 'No Subscribers Found',
-        icon: '🔍',
-        tags: {
-          alert_id: item.id,
-          alert_name: item.name,
-          type: 'info',
-        },
-      })
-    }
-
-    for (const subscriber of subscribers) {
+    for (const subscriber of slowChannelSubscribers) {
       const user = await db.query.users.findFirst({
         where: eq(users.id, subscriber.userId),
       })
@@ -129,55 +172,126 @@ export const processAlert = async (item: Alert) => {
         herald({
           alertName: item.name,
           channelId: subscriber.channelId,
-          readerCount: subscribers.length,
-          stories: filteredStories,
+          readerCount: allSubscribers.length,
+          stories: slowChannelFilteredStories,
           strategy: item.strategy,
           subscriptionId: subscriber.id,
           user,
           wait: item.wait,
         }),
-        30 * 1000, // 30 seconds per herald call
+        30 * 1000,
         `Herald timeout for user ${user?.email || 'unknown'}`,
       )
     }
-
-    // Update lastSent only when emails are actually sent
-    await db
-      .update(alerts)
-      .set({ lastSent: currentTime })
-      .where(eq(alerts.id, item.id))
-  } else {
+    anySent = true
+  } else if (slowChannelSubscribers.length > 0) {
     await track({
       channel: 'worker',
       description:
         item.wait.type === 'count'
-          ? `Found ${filteredStories.length} stories, waiting for ${item.wait.value} - skipping alert delivery`
-          : `No new stories since last sent - skipping alert delivery`,
-      event: 'Alert Delivery Skipped',
+          ? `Slow channels: Found ${slowChannelFilteredStories.length} stories, waiting for ${item.wait.value}`
+          : `Slow channels: No new stories since last sent`,
+      event: 'Slow Channel Alert Delivery Skipped',
       icon: '⏭️',
       tags: {
         alert_id: item.id,
         alert_name: item.name,
-        last_run: item.lastRun?.toISOString() || 'null',
-        last_sent: item.lastSent?.toISOString() || 'null',
-        stories_found: filteredStories.length,
+        stories_found: slowChannelFilteredStories.length,
         type: 'info',
         wait_threshold: item.wait.type === 'count' ? item.wait.value : 'n/a',
       },
     })
   }
 
+  // Send to fast channel subscribers immediately if there are new stories
+  if (shouldSendFastChannels && fastChannelSubscribers.length > 0) {
+    await track({
+      channel: 'worker',
+      description: `Sending ${fastChannelFilteredStories.length} stories to ${fastChannelSubscribers.length} fast channel subscribers`,
+      event: 'Fast Channel Alert Delivery Starting',
+      icon: '⚡',
+      tags: {
+        alert_id: item.id,
+        alert_name: item.name,
+        stories_count: fastChannelFilteredStories.length,
+        subscribers_count: fastChannelSubscribers.length,
+        type: 'info',
+      },
+    })
+
+    for (const subscriber of fastChannelSubscribers) {
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, subscriber.userId),
+      })
+      await withTimeout(
+        herald({
+          alertName: item.name,
+          channelId: subscriber.channelId,
+          readerCount: allSubscribers.length,
+          stories: fastChannelFilteredStories,
+          strategy: item.strategy,
+          subscriptionId: subscriber.id,
+          user,
+          wait: item.wait,
+        }),
+        30 * 1000,
+        `Herald timeout for user ${user?.email || 'unknown'}`,
+      )
+    }
+    anySent = true
+  } else if (fastChannelSubscribers.length > 0) {
+    await track({
+      channel: 'worker',
+      description: `Fast channels: No new stories since last run`,
+      event: 'Fast Channel Alert Delivery Skipped',
+      icon: '⏭️',
+      tags: {
+        alert_id: item.id,
+        alert_name: item.name,
+        stories_found: fastChannelFilteredStories.length,
+        type: 'info',
+      },
+    })
+  }
+
+  // Update lastSent only if any messages were actually sent
+  if (anySent) {
+    await db
+      .update(alerts)
+      .set({ lastSent: currentTime })
+      .where(eq(alerts.id, item.id))
+  }
+
+  if (allSubscribers.length === 0) {
+    await track({
+      channel: 'worker',
+      description: `No subscribers found for alert "${item.name}"`,
+      event: 'No Subscribers Found',
+      icon: '🔍',
+      tags: {
+        alert_id: item.id,
+        alert_name: item.name,
+        type: 'info',
+      },
+    })
+  }
+
   await track({
     channel: 'worker',
-    description: `Completed processing: ${item.name} - Found ${stories.length} stories, sent ${filteredStories.length} new stories`,
+    description: `Completed processing: ${item.name} - Slow: ${shouldSendSlowChannels ? `sent ${slowChannelFilteredStories.length}` : `waiting (${slowChannelFilteredStories.length}/${item.wait.type === 'count' ? item.wait.value : '1'})`} to ${slowChannelSubscribers.length} subscribers. Fast: ${shouldSendFastChannels ? `sent ${fastChannelFilteredStories.length}` : 'no new'} to ${fastChannelSubscribers.length} subscribers`,
     event: 'Alert Processed',
     icon: '✅',
     tags: {
       alert_id: item.id,
       alert_name: item.name,
+      fast_sent: shouldSendFastChannels && fastChannelSubscribers.length > 0,
+      fast_stories: fastChannelFilteredStories.length,
+      fast_subscribers: fastChannelSubscribers.length,
       next_run: nextRun?.toISOString() || 'unknown',
-      stories_created: stories.length,
-      stories_sent: filteredStories.length,
+      slow_sent: shouldSendSlowChannels && slowChannelSubscribers.length > 0,
+      slow_stories: slowChannelFilteredStories.length,
+      slow_subscribers: slowChannelSubscribers.length,
+      stories_total: stories.length,
       type: 'info',
       urls_found: urls.length,
       wait_type: item.wait.type,
