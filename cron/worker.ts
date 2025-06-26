@@ -3,8 +3,8 @@ import { track } from '@everynews/logs'
 import {
   type Alert,
   alerts,
-  channels,
   type Content,
+  channels,
   subscriptions,
   users,
 } from '@everynews/schema'
@@ -56,7 +56,10 @@ export const processAlert = async (item: Alert) => {
 
   // Get all subscriptions and separate by channel type
   const allSubscribers = await db.query.subscriptions.findMany({
-    where: and(eq(subscriptions.alertId, item.id), isNull(subscriptions.deletedAt)),
+    where: and(
+      eq(subscriptions.alertId, item.id),
+      isNull(subscriptions.deletedAt),
+    ),
   })
 
   // Separate subscribers by channel speed type
@@ -69,10 +72,17 @@ export const processAlert = async (item: Alert) => {
       slowChannelSubscribers.push(subscriber)
     } else {
       const channel = await db.query.channels.findFirst({
-        where: and(eq(channels.id, subscriber.channelId), isNull(channels.deletedAt)),
+        where: and(
+          eq(channels.id, subscriber.channelId),
+          isNull(channels.deletedAt),
+        ),
       })
       // Fast channels: phone, push, slack, etc.
-      if (channel?.type === 'phone' || channel?.type === 'push' || channel?.type === 'slack') {
+      if (
+        channel?.type === 'phone' ||
+        channel?.type === 'push' ||
+        channel?.type === 'slack'
+      ) {
         fastChannelSubscribers.push(subscriber)
       } else {
         // Slow channels: email

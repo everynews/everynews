@@ -18,7 +18,11 @@ import {
 } from '@everynews/components/ui/radio-group'
 import { Separator } from '@everynews/components/ui/separator'
 import { toastNetworkError } from '@everynews/lib/error'
-import { type ChannelDto, ChannelDtoSchema } from '@everynews/schema/channel'
+import {
+  type ChannelDto,
+  ChannelDtoSchema,
+  ChannelSchema,
+} from '@everynews/schema/channel'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
 import { useRouter } from 'next/navigation'
@@ -65,10 +69,7 @@ export const ChannelCreatePage = () => {
         return
       }
 
-      const responseData = await res.json()
-      const createdChannel: any = Array.isArray(responseData)
-        ? responseData[0]
-        : responseData
+      const createdChannel = ChannelSchema.parse(await res.json())
       const channelId = createdChannel?.id
 
       if (channelId) {
