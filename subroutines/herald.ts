@@ -1,6 +1,6 @@
 import { db } from '@everynews/database'
 import { sendTemplateEmail } from '@everynews/emails'
-import { Alert } from '@everynews/emails/alert'
+import Alert from '@everynews/emails/alert'
 import { track } from '@everynews/logs'
 import {
   ChannelSchema,
@@ -20,6 +20,7 @@ const sendAlertEmail = async (parcel: {
   readerCount: number
   stories: Story[]
   strategy: Strategy
+  subscriptionId?: string
   wait: Wait
 }) => {
   try {
@@ -30,6 +31,7 @@ const sendAlertEmail = async (parcel: {
         readerCount: parcel.readerCount,
         stories: parcel.stories,
         strategy: parcel.strategy,
+        subscriptionId: parcel.subscriptionId,
         wait: parcel.wait,
       }),
       to: parcel.destination,
@@ -112,6 +114,7 @@ export const herald = async ({
   readerCount,
   stories,
   strategy,
+  subscriptionId,
   wait,
   user,
 }: {
@@ -120,6 +123,7 @@ export const herald = async ({
   readerCount: number
   stories: Story[]
   strategy: Strategy
+  subscriptionId?: string
   wait: Wait
   user?: { id: string; email: string }
 }) => {
@@ -143,6 +147,7 @@ export const herald = async ({
       readerCount: number
       stories: Story[]
       strategy: Strategy
+      subscriptionId?: string
       wait: Wait
     }
     let channelType: 'email' | 'slack' = 'email'
@@ -168,6 +173,7 @@ export const herald = async ({
         readerCount,
         stories,
         strategy,
+        subscriptionId,
         wait,
       }
     } else {
@@ -198,6 +204,7 @@ export const herald = async ({
         readerCount,
         stories,
         strategy,
+        subscriptionId,
         wait,
       }
       channelType = channel.type as 'email' | 'slack'

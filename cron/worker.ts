@@ -132,6 +132,7 @@ export const processAlert = async (item: Alert) => {
           readerCount: subscribers.length,
           stories: filteredStories,
           strategy: item.strategy,
+          subscriptionId: subscriber.id,
           user,
           wait: item.wait,
         }),

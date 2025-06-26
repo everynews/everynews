@@ -1,6 +1,7 @@
 import { sendTemplateEmail } from '@everynews/emails'
-import { MagicLinkEmail } from '@everynews/emails/magic-link'
-import { SubscriptionConfirmationEmail } from '@everynews/emails/subscription-confirmation'
+import ChannelVerificationEmail from '@everynews/emails/channel-verification'
+import MagicLinkEmail from '@everynews/emails/magic-link'
+import SubscriptionConfirmationEmail from '@everynews/emails/subscription-confirmation'
 
 export const sendMagicLink = async (
   {
@@ -50,10 +51,6 @@ export const sendChannelVerification = async ({
   email: string
   verificationLink: string
 }): Promise<void> => {
-  const { ChannelVerificationEmail } = await import(
-    '@everynews/emails/channel-verification'
-  )
-
   const template = ChannelVerificationEmail({ channelName, verificationLink })
 
   await sendTemplateEmail({
