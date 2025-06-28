@@ -1,8 +1,9 @@
 import { db } from '@everynews/database'
 import { sendTemplateEmail } from '@everynews/emails'
 import Alert from '@everynews/emails/alert'
+import { decrypt } from '@everynews/lib/crypto'
 import { track } from '@everynews/logs'
-import { sendSurgeAlert } from '@everynews/messengers'
+import { sendSlackAlert, sendSurgeAlert } from '@everynews/messengers'
 import {
   ChannelSchema,
   channels,
@@ -91,39 +92,16 @@ const sendAlertSlack = async (parcel: {
   stories: Story[]
   strategy: Strategy
   wait: Wait
+  config: any
 }) => {
-  try {
-    console.log(
-      `Sending slack message to ${parcel.destination} for ${parcel.alertName} with ${parcel.stories.length} stories`,
-    )
-
-    await track({
-      channel: 'herald',
-      description: `Sent slack message to ${parcel.destination}`,
-      event: 'Slack Alert Sent',
-      icon: '💬',
-      tags: {
-        alert_name: parcel.alertName,
-        destination: parcel.destination,
-        stories_count: parcel.stories.length,
-        type: 'info',
-      },
-    })
-  } catch (error) {
-    await track({
-      channel: 'herald',
-      description: `Failed to send slack message to ${parcel.destination}`,
-      event: 'Slack Alert Failed',
-      icon: '❌',
-      tags: {
-        alert_name: parcel.alertName,
-        destination: parcel.destination,
-        error: String(error),
-        type: 'error',
-      },
-    })
-    throw error
-  }
+  await sendSlackAlert({
+    accessToken: decrypt(parcel.config.accessToken),
+    alertName: parcel.alertName,
+    channelId: parcel.config.channel.id,
+    stories: parcel.stories,
+    strategy: parcel.strategy,
+    wait: parcel.wait,
+  })
 }
 
 export const herald = async ({
@@ -231,8 +209,12 @@ export const herald = async ({
     // Send the alert
     if (channelType === 'email') await sendAlertEmail(parcel)
     else if (channelType === 'phone') await sendAlertPhone(parcel)
-    else if (channelType === 'slack') await sendAlertSlack(parcel)
-    else {
+    else if (channelType === 'slack') {
+      await sendAlertSlack({
+        ...parcel,
+        config: channel.config,
+      })
+    } else {
       await track({
         channel: 'herald',
         description: `Unsupported channel type: ${channelType}`,

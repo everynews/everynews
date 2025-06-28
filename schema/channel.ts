@@ -54,19 +54,27 @@ const PhoneChannelSchema = BaseChannel.extend({
   type: z.literal('phone').openapi({ example: 'phone' }),
 }).openapi({ ref: 'PhoneChannelSchema' })
 
-// const SlackChannelSchema = BaseChannel.extend({
-//   config: z.object({
-//     destination: z.string().openapi({
-//       example:
-//         'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
-//     }),
-//   }),
-//   type: z.literal('slack').openapi({ example: 'slack' }),
-// }).openapi({ ref: 'SlackChannelSchema' })
+const SlackChannelSchema = BaseChannel.extend({
+  config: z.object({
+    accessToken: z.string().openapi({ example: 'xoxb-...' }),
+    channel: z.object({
+      id: z.string().openapi({ example: 'C00000000' }),
+      name: z.string().openapi({ example: 'general' }),
+    }),
+    destination: z.string().openapi({ example: '#general' }),
+    teamId: z.string().openapi({ example: 'T00000000' }),
+    workspace: z.object({
+      id: z.string().openapi({ example: 'T00000000' }),
+      name: z.string().openapi({ example: 'My Workspace' }),
+    }), // For display purposes
+  }),
+  type: z.literal('slack').openapi({ example: 'slack' }),
+}).openapi({ ref: 'SlackChannelSchema' })
 
 export const ChannelSchema = z.discriminatedUnion('type', [
   EmailChannelSchema,
   PhoneChannelSchema,
+  SlackChannelSchema,
 ])
 
 const EmailChannelDtoSchema = EmailChannelSchema.omit({
@@ -89,16 +97,20 @@ const PhoneChannelDtoSchema = PhoneChannelSchema.omit({
   verifiedAt: true,
 }).openapi({ ref: 'PhoneChannelDtoSchema' })
 
-// const SlackChannelDtoSchema = SlackChannelSchema.omit({
-//   createdAt: true,
-//   id: true,
-//   updatedAt: true,
-//   userId: true,
-// }).openapi({ ref: 'SlackChannelDtoSchema' })
+const SlackChannelDtoSchema = SlackChannelSchema.omit({
+  createdAt: true,
+  deletedAt: true,
+  id: true,
+  updatedAt: true,
+  userId: true,
+  verified: true,
+  verifiedAt: true,
+}).openapi({ ref: 'SlackChannelDtoSchema' })
 
 export const ChannelDtoSchema = z.discriminatedUnion('type', [
   EmailChannelDtoSchema,
   PhoneChannelDtoSchema,
+  SlackChannelDtoSchema,
 ])
 
 export type Channel = z.infer<typeof ChannelSchema>
