@@ -4,36 +4,12 @@ import { track } from '@everynews/logs'
 import { channels } from '@everynews/schema'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
-import { InstallProvider } from '@slack/oauth'
 import { WebClient } from '@slack/web-api'
 import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver } from 'hono-openapi/zod'
 import { z } from 'zod'
-
-// Initialize Slack OAuth installer
-const installer = new InstallProvider({
-  clientId: process.env.SLACK_CLIENT_ID!,
-  clientSecret: process.env.SLACK_CLIENT_SECRET!,
-  installationStore: {
-    deleteInstallation: async (query) => {
-      // Not needed for our use case
-      throw new Error('Not implemented')
-    },
-    fetchInstallation: async (query) => {
-      // Not needed for our use case
-      throw new Error('Not implemented')
-    },
-    // We'll store tokens in our channels table
-    storeInstallation: async (installation) => {
-      // This is handled in the callback
-      return
-    },
-  },
-  scopes: ['channels:read', 'chat:write', 'chat:write.public'],
-  stateSecret: process.env.SLACK_STATE_SECRET || 'my-state-secret',
-})
 
 export const SlackRouter = new Hono<WithAuth>()
   .use(authMiddleware)
@@ -54,12 +30,17 @@ export const SlackRouter = new Hono<WithAuth>()
       }
 
       try {
-        // Generate the installation URL
-        const url = await installer.generateInstallUrl({
-          // Pass state to track the user
-          metadata: JSON.stringify({ userId: user.id }),
-          redirectUri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/slack/callback`,
+        // Generate the installation URL manually
+        const state = Buffer.from(JSON.stringify({ userId: user.id })).toString(
+          'base64',
+        )
+        const params = new URLSearchParams({
+          client_id: process.env.SLACK_CLIENT_ID || '',
+          redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/slack/callback`,
+          scope: 'channels:read,chat:write,chat:write.public',
+          state: state,
         })
+        const url = `https://slack.com/oauth/v2/authorize?${params.toString()}`
 
         await track({
           channel: 'slack',
@@ -108,84 +89,67 @@ export const SlackRouter = new Hono<WithAuth>()
       const { code, state } = c.req.query()
 
       try {
-        // Handle the OAuth callback
-        const installation = await installer.handleCallback(c.req.raw, {
-          failure: async (error, options, req, res) => {
-            await track({
-              channel: 'slack',
-              description: 'Slack installation failed',
-              event: 'Slack Install Failed',
-              icon: '❌',
-              tags: {
-                error: String(error),
-                type: 'error',
-              },
-              user_id: user.id,
-            })
-            return c.redirect('/channels?error=slack_install_failed')
-          },
-          success: async (installation, options, req, res) => {
-            // Extract user ID from state
-            const metadata = JSON.parse(options.metadata || '{}')
-            const userId = metadata.userId
+        // Manually handle OAuth token exchange since Hono uses Web API Request objects
+        if (!code) {
+          throw new Error('Missing authorization code')
+        }
 
-            if (userId !== user.id) {
-              throw new Error('User mismatch')
-            }
-
-            // Create a temporary Slack channel to store OAuth data
-            // The user will update this with their selected channel later
-            const slackData = {
-              accessToken: installation.access_token!,
-              botUserId: installation.bot?.bot_user_id || '',
-              teamId: installation.team?.id || '',
-              teamName: installation.team?.name || '',
-            }
-
-            // Create a temporary channel entry
-            const [tempChannel] = await db
-              .insert(channels)
-              .values({
-                config: {
-                  accessToken: encrypt(slackData.accessToken),
-                  channel: {
-                    id: '',
-                    name: '',
-                  },
-                  destination: '',
-                  teamId: slackData.teamId,
-                  workspace: {
-                    id: slackData.teamId,
-                    name: slackData.teamName,
-                  },
-                },
-                name: `Slack - ${slackData.teamName} (Select Channel)`,
-                type: 'slack',
-                userId: user.id,
-                verified: false,
-              })
-              .returning()
-
-            await track({
-              channel: 'slack',
-              description: `Slack workspace connected: ${slackData.teamName}`,
-              event: 'Slack Workspace Connected',
-              icon: '✅',
-              tags: {
-                channel_id: tempChannel.id,
-                team_id: slackData.teamId,
-                team_name: slackData.teamName,
-                type: 'info',
-              },
-              user_id: user.id,
-            })
-
-            // Redirect to channel selection page
-            return c.redirect(`/channels/${tempChannel.id}/slack-setup`)
-          },
+        // Exchange code for access token
+        const slack = new WebClient()
+        const result = await slack.oauth.v2.access({
+          client_id: process.env.SLACK_CLIENT_ID || '',
+          client_secret: process.env.SLACK_CLIENT_SECRET || '',
+          code: code,
         })
 
-        return installation
+        if (!result.ok || !result.access_token) {
+          throw new Error('Failed to get access token')
+        }
+
+        // Parse state to get user ID
+        const stateData = state
+          ? JSON.parse(Buffer.from(state, 'base64').toString())
+          : {}
+        const userId = stateData.userId
+
+        if (userId !== user.id) {
+          throw new Error('User mismatch')
+        }
+
+        // Create a temporary Slack channel to store OAuth data
+        const slackData = {
+          accessToken: result.access_token,
+          botUserId: result.bot_user_id || '',
+          teamId: result.team?.id || '',
+          teamName: result.team?.name || 'Unknown Team',
+        }
+
+        const [tempChannel] = await db
+          .insert(channels)
+          .values({
+            config: encrypt(JSON.stringify(slackData)),
+            name: `Slack: ${slackData.teamName}`,
+            type: 'slack',
+            userId: user.id,
+          })
+          .returning()
+
+        await track({
+          channel: 'slack',
+          description: 'Slack installation successful',
+          event: 'Slack Install Success',
+          icon: '✅',
+          tags: {
+            channel_id: tempChannel.id,
+            team_id: slackData.teamId,
+            team_name: slackData.teamName,
+            type: 'info',
+          },
+          user_id: user.id,
+        })
+
+        // Redirect to channel selection page
+        return c.redirect(`/channels/${tempChannel.id}/slack-setup`)
       } catch (error) {
         await track({
           channel: 'slack',
@@ -250,7 +214,13 @@ export const SlackRouter = new Hono<WithAuth>()
           return c.json({ error: 'Channel not found' }, 404)
         }
 
-        const config = channel.config as any
+        const config = channel.config as {
+          accessToken: string
+          channel: { id: string; name: string }
+          destination: string
+          teamId: string
+          workspace: { id: string; name: string }
+        }
         const accessToken = decrypt(config.accessToken)
 
         // Initialize Slack client
@@ -265,9 +235,9 @@ export const SlackRouter = new Hono<WithAuth>()
 
         const slackChannels =
           result.channels?.map((channel) => ({
-            id: channel.id!,
+            id: channel.id || '',
             is_private: channel.is_private || false,
-            name: channel.name!,
+            name: channel.name || '',
           })) || []
 
         await track({
@@ -337,7 +307,13 @@ export const SlackRouter = new Hono<WithAuth>()
           return c.json({ error: 'Channel not found' }, 404)
         }
 
-        const config = channel.config as any
+        const config = channel.config as {
+          accessToken: string
+          channel: { id: string; name: string }
+          destination: string
+          teamId: string
+          workspace: { id: string; name: string }
+        }
         const accessToken = decrypt(config.accessToken)
         const slack = new WebClient(accessToken)
 

@@ -71,73 +71,64 @@ export default async function AlertsPage() {
     .sort((a, b) => b.subscriberCount - a.subscriberCount)
 
   return (
-    <>
-      <div className='container mx-auto p-4'>
-        <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
-          {alertsData.map(
-            ({ alert: alertInfo, storyCount, subscriberCount }) => (
-              <Link
-                href={`/alerts/${alertInfo.id}`}
-                key={alertInfo.id}
-                lang={alertInfo.languageCode}
-              >
-                <Card className='h-full hover:shadow-md transition-shadow'>
-                  <CardHeader>
-                    <div className='flex items-start justify-between'>
-                      <div className='flex-1'>
-                        <CardTitle className='text-lg line-clamp-2 cursor-pointer'>
-                          {alertInfo.name}
-                        </CardTitle>
-                      </div>
-                      <Badge
-                        variant={alertInfo.active ? 'default' : 'secondary'}
-                      >
-                        {alertInfo.active ? 'Active' : 'Inactive'}
-                      </Badge>
-                    </div>
-                  </CardHeader>
+    <div className='container mx-auto p-4'>
+      <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
+        {alertsData.map(({ alert: alertInfo, storyCount, subscriberCount }) => (
+          <Link
+            href={`/alerts/${alertInfo.id}`}
+            key={alertInfo.id}
+            lang={alertInfo.languageCode}
+          >
+            <Card className='h-full hover:shadow-md transition-shadow'>
+              <CardHeader>
+                <div className='flex items-start justify-between'>
+                  <div className='flex-1'>
+                    <CardTitle className='text-lg line-clamp-2 cursor-pointer'>
+                      {alertInfo.name}
+                    </CardTitle>
+                  </div>
+                  <Badge variant={alertInfo.active ? 'default' : 'secondary'}>
+                    {alertInfo.active ? 'Active' : 'Inactive'}
+                  </Badge>
+                </div>
+              </CardHeader>
 
-                  <CardContent>
-                    <div className='flex flex-col gap-3'>
-                      {alertInfo.description && (
-                        <p className='text-sm text-muted-foreground line-clamp-2'>
-                          {alertInfo.description}
-                        </p>
-                      )}
-                      <div className='flex items-center justify-between text-sm text-muted-foreground'>
-                        <div className='flex items-center gap-2'>
-                          <FileText className='size-4' />
-                          <span>
-                            {storyCount}{' '}
-                            {storyCount === 1 ? 'story' : 'stories'}
-                          </span>
-                        </div>
-                        <div className='flex items-center gap-2'>
-                          <Users className='size-4' />
-                          <span>
-                            {subscriberCount}{' '}
-                            {subscriberCount === 1
-                              ? 'subscriber'
-                              : 'subscribers'}
-                          </span>
-                        </div>
-                      </div>
-                      {alertInfo.strategy.query && (
-                        <Badge
-                          className='text-muted-foreground text-xs'
-                          variant='outline'
-                        >
-                          {alertInfo.strategy.query}
-                        </Badge>
-                      )}
+              <CardContent>
+                <div className='flex flex-col gap-3'>
+                  {alertInfo.description && (
+                    <p className='text-sm text-muted-foreground line-clamp-2'>
+                      {alertInfo.description}
+                    </p>
+                  )}
+                  <div className='flex items-center justify-between text-sm text-muted-foreground'>
+                    <div className='flex items-center gap-2'>
+                      <FileText className='size-4' />
+                      <span>
+                        {storyCount} {storyCount === 1 ? 'story' : 'stories'}
+                      </span>
                     </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ),
-          )}
-        </div>
+                    <div className='flex items-center gap-2'>
+                      <Users className='size-4' />
+                      <span>
+                        {subscriberCount}{' '}
+                        {subscriberCount === 1 ? 'subscriber' : 'subscribers'}
+                      </span>
+                    </div>
+                  </div>
+                  {alertInfo.strategy.query && (
+                    <Badge
+                      className='text-muted-foreground text-xs'
+                      variant='outline'
+                    >
+                      {alertInfo.strategy.query}
+                    </Badge>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
       </div>
-    </>
+    </div>
   )
 }

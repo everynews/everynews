@@ -1,5 +1,11 @@
 import { track } from '@everynews/logs'
 import type { Story, Strategy, WaitSchema } from '@everynews/schema'
+import type {
+  ContextBlockElement,
+  KnownBlock,
+  PlainTextElement,
+  SectionBlock,
+} from '@slack/types'
 import { WebClient } from '@slack/web-api'
 import type { z } from 'zod'
 
@@ -25,10 +31,10 @@ export const sendSlackAlert = async ({
 
     // Build the message blocks
     const blocks = buildSlackBlocks({
+      _strategy: strategy,
+      _wait: wait,
       alertName,
       stories,
-      strategy,
-      wait,
     })
 
     const result = await slack.chat.postMessage({
@@ -47,7 +53,7 @@ export const sendSlackAlert = async ({
       tags: {
         alert_name: alertName,
         channel_id: channelId,
-        message_ts: result.ts,
+        message_ts: result.ts || '',
         stories_count: stories.length,
         type: 'info',
       },
@@ -72,15 +78,15 @@ export const sendSlackAlert = async ({
 const buildSlackBlocks = ({
   alertName,
   stories,
-  strategy,
-  wait,
+  _strategy,
+  _wait,
 }: {
   alertName: string
   stories: Story[]
-  strategy: Strategy
-  wait: Wait
+  _strategy: Strategy
+  _wait: Wait
 }) => {
-  const blocks: any[] = []
+  const blocks: KnownBlock[] = []
 
   // Header
   blocks.push({
@@ -108,62 +114,51 @@ const buildSlackBlocks = ({
   // Stories
   stories.slice(0, 10).forEach((story, index) => {
     // Story section
-    const storyBlock: any = {
+    const storyBlock: SectionBlock = {
       text: {
-        text: `*<${story.url}|${story.title}>*\n${story.description || ''}`.slice(
-          0,
-          3000,
-        ),
+        text: `*<${story.url}|${story.title}>*`.slice(0, 3000),
         type: 'mrkdwn',
       },
       type: 'section',
     }
 
-    // Add thumbnail if available
-    if (story.imageUrl) {
-      storyBlock.accessory = {
-        alt_text: story.title || 'Story image',
-        image_url: story.imageUrl,
-        type: 'image',
-      }
-    }
+    // Thumbnail removed - not available in Story type
 
     blocks.push(storyBlock)
 
     // Add context with metadata
-    const contextElements = []
+    const contextElements: ContextBlockElement[] = []
 
-    if (story.source) {
+    if (story.originalUrl) {
       contextElements.push({
         emoji: true,
-        text: story.source,
+        text: new URL(story.originalUrl).hostname,
         type: 'plain_text',
-      })
+      } as PlainTextElement)
     }
 
-    if (story.publishedAt) {
-      const publishedDate = new Date(story.publishedAt)
-      const now = new Date()
-      const diffHours = Math.floor(
-        (now.getTime() - publishedDate.getTime()) / (1000 * 60 * 60),
-      )
+    // Use createdAt instead of publishedAt
+    const createdDate = new Date(story.createdAt)
+    const now = new Date()
+    const diffHours = Math.floor(
+      (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60),
+    )
 
-      let timeAgo = ''
-      if (diffHours < 1) {
-        timeAgo = 'Just now'
-      } else if (diffHours < 24) {
-        timeAgo = `${diffHours}h ago`
-      } else {
-        const diffDays = Math.floor(diffHours / 24)
-        timeAgo = `${diffDays}d ago`
-      }
-
-      contextElements.push({
-        emoji: true,
-        text: timeAgo,
-        type: 'plain_text',
-      })
+    let timeAgo = ''
+    if (diffHours < 1) {
+      timeAgo = 'Just now'
+    } else if (diffHours < 24) {
+      timeAgo = `${diffHours}h ago`
+    } else {
+      const diffDays = Math.floor(diffHours / 24)
+      timeAgo = `${diffDays}d ago`
     }
+
+    contextElements.push({
+      emoji: true,
+      text: timeAgo,
+      type: 'plain_text',
+    } as PlainTextElement)
 
     if (contextElements.length > 0) {
       blocks.push({

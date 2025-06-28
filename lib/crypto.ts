@@ -1,4 +1,4 @@
-import { createCipheriv, createDecipheriv, randomBytes } from 'crypto'
+import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
 
 const algorithm = 'aes-256-gcm'
 const keyLength = 32 // 256 bits
@@ -46,7 +46,6 @@ export const decrypt = (encryptedText: string): string => {
   const combined = Buffer.from(encryptedText, 'base64')
 
   // Extract components
-  const salt = combined.slice(0, saltLength)
   const iv = combined.slice(saltLength, saltLength + ivLength)
   const tag = combined.slice(
     saltLength + ivLength,

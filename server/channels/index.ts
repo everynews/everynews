@@ -435,7 +435,13 @@ export const ChannelRouter = new Hono<WithAuth>()
         })
       } else if (channel.type === 'slack') {
         // For Slack, send a test message to verify the channel
-        const config = channel.config as any
+        const config = channel.config as {
+          accessToken: string
+          channel: { id: string; name: string }
+          destination: string
+          teamId: string
+          workspace: { id: string; name: string }
+        }
         await sendSlackVerification({
           accessToken: decrypt(config.accessToken),
           channelId: config.channel.id,

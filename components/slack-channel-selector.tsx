@@ -1,121 +1,85 @@
-'use client'
-
-import { api } from '@everynews/app/api'
-import { Button } from '@everynews/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@everynews/components/ui/select'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
+import { db } from '@everynews/database'
+import { channels } from '@everynews/schema/channel'
+import { eq } from 'drizzle-orm'
+import { SlackChannelSelectorClient } from './slack-channel-selector-client'
 
 interface SlackChannelSelectorProps {
   channelId: string
 }
 
-export const SlackChannelSelector = ({
+// Server component for fetching Slack channels
+export const SlackChannelSelector = async ({
   channelId,
 }: SlackChannelSelectorProps) => {
-  const router = useRouter()
-  const [channels, setChannels] = useState<
-    Array<{ id: string; name: string; is_private: boolean }>
-  >([])
-  const [selectedChannel, setSelectedChannel] = useState<string>('')
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
+  // Fetch the channel to get the access token
+  const [channelData] = await db
+    .select()
+    .from(channels)
+    .where(eq(channels.id, channelId))
+    .limit(1)
 
-  useEffect(() => {
-    loadChannels()
-  }, [])
-
-  const loadChannels = async () => {
-    try {
-      const response = await api.slack.channels.$post({
-        json: { channelId },
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setChannels(data.channels)
-      } else {
-        toast.error('Failed to load Slack channels')
-      }
-    } catch (error) {
-      toast.error('Error loading Slack channels')
-    } finally {
-      setLoading(false)
-    }
+  if (!channelData) {
+    return <div>Channel not found</div>
   }
 
-  const handleSave = async () => {
-    if (!selectedChannel) {
-      toast.error('Please select a channel')
-      return
-    }
+  const config = channelData.config as {
+    accessToken?: string
+    teamId?: string
+    workspace?: { id: string; name: string }
+  }
 
-    setSaving(true)
-    try {
-      const channel = channels.find((c) => c.id === selectedChannel)
-      if (!channel) return
+  if (!config.accessToken) {
+    return <div>Channel not connected to Slack</div>
+  }
 
-      const response = await api.channels[':id'].$put({
-        json: {
-          config: {
-            channel: {
-              id: channel.id,
-              name: channel.name,
-            },
-            destination: `#${channel.name}`,
-          },
-          name: `Slack - ${channel.name}`,
-          type: 'slack',
+  // Fetch Slack channels server-side
+  let slackChannels: Array<{ id: string; name: string; is_private: boolean }> =
+    []
+  let error = null
+
+  try {
+    const slackResponse = await fetch(
+      'https://slack.com/api/conversations.list',
+      {
+        headers: {
+          Authorization: `Bearer ${config.accessToken}`,
+          'Content-Type': 'application/json',
         },
-        param: { id: channelId },
-      })
+        method: 'GET',
+      },
+    )
 
-      if (response.ok) {
-        toast.success('Slack channel connected successfully!')
-        router.push('/channels')
-        router.refresh()
+    if (slackResponse.ok) {
+      const data = await slackResponse.json()
+      if (data.ok && data.channels) {
+        slackChannels = data.channels
+          .filter(
+            (ch: { is_member: boolean; is_archived: boolean }) =>
+              ch.is_member && !ch.is_archived,
+          )
+          .map((ch: { id: string; is_private: boolean; name: string }) => ({
+            id: ch.id,
+            is_private: ch.is_private,
+            name: ch.name,
+          }))
       } else {
-        toast.error('Failed to update channel')
+        error = 'Failed to fetch Slack channels'
       }
-    } catch (error) {
-      toast.error('Error saving channel')
-    } finally {
-      setSaving(false)
+    } else {
+      error = 'Failed to connect to Slack'
     }
+  } catch (e) {
+    error = `Error loading Slack channels: ${JSON.stringify(e)}`
   }
 
-  if (loading) {
-    return <div>Loading Slack channels...</div>
+  if (error) {
+    return <div>{error}</div>
   }
 
   return (
-    <div className='space-y-4'>
-      <div>
-        <label className='text-sm font-medium'>Select Slack Channel</label>
-        <Select value={selectedChannel} onValueChange={setSelectedChannel}>
-          <SelectTrigger>
-            <SelectValue placeholder='Choose a channel' />
-          </SelectTrigger>
-          <SelectContent>
-            {channels.map((channel) => (
-              <SelectItem key={channel.id} value={channel.id}>
-                #{channel.name} {channel.is_private && '🔒'}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <Button onClick={handleSave} disabled={!selectedChannel || saving}>
-        {saving ? 'Saving...' : 'Save Channel'}
-      </Button>
-    </div>
+    <SlackChannelSelectorClient
+      channelId={channelId}
+      channels={slackChannels}
+    />
   )
 }

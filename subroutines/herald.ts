@@ -92,7 +92,13 @@ const sendAlertSlack = async (parcel: {
   stories: Story[]
   strategy: Strategy
   wait: Wait
-  config: any
+  config: {
+    accessToken: string
+    channel: { id: string; name: string }
+    destination: string
+    teamId: string
+    workspace: { id: string; name: string }
+  }
 }) => {
   await sendSlackAlert({
     accessToken: decrypt(parcel.config.accessToken),
@@ -204,17 +210,27 @@ export const herald = async ({
         wait,
       }
       channelType = channel.type as 'email' | 'phone' | 'slack'
+
+      // Send the alert for Slack channels with config
+      if (channelType === 'slack') {
+        await sendAlertSlack({
+          ...parcel,
+          config: channel.config as {
+            accessToken: string
+            channel: { id: string; name: string }
+            destination: string
+            teamId: string
+            workspace: { id: string; name: string }
+          },
+        })
+        return
+      }
     }
 
-    // Send the alert
+    // Send the alert for email/phone channels
     if (channelType === 'email') await sendAlertEmail(parcel)
     else if (channelType === 'phone') await sendAlertPhone(parcel)
-    else if (channelType === 'slack') {
-      await sendAlertSlack({
-        ...parcel,
-        config: channel.config,
-      })
-    } else {
+    else {
       await track({
         channel: 'herald',
         description: `Unsupported channel type: ${channelType}`,

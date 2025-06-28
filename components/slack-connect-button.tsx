@@ -5,7 +5,7 @@ import { Slack } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 export const SlackConnectButton = () => {
-  const router = useRouter()
+  const _router = useRouter()
 
   const handleConnect = () => {
     // Redirect to Slack OAuth flow
