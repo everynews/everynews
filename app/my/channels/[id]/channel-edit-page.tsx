@@ -1,6 +1,8 @@
 'use client'
 
 import { api } from '@everynews/app/api'
+import { ChannelStatusBadge } from '@everynews/components/channel-status-badge'
+import { SlackTestButton } from '@everynews/components/slack-test-button'
 import { SubmitButton } from '@everynews/components/submit-button'
 import { Button } from '@everynews/components/ui/button'
 import {
@@ -20,6 +22,8 @@ import {
   ChannelDtoSchema,
 } from '@everynews/schema/channel'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Slack } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -35,6 +39,33 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
   })
 
   const onSubmit = async (values: ChannelDto) => {
+    // Slack channels can't update destination through this form
+    if (channel.type === 'slack') {
+      setIsSubmitting(true)
+      try {
+        const res = await api.channels[':id'].$put({
+          json: { ...values, config: channel.config },
+          param: { id: channel.id },
+        })
+
+        if (!res.ok) {
+          const errorData = await res.json()
+          const errorMessage = errorData?.error || 'Failed to update channel'
+          toast.error(errorMessage)
+          return
+        }
+
+        toast.success(`Channel "${form.watch('name')}" updated.`)
+        router.push('/my/channels')
+      } catch (e) {
+        toastNetworkError(e as Error)
+      } finally {
+        setIsSubmitting(false)
+      }
+      return
+    }
+
+    // Handle regular channels
     setIsSubmitting(true)
     try {
       const res = await api.channels[':id'].$put({
@@ -75,10 +106,15 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
   return (
     <div className='container mx-auto'>
       <div className='mb-6'>
-        <h1 className='text-3xl font-bold'>Edit Channel</h1>
-        <p className='text-muted-foreground mt-1'>
-          Update your delivery channel settings
-        </p>
+        <div className='flex items-center justify-between'>
+          <div>
+            <h1 className='text-3xl font-bold'>Edit Channel</h1>
+            <p className='text-muted-foreground mt-1'>
+              Update your delivery channel settings
+            </p>
+          </div>
+          <ChannelStatusBadge channel={channel} />
+        </div>
       </div>
       <Form {...form}>
         <form
@@ -101,29 +137,78 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
 
           <Separator />
 
-          <FormField
-            control={form.control}
-            name='config.destination'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  {channel.type === 'phone' ? 'Phone Number' : 'Email Address'}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder={
-                      channel.type === 'phone'
-                        ? '+1234567890'
-                        : 'you@example.com'
-                    }
-                    type={channel.type === 'phone' ? 'tel' : 'email'}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {channel.type === 'slack' ? (
+            <div className='space-y-4'>
+              <div>
+                <p className='text-sm font-medium mb-2'>Slack Configuration</p>
+                <div className='rounded-lg border bg-muted/50 p-4 space-y-3'>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-sm text-muted-foreground'>
+                      Workspace
+                    </span>
+                    <span className='text-sm font-medium'>
+                      {channel.config.workspace?.name ||
+                        channel.config.teamId ||
+                        'Unknown'}
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-sm text-muted-foreground'>
+                      Channel
+                    </span>
+                    <span className='text-sm font-medium'>
+                      {channel.config.channel?.name
+                        ? `#${channel.config.channel.name}`
+                        : 'Not selected'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className='flex flex-col gap-2'>
+                <Button asChild variant='outline' className='w-full'>
+                  <Link href={`/channels/${channel.id}/slack-setup`}>
+                    <Slack className='size-4 mr-2' />
+                    Change Slack Channel
+                  </Link>
+                </Button>
+                <SlackTestButton
+                  channel={channel}
+                  variant='secondary'
+                  className='w-full'
+                />
+                <p className='text-xs text-muted-foreground text-center'>
+                  To connect a different workspace, create a new Slack channel
+                </p>
+              </div>
+            </div>
+          ) : (
+            <FormField
+              control={form.control}
+              name='config.destination'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {channel.type === 'phone'
+                      ? 'Phone Number'
+                      : 'Email Address'}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder={
+                        channel.type === 'phone'
+                          ? '+1234567890'
+                          : 'you@example.com'
+                      }
+                      type={channel.type === 'phone' ? 'tel' : 'email'}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <div className='flex justify-end gap-2'>
             <Button

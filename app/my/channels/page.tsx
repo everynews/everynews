@@ -1,4 +1,5 @@
 import { whoami } from '@everynews/auth/session'
+import { ChannelStatusBadge } from '@everynews/components/channel-status-badge'
 import { ClickableCard } from '@everynews/components/clickable-card'
 import { DeleteChannelPopover } from '@everynews/components/delete-channel-popover'
 import { SendVerificationButton } from '@everynews/components/send-verification-button'
@@ -7,7 +8,7 @@ import { Button } from '@everynews/components/ui/button'
 import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { and, eq, isNull } from 'drizzle-orm'
-import { Mail, Phone, Trash2 } from 'lucide-react'
+import { Mail, Phone, Slack, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -87,7 +88,9 @@ export default async function MyChannelsPage() {
                   </Button>
                 </DeleteChannelPopover>
                 <div className='flex items-center gap-2'>
-                  {!item.verified && <SendVerificationButton channel={item} />}
+                  {!item.verified && item.type !== 'slack' && (
+                    <SendVerificationButton channel={item} />
+                  )}
                 </div>
               </div>
             }
@@ -97,11 +100,9 @@ export default async function MyChannelsPage() {
             </h3>
 
             <div className='space-y-2 text-sm text-muted-foreground mb-4'>
-              <div className='flex justify-between'>
+              <div className='flex justify-between items-center'>
                 <span>Status</span>
-                <span className='text-muted-foreground'>
-                  {item.verified ? 'Verified' : 'Pending'}
-                </span>
+                <ChannelStatusBadge channel={item} />
               </div>
               <div className='flex justify-between'>
                 <span>Type</span>
@@ -110,6 +111,8 @@ export default async function MyChannelsPage() {
                     <Mail className='size-4' />
                   ) : item.type === 'phone' ? (
                     <Phone className='size-4' />
+                  ) : item.type === 'slack' ? (
+                    <Slack className='size-4' />
                   ) : null}
                   <span className='capitalize'>{item.type}</span>
                 </div>
@@ -117,7 +120,9 @@ export default async function MyChannelsPage() {
               <div className='flex justify-between'>
                 <span>Destination</span>
                 <span className='text-muted-foreground truncate max-w-[150px]'>
-                  {item.config.destination}
+                  {item.type === 'slack' && item.config.channel
+                    ? `#${item.config.channel.name}`
+                    : item.config.destination}
                 </span>
               </div>
               <div className='flex justify-between'>

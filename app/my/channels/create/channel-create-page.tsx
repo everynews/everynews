@@ -25,6 +25,7 @@ import {
 } from '@everynews/schema/channel'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
+import { Slack } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -34,8 +35,11 @@ export const ChannelCreatePage = () => {
   const router = useRouter()
   const emailId = useId()
   const phoneId = useId()
+  const slackId = useId()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [channelType, setChannelType] = useState<'email' | 'phone'>('email')
+  const [channelType, setChannelType] = useState<'email' | 'phone' | 'slack'>(
+    'email',
+  )
   const [verificationCode, setVerificationCode] = useState('')
   const [showVerificationInput, setShowVerificationInput] = useState(false)
   const [verificationChannelId, setVerificationChannelId] = useState<
@@ -58,6 +62,12 @@ export const ChannelCreatePage = () => {
   }, [channelType, form])
 
   const onSubmit = async (values: ChannelDto) => {
+    // Handle Slack channel type differently
+    if (channelType === 'slack') {
+      window.location.href = '/api/slack/install'
+      return
+    }
+
     setIsSubmitting(true)
     try {
       const res = await api.channels.$post({ json: values })
@@ -203,7 +213,9 @@ export const ChannelCreatePage = () => {
                       placeholder={
                         channelType === 'phone'
                           ? 'My SMS Channel'
-                          : 'My Email Channel'
+                          : channelType === 'slack'
+                            ? 'My Slack Channel'
+                            : 'My Email Channel'
                       }
                       {...field}
                     />
@@ -220,7 +232,7 @@ export const ChannelCreatePage = () => {
               <RadioGroup
                 value={channelType}
                 onValueChange={(value) =>
-                  setChannelType(value as 'email' | 'phone')
+                  setChannelType(value as 'email' | 'phone' | 'slack')
                 }
               >
                 <div className='flex items-center space-x-2'>
@@ -241,34 +253,59 @@ export const ChannelCreatePage = () => {
                     SMS (Phone)
                   </label>
                 </div>
+                <div className='flex items-center space-x-2'>
+                  <RadioGroupItem value='slack' id={slackId} />
+                  <label
+                    htmlFor={slackId}
+                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2'
+                  >
+                    <Slack className='size-4' />
+                    Slack
+                  </label>
+                </div>
               </RadioGroup>
             </FormItem>
 
             <Separator />
 
-            <FormField
-              control={form.control}
-              name='config.destination'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {channelType === 'phone' ? 'Phone Number' : 'Email Address'}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder={
-                        channelType === 'phone'
-                          ? '+1234567890'
-                          : 'you@example.com'
-                      }
-                      type={channelType === 'phone' ? 'tel' : 'email'}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {channelType === 'slack' ? (
+              <div className='rounded-lg border bg-muted/50 p-4'>
+                <p className='text-sm text-muted-foreground mb-2'>
+                  You'll be redirected to Slack to connect your workspace and
+                  select a channel.
+                </p>
+                <p className='text-sm text-muted-foreground'>
+                  Make sure you have permission to install apps in your Slack
+                  workspace.
+                </p>
+              </div>
+            ) : (
+              <FormField
+                control={form.control}
+                name='config.destination'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {channelType === 'phone'
+                        ? 'Phone Number'
+                        : 'Email Address'}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={
+                          channelType === 'phone'
+                            ? '+1234567890'
+                            : 'you@example.com'
+                        }
+                        type={channelType === 'phone' ? 'tel' : 'email'}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <div className='flex justify-end gap-2'>
               <Button
@@ -282,7 +319,7 @@ export const ChannelCreatePage = () => {
                 onClick={form.handleSubmit(onSubmit)}
                 loading={isSubmitting}
               >
-                Create
+                {channelType === 'slack' ? 'Connect Slack' : 'Create'}
               </SubmitButton>
             </div>
           </form>
