@@ -43,6 +43,7 @@ export const GET = async (request: Request) => {
       >
         <div tw='flex flex-col w-full p-24 pt-16'>
           <h2 tw='items-center text-7xl text-slate-400 text-left flex flex-row gap-20'>
+            {/* biome-ignore lint/performance/noImgElement: ImageResponse requires img element for OG image generation */}
             <img
               src={logoBase64}
               width='80'
