@@ -1,4 +1,5 @@
 import { db } from '@everynews/database'
+import { decrypt } from '@everynews/lib/crypto'
 import { channels } from '@everynews/schema/channel'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
@@ -19,10 +20,12 @@ const SlackConfigSchema = z.object({
     .optional(),
   destination: z.string().optional(),
   teamId: z.string(),
-  workspace: z.object({
-    id: z.string(),
-    name: z.string(),
-  }),
+  workspace: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+    })
+    .optional(),
 })
 
 // Server component for fetching Slack channels
@@ -60,6 +63,9 @@ export const SlackChannelSelector = async ({
   let error = null
 
   try {
+    // Decrypt the access token
+    const decryptedToken = await decrypt(config.accessToken)
+
     // Create AbortController for timeout
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
@@ -68,7 +74,7 @@ export const SlackChannelSelector = async ({
       'https://slack.com/api/conversations.list',
       {
         headers: {
-          Authorization: `Bearer ${config.accessToken}`,
+          Authorization: `Bearer ${decryptedToken}`,
           'Content-Type': 'application/json',
         },
         method: 'GET',

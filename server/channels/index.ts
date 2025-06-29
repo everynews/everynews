@@ -456,6 +456,17 @@ export const ChannelRouter = new Hono<WithAuth>()
           )
         }
 
+        if (!config.channel?.id) {
+          return c.json(
+            {
+              error:
+                'Slack channel not configured. Please select a channel first.',
+              success: false,
+            },
+            400,
+          )
+        }
+
         await sendSlackVerification({
           accessToken: decryptedToken,
           channelId: config.channel.id,

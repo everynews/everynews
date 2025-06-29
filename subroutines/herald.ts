@@ -97,7 +97,7 @@ const sendAlertSlack = async (parcel: {
     channel: { id: string; name: string }
     destination?: string
     teamId: string
-    workspace: { id: string; name: string }
+    workspace?: { id: string; name: string }
   }
 }) => {
   await sendSlackAlert({
@@ -213,14 +213,39 @@ export const herald = async ({
 
       // Send the alert for Slack channels with config
       if (channelType === 'slack') {
+        const slackConfig = channel.config as {
+          accessToken: string
+          channel?: { id: string; name: string }
+          destination?: string
+          teamId: string
+          workspace?: { id: string; name: string }
+        }
+
+        // Ensure Slack channel is properly configured
+        if (!slackConfig.channel?.id) {
+          await track({
+            channel: 'herald',
+            description: `Slack channel not configured for channel ${channelId}`,
+            event: 'Slack Channel Not Configured',
+            icon: '⚠️',
+            tags: {
+              channel_id: channelId,
+              type: 'error',
+            },
+          })
+          throw new Error(
+            `Slack channel ${channelId} is not properly configured. Please select a channel.`,
+          )
+        }
+
         await sendAlertSlack({
           ...parcel,
-          config: channel.config as {
+          config: slackConfig as {
             accessToken: string
             channel: { id: string; name: string }
             destination?: string
             teamId: string
-            workspace: { id: string; name: string }
+            workspace?: { id: string; name: string }
           },
         })
         return

@@ -56,16 +56,20 @@ const PhoneChannelSchema = BaseChannel.extend({
 
 export const SlackChannelConfigSchema = z.object({
   accessToken: z.string().openapi({ example: 'xoxb-...' }),
-  channel: z.object({
-    id: z.string().openapi({ example: 'C00000000' }),
-    name: z.string().openapi({ example: 'general' }),
-  }),
+  channel: z
+    .object({
+      id: z.string().openapi({ example: 'C00000000' }),
+      name: z.string().openapi({ example: 'general' }),
+    })
+    .optional(),
   destination: z.string().optional().openapi({ example: '#general' }),
   teamId: z.string().openapi({ example: 'T00000000' }),
-  workspace: z.object({
-    id: z.string().openapi({ example: 'T00000000' }),
-    name: z.string().openapi({ example: 'My Workspace' }),
-  }), // For display purposes
+  workspace: z
+    .object({
+      id: z.string().openapi({ example: 'T00000000' }),
+      name: z.string().openapi({ example: 'My Workspace' }),
+    })
+    .optional(), // For display purposes
 })
 
 const SlackChannelSchema = BaseChannel.extend({
