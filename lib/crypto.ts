@@ -13,7 +13,10 @@ const getEncryptionKey = (): Buffer => {
     throw new Error('ENCRYPTION_KEY environment variable is not set')
   }
 
-  // Ensure key is exactly 32 bytes (256 bits)
+  if (!/^[0-9a-fA-F]+$/.test(key)) {
+    throw new Error('ENCRYPTION_KEY must be a valid hexadecimal string')
+  }
+
   const keyBuffer = Buffer.from(key, 'hex')
   if (keyBuffer.length !== keyLength) {
     throw new Error(
