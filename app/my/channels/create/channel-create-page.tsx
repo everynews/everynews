@@ -26,6 +26,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
 import { Mail, Phone, Slack } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -370,9 +371,15 @@ export const ChannelCreatePage = () => {
               >
                 Cancel
               </Button>
-              <Button type='submit' disabled={isSubmitting}>
-                {channelType === 'slack' ? 'Connect Slack' : 'Create'}
-              </Button>
+              {channelType === 'slack' ? (
+                <Button asChild>
+                  <Link href='/api/slack/install'>Connect Slack</Link>
+                </Button>
+              ) : (
+                <Button type='submit' disabled={isSubmitting}>
+                  Create
+                </Button>
+              )}
             </div>
           </form>
         </Form>

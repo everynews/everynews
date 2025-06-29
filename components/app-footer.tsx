@@ -8,6 +8,7 @@ import {
 } from '@everynews/components/ui/footer'
 import { cn } from '@everynews/lib/utils'
 import { Logo } from '@everynews/public/logo'
+import Link from 'next/link'
 import type { ReactNode } from 'react'
 
 type FooterLink = {
@@ -76,13 +77,13 @@ export const AppFooter = ({
               <FooterColumn key={column.title}>
                 <h3 className='text-md pt-1 font-semibold'>{column.title}</h3>
                 {column.links.map((link) => (
-                  <a
+                  <Link
                     key={link.text}
                     href={link.href}
                     className='text-muted-foreground text-sm hover:text-foreground'
                   >
                     {link.text}
-                  </a>
+                  </Link>
                 ))}
               </FooterColumn>
             ))}
@@ -91,13 +92,13 @@ export const AppFooter = ({
             <div className='text-sm text-muted-foreground'>{copyright}</div>
             <div className='flex items-center gap-4'>
               {policies.map((policy) => (
-                <a
+                <Link
                   key={policy.text}
                   href={policy.href}
                   className='text-sm text-muted-foreground hover:text-foreground'
                 >
                   {policy.text}
-                </a>
+                </Link>
               ))}
               {showThemeToggle && <ThemeToggle />}
             </div>

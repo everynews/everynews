@@ -2,7 +2,8 @@ import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { Skeleton } from '@everynews/components/ui/skeleton'
-import { Link, Mail } from 'lucide-react'
+import { Mail } from 'lucide-react'
+import Link from 'next/link'
 
 export default function Loading() {
   return (
