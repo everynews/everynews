@@ -168,9 +168,9 @@ export const ChannelCreatePage = () => {
   }
 
   return (
-    <div className='container mx-auto'>
-      <div className='mb-6'>
-        <h1 className='text-3xl font-bold'>Create Channel</h1>
+    <>
+      <div className='mb-4 sm:mb-6'>
+        <h1 className='text-2xl sm:text-3xl font-bold'>Create Channel</h1>
         <p className='text-muted-foreground mt-1'>
           Add a new delivery channel for your alerts
         </p>
@@ -213,7 +213,7 @@ export const ChannelCreatePage = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className='flex flex-col gap-6'
+            className='flex flex-col gap-4 sm:gap-6'
           >
             <FormField
               control={form.control}
@@ -388,6 +388,6 @@ export const ChannelCreatePage = () => {
           </form>
         </Form>
       )}
-    </div>
+    </>
   )
 }

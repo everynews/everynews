@@ -230,9 +230,9 @@ export const AlertCreatePage = ({
   }
 
   return (
-    <div className='container mx-auto'>
-      <div className='mb-6'>
-        <h1 className='text-3xl font-bold flex items-center gap-2 justify-between'>
+    <div className='container mx-auto max-w-7xl'>
+      <div className='mb-4 sm:mb-6'>
+        <h1 className='text-2xl sm:text-3xl font-bold flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:justify-between'>
           Create Alert
           <div className='flex gap-2'>
             <SubmitButton
@@ -254,12 +254,12 @@ export const AlertCreatePage = ({
           Configure a new AI-powered alert for content monitoring
         </p>
       </div>
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>
         <div>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className='flex flex-col gap-6'
+              className='flex flex-col gap-4 sm:gap-6'
             >
               <FormField
                 control={form.control}

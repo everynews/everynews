@@ -59,15 +59,15 @@ export const PromptCreatePage = () => {
   }
 
   return (
-    <div className='container mx-auto'>
-      <div className='mb-6'>
-        <h1 className='text-3xl font-bold'>Create Prompt</h1>
+    <>
+      <div className='mb-4 sm:mb-6'>
+        <h1 className='text-2xl sm:text-3xl font-bold'>Create Prompt</h1>
         <p className='text-muted-foreground mt-1'>
           Create a custom AI prompt for alert summarization
         </p>
       </div>
 
-      <div className='space-y-6'>
+      <div className='space-y-4 sm:space-y-6'>
         <div className='space-y-2'>
           <Label htmlFor={nameId}>Name</Label>
           <Input
@@ -100,6 +100,6 @@ export const PromptCreatePage = () => {
           </SubmitButton>
         </div>
       </div>
-    </div>
+    </>
   )
 }

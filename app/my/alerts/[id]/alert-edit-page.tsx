@@ -244,11 +244,11 @@ export const AlertEditPage = ({
   }
 
   return (
-    <div className='container mx-auto'>
-      <div className='mb-6'>
-        <h1 className='text-3xl font-bold flex items-center gap-2 justify-between'>
+    <>
+      <div className='mb-4 sm:mb-6'>
+        <h1 className='text-2xl sm:text-3xl font-bold flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:justify-between'>
           Edit Alert
-          <div className='flex gap-2'>
+          <div className='flex gap-2 w-full sm:w-auto'>
             <SubmitButton
               variant='outline'
               onClick={onTest}
@@ -268,12 +268,12 @@ export const AlertEditPage = ({
           Update your alert configuration
         </p>
       </div>
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>
         <div>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className='flex flex-col gap-6'
+              className='flex flex-col gap-4 sm:gap-6'
             >
               <FormField
                 control={form.control}
@@ -594,7 +594,7 @@ export const AlertEditPage = ({
                         <div className='text-muted-foreground text-xs mb-2'>
                           Times shown in your local timezone
                         </div>
-                        <div className='grid grid-cols-2 gap-8'>
+                        <div className='grid grid-cols-2 gap-4 sm:gap-8'>
                           <div className='flex flex-col gap-2'>
                             {DAYS_OF_WEEK.map((day) => (
                               <div
@@ -789,6 +789,6 @@ export const AlertEditPage = ({
             : handlePromptUpdated
         }
       />
-    </div>
+    </>
   )
 }

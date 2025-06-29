@@ -104,11 +104,11 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
   }
 
   return (
-    <div className='container mx-auto'>
-      <div className='mb-6'>
-        <div className='flex items-center justify-between'>
+    <>
+      <div className='mb-4 sm:mb-6'>
+        <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2'>
           <div>
-            <h1 className='text-3xl font-bold'>Edit Channel</h1>
+            <h1 className='text-2xl sm:text-3xl font-bold'>Edit Channel</h1>
             <p className='text-muted-foreground mt-1'>
               Update your delivery channel settings
             </p>
@@ -119,7 +119,7 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className='flex flex-col gap-6'
+          className='flex flex-col gap-4 sm:gap-6'
         >
           <FormField
             control={form.control}
@@ -227,6 +227,6 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
           </div>
         </form>
       </Form>
-    </div>
+    </>
   )
 }
