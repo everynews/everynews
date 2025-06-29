@@ -95,12 +95,12 @@ const buildSlackBlocks = ({
 }) => {
   const blocks: KnownBlock[] = []
 
-  // Send Everynews links to trigger Slack's link previews
+  // Send title with link and then the URL again for preview
   stories.forEach((story) => {
     const everynewsUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news'}/stories/${story.id}`
     blocks.push({
       text: {
-        text: everynewsUrl,
+        text: `<${everynewsUrl}|${story.title}>\n${everynewsUrl}`,
         type: 'mrkdwn',
       },
       type: 'section',
