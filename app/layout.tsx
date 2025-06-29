@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   icons: {
     apple: '/logo.png',
-    icon: '/favicon.svg',
+    icon: '/logo.png',
   },
   metadataBase: new URL(siteConfig.url),
   openGraph: {

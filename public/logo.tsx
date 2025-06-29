@@ -1,16 +1,15 @@
 import { cn } from '@everynews/lib/utils'
-import favicon from '@everynews/public/favicon.svg'
-import Image from 'next/image'
 
 const Logo = () => (
-  <Image
-    priority
-    src={favicon}
-    alt='Everynews'
-    width={24}
-    height={24}
-    className={cn('h-6 w-6')}
-  />
+  <video
+    autoPlay
+    loop
+    muted
+    playsInline
+    className={cn('size-8')}
+  >
+    <source src="/logo.webm" type="video/webm" />
+  </video>
 )
 
 export { Logo }
