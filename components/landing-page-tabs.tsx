@@ -35,13 +35,13 @@ export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
           value='saas'
           className='bg-muted overflow-hidden rounded-b-none border-x border-t py-2 data-[state=active]:z-10 data-[state=active]:shadow-none'
         >
-          The VC-pleasing version
+          For VCs
         </TabsTrigger>
         <TabsTrigger
           value='redditor'
           className='bg-muted overflow-hidden rounded-b-none border-x border-t py-2 data-[state=active]:z-10 data-[state=active]:shadow-none'
         >
-          The Reddit-pleasing version
+          For Reddit & HN
         </TabsTrigger>
       </TabsList>
 
