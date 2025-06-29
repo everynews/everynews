@@ -24,7 +24,6 @@ export const SubscribeAlertDropdownItem = ({
   user?: { id: string; email: string; createdAt: Date }
 }) => {
   const [loading, setLoading] = useState(false)
-  const [showDialog, setShowDialog] = useState(false)
   const router = useRouter()
 
   const handleUnsubscribe = async () => {
@@ -60,18 +59,11 @@ export const SubscribeAlertDropdownItem = ({
   }
 
   return (
-    <>
-      <DropdownMenuItem onClick={() => setShowDialog(true)}>
+    <SubscribeAlertDialog alert={alert} channels={channels} user={user}>
+      <DropdownMenuItem>
         <Bell className='mr-2 size-4' />
         Subscribe
       </DropdownMenuItem>
-      <SubscribeAlertDialog
-        alert={alert}
-        channels={channels}
-        open={showDialog}
-        onOpenChange={setShowDialog}
-        user={user}
-      />
-    </>
+    </SubscribeAlertDialog>
   )
 }
