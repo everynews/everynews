@@ -39,7 +39,7 @@ export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
           For VCs
         </TabsTrigger>
         <TabsTrigger
-          value='redditor'
+          value='hn'
           className='bg-muted overflow-hidden rounded-b-none border-x border-t py-2 data-[state=active]:z-10 data-[state=active]:shadow-none'
         >
           For HN
@@ -273,7 +273,7 @@ export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
           </Button>
         </div>
       </TabsContent>
-      <TabsContent value='redditor' className='mt-8'>
+      <TabsContent value='hn' className='mt-8'>
         <div className='max-w-6xl mx-auto flex flex-col gap-12 w-full'>
           <div className='text-center flex flex-col gap-4 w-full'>
             <div className='flex justify-center'>
