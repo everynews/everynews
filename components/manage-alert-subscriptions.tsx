@@ -28,6 +28,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { SendTestAlertButton } from './send-test-alert-button'
 import { SubscribeAlertDialog } from './subscribe-alert-dialog'
 
 const getChannelIcon = (type: string) => {
@@ -190,14 +191,21 @@ export const ManageAlertSubscriptions = ({
                       </p>
                     </div>
                   </div>
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    onClick={() => handleUnsubscribe(subscription.id)}
-                    disabled={loadingStates[subscription.id]}
-                  >
-                    <X className='size-4' />
-                  </Button>
+                  <div className='flex items-center gap-1'>
+                    <SendTestAlertButton
+                      alert={alert}
+                      subscription={subscription}
+                      channel={channel}
+                    />
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      onClick={() => handleUnsubscribe(subscription.id)}
+                      disabled={loadingStates[subscription.id]}
+                    >
+                      <X className='size-4' />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>

@@ -195,7 +195,6 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
                   </Button>
                   <SlackTestButton
                     channel={channel}
-                    variant='secondary'
                     className='flex-1 md:flex-initial'
                   />
                 </div>

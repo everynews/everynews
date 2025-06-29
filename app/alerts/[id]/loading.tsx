@@ -6,19 +6,11 @@ import { Skeleton } from '@everynews/components/ui/skeleton'
 export default function Loading() {
   return (
     <div className='flex flex-col gap-6'>
-      <div className='flex flex-col text-center gap-2'>
+      <div className='flex flex-col text-center gap-6'>
         <div className='flex flex-col items-center justify-center gap-4'>
           <Skeleton className='h-8 w-64' />
-          <div className='flex items-center justify-center gap-2'>
-            <Button size='sm' disabled>
-              Subscribe
-            </Button>
-            <Button size='sm' variant='outline' disabled>
-              Edit
-            </Button>
-          </div>
         </div>
-        <Skeleton className='h-5 w-96 mx-auto' />
+        <Skeleton className='size-6 mx-auto' />
       </div>
 
       <div className='container mx-auto max-w-prose p-4 flex flex-col gap-6'>

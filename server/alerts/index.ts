@@ -8,6 +8,7 @@ import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver, validator } from 'hono-openapi/zod'
+import { TestAlertRouter } from './test'
 
 export const AlertRouter = new Hono<WithAuth>()
   .use(authMiddleware)
@@ -329,3 +330,4 @@ export const AlertRouter = new Hono<WithAuth>()
       return c.json(result)
     },
   )
+  .route('/test', TestAlertRouter)

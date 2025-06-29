@@ -73,7 +73,7 @@ export default async function MySubscriptionsPage() {
           </p>
         </div>
         <Link href='/marketplace'>
-          <Button variant='outline'>Marketplace</Button>
+          <Button>Marketplace</Button>
         </Link>
       </div>
 
