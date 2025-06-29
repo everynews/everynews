@@ -78,7 +78,6 @@ export default async function MyChannelsPage() {
               <span>{new Date(user.createdAt).toLocaleDateString()}</span>
             </div>
           </div>
-
         </div>
 
         {/* User-created channels */}

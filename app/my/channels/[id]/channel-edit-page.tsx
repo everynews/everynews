@@ -200,7 +200,8 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
                   />
                 </div>
                 <p className='text-xs text-muted-foreground text-center md:text-left'>
-                  To connect a different workspace, create a new Everynews channel.
+                  To connect a different workspace, create a new Everynews
+                  channel.
                 </p>
               </div>
             </div>
