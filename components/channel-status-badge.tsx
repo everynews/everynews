@@ -1,4 +1,3 @@
-import { Badge } from '@everynews/components/ui/badge'
 import type { Channel } from '@everynews/schema/channel'
 import { AlertCircle, CheckCircle, Circle } from 'lucide-react'
 
@@ -14,44 +13,44 @@ export const ChannelStatusBadge = ({ channel }: ChannelStatusBadgeProps) => {
 
     if (!hasAccessToken) {
       return (
-        <Badge variant='destructive' className='gap-1'>
+        <span className='flex items-center gap-1 text-destructive'>
           <AlertCircle className='size-3' />
           Disconnected
-        </Badge>
+        </span>
       )
     }
 
     if (!hasChannel) {
       return (
-        <Badge variant='secondary' className='gap-1'>
+        <span className='flex items-center gap-1 text-muted-foreground'>
           <Circle className='size-3' />
           Setup Required
-        </Badge>
+        </span>
       )
     }
 
     return (
-      <Badge variant='default' className='gap-1'>
+      <span className='flex items-center gap-1'>
         <CheckCircle className='size-3' />
         Connected
-      </Badge>
+      </span>
     )
   }
 
   // Regular channels use verification status
   if (channel.verified) {
     return (
-      <Badge variant='default' className='gap-1'>
+      <span className='flex items-center gap-1'>
         <CheckCircle className='size-3' />
         Verified
-      </Badge>
+      </span>
     )
   }
 
   return (
-    <Badge variant='secondary' className='gap-1'>
+    <span className='flex items-center gap-1 text-muted-foreground'>
       <Circle className='size-3' />
       Pending
-    </Badge>
+    </span>
   )
 }

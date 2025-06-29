@@ -8,12 +8,11 @@ import { ChannelStatusBadge } from '@everynews/components/channel-status-badge'
 import { ClickableCard } from '@everynews/components/clickable-card'
 import { DeleteChannelDropdownItem } from '@everynews/components/delete-channel-dropdown-item'
 import { SendVerificationDropdownItem } from '@everynews/components/send-verification-dropdown-item'
-import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { and, eq, isNull } from 'drizzle-orm'
-import { Edit, Mail, Phone, Slack } from 'lucide-react'
+import { CheckCircle, Edit, Mail, Phone, Slack } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -47,16 +46,19 @@ export default async function MyChannelsPage() {
       </div>
 
       <div className='grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-        {/* Default channel card */}
-        <div className='border rounded-lg p-3 sm:p-4 bg-card'>
+        {/* Primary channel card */}
+        <div className='border rounded-lg p-3 sm:p-4 bg-card shadow-sm'>
           <h3 className='font-semibold text-base sm:text-lg mb-2 sm:mb-3'>
-            Default Channel
+            Sign-in Email
           </h3>
 
           <div className='space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4'>
             <div className='flex justify-between'>
               <span>Status</span>
-              <span className='text-muted-foreground'>Verified</span>
+              <div className='flex items-center gap-1'>
+                <CheckCircle className='size-3' />
+                <span className='text-muted-foreground'>Verified</span>
+              </div>
             </div>
             <div className='flex justify-between'>
               <span>Type</span>
@@ -77,9 +79,6 @@ export default async function MyChannelsPage() {
             </div>
           </div>
 
-          <div className='flex items-center justify-center'>
-            <Badge variant='secondary'>Sign-in Email</Badge>
-          </div>
         </div>
 
         {/* User-created channels */}

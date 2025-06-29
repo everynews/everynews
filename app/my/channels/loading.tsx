@@ -19,7 +19,7 @@ export default function Loading() {
       </div>
 
       <div className='grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-        {/* Default channel card skeleton */}
+        {/* Primary channel card skeleton */}
         <div className='border rounded-lg bg-card'>
           <Skeleton className='h-48 w-full' />
         </div>

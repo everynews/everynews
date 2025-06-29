@@ -30,7 +30,7 @@ export const ClickableCard = ({
 
   return (
     <Link href={href} lang={lang} className='block group'>
-      <div className='relative border rounded-lg p-4 hover:shadow-lg transition-all duration-200 cursor-pointer bg-card h-full'>
+      <div className='relative border rounded-lg p-4 shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer bg-card h-full'>
         {children}
         {actions && (
           <div

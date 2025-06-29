@@ -117,10 +117,10 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
 
   return (
     <>
-      <div className='mb-4 sm:mb-6'>
-        <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2'>
+      <div className='mb-6 md:mb-8'>
+        <div className='flex flex-col md:flex-row items-start md:items-center justify-between gap-4'>
           <div>
-            <h1 className='text-2xl sm:text-3xl font-bold'>Edit Channel</h1>
+            <h1 className='text-2xl md:text-3xl font-bold'>Edit Channel</h1>
             <p className='text-muted-foreground mt-1'>
               Update your delivery channel settings
             </p>
@@ -131,7 +131,7 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className='flex flex-col gap-4 sm:gap-6'
+          className='flex flex-col gap-6 md:gap-8'
         >
           <FormField
             control={form.control}
@@ -140,7 +140,11 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder='My Email Channel' {...field} />
+                  <Input
+                    placeholder='My Email Channel'
+                    {...field}
+                    className='md:max-w-md'
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -150,27 +154,25 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
           <Separator />
 
           {channel.type === 'slack' ? (
-            <div className='space-y-4'>
+            <div className='space-y-6'>
               <div>
-                <p className='text-xs sm:text-sm font-medium mb-2'>
-                  Slack Configuration
-                </p>
-                <div className='rounded-lg border bg-muted/50 p-3 sm:p-4 space-y-2 sm:space-y-3'>
-                  <div className='flex items-center justify-between'>
-                    <span className='text-xs sm:text-sm text-muted-foreground'>
+                <p className='text-sm font-medium mb-3'>Slack Configuration</p>
+                <div className='rounded-lg border bg-muted/50 p-4 md:p-6 space-y-3 md:space-y-4'>
+                  <div className='flex items-center justify-between gap-4'>
+                    <span className='text-sm text-muted-foreground'>
                       Workspace
                     </span>
-                    <span className='text-xs sm:text-sm font-medium truncate max-w-[150px] sm:max-w-none'>
+                    <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
                       {channel.config.workspace?.name ||
                         channel.config.teamId ||
                         'Unknown'}
                     </span>
                   </div>
-                  <div className='flex items-center justify-between'>
-                    <span className='text-xs sm:text-sm text-muted-foreground'>
+                  <div className='flex items-center justify-between gap-4'>
+                    <span className='text-sm text-muted-foreground'>
                       Channel
                     </span>
-                    <span className='text-xs sm:text-sm font-medium truncate max-w-[150px] sm:max-w-none'>
+                    <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
                       {channel.config.channel?.name
                         ? `#${channel.config.channel.name}`
                         : 'Not selected'}
@@ -179,20 +181,26 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
                 </div>
               </div>
 
-              <div className='flex flex-col gap-2'>
-                <Button asChild variant='outline' className='w-full'>
-                  <Link href={`/channels/${channel.id}/slack-setup`}>
-                    <Slack className='size-3 sm:size-4 mr-2' />
-                    Change Slack Channel
-                  </Link>
-                </Button>
-                <SlackTestButton
-                  channel={channel}
-                  variant='secondary'
-                  className='w-full'
-                />
-                <p className='text-xs text-muted-foreground text-center'>
-                  To connect a different workspace, create a new Slack channel
+              <div className='space-y-4'>
+                <div className='flex flex-col md:flex-row gap-2 md:gap-3'>
+                  <Button
+                    asChild
+                    variant='outline'
+                    className='flex-1 md:flex-initial'
+                  >
+                    <Link href={`/channels/${channel.id}/slack-setup`}>
+                      <Slack className='size-4 mr-2' />
+                      Change Slack Channel
+                    </Link>
+                  </Button>
+                  <SlackTestButton
+                    channel={channel}
+                    variant='secondary'
+                    className='flex-1 md:flex-initial'
+                  />
+                </div>
+                <p className='text-xs text-muted-foreground text-center md:text-left'>
+                  To connect a different workspace, create a new Everynews channel.
                 </p>
               </div>
             </div>
@@ -216,6 +224,7 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
                       }
                       type={channel.type === 'phone' ? 'tel' : 'email'}
                       {...field}
+                      className='md:max-w-md'
                     />
                   </FormControl>
                   <FormMessage />
@@ -224,7 +233,7 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
             />
           )}
 
-          <div className='flex flex-col-reverse sm:flex-row justify-end gap-2'>
+          <div className='flex flex-col-reverse md:flex-row justify-end gap-2 pt-4'>
             <Button
               type='button'
               variant='outline'
