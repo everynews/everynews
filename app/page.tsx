@@ -1,5 +1,3 @@
-'use cache'
-
 import { siteConfig } from '@everynews/app/site-config'
 import { LandingPageTabs } from '@everynews/components/landing-page-tabs'
 import {

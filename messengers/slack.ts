@@ -1,42 +1,23 @@
 import { track } from '@everynews/logs'
-import type { Story, Strategy, WaitSchema } from '@everynews/schema'
+import type { Story } from '@everynews/schema'
 import { isTokenError } from '@everynews/server/slack/token-refresh'
-import type {
-  ContextBlockElement,
-  KnownBlock,
-  PlainTextElement,
-  SectionBlock,
-} from '@slack/types'
+import type { KnownBlock } from '@slack/types'
 import { WebClient } from '@slack/web-api'
-import type { z } from 'zod'
-
-type Wait = z.infer<typeof WaitSchema>
 
 export const sendSlackAlert = async ({
   accessToken,
   channelId,
   alertName,
   stories,
-  strategy,
-  wait,
 }: {
   accessToken: string
   channelId: string
   alertName: string
   stories: Story[]
-  strategy: Strategy
-  wait: Wait
 }): Promise<void> => {
   try {
     const slack = new WebClient(accessToken)
-
-    // Build the message blocks
-    const blocks = buildSlackBlocks({
-      _strategy: strategy,
-      _wait: wait,
-      alertName,
-      stories,
-    })
+    const blocks = buildSlackBlocks(stories)
 
     const result = await slack.chat.postMessage({
       blocks,
@@ -82,17 +63,7 @@ export const sendSlackAlert = async ({
   }
 }
 
-const buildSlackBlocks = ({
-  alertName,
-  stories,
-  _strategy,
-  _wait,
-}: {
-  alertName: string
-  stories: Story[]
-  _strategy: Strategy
-  _wait: Wait
-}) => {
+const buildSlackBlocks = (stories: Story[]) => {
   const blocks: KnownBlock[] = []
 
   // Send title with link and then the URL again for preview

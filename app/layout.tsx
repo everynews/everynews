@@ -9,7 +9,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
 
-export const dynamic = 'force-dynamic'
+export const experimental_ppr = true
 
 export const metadata: Metadata = {
   authors: [

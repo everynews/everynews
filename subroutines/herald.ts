@@ -110,8 +110,6 @@ const sendAlertSlack = async (parcel: {
     alertName: parcel.alertName,
     channelId: parcel.config.channel.id,
     stories: parcel.stories,
-    strategy: parcel.strategy,
-    wait: parcel.wait,
   })
 }
 

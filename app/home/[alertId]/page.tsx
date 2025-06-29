@@ -22,6 +22,27 @@ export default async function Page({
     return null
   }
 
+  // Check if user is subscribed to this alert
+  const userSubscription = await db
+    .select()
+    .from(subscriptions)
+    .where(
+      and(
+        eq(subscriptions.alertId, selectedAlertId),
+        eq(subscriptions.userId, user.id),
+        isNull(subscriptions.deletedAt),
+      ),
+    )
+    .limit(1)
+
+  if (userSubscription.length === 0) {
+    return (
+      <Card className='p-8 text-center text-muted-foreground'>
+        <p>You are not subscribed to this alert</p>
+      </Card>
+    )
+  }
+
   // Fetch the selected alert details
   const selectedAlert = await db
     .select()
@@ -45,20 +66,7 @@ export default async function Page({
       alerts,
       and(eq(stories.alertId, alerts.id), isNull(alerts.deletedAt)),
     )
-    .innerJoin(
-      subscriptions,
-      and(
-        eq(subscriptions.alertId, alerts.id),
-        isNull(subscriptions.deletedAt),
-      ),
-    )
-    .where(
-      and(
-        eq(subscriptions.userId, user.id),
-        isNull(stories.deletedAt),
-        eq(alerts.id, selectedAlertId),
-      ),
-    )
+    .where(and(eq(stories.alertId, selectedAlertId), isNull(stories.deletedAt)))
     .orderBy(desc(stories.createdAt))
     .limit(20)
 

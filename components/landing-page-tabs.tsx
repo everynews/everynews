@@ -18,6 +18,8 @@ import {
   StorySchema,
   stories,
 } from '@everynews/schema'
+import { getLanguageLabel } from '@everynews/schema/language'
+import { formatDistanceToNow } from 'date-fns'
 import { eq, sql } from 'drizzle-orm'
 import {
   AlertCircle,
@@ -58,13 +60,13 @@ export const LandingPageTabs = async () => {
           value='saas'
           className='bg-muted overflow-hidden rounded-b-none border-x border-t py-2 data-[state=active]:z-10 data-[state=active]:shadow-none'
         >
-          For VCs
+          The cliché landing page
         </TabsTrigger>
         <TabsTrigger
           value='hn'
           className='bg-muted overflow-hidden rounded-b-none border-x border-t py-2 data-[state=active]:z-10 data-[state=active]:shadow-none'
         >
-          For HN
+          The cut-the-bs landing page
         </TabsTrigger>
       </TabsList>
 
@@ -296,6 +298,9 @@ export const LandingPageTabs = async () => {
         </div>
       </TabsContent>
       <TabsContent value='hn' className='mt-8'>
+        <p className='text-center text-muted-foreground mb-8'>
+          We just notified a bunch of people these news.
+        </p>
         <div className='max-w-6xl mx-auto flex flex-col gap-12 w-full'>
           <div className='grid md:grid-cols-2 gap-6'>
             {latest.map(({ story, alert: alertInfo }) => (
@@ -306,17 +311,17 @@ export const LandingPageTabs = async () => {
               >
                 <Card className='hover:shadow-lg transition-all duration-200 cursor-pointer bg-card w-full'>
                   <CardHeader className='pb-3 flex flex-col gap-2'>
-                    <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-                      <Badge variant='secondary' className='text-xs'>
-                        {alertInfo.name}
-                      </Badge>
+                    <div className='flex items-center gap-1 text-sm text-muted-foreground'>
+                      {alertInfo.name}
                       <span>•</span>
                       <time dateTime={story.createdAt.toISOString()}>
-                        {story.createdAt.toLocaleDateString('en-US', {
-                          day: 'numeric',
-                          month: 'short',
+                        {formatDistanceToNow(story.createdAt, {
+                          addSuffix: true,
                         })}
                       </time>
+                      <span>•</span>
+
+                      {getLanguageLabel(story.languageCode)}
                     </div>
                     <h3 className='font-semibold text-foreground line-clamp-2 leading-tight'>
                       {story.title}

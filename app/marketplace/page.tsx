@@ -1,5 +1,3 @@
-'use cache'
-
 import { Badge } from '@everynews/components/ui/badge'
 import {
   Card,
