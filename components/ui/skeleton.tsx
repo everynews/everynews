@@ -3,7 +3,10 @@
 import { cn } from '@everynews/lib/utils'
 import { useEffect, useState } from 'react'
 
-const Skeleton = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
+const Skeleton = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => {
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
