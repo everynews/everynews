@@ -10,6 +10,7 @@ import {
   TabsTrigger,
 } from '@everynews/components/ui/tabs'
 import { dancingScript } from '@everynews/lib/fonts'
+import { cn } from '@everynews/lib/utils'
 import type { Alert, Story } from '@everynews/schema'
 import {
   AlertCircle,
@@ -41,7 +42,7 @@ export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
           value='redditor'
           className='bg-muted overflow-hidden rounded-b-none border-x border-t py-2 data-[state=active]:z-10 data-[state=active]:shadow-none'
         >
-          For Reddit & HN
+          For HN
         </TabsTrigger>
       </TabsList>
 
@@ -50,7 +51,7 @@ export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
         <div className='max-w-6xl mx-auto flex flex-col gap-12 w-full'>
           <div className='text-center flex flex-col gap-4 w-full'>
             <h2
-              className={`text-3xl font-bold text-foreground w-full ${dancingScript.className}`}
+              className={cn(`text-3xl font-bold text-foreground w-full`, dancingScript.className)}
             >
               Beyond Traditional Alerts
             </h2>
@@ -114,7 +115,7 @@ export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
         <div className='max-w-6xl mx-auto flex flex-col gap-12 w-full'>
           <div className='text-center flex flex-col gap-4 w-full'>
             <h2
-              className={`text-3xl font-bold text-foreground w-full ${dancingScript.className}`}
+              className={cn(`text-3xl font-bold text-foreground w-full`, dancingScript.className)}
             >
               Intelligent Monitoring, Reimagined
             </h2>
@@ -204,7 +205,7 @@ export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
         <div className='max-w-6xl mx-auto flex flex-col gap-8 w-full'>
           <div className='text-center w-full'>
             <h2
-              className={`text-3xl font-bold text-foreground w-full ${dancingScript.className}`}
+              className={cn(`text-3xl font-bold text-foreground w-full`, dancingScript.className)}
             >
               Built for Modern Teams
             </h2>
@@ -252,7 +253,7 @@ export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
         <div className='max-w-6xl mx-auto flex flex-col items-center gap-4 w-full'>
           <Button asChild size='lg' className='text-lg px-8 py-6'>
             <Link href='/sign-in'>
-              Ready to consume <span className='italic mx-1'>every news</span>?
+              Ready to know <span className={cn('italic mx-1 text-2xl', dancingScript.className)}>Every News</span>?
             </Link>
           </Button>
         </div>
