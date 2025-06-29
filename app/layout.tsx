@@ -4,10 +4,10 @@ import { AppFooter } from '@everynews/components/app-footer'
 import { AppNavbar } from '@everynews/components/app-navbar'
 import { ThemeProvider } from '@everynews/components/theme/provider'
 import { Toaster } from '@everynews/components/ui/sonner'
+import { dancingScript } from '@everynews/lib/fonts'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
-import { dancingScript } from '@everynews/lib/fonts'
 
 export const dynamic = 'force-dynamic'
 
@@ -44,7 +44,9 @@ export const metadata: Metadata = {
 
 const Layout = ({ children }: { children: React.ReactNode }) => (
   <html lang='en' suppressHydrationWarning>
-    <body className={`bg-background h-screen flex flex-col ${dancingScript.variable}`}>
+    <body
+      className={`bg-background h-screen flex flex-col ${dancingScript.variable}`}
+    >
       <ThemeProvider
         attribute='class'
         defaultTheme='system'

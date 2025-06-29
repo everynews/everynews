@@ -10,6 +10,7 @@ import {
   TabsTrigger,
 } from '@everynews/components/ui/tabs'
 import { dancingScript } from '@everynews/lib/fonts'
+import type { Alert, Story } from '@everynews/schema'
 import {
   AlertCircle,
   Blocks,
@@ -21,33 +22,12 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 
-interface Story {
-  id: string
-  title: string
-  createdAt: Date
-  keyFindings: string[]
-  languageCode: string
-}
-
-interface Alert {
-  id: string
-  name: string
-}
-
 interface StoryWithAlert {
   story: Story
   alert: Alert
 }
 
-interface LandingPageTabsProps {
-  recentStories: StoryWithAlert[]
-  latestPerAlert: StoryWithAlert[]
-}
-
-export const LandingPageTabs = ({
-  recentStories,
-  latestPerAlert,
-}: LandingPageTabsProps) => {
+export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
   return (
     <Tabs defaultValue='saas' className='w-full'>
       <TabsList className='before:bg-border relative h-auto w-full gap-0.5 bg-transparent p-0 before:absolute before:inset-x-0 before:bottom-0 before:h-px'>
@@ -69,7 +49,9 @@ export const LandingPageTabs = ({
         {/* Problem Statement */}
         <div className='max-w-6xl mx-auto flex flex-col gap-12 w-full'>
           <div className='text-center flex flex-col gap-4 w-full'>
-            <h2 className={`text-3xl font-bold text-foreground w-full ${dancingScript.className}`}>
+            <h2
+              className={`text-3xl font-bold text-foreground w-full ${dancingScript.className}`}
+            >
               Beyond Traditional Alerts
             </h2>
             <p className='text-lg text-muted-foreground w-full mx-auto'>
@@ -131,7 +113,9 @@ export const LandingPageTabs = ({
         {/* Solutions */}
         <div className='max-w-6xl mx-auto flex flex-col gap-12 w-full'>
           <div className='text-center flex flex-col gap-4 w-full'>
-            <h2 className={`text-3xl font-bold text-foreground w-full ${dancingScript.className}`}>
+            <h2
+              className={`text-3xl font-bold text-foreground w-full ${dancingScript.className}`}
+            >
               Intelligent Monitoring, Reimagined
             </h2>
             <p className='text-lg text-muted-foreground w-full mx-auto'>
@@ -219,7 +203,9 @@ export const LandingPageTabs = ({
         {/* Use Cases */}
         <div className='max-w-6xl mx-auto flex flex-col gap-8 w-full'>
           <div className='text-center w-full'>
-            <h2 className={`text-3xl font-bold text-foreground w-full ${dancingScript.className}`}>
+            <h2
+              className={`text-3xl font-bold text-foreground w-full ${dancingScript.className}`}
+            >
               Built for Modern Teams
             </h2>
           </div>
@@ -293,7 +279,7 @@ export const LandingPageTabs = ({
           </div>
 
           <div className='grid md:grid-cols-2 gap-6'>
-            {latestPerAlert.map(({ story, alert: alertInfo }) => (
+            {latest.map(({ story, alert: alertInfo }) => (
               <Link
                 key={story.id}
                 href={`/stories/${story.id}`}
