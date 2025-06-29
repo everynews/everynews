@@ -1,5 +1,3 @@
-'use client'
-
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
@@ -9,9 +7,18 @@ import {
   TabsList,
   TabsTrigger,
 } from '@everynews/components/ui/tabs'
+import { db } from '@everynews/database'
 import { dancingScript } from '@everynews/lib/fonts'
 import { cn } from '@everynews/lib/utils'
-import type { Alert, Story } from '@everynews/schema'
+import {
+  AlertSchema,
+  alerts,
+  ContentSchema,
+  contents,
+  StorySchema,
+  stories,
+} from '@everynews/schema'
+import { eq, sql } from 'drizzle-orm'
 import {
   AlertCircle,
   Blocks,
@@ -22,13 +29,28 @@ import {
   Zap,
 } from 'lucide-react'
 import Link from 'next/link'
+import z from 'zod'
 
-interface StoryWithAlert {
-  story: Story
-  alert: Alert
-}
+const LatestStorySchema = z.object({
+  alert: AlertSchema,
+  content: ContentSchema,
+  story: StorySchema,
+})
 
-export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
+export const LandingPageTabs = async () => {
+  const latest = await db
+    .selectDistinctOn([stories.alertId], {
+      alert: alerts,
+      content: contents,
+      story: stories,
+    })
+    .from(stories)
+    .innerJoin(alerts, eq(stories.alertId, alerts.id))
+    .innerJoin(contents, eq(stories.contentId, contents.id))
+    .where(eq(alerts.isPublic, true))
+    .orderBy(stories.alertId, sql`${stories.updatedAt} DESC`)
+    .limit(20)
+    .then((rows) => rows.map((row) => LatestStorySchema.parse(row)))
   return (
     <Tabs defaultValue='saas' className='w-full'>
       <TabsList className='before:bg-border relative h-auto w-full gap-0.5 bg-transparent p-0 before:absolute before:inset-x-0 before:bottom-0 before:h-px'>
@@ -275,25 +297,6 @@ export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
       </TabsContent>
       <TabsContent value='hn' className='mt-8'>
         <div className='max-w-6xl mx-auto flex flex-col gap-12 w-full'>
-          <div className='text-center flex flex-col gap-4 w-full'>
-            <div className='flex justify-center'>
-              <div className='relative'>
-                <div className='bg-blue-500 text-primary-foreground px-4 py-2 rounded-2xl rounded-bl-sm max-w-xs'>
-                  <span className='text-lg text-white text-center'>
-                    bro did u see this
-                  </span>
-                </div>
-                <div className='absolute -bottom-1 left-0 w-0 h-0 border-t-8 border-t-blue-500 border-r-8 border-r-transparent'></div>
-              </div>
-            </div>
-            <p className='text-lg text-muted-foreground w-full mx-auto'>
-              We all have that one friend who sends the hottest news.
-            </p>
-            <p className='text-lg text-muted-foreground w-full mx-auto'>
-              Everynews is one of those friends.
-            </p>
-          </div>
-
           <div className='grid md:grid-cols-2 gap-6'>
             {latest.map(({ story, alert: alertInfo }) => (
               <Link
