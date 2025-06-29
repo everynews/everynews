@@ -51,7 +51,10 @@ export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
         <div className='max-w-6xl mx-auto flex flex-col gap-12 w-full'>
           <div className='text-center flex flex-col gap-4 w-full'>
             <h2
-              className={cn(`text-3xl font-bold text-foreground w-full`, dancingScript.className)}
+              className={cn(
+                `text-3xl font-bold text-foreground w-full`,
+                dancingScript.className,
+              )}
             >
               Beyond Traditional Alerts
             </h2>
@@ -115,7 +118,10 @@ export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
         <div className='max-w-6xl mx-auto flex flex-col gap-12 w-full'>
           <div className='text-center flex flex-col gap-4 w-full'>
             <h2
-              className={cn(`text-3xl font-bold text-foreground w-full`, dancingScript.className)}
+              className={cn(
+                `text-3xl font-bold text-foreground w-full`,
+                dancingScript.className,
+              )}
             >
               Intelligent Monitoring, Reimagined
             </h2>
@@ -205,7 +211,10 @@ export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
         <div className='max-w-6xl mx-auto flex flex-col gap-8 w-full'>
           <div className='text-center w-full'>
             <h2
-              className={cn(`text-3xl font-bold text-foreground w-full`, dancingScript.className)}
+              className={cn(
+                `text-3xl font-bold text-foreground w-full`,
+                dancingScript.className,
+              )}
             >
               Built for Modern Teams
             </h2>
@@ -253,7 +262,13 @@ export const LandingPageTabs = ({ latest }: { latest: StoryWithAlert[] }) => {
         <div className='max-w-6xl mx-auto flex flex-col items-center gap-4 w-full'>
           <Button asChild size='lg' className='text-lg px-8 py-6'>
             <Link href='/sign-in'>
-              Ready to know <span className={cn('italic mx-1 text-2xl', dancingScript.className)}>Every News</span>?
+              Ready to know{' '}
+              <span
+                className={cn('italic mx-1 text-2xl', dancingScript.className)}
+              >
+                Every News
+              </span>
+              ?
             </Link>
           </Button>
         </div>
