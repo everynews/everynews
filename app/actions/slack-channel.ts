@@ -80,9 +80,10 @@ export const updateSlackChannel = async (
       .where(eq(channels.id, channelId))
 
     revalidatePath('/channels')
-    redirect('/channels')
   } catch (error) {
     console.error('Failed to update Slack channel:', error)
     throw new Error('Failed to update Slack channel. Please try again.')
   }
+
+  redirect('/channels')
 }

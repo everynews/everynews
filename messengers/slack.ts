@@ -197,7 +197,7 @@ const buildSlackBlocks = ({
   blocks.push({
     elements: [
       {
-        text: `📰 Delivered by <${process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news'}|Every.news>`,
+        text: `📰 Delivered by <${process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news'}|Everynews>`,
         type: 'mrkdwn',
       },
     ],
@@ -231,7 +231,7 @@ export const sendSlackVerification = async ({
         },
         {
           text: {
-            text: `✅ This Slack channel is now connected to Every.news!\n\nYour alerts for *${channelName}* will be delivered here.`,
+            text: `✅ This Slack channel is now connected to Everynews!\n\nYour alerts for *${channelName}* will be delivered here.`,
             type: 'mrkdwn',
           },
           type: 'section',
@@ -239,7 +239,7 @@ export const sendSlackVerification = async ({
         {
           elements: [
             {
-              text: `Connected by <${process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news'}|Every.news>`,
+              text: `Connected by <${process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news'}|Everynews>`,
               type: 'mrkdwn',
             },
           ],
@@ -247,7 +247,7 @@ export const sendSlackVerification = async ({
         },
       ],
       channel: channelId,
-      text: 'Every.news channel verification',
+      text: 'Everynews channel verification',
     })
 
     await track({

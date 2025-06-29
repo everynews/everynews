@@ -10,7 +10,7 @@ export default function Loading() {
     <div className='container mx-auto max-w-6xl'>
       <div className='flex items-center justify-between gap-4 mb-4 sm:mb-6'>
         <div className='flex-1'>
-          <h1 className='text-3xl font-bold'>Channels</h1>
+          <h1 className='text-2xl sm:text-3xl font-bold'>Channels</h1>
           <p className='text-muted-foreground mt-1'>
             Manage where your alerts are delivered
           </p>
@@ -20,7 +20,7 @@ export default function Loading() {
         </Link>
       </div>
 
-      <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+      <div className='grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3'>
         {/* Default channel card skeleton */}
         <div className='border rounded-lg p-4 bg-card'>
           <h3 className='font-semibold text-lg mb-3'>Default Channel</h3>

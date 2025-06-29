@@ -1,25 +1,25 @@
 # Slack Integration Guide
 
-This guide explains how to set up and use Slack integration with Every.news to receive your alerts directly in Slack channels.
+This guide explains how to set up and use Slack integration with Everynews to receive your alerts directly in Slack channels.
 
 ## Prerequisites
 
 Before you begin, ensure you have:
-- An active Every.news account
+- An active Everynews account
 - Admin permissions in your Slack workspace (to install apps)
-- At least one alert configured in Every.news
+- At least one alert configured in Everynews
 
 ## Setting Up Slack Integration
 
 ### Step 1: Create a New Slack Channel
 
-1. Navigate to **My Channels** (`/my/channels`) in your Every.news dashboard
+1. Navigate to **My Channels** (`/my/channels`) in your Everynews dashboard
 2. Click the **Create Channel** button
 3. Enter a name for your channel (e.g., "My Slack Alerts")
 4. Select **Slack** as the channel type
 5. Click **Connect Slack**
 
-### Step 2: Authorize Every.news in Slack
+### Step 2: Authorize Everynews in Slack
 
 1. You'll be redirected to Slack's OAuth authorization page
 2. Select the Slack workspace where you want to receive alerts
@@ -31,7 +31,7 @@ Before you begin, ensure you have:
 
 ### Step 3: Select a Slack Channel
 
-1. After authorization, you'll be redirected back to Every.news
+1. After authorization, you'll be redirected back to Everynews
 2. You'll see a channel selector page showing all available Slack channels
 3. Select the Slack channel where you want to receive alerts
 4. Click **Save Channel**
@@ -90,7 +90,7 @@ Alerts sent to Slack include:
   - Clickable title linking to the full article
   - Source domain
   - Time since publication
-- **Footer**: Powered by Every.news attribution
+- **Footer**: Powered by Everynews attribution
 
 ## Troubleshooting
 
@@ -106,11 +106,11 @@ Alerts sent to Slack include:
 1. Verify the channel status is "Connected"
 2. Send a test message to confirm connectivity
 3. Check that your alerts are configured to use the Slack channel
-4. Ensure the Every.news bot hasn't been removed from your Slack channel
+4. Ensure the Everynews bot hasn't been removed from your Slack channel
 
 ### Permission Errors
 - Ensure you have permission to install apps in your Slack workspace
-- The selected Slack channel must be accessible to the Every.news bot
+- The selected Slack channel must be accessible to the Everynews bot
 - For private channels, you may need to manually add the bot
 
 ## Best Practices
@@ -123,10 +123,10 @@ Alerts sent to Slack include:
 
 ## Security & Privacy
 
-- Every.news only requests minimal Slack permissions needed for functionality
+- Everynews only requests minimal Slack permissions needed for functionality
 - Your Slack access token is encrypted and stored securely
 - You can revoke access at any time from your Slack workspace settings
-- Every.news cannot read messages in your Slack channels
+- Everynews cannot read messages in your Slack channels
 - Only channels where the bot has access will appear in the selector
 
 ## Limitations

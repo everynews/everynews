@@ -327,7 +327,7 @@ export const SlackRouter = new Hono<WithAuth>()
         // Send test message
         await slack.chat.postMessage({
           channel: config.channel.id,
-          text: `Test message from Every.news! Your Slack channel is successfully connected.`,
+          text: `Test message from Everynews! Your Slack channel is successfully connected.`,
         })
 
         await track({

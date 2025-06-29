@@ -36,13 +36,7 @@ export const SlackChannelSelectorClient = ({
       return
     }
 
-    try {
-      await updateSlackChannel(channelId, channel.id, channel.name)
-      toast.success('Slack channel connected successfully!')
-    } catch (error) {
-      console.error('Failed to update Slack channel:', error)
-      toast.error('Failed to update channel. Please try again.')
-    }
+    await updateSlackChannel(channelId, channel.id, channel.name)
   }
 
   return (
