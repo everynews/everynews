@@ -26,7 +26,7 @@ export const MainNavigation = ({ user }: { user?: User | null }) => {
         )}
         <NavigationMenuItem>
           <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <Link href='/alerts'>Alert Marketplace</Link>
+            <Link href='/marketplace'>Alert Marketplace</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

@@ -25,7 +25,7 @@ import {
 } from '@everynews/schema/channel'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
-import { Slack } from 'lucide-react'
+import { Mail, Phone, Slack } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -58,7 +58,12 @@ export const ChannelCreatePage = () => {
   // Update form when channel type changes
   useEffect(() => {
     form.setValue('type', channelType)
-    form.setValue('config.destination', '')
+    // Set a placeholder destination for Slack to satisfy validation
+    if (channelType === 'slack') {
+      form.setValue('config.destination', 'slack-placeholder')
+    } else {
+      form.setValue('config.destination', '')
+    }
   }, [channelType, form])
 
   const onSubmit = async (values: ChannelDto) => {
@@ -154,6 +159,14 @@ export const ChannelCreatePage = () => {
     }
   }
 
+  const handleCreateClick = () => {
+    if (channelType === 'slack') {
+      window.location.href = '/api/slack/install'
+    } else {
+      form.handleSubmit(onSubmit)()
+    }
+  }
+
   return (
     <div className='container mx-auto'>
       <div className='mb-6'>
@@ -227,42 +240,95 @@ export const ChannelCreatePage = () => {
 
             <Separator />
 
-            <FormItem className='space-y-3'>
+            <FormItem>
               <FormLabel>Channel Type</FormLabel>
               <RadioGroup
                 value={channelType}
                 onValueChange={(value) =>
                   setChannelType(value as 'email' | 'phone' | 'slack')
                 }
+                className='gap-2 lg:grid lg:grid-cols-3'
               >
-                <div className='flex items-center space-x-2'>
-                  <RadioGroupItem value='email' id={emailId} />
-                  <label
-                    htmlFor={emailId}
-                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-                  >
-                    Email
-                  </label>
-                </div>
-                <div className='flex items-center space-x-2'>
-                  <RadioGroupItem value='phone' id={phoneId} />
-                  <label
-                    htmlFor={phoneId}
-                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-                  >
-                    SMS (Phone)
-                  </label>
-                </div>
-                <div className='flex items-center space-x-2'>
-                  <RadioGroupItem value='slack' id={slackId} />
-                  <label
-                    htmlFor={slackId}
-                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2'
-                  >
-                    <Slack className='size-4' />
-                    Slack
-                  </label>
-                </div>
+                <label
+                  htmlFor={emailId}
+                  className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none cursor-pointer'
+                >
+                  <RadioGroupItem
+                    value='email'
+                    id={emailId}
+                    aria-describedby={`${emailId}-description`}
+                    className='order-1 after:absolute after:inset-0'
+                  />
+                  <div className='flex grow items-start gap-3'>
+                    <div className='grid grow gap-2'>
+                      <span className='font-medium flex items-center gap-2'>
+                        <Mail className='size-4' />
+                        Email
+                      </span>
+                      <p
+                        id={`${emailId}-description`}
+                        className='text-muted-foreground text-sm'
+                      >
+                        Receive alerts via email. Perfect for daily digests and
+                        important updates.
+                      </p>
+                    </div>
+                  </div>
+                </label>
+
+                <label
+                  htmlFor={phoneId}
+                  className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none cursor-pointer'
+                >
+                  <RadioGroupItem
+                    value='phone'
+                    id={phoneId}
+                    aria-describedby={`${phoneId}-description`}
+                    className='order-1 after:absolute after:inset-0'
+                  />
+                  <div className='flex grow items-start gap-3'>
+                    <div className='grid grow gap-2'>
+                      <span className='font-medium flex items-center gap-2'>
+                        <Phone className='size-4' />
+                        SMS
+                      </span>
+                      <p
+                        id={`${phoneId}-description`}
+                        className='text-muted-foreground text-sm'
+                      >
+                        Get instant notifications via text message for
+                        time-sensitive alerts.
+                      </p>
+                    </div>
+                  </div>
+                </label>
+
+                <label
+                  htmlFor={slackId}
+                  className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none cursor-pointer'
+                >
+                  <RadioGroupItem
+                    value='slack'
+                    id={slackId}
+                    aria-describedby={`${slackId}-description`}
+                    className='order-1 after:absolute after:inset-0'
+                  />
+                  <div className='flex grow items-start gap-3'>
+                    <div className='grid grow gap-2'>
+                      <span className='font-medium flex items-center gap-2'>
+                        <Slack className='size-4' />
+                        Slack
+                      </span>
+                      <p
+                        id={`${slackId}-description`}
+                        className='text-muted-foreground text-sm'
+                      >
+                        Share alerts with your team in Slack channels for
+                        collaborative monitoring.
+                      </p>
+                    </div>
+                  </div>
+                </label>
               </RadioGroup>
             </FormItem>
 
@@ -315,10 +381,7 @@ export const ChannelCreatePage = () => {
               >
                 Cancel
               </Button>
-              <SubmitButton
-                onClick={form.handleSubmit(onSubmit)}
-                loading={isSubmitting}
-              >
+              <SubmitButton onClick={handleCreateClick} loading={isSubmitting}>
                 {channelType === 'slack' ? 'Connect Slack' : 'Create'}
               </SubmitButton>
             </div>

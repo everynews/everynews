@@ -1,7 +1,12 @@
 import { whoami } from '@everynews/auth/session'
+import {
+  CardActionsPopover,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@everynews/components/card-actions-popover'
 import { ClickableCard } from '@everynews/components/clickable-card'
-import { DeleteAlertPopover } from '@everynews/components/delete-alert-popover'
-import { SubscribeAlertButton } from '@everynews/components/subscribe-alert-button'
+import { DeleteAlertDropdownItem } from '@everynews/components/delete-alert-dropdown-item'
+import { SubscribeAlertDropdownItem } from '@everynews/components/subscribe-alert-dropdown-item'
 import { Button } from '@everynews/components/ui/button'
 import { db } from '@everynews/database'
 import { AlertSchema, alerts } from '@everynews/schema/alert'
@@ -9,7 +14,7 @@ import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { LANGUAGE_LABELS } from '@everynews/schema/language'
 import { subscriptions } from '@everynews/schema/subscription'
 import { and, eq, isNull } from 'drizzle-orm'
-import { Trash2 } from 'lucide-react'
+import { Edit } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -75,24 +80,23 @@ export default async function MyAlertsPage() {
                 href={`/alerts/${item.id}`}
                 lang={item.languageCode}
                 actions={
-                  <div className='flex items-center justify-between'>
-                    <DeleteAlertPopover alert={item}>
-                      <Button size='icon' variant='destructive'>
-                        <Trash2 className='size-4' />
-                      </Button>
-                    </DeleteAlertPopover>
-                    <div className='flex items-center gap-2'>
-                      <SubscribeAlertButton
-                        alert={item}
-                        channels={userChannels}
-                        subscription={subscription}
-                        user={user}
-                      />
-                      <Button asChild size='sm' variant='outline'>
-                        <Link href={`/my/alerts/${item.id}`}>Edit</Link>
-                      </Button>
-                    </div>
-                  </div>
+                  <CardActionsPopover>
+                    <DropdownMenuItem asChild>
+                      <Link href={`/my/alerts/${item.id}`}>
+                        <Edit className='mr-2 size-4' />
+                        Edit
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <SubscribeAlertDropdownItem
+                      alert={item}
+                      channels={userChannels}
+                      subscription={subscription}
+                      user={user}
+                    />
+                    <DropdownMenuSeparator />
+                    <DeleteAlertDropdownItem alert={item} />
+                  </CardActionsPopover>
                 }
               >
                 <h3 className='font-semibold text-lg line-clamp-1 mb-3'>

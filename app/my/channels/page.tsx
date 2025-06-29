@@ -1,14 +1,19 @@
 import { whoami } from '@everynews/auth/session'
+import {
+  CardActionsPopover,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@everynews/components/card-actions-popover'
 import { ChannelStatusBadge } from '@everynews/components/channel-status-badge'
 import { ClickableCard } from '@everynews/components/clickable-card'
-import { DeleteChannelPopover } from '@everynews/components/delete-channel-popover'
-import { SendVerificationButton } from '@everynews/components/send-verification-button'
+import { DeleteChannelDropdownItem } from '@everynews/components/delete-channel-dropdown-item'
+import { SendVerificationDropdownItem } from '@everynews/components/send-verification-dropdown-item'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { and, eq, isNull } from 'drizzle-orm'
-import { Mail, Phone, Slack, Trash2 } from 'lucide-react'
+import { Edit, Mail, Phone, Slack } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -81,18 +86,22 @@ export default async function MyChannelsPage() {
             key={item.id}
             href={`/my/channels/${item.id}`}
             actions={
-              <div className='flex items-center justify-between'>
-                <DeleteChannelPopover channel={item}>
-                  <Button size='icon' variant='destructive'>
-                    <Trash2 className='size-4' />
-                  </Button>
-                </DeleteChannelPopover>
-                <div className='flex items-center gap-2'>
-                  {!item.verified && item.type !== 'slack' && (
-                    <SendVerificationButton channel={item} />
-                  )}
-                </div>
-              </div>
+              <CardActionsPopover>
+                <DropdownMenuItem asChild>
+                  <Link href={`/my/channels/${item.id}`}>
+                    <Edit className='mr-2 size-4' />
+                    Edit
+                  </Link>
+                </DropdownMenuItem>
+                {!item.verified && item.type !== 'slack' && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <SendVerificationDropdownItem channel={item} />
+                  </>
+                )}
+                <DropdownMenuSeparator />
+                <DeleteChannelDropdownItem channel={item} />
+              </CardActionsPopover>
             }
           >
             <h3 className='font-semibold text-lg line-clamp-1 mb-3'>

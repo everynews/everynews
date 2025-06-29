@@ -45,3 +45,4 @@ llms.txt
 
 .trigger
 .react-email
+.env*.local

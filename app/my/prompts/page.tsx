@@ -1,11 +1,16 @@
 import { whoami } from '@everynews/auth/session'
+import {
+  CardActionsPopover,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@everynews/components/card-actions-popover'
 import { ClickableCard } from '@everynews/components/clickable-card'
-import { DeletePromptPopover } from '@everynews/components/delete-prompt-popover'
+import { DeletePromptDropdownItem } from '@everynews/components/delete-prompt-dropdown-item'
 import { Button } from '@everynews/components/ui/button'
 import { db } from '@everynews/database'
 import { prompt } from '@everynews/schema'
 import { and, eq, isNull } from 'drizzle-orm'
-import { Trash2 } from 'lucide-react'
+import { Edit } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -50,13 +55,16 @@ export default async function PromptsPage() {
               key={item.id}
               href={`/my/prompts/${item.id}`}
               actions={
-                <div className='flex items-center justify-start'>
-                  <DeletePromptPopover prompt={item}>
-                    <Button size='icon' variant='destructive'>
-                      <Trash2 className='size-4' />
-                    </Button>
-                  </DeletePromptPopover>
-                </div>
+                <CardActionsPopover>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/my/prompts/${item.id}`}>
+                      <Edit className='mr-2 size-4' />
+                      Edit
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DeletePromptDropdownItem prompt={item} />
+                </CardActionsPopover>
               }
             >
               <h3 className='font-semibold text-lg mb-3 line-clamp-2'>

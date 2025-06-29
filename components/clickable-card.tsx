@@ -29,14 +29,14 @@ export const ClickableCard = ({
   }
 
   return (
-    <Link href={href} lang={lang} className='block'>
-      <div className='border rounded-lg p-4 hover:shadow-lg transition-all duration-200 cursor-pointer bg-card h-full'>
+    <Link href={href} lang={lang} className='block group'>
+      <div className='relative border rounded-lg p-4 hover:shadow-lg transition-all duration-200 cursor-pointer bg-card h-full'>
         {children}
         {actions && (
           <div
             onClick={handleActionsClick}
             onKeyDown={handleActionsKeyDown}
-            className='relative z-10'
+            className='absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity'
             role='toolbar'
             aria-label='Card actions'
           >

@@ -94,10 +94,10 @@ export default function CanWeTextYouPage() {
 
         <section className='mb-8'>
           <Link
-            href='/alerts'
+            href='/marketplace'
             className='text-orange-500 hover:underline text-lg text-center w-full block'
           >
-            Return to Alerts
+            Return to Marketplace
           </Link>
         </section>
       </div>

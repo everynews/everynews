@@ -75,7 +75,7 @@ export default async function HomeLayout({
                   <FileText className='size-12 mx-auto mb-3 opacity-50' />
                   <p>No alerts subscribed yet</p>
                   <Link
-                    href='/alerts'
+                    href='/marketplace'
                     className='text-primary hover:underline text-sm mt-2 inline-block'
                   >
                     Browse alerts
