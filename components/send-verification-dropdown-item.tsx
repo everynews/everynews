@@ -20,7 +20,7 @@ export const SendVerificationDropdownItem = ({
   const handleSendVerification = async () => {
     setLoading(true)
     try {
-      const response = await api.channels[':id'].verify.$post({
+      const response = await api.channels[':id']['send-verification'].$post({
         param: { id: channel.id },
       })
 
