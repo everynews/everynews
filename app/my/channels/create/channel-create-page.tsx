@@ -24,7 +24,6 @@ import {
   ChannelDtoSchema,
   ChannelSchema,
 } from '@everynews/schema/channel'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
 import { Mail, Phone, Slack } from 'lucide-react'
 import Link from 'next/link'
@@ -54,7 +53,21 @@ export const ChannelCreatePage = () => {
       name: humanId({ capitalize: false, separator: '-' }),
       type: channelType,
     } as ChannelDto,
-    resolver: zodResolver(ChannelDtoSchema),
+    resolver: async (data) => {
+      const result = ChannelDtoSchema.safeParse(data)
+      if (result.success) {
+        return { errors: {}, values: result.data }
+      }
+      return {
+        errors: Object.fromEntries(
+          result.error.issues.map((issue) => [
+            issue.path.join('.'),
+            { message: issue.message, type: 'validation' },
+          ]),
+        ),
+        values: {},
+      }
+    },
   })
 
   // Update form when channel type changes

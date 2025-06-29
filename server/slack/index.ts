@@ -1,5 +1,5 @@
 import { db } from '@everynews/database'
-import { decrypt, encrypt } from '@everynews/lib/crypto'
+import { encrypt } from '@everynews/lib/crypto'
 import { track } from '@everynews/logs'
 import { channels } from '@everynews/schema'
 import type { WithAuth } from '@everynews/server/bindings/auth'
@@ -10,6 +10,7 @@ import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver } from 'hono-openapi/zod'
 import { z } from 'zod'
+import { getValidSlackToken, isTokenError } from './token-refresh'
 
 export const SlackRouter = new Hono<WithAuth>()
   .use(authMiddleware)
@@ -89,12 +90,11 @@ export const SlackRouter = new Hono<WithAuth>()
       const { code, state } = c.req.query()
 
       try {
-        // Manually handle OAuth token exchange since Hono uses Web API Request objects
         if (!code) {
           throw new Error('Missing authorization code')
         }
 
-        // Exchange code for access token
+        // Exchange code for access token manually due to Hono/Node.js incompatibility
         const slack = new WebClient()
         const result = await slack.oauth.v2.access({
           client_id: process.env.SLACK_CLIENT_ID || '',
@@ -120,9 +120,19 @@ export const SlackRouter = new Hono<WithAuth>()
         const teamId = result.team?.id || ''
         const teamName = result.team?.name || 'Unknown Team'
 
+        // Check if token rotation is enabled based on presence of refresh token
+        const tokenRotationEnabled = !!result.refresh_token
+
         const slackData = {
           accessToken: await encrypt(result.access_token),
+          expiresAt: result.expires_in
+            ? new Date(Date.now() + result.expires_in * 1000)
+            : undefined,
+          refreshToken: result.refresh_token
+            ? await encrypt(result.refresh_token)
+            : undefined,
           teamId: teamId,
+          tokenRotationEnabled,
           workspace: {
             id: teamId,
             name: teamName,
@@ -148,8 +158,8 @@ export const SlackRouter = new Hono<WithAuth>()
           icon: '✅',
           tags: {
             channel_id: tempChannel.id,
-            team_id: teamId,
-            team_name: teamName,
+            team_id: result.team?.id || '',
+            team_name: result.team?.name || '',
             type: 'info',
           },
           user_id: user.id,
@@ -221,14 +231,7 @@ export const SlackRouter = new Hono<WithAuth>()
           return c.json({ error: 'Channel not found' }, 404)
         }
 
-        const config = channel.config as {
-          accessToken: string
-          channel: { id: string; name: string }
-          destination: string
-          teamId: string
-          workspace: { id: string; name: string }
-        }
-        const accessToken = await decrypt(config.accessToken)
+        const accessToken = await getValidSlackToken(channel.id)
 
         // Initialize Slack client
         const slack = new WebClient(accessToken)
@@ -268,10 +271,19 @@ export const SlackRouter = new Hono<WithAuth>()
           icon: '❌',
           tags: {
             error: String(error),
+            is_token_error: isTokenError(error),
             type: 'error',
           },
           user_id: user.id,
         })
+
+        if (isTokenError(error)) {
+          return c.json(
+            { error: 'Slack authentication expired. Please reconnect.' },
+            401,
+          )
+        }
+
         return c.json({ error: 'Failed to list channels' }, 500)
       }
     },
@@ -316,12 +328,15 @@ export const SlackRouter = new Hono<WithAuth>()
 
         const config = channel.config as {
           accessToken: string
+          refreshToken?: string
+          expiresAt?: Date
+          tokenRotationEnabled?: boolean
           channel: { id: string; name: string }
           destination: string
           teamId: string
           workspace: { id: string; name: string }
         }
-        const accessToken = await decrypt(config.accessToken)
+        const accessToken = await getValidSlackToken(channel.id)
         const slack = new WebClient(accessToken)
 
         // Send test message
@@ -352,10 +367,19 @@ export const SlackRouter = new Hono<WithAuth>()
           tags: {
             channel_id: channelId,
             error: String(error),
+            is_token_error: isTokenError(error),
             type: 'error',
           },
           user_id: user.id,
         })
+
+        if (isTokenError(error)) {
+          return c.json(
+            { error: 'Slack authentication expired. Please reconnect.' },
+            401,
+          )
+        }
+
         return c.json({ error: 'Failed to send test message' }, 500)
       }
     },

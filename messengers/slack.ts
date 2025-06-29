@@ -1,5 +1,6 @@
 import { track } from '@everynews/logs'
 import type { Story, Strategy, WaitSchema } from '@everynews/schema'
+import { isTokenError } from '@everynews/server/slack/token-refresh'
 import type {
   ContextBlockElement,
   KnownBlock,
@@ -68,9 +69,17 @@ export const sendSlackAlert = async ({
         alert_name: alertName,
         channel_id: channelId,
         error: String(error),
+        is_token_error: isTokenError(error),
         type: 'error',
       },
     })
+
+    if (isTokenError(error)) {
+      throw new Error(
+        'Slack authentication expired. Please reconnect your Slack channel.',
+      )
+    }
+
     throw error
   }
 }
@@ -271,9 +280,17 @@ export const sendSlackVerification = async ({
         channel_id: channelId,
         channel_name: channelName,
         error: String(error),
+        is_token_error: isTokenError(error),
         type: 'error',
       },
     })
+
+    if (isTokenError(error)) {
+      throw new Error(
+        'Slack authentication expired. Please reconnect your Slack channel.',
+      )
+    }
+
     throw error
   }
 }

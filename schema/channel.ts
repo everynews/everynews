@@ -63,7 +63,13 @@ export const SlackChannelConfigSchema = z.object({
     })
     .optional(),
   destination: z.string().optional().openapi({ example: '#general' }),
+  expiresAt: z.coerce
+    .date()
+    .optional()
+    .openapi({ example: '2024-01-01T12:00:00Z' }),
+  refreshToken: z.string().optional().openapi({ example: 'xoxe-1-...' }),
   teamId: z.string().openapi({ example: 'T00000000' }),
+  tokenRotationEnabled: z.boolean().default(false),
   workspace: z
     .object({
       id: z.string().openapi({ example: 'T00000000' }),

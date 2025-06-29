@@ -1,3 +1,4 @@
+import { refreshExpiredSlackTokens } from '@everynews/cron/slack-token-refresh'
 import { processAlert } from '@everynews/cron/worker'
 import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
@@ -72,6 +73,26 @@ const main = async () => {
     2 * 60 * 1000, // 2 minutes for custodian
     'Custodian timeout after 2 minutes',
   )
+
+  // Refresh expired Slack tokens
+  try {
+    await withTimeout(
+      refreshExpiredSlackTokens(),
+      5 * 60 * 1000, // 5 minutes for token refresh
+      'Slack token refresh timeout after 5 minutes',
+    )
+  } catch (error) {
+    await track({
+      channel: 'cron',
+      description: 'Failed to refresh Slack tokens during cron job',
+      event: 'Slack Token Refresh Failed',
+      icon: '⚠️',
+      tags: {
+        error: String(error),
+        type: 'warning',
+      },
+    })
+  }
 
   await track({
     channel: 'cron',

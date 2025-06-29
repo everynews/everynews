@@ -22,7 +22,6 @@ import {
   ChannelDtoSchema,
   SlackChannelConfigSchema,
 } from '@everynews/schema/channel'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Slack } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -34,9 +33,30 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Transform Channel to ChannelDto - only include fields that can be edited
+  const channelDto = {
+    config: channel.config,
+    name: channel.name,
+    type: channel.type,
+  } as ChannelDto
+
   const form = useForm<ChannelDto>({
-    defaultValues: channel,
-    resolver: zodResolver(ChannelDtoSchema),
+    defaultValues: channelDto,
+    resolver: async (data) => {
+      const result = ChannelDtoSchema.safeParse(data)
+      if (result.success) {
+        return { errors: {}, values: result.data }
+      }
+      return {
+        errors: Object.fromEntries(
+          result.error.issues.map((issue) => [
+            issue.path.join('.'),
+            { message: issue.message, type: 'validation' },
+          ]),
+        ),
+        values: {},
+      }
+    },
   })
 
   const onSubmit = async (values: ChannelDto) => {

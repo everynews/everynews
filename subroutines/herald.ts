@@ -1,7 +1,6 @@
 import { db } from '@everynews/database'
 import { sendTemplateEmail } from '@everynews/emails'
 import Alert from '@everynews/emails/alert'
-import { decrypt } from '@everynews/lib/crypto'
 import { track } from '@everynews/logs'
 import { sendSlackAlert, sendSurgeAlert } from '@everynews/messengers'
 import {
@@ -11,6 +10,7 @@ import {
   type Strategy,
   type WaitSchema,
 } from '@everynews/schema'
+import { getValidSlackToken } from '@everynews/server/slack/token-refresh'
 import { and, eq, isNull } from 'drizzle-orm'
 import type { z } from 'zod'
 
@@ -92,16 +92,21 @@ const sendAlertSlack = async (parcel: {
   stories: Story[]
   strategy: Strategy
   wait: Wait
+  channelId: string
   config: {
     accessToken: string
+    refreshToken?: string
+    expiresAt?: Date
+    tokenRotationEnabled?: boolean
     channel: { id: string; name: string }
     destination?: string
     teamId: string
     workspace?: { id: string; name: string }
   }
 }) => {
+  const accessToken = await getValidSlackToken(parcel.channelId)
   await sendSlackAlert({
-    accessToken: await decrypt(parcel.config.accessToken),
+    accessToken,
     alertName: parcel.alertName,
     channelId: parcel.config.channel.id,
     stories: parcel.stories,
@@ -215,6 +220,9 @@ export const herald = async ({
       if (channelType === 'slack') {
         const slackConfig = channel.config as {
           accessToken: string
+          refreshToken?: string
+          expiresAt?: Date
+          tokenRotationEnabled?: boolean
           channel?: { id: string; name: string }
           destination?: string
           teamId: string
@@ -240,8 +248,12 @@ export const herald = async ({
 
         await sendAlertSlack({
           ...parcel,
+          channelId,
           config: slackConfig as {
             accessToken: string
+            refreshToken?: string
+            expiresAt?: Date
+            tokenRotationEnabled?: boolean
             channel: { id: string; name: string }
             destination?: string
             teamId: string

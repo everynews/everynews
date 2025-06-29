@@ -56,6 +56,7 @@ export const updateSlackChannel = async (
             name: slackChannelName,
           },
           destination: `#${slackChannelName}`,
+          tokenRotationEnabled: existingConfig.tokenRotationEnabled ?? false,
         },
         name: `Slack - ${slackChannelName}`,
         type: 'slack',

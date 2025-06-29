@@ -31,7 +31,6 @@ import {
   type ChannelDto,
   ChannelDtoSchema,
 } from '@everynews/schema/channel'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -79,7 +78,21 @@ export const ChannelDialog = ({
             name: original?.name || '',
             type: original?.type || 'email',
           } as ChannelDto),
-    resolver: zodResolver(ChannelDtoSchema),
+    resolver: async (data) => {
+      const result = ChannelDtoSchema.safeParse(data)
+      if (result.success) {
+        return { errors: {}, values: result.data }
+      }
+      return {
+        errors: Object.fromEntries(
+          result.error.issues.map((issue) => [
+            issue.path.join('.'),
+            { message: issue.message, type: 'validation' },
+          ]),
+        ),
+        values: {},
+      }
+    },
   })
 
   // Update form when channel type changes
