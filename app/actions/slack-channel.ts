@@ -85,5 +85,5 @@ export const updateSlackChannel = async (
     throw new Error('Failed to update Slack channel. Please try again.')
   }
 
-  redirect('/channels')
+  redirect('/my/channels')
 }
