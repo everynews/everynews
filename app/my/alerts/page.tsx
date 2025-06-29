@@ -91,7 +91,7 @@ export default async function MyAlertsPage() {
                     <SubscribeAlertDropdownItem
                       alert={item}
                       channels={userChannels}
-                      subscription={subscription}
+                      subscriptions={subscription ? [subscription] : []}
                       user={user}
                     />
                     <DropdownMenuSeparator />

@@ -1,5 +1,6 @@
 import { whoami } from '@everynews/auth/session'
-import { SubscribeAlertButton } from '@everynews/components/subscribe-alert-button'
+import { ManageAlertSubscriptions } from '@everynews/components/manage-alert-subscriptions'
+import { OneClickSubscribeForm } from '@everynews/components/one-click-subscribe-form'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
@@ -70,9 +71,9 @@ export default async function AlertStoriesPage({
     notFound()
   }
 
-  // Get user's channels and subscription for this alert
+  // Get user's channels and subscriptions for this alert
   let userChannels: Channel[] = []
-  let userSubscription: Subscription | null = null
+  let userSubscriptions: Subscription[] = []
 
   if (user) {
     // Get user's channels
@@ -82,8 +83,8 @@ export default async function AlertStoriesPage({
       .where(and(eq(channels.userId, user.id), isNull(channels.deletedAt)))
     userChannels = ChannelSchema.array().parse(channelsRes)
 
-    // Check if user is subscribed to this alert
-    const subscriptionRes = await db
+    // Get all user's subscriptions for this alert
+    const subscriptionsRes = await db
       .select()
       .from(subscriptions)
       .where(
@@ -93,11 +94,8 @@ export default async function AlertStoriesPage({
           isNull(subscriptions.deletedAt),
         ),
       )
-      .limit(1)
 
-    userSubscription = subscriptionRes[0]
-      ? SubscriptionSchema.parse(subscriptionRes[0])
-      : null
+    userSubscriptions = SubscriptionSchema.array().parse(subscriptionsRes)
   }
 
   // Get stories for this alert with content joined
@@ -144,41 +142,18 @@ export default async function AlertStoriesPage({
       <div className='flex flex-col text-center gap-2'>
         <div className='flex flex-col items-center justify-center gap-4'>
           <h1 className='text-2xl font-bold'>{alertInfo.name}</h1>
-          <div>
+          <div className='flex items-center gap-2'>
             {user && (
-              <SubscribeAlertButton
-                className='text-muted-foreground text-sm text-bold'
+              <ManageAlertSubscriptions
                 alert={AlertSchema.parse(alertInfo)}
                 channels={userChannels}
-                subscription={userSubscription ?? undefined}
+                subscriptions={userSubscriptions}
                 user={user}
+                isOwner={isOwner}
               />
             )}
-            {user && isOwner && (
-              <Link href={`/my/alerts/${id}`}>
-                <Button
-                  variant='ghost'
-                  className='text-muted-foreground text-sm text-bold'
-                  size='sm'
-                >
-                  Edit
-                </Button>
-              </Link>
-            )}
             {!user && (
-              <Link
-                href='/sign-in'
-                target='_blank'
-                className='text-muted-foreground text-sm text-bold'
-              >
-                <Button
-                  variant='ghost'
-                  className='text-muted-foreground text-sm text-bold'
-                  size='sm'
-                >
-                  Sign in to subscribe
-                </Button>
-              </Link>
+              <OneClickSubscribeForm alert={AlertSchema.parse(alertInfo)} />
             )}
           </div>
         </div>

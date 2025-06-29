@@ -14,7 +14,7 @@ export default function Loading() {
           </p>
         </div>
         <Link href='/marketplace'>
-          <Button>Browse Alerts</Button>
+          <Button>Marketplace</Button>
         </Link>
       </div>
 

@@ -48,11 +48,15 @@ export const SubscribeAlertDialog = ({
   channels,
   children,
   user,
+  subscribedChannelIds = [],
+  hasDefaultSubscription = false,
 }: {
   alert: Alert
   channels: Channel[]
   children: React.ReactNode
   user?: { id: string; email: string; createdAt: Date }
+  subscribedChannelIds?: string[]
+  hasDefaultSubscription?: boolean
 }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -64,6 +68,11 @@ export const SubscribeAlertDialog = ({
     },
     resolver: zodResolver(SubscribeFormSchema),
   })
+
+  // Filter out already subscribed channels
+  const availableChannels = channels.filter(
+    (channel) => !subscribedChannelIds.includes(channel.id),
+  )
 
   const onSubmit = async (data: SubscribeFormData) => {
     setLoading(true)
@@ -81,7 +90,15 @@ export const SubscribeAlertDialog = ({
         return
       }
 
-      toast.success(`Successfully subscribed to "${alert.name}"`)
+      const selectedChannel =
+        data.channelId === 'default'
+          ? 'default email'
+          : availableChannels.find((ch) => ch.id === data.channelId)?.name ||
+            'channel'
+
+      toast.success(
+        `Successfully subscribed to "${alert.name}" via ${selectedChannel}`,
+      )
       setOpen(false)
       form.reset()
       router.refresh()
@@ -100,6 +117,12 @@ export const SubscribeAlertDialog = ({
           <DialogTitle>Subscribe to "{alert.name}"</DialogTitle>
           <DialogDescription>
             Choose a channel to receive notifications for this alert.
+            {subscribedChannelIds.length > 0 && (
+              <span className='block mt-2 text-xs'>
+                Already subscribed: {subscribedChannelIds.length} channel
+                {subscribedChannelIds.length !== 1 && 's'}
+              </span>
+            )}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -119,12 +142,12 @@ export const SubscribeAlertDialog = ({
                         <SelectValue placeholder='Select a channel' />
                       </SelectTrigger>
                       <SelectContent>
-                        {user && (
+                        {user && !hasDefaultSubscription && (
                           <SelectItem value='default'>
                             Default Channel (email: {user.email})
                           </SelectItem>
                         )}
-                        {channels.map((channel) => (
+                        {availableChannels.map((channel) => (
                           <SelectItem key={channel.id} value={channel.id}>
                             {channel.name} ({channel.type}:{' '}
                             {channel.config.destination})
@@ -149,7 +172,7 @@ export const SubscribeAlertDialog = ({
               <SubmitButton
                 onClick={form.handleSubmit(onSubmit)}
                 loading={loading}
-                disabled={loading}
+                disabled={loading || !form.watch('channelId')}
               >
                 Subscribe
               </SubmitButton>

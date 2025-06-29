@@ -1,6 +1,7 @@
 'use client'
 
 import { api } from '@everynews/app/api'
+import { PhoneInputField } from '@everynews/components/phone-input-field'
 import { SubmitButton } from '@everynews/components/submit-button'
 import { Button } from '@everynews/components/ui/button'
 import {
@@ -347,17 +348,45 @@ export const ChannelCreatePage = () => {
                         : 'Email Address'}
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder={
-                          channelType === 'phone'
-                            ? '+1234567890'
-                            : 'you@example.com'
-                        }
-                        type={channelType === 'phone' ? 'tel' : 'email'}
-                        {...field}
-                      />
+                      {channelType === 'phone' ? (
+                        <PhoneInputField
+                          placeholder='Enter phone number'
+                          value={field.value}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          name={field.name}
+                        />
+                      ) : (
+                        <Input
+                          placeholder='you@example.com'
+                          type='email'
+                          {...field}
+                        />
+                      )}
                     </FormControl>
                     <FormMessage />
+                    {channelType === 'phone' && (
+                      <p className='text-xs text-muted-foreground mt-2'>
+                        By providing your phone number, you authorize Everynews
+                        to send automated text alerts to the number provided.
+                        Messages and Data rates apply. Message frequency may
+                        vary. Text HELP for help or STOP to opt out. See{' '}
+                        <Link
+                          href='/terms'
+                          className='underline hover:text-primary'
+                        >
+                          terms
+                        </Link>{' '}
+                        and{' '}
+                        <Link
+                          href='/privacy'
+                          className='underline hover:text-primary'
+                        >
+                          privacy policy
+                        </Link>
+                        .
+                      </p>
+                    )}
                   </FormItem>
                 )}
               />

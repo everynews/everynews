@@ -72,9 +72,9 @@ export default async function MySubscriptionsPage() {
             Alerts you're subscribed to
           </p>
         </div>
-        <Button asChild>
-          <Link href='/marketplace'>Browse Alerts</Link>
-        </Button>
+        <Link href='/marketplace'>
+          <Button variant='outline'>Marketplace</Button>
+        </Link>
       </div>
 
       {userSubscriptions.length === 0 ? (
@@ -100,7 +100,7 @@ export default async function MySubscriptionsPage() {
                   <SubscribeAlertDropdownItem
                     alert={alert}
                     channels={userChannels}
-                    subscription={subscription}
+                    subscriptions={[subscription]}
                     user={user}
                   />
                 </CardActionsPopover>
