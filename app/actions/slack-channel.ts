@@ -2,7 +2,7 @@
 
 import { whoami } from '@everynews/auth/session'
 import { db } from '@everynews/database'
-import { channels } from '@everynews/schema/channel'
+import { channels, SlackChannelConfigSchema } from '@everynews/schema/channel'
 import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 import { redirect, unauthorized } from 'next/navigation'
@@ -35,32 +35,14 @@ export const updateSlackChannel = async (
       )
     }
 
-    // Validate and extract existing config
-    const existingConfig = existingChannel.config
-
-    // Runtime validation of config structure
-    if (
-      !existingConfig ||
-      typeof existingConfig !== 'object' ||
-      !('accessToken' in existingConfig) ||
-      !('teamId' in existingConfig) ||
-      typeof existingConfig.accessToken !== 'string' ||
-      typeof existingConfig.teamId !== 'string'
-    ) {
+    // Validate and extract existing config using Zod
+    const parseResult = SlackChannelConfigSchema.safeParse(existingChannel.config)
+    
+    if (!parseResult.success) {
       throw new Error('Invalid channel configuration structure')
     }
-
-    // Validate workspace if it exists
-    if (
-      existingConfig.workspace &&
-      (typeof existingConfig.workspace !== 'object' ||
-        !('id' in existingConfig.workspace) ||
-        !('name' in existingConfig.workspace) ||
-        typeof existingConfig.workspace.id !== 'string' ||
-        typeof existingConfig.workspace.name !== 'string')
-    ) {
-      throw new Error('Invalid workspace configuration structure')
-    }
+    
+    const existingConfig = parseResult.data
 
     await db
       .update(channels)
