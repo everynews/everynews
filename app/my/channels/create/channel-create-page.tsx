@@ -252,7 +252,7 @@ export const ChannelCreatePage = () => {
                   <div className='flex grow items-start gap-3'>
                     <div className='grid grow gap-2'>
                       <span className='font-medium flex items-center gap-2'>
-                        <Mail className='size-4' />
+                        <Mail className='size-3 sm:size-4' />
                         Email
                       </span>
                       <p
@@ -279,7 +279,7 @@ export const ChannelCreatePage = () => {
                   <div className='flex grow items-start gap-3'>
                     <div className='grid grow gap-2'>
                       <span className='font-medium flex items-center gap-2'>
-                        <Phone className='size-4' />
+                        <Phone className='size-3 sm:size-4' />
                         SMS
                       </span>
                       <p
@@ -306,7 +306,7 @@ export const ChannelCreatePage = () => {
                   <div className='flex grow items-start gap-3'>
                     <div className='grid grow gap-2'>
                       <span className='font-medium flex items-center gap-2'>
-                        <Slack className='size-4' />
+                        <Slack className='size-3 sm:size-4' />
                         Slack
                       </span>
                       <p
@@ -325,12 +325,12 @@ export const ChannelCreatePage = () => {
             <Separator />
 
             {channelType === 'slack' ? (
-              <div className='rounded-lg border bg-muted/50 p-4'>
-                <p className='text-sm text-muted-foreground mb-2'>
+              <div className='rounded-lg border bg-muted/50 p-3 sm:p-4'>
+                <p className='text-xs sm:text-sm text-muted-foreground mb-2'>
                   You'll be redirected to Slack to connect your workspace and
                   select a channel.
                 </p>
-                <p className='text-sm text-muted-foreground'>
+                <p className='text-xs sm:text-sm text-muted-foreground'>
                   Make sure you have permission to install apps in your Slack
                   workspace.
                 </p>
@@ -363,7 +363,7 @@ export const ChannelCreatePage = () => {
               />
             )}
 
-            <div className='flex justify-end gap-2'>
+            <div className='flex flex-col-reverse sm:flex-row justify-end gap-2'>
               <Button
                 type='button'
                 variant='outline'

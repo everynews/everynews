@@ -48,10 +48,12 @@ export default async function MyChannelsPage() {
 
       <div className='grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3'>
         {/* Default channel card */}
-        <div className='border rounded-lg p-4 bg-card'>
-          <h3 className='font-semibold text-lg mb-3'>Default Channel</h3>
+        <div className='border rounded-lg p-3 sm:p-4 bg-card'>
+          <h3 className='font-semibold text-base sm:text-lg mb-2 sm:mb-3'>
+            Default Channel
+          </h3>
 
-          <div className='space-y-2 text-sm text-muted-foreground mb-4'>
+          <div className='space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4'>
             <div className='flex justify-between'>
               <span>Status</span>
               <span className='text-muted-foreground'>Verified</span>
@@ -65,7 +67,7 @@ export default async function MyChannelsPage() {
             </div>
             <div className='flex justify-between'>
               <span>Destination</span>
-              <span className='text-muted-foreground truncate max-w-[150px]'>
+              <span className='text-muted-foreground truncate max-w-[120px] sm:max-w-[150px]'>
                 {user.email}
               </span>
             </div>
@@ -104,11 +106,11 @@ export default async function MyChannelsPage() {
               </CardActionsPopover>
             }
           >
-            <h3 className='font-semibold text-lg line-clamp-1 mb-3'>
+            <h3 className='font-semibold text-base sm:text-lg line-clamp-1 mb-2 sm:mb-3'>
               {item.name}
             </h3>
 
-            <div className='space-y-2 text-sm text-muted-foreground mb-4'>
+            <div className='space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4'>
               <div className='flex justify-between items-center'>
                 <span>Status</span>
                 <ChannelStatusBadge channel={item} />
@@ -117,18 +119,18 @@ export default async function MyChannelsPage() {
                 <span>Type</span>
                 <div className='flex items-center gap-2'>
                   {item.type === 'email' ? (
-                    <Mail className='size-4' />
+                    <Mail className='size-3 sm:size-4' />
                   ) : item.type === 'phone' ? (
-                    <Phone className='size-4' />
+                    <Phone className='size-3 sm:size-4' />
                   ) : item.type === 'slack' ? (
-                    <Slack className='size-4' />
+                    <Slack className='size-3 sm:size-4' />
                   ) : null}
                   <span className='capitalize'>{item.type}</span>
                 </div>
               </div>
               <div className='flex justify-between'>
                 <span>Destination</span>
-                <span className='text-muted-foreground truncate max-w-[150px]'>
+                <span className='text-muted-foreground truncate max-w-[120px] sm:max-w-[150px]'>
                   {item.type === 'slack' && item.config.channel
                     ? `#${item.config.channel.name}`
                     : item.config.destination}

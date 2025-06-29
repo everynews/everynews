@@ -16,9 +16,9 @@ export const SlackConnectButton = () => {
     <Button
       onClick={handleConnect}
       variant='outline'
-      className='flex items-center gap-2'
+      className='flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto justify-center'
     >
-      <Slack className='size-4' />
+      <Slack className='size-3 sm:size-4' />
       Connect Slack Workspace
     </Button>
   )

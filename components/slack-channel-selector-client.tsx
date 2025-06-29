@@ -40,9 +40,12 @@ export const SlackChannelSelectorClient = ({
   }
 
   return (
-    <form action={handleSubmit} className='space-y-4'>
+    <form action={handleSubmit} className='space-y-3 sm:space-y-4'>
       <div>
-        <label htmlFor='slack-channel' className='text-sm font-medium'>
+        <label
+          htmlFor='slack-channel'
+          className='text-xs sm:text-sm font-medium'
+        >
           Select Slack Channel
         </label>
         <Select
@@ -63,7 +66,11 @@ export const SlackChannelSelectorClient = ({
         </Select>
       </div>
 
-      <Button type='submit' disabled={!selectedChannel}>
+      <Button
+        type='submit'
+        disabled={!selectedChannel}
+        className='w-full sm:w-auto'
+      >
         Save Channel
       </Button>
     </form>

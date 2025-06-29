@@ -152,23 +152,25 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
           {channel.type === 'slack' ? (
             <div className='space-y-4'>
               <div>
-                <p className='text-sm font-medium mb-2'>Slack Configuration</p>
-                <div className='rounded-lg border bg-muted/50 p-4 space-y-3'>
+                <p className='text-xs sm:text-sm font-medium mb-2'>
+                  Slack Configuration
+                </p>
+                <div className='rounded-lg border bg-muted/50 p-3 sm:p-4 space-y-2 sm:space-y-3'>
                   <div className='flex items-center justify-between'>
-                    <span className='text-sm text-muted-foreground'>
+                    <span className='text-xs sm:text-sm text-muted-foreground'>
                       Workspace
                     </span>
-                    <span className='text-sm font-medium'>
+                    <span className='text-xs sm:text-sm font-medium truncate max-w-[150px] sm:max-w-none'>
                       {channel.config.workspace?.name ||
                         channel.config.teamId ||
                         'Unknown'}
                     </span>
                   </div>
                   <div className='flex items-center justify-between'>
-                    <span className='text-sm text-muted-foreground'>
+                    <span className='text-xs sm:text-sm text-muted-foreground'>
                       Channel
                     </span>
-                    <span className='text-sm font-medium'>
+                    <span className='text-xs sm:text-sm font-medium truncate max-w-[150px] sm:max-w-none'>
                       {channel.config.channel?.name
                         ? `#${channel.config.channel.name}`
                         : 'Not selected'}
@@ -180,7 +182,7 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
               <div className='flex flex-col gap-2'>
                 <Button asChild variant='outline' className='w-full'>
                   <Link href={`/channels/${channel.id}/slack-setup`}>
-                    <Slack className='size-4 mr-2' />
+                    <Slack className='size-3 sm:size-4 mr-2' />
                     Change Slack Channel
                   </Link>
                 </Button>
@@ -222,7 +224,7 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
             />
           )}
 
-          <div className='flex justify-end gap-2'>
+          <div className='flex flex-col-reverse sm:flex-row justify-end gap-2'>
             <Button
               type='button'
               variant='outline'
