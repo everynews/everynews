@@ -1,7 +1,7 @@
 import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { Skeleton } from '@everynews/components/ui/skeleton'
-import { Trash2 } from 'lucide-react'
+import Link from 'next/link'
 
 export default function Loading() {
   return (
@@ -13,7 +13,9 @@ export default function Loading() {
             Manage your AI-powered alerts
           </p>
         </div>
-        <Button disabled>Create Alert</Button>
+        <Link href='/my/alerts/create'>
+          <Button>Create Alert</Button>
+        </Link>
       </div>
 
       <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
@@ -42,20 +44,6 @@ export default function Loading() {
                 <div className='flex justify-between'>
                   <span>Updated</span>
                   <Skeleton className='h-4 w-20' />
-                </div>
-              </div>
-
-              <div className='flex items-center justify-between'>
-                <Button size='icon' variant='destructive' disabled>
-                  <Trash2 className='size-4' />
-                </Button>
-                <div className='flex items-center gap-2'>
-                  <Button size='sm' disabled variant='outline'>
-                    Unsubscribe
-                  </Button>
-                  <Button size='sm' variant='outline' disabled>
-                    Edit
-                  </Button>
                 </div>
               </div>
             </CardContent>

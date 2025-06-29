@@ -1,13 +1,19 @@
 import { db } from '@everynews/database'
+import { decrypt } from '@everynews/lib/crypto'
 import { url } from '@everynews/lib/url'
 import { track } from '@everynews/logs'
 import {
   checkSurgeVerification,
   sendChannelVerification,
+  sendSlackVerification,
   sendSurgeVerification,
 } from '@everynews/messengers'
 import { channels, channelVerifications } from '@everynews/schema'
-import { ChannelDtoSchema, ChannelSchema } from '@everynews/schema/channel'
+import {
+  ChannelDtoSchema,
+  ChannelSchema,
+  type SlackChannelConfig,
+} from '@everynews/schema/channel'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { and, eq, gt, isNull } from 'drizzle-orm'
@@ -431,9 +437,58 @@ export const ChannelRouter = new Hono<WithAuth>()
           },
           user_id: user.id,
         })
+      } else if (channel.type === 'slack') {
+        // For Slack, send a test message to verify the channel
+        const config = channel.config as SlackChannelConfig
+
+        let decryptedToken: string
+        try {
+          decryptedToken = await decrypt(config.accessToken)
+        } catch (error) {
+          console.error('Failed to decrypt Slack access token:', error)
+          return c.json(
+            {
+              error:
+                'Failed to decrypt access token. Please reconnect to Slack.',
+              success: false,
+            },
+            500,
+          )
+        }
+
+        await sendSlackVerification({
+          accessToken: decryptedToken,
+          channelId: config.channel.id,
+          channelName: channel.name,
+        })
+
+        // Mark as verified immediately since we sent the verification message
+        await db
+          .update(channels)
+          .set({
+            verified: true,
+            verifiedAt: new Date(),
+          })
+          .where(eq(channels.id, id))
+
+        await track({
+          channel: 'channels',
+          description: `Sent verification message to Slack channel: ${channel.name}`,
+          event: 'Slack Channel Verification Sent',
+          icon: '💬',
+          tags: {
+            channel_id: id,
+            channel_name: channel.name,
+          },
+          user_id: user.id,
+        })
       }
 
-      return c.json({ isPhone: channel.type === 'phone', success: true })
+      return c.json({
+        isPhone: channel.type === 'phone',
+        isSlack: channel.type === 'slack',
+        success: true,
+      })
     },
   )
   .get(

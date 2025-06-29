@@ -1,7 +1,7 @@
 import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { Skeleton } from '@everynews/components/ui/skeleton'
-import { Trash2 } from 'lucide-react'
+import Link from 'next/link'
 
 export default function Loading() {
   return (
@@ -13,7 +13,9 @@ export default function Loading() {
             Manage your custom AI prompts for alert summarization
           </p>
         </div>
-        <Button disabled>Create Prompt</Button>
+        <Link href='/my/prompts/create'>
+          <Button>Create Prompt</Button>
+        </Link>
       </div>
 
       <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
@@ -31,12 +33,6 @@ export default function Loading() {
                   <span>Updated</span>
                   <Skeleton className='h-4 w-20' />
                 </div>
-              </div>
-
-              <div className='flex items-center justify-start'>
-                <Button size='icon' variant='destructive' disabled>
-                  <Trash2 className='size-4' />
-                </Button>
               </div>
             </CardContent>
           </Card>

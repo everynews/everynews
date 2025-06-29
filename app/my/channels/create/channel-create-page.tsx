@@ -25,6 +25,7 @@ import {
 } from '@everynews/schema/channel'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { humanId } from 'human-id'
+import { Mail, Phone, Slack } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -34,8 +35,11 @@ export const ChannelCreatePage = () => {
   const router = useRouter()
   const emailId = useId()
   const phoneId = useId()
+  const slackId = useId()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [channelType, setChannelType] = useState<'email' | 'phone'>('email')
+  const [channelType, setChannelType] = useState<'email' | 'phone' | 'slack'>(
+    'email',
+  )
   const [verificationCode, setVerificationCode] = useState('')
   const [showVerificationInput, setShowVerificationInput] = useState(false)
   const [verificationChannelId, setVerificationChannelId] = useState<
@@ -54,10 +58,18 @@ export const ChannelCreatePage = () => {
   // Update form when channel type changes
   useEffect(() => {
     form.setValue('type', channelType)
-    form.setValue('config.destination', '')
+    if (channelType !== 'slack') {
+      form.setValue('config.destination', '')
+    }
   }, [channelType, form])
 
   const onSubmit = async (values: ChannelDto) => {
+    // Handle Slack channel type differently
+    if (channelType === 'slack') {
+      window.location.href = '/api/slack/install'
+      return
+    }
+
     setIsSubmitting(true)
     try {
       const res = await api.channels.$post({ json: values })
@@ -145,9 +157,9 @@ export const ChannelCreatePage = () => {
   }
 
   return (
-    <div className='container mx-auto'>
-      <div className='mb-6'>
-        <h1 className='text-3xl font-bold'>Create Channel</h1>
+    <>
+      <div className='mb-4 sm:mb-6'>
+        <h1 className='text-2xl sm:text-3xl font-bold'>Create Channel</h1>
         <p className='text-muted-foreground mt-1'>
           Add a new delivery channel for your alerts
         </p>
@@ -190,7 +202,7 @@ export const ChannelCreatePage = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className='flex flex-col gap-6'
+            className='flex flex-col gap-4 sm:gap-6'
           >
             <FormField
               control={form.control}
@@ -203,7 +215,9 @@ export const ChannelCreatePage = () => {
                       placeholder={
                         channelType === 'phone'
                           ? 'My SMS Channel'
-                          : 'My Email Channel'
+                          : channelType === 'slack'
+                            ? 'My Slack Channel'
+                            : 'My Email Channel'
                       }
                       {...field}
                     />
@@ -215,60 +229,138 @@ export const ChannelCreatePage = () => {
 
             <Separator />
 
-            <FormItem className='space-y-3'>
+            <FormItem>
               <FormLabel>Channel Type</FormLabel>
               <RadioGroup
                 value={channelType}
                 onValueChange={(value) =>
-                  setChannelType(value as 'email' | 'phone')
+                  setChannelType(value as 'email' | 'phone' | 'slack')
                 }
+                className='gap-2 lg:grid lg:grid-cols-3'
               >
-                <div className='flex items-center space-x-2'>
-                  <RadioGroupItem value='email' id={emailId} />
-                  <label
-                    htmlFor={emailId}
-                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-                  >
-                    Email
-                  </label>
-                </div>
-                <div className='flex items-center space-x-2'>
-                  <RadioGroupItem value='phone' id={phoneId} />
-                  <label
-                    htmlFor={phoneId}
-                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-                  >
-                    SMS (Phone)
-                  </label>
-                </div>
+                <label
+                  htmlFor={emailId}
+                  className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none cursor-pointer'
+                >
+                  <RadioGroupItem
+                    value='email'
+                    id={emailId}
+                    aria-describedby={`${emailId}-description`}
+                    className='order-1 after:absolute after:inset-0'
+                  />
+                  <div className='flex grow items-start gap-3'>
+                    <div className='grid grow gap-2'>
+                      <span className='font-medium flex items-center gap-2'>
+                        <Mail className='size-4' />
+                        Email
+                      </span>
+                      <p
+                        id={`${emailId}-description`}
+                        className='text-muted-foreground text-sm'
+                      >
+                        Receive alerts via email. Perfect for daily digests and
+                        important updates.
+                      </p>
+                    </div>
+                  </div>
+                </label>
+
+                <label
+                  htmlFor={phoneId}
+                  className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none cursor-pointer'
+                >
+                  <RadioGroupItem
+                    value='phone'
+                    id={phoneId}
+                    aria-describedby={`${phoneId}-description`}
+                    className='order-1 after:absolute after:inset-0'
+                  />
+                  <div className='flex grow items-start gap-3'>
+                    <div className='grid grow gap-2'>
+                      <span className='font-medium flex items-center gap-2'>
+                        <Phone className='size-4' />
+                        SMS
+                      </span>
+                      <p
+                        id={`${phoneId}-description`}
+                        className='text-muted-foreground text-sm'
+                      >
+                        Get instant notifications via text message for
+                        time-sensitive alerts.
+                      </p>
+                    </div>
+                  </div>
+                </label>
+
+                <label
+                  htmlFor={slackId}
+                  className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none cursor-pointer'
+                >
+                  <RadioGroupItem
+                    value='slack'
+                    id={slackId}
+                    aria-describedby={`${slackId}-description`}
+                    className='order-1 after:absolute after:inset-0'
+                  />
+                  <div className='flex grow items-start gap-3'>
+                    <div className='grid grow gap-2'>
+                      <span className='font-medium flex items-center gap-2'>
+                        <Slack className='size-4' />
+                        Slack
+                      </span>
+                      <p
+                        id={`${slackId}-description`}
+                        className='text-muted-foreground text-sm'
+                      >
+                        Share alerts with your team in Slack channels for
+                        collaborative monitoring.
+                      </p>
+                    </div>
+                  </div>
+                </label>
               </RadioGroup>
             </FormItem>
 
             <Separator />
 
-            <FormField
-              control={form.control}
-              name='config.destination'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {channelType === 'phone' ? 'Phone Number' : 'Email Address'}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder={
-                        channelType === 'phone'
-                          ? '+1234567890'
-                          : 'you@example.com'
-                      }
-                      type={channelType === 'phone' ? 'tel' : 'email'}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {channelType === 'slack' ? (
+              <div className='rounded-lg border bg-muted/50 p-4'>
+                <p className='text-sm text-muted-foreground mb-2'>
+                  You'll be redirected to Slack to connect your workspace and
+                  select a channel.
+                </p>
+                <p className='text-sm text-muted-foreground'>
+                  Make sure you have permission to install apps in your Slack
+                  workspace.
+                </p>
+              </div>
+            ) : (
+              <FormField
+                control={form.control}
+                name='config.destination'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {channelType === 'phone'
+                        ? 'Phone Number'
+                        : 'Email Address'}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={
+                          channelType === 'phone'
+                            ? '+1234567890'
+                            : 'you@example.com'
+                        }
+                        type={channelType === 'phone' ? 'tel' : 'email'}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <div className='flex justify-end gap-2'>
               <Button
@@ -278,16 +370,13 @@ export const ChannelCreatePage = () => {
               >
                 Cancel
               </Button>
-              <SubmitButton
-                onClick={form.handleSubmit(onSubmit)}
-                loading={isSubmitting}
-              >
-                Create
-              </SubmitButton>
+              <Button type='submit' disabled={isSubmitting}>
+                {channelType === 'slack' ? 'Connect Slack' : 'Create'}
+              </Button>
             </div>
           </form>
         </Form>
       )}
-    </div>
+    </>
   )
 }

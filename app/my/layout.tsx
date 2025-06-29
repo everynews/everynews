@@ -111,7 +111,7 @@ const MyLayout = async ({ children }: { children: React.ReactNode }) => {
         <div className='p-4 md:hidden'>
           <MobileSidebar items={sidebarItems} />
         </div>
-        <main className='py-6'>{children}</main>
+        <main className='px-4 py-4 sm:px-6 sm:py-6'>{children}</main>
       </div>
     </div>
   )

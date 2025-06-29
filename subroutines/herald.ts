@@ -1,8 +1,9 @@
 import { db } from '@everynews/database'
 import { sendTemplateEmail } from '@everynews/emails'
 import Alert from '@everynews/emails/alert'
+import { decrypt } from '@everynews/lib/crypto'
 import { track } from '@everynews/logs'
-import { sendSurgeAlert } from '@everynews/messengers'
+import { sendSlackAlert, sendSurgeAlert } from '@everynews/messengers'
 import {
   ChannelSchema,
   channels,
@@ -91,39 +92,22 @@ const sendAlertSlack = async (parcel: {
   stories: Story[]
   strategy: Strategy
   wait: Wait
-}) => {
-  try {
-    console.log(
-      `Sending slack message to ${parcel.destination} for ${parcel.alertName} with ${parcel.stories.length} stories`,
-    )
-
-    await track({
-      channel: 'herald',
-      description: `Sent slack message to ${parcel.destination}`,
-      event: 'Slack Alert Sent',
-      icon: '💬',
-      tags: {
-        alert_name: parcel.alertName,
-        destination: parcel.destination,
-        stories_count: parcel.stories.length,
-        type: 'info',
-      },
-    })
-  } catch (error) {
-    await track({
-      channel: 'herald',
-      description: `Failed to send slack message to ${parcel.destination}`,
-      event: 'Slack Alert Failed',
-      icon: '❌',
-      tags: {
-        alert_name: parcel.alertName,
-        destination: parcel.destination,
-        error: String(error),
-        type: 'error',
-      },
-    })
-    throw error
+  config: {
+    accessToken: string
+    channel: { id: string; name: string }
+    destination?: string
+    teamId: string
+    workspace: { id: string; name: string }
   }
+}) => {
+  await sendSlackAlert({
+    accessToken: await decrypt(parcel.config.accessToken),
+    alertName: parcel.alertName,
+    channelId: parcel.config.channel.id,
+    stories: parcel.stories,
+    strategy: parcel.strategy,
+    wait: parcel.wait,
+  })
 }
 
 export const herald = async ({
@@ -218,7 +202,7 @@ export const herald = async ({
 
       parcel = {
         alertName,
-        destination: channel.config.destination,
+        destination: channel.config.destination || '',
         readerCount,
         stories,
         strategy,
@@ -226,12 +210,26 @@ export const herald = async ({
         wait,
       }
       channelType = channel.type as 'email' | 'phone' | 'slack'
+
+      // Send the alert for Slack channels with config
+      if (channelType === 'slack') {
+        await sendAlertSlack({
+          ...parcel,
+          config: channel.config as {
+            accessToken: string
+            channel: { id: string; name: string }
+            destination?: string
+            teamId: string
+            workspace: { id: string; name: string }
+          },
+        })
+        return
+      }
     }
 
-    // Send the alert
+    // Send the alert for email/phone channels
     if (channelType === 'email') await sendAlertEmail(parcel)
     else if (channelType === 'phone') await sendAlertPhone(parcel)
-    else if (channelType === 'slack') await sendAlertSlack(parcel)
     else {
       await track({
         channel: 'herald',

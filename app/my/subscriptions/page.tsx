@@ -1,6 +1,11 @@
 import { whoami } from '@everynews/auth/session'
+import {
+  CardActionsPopover,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@everynews/components/card-actions-popover'
 import { ClickableCard } from '@everynews/components/clickable-card'
-import { SubscribeAlertButton } from '@everynews/components/subscribe-alert-button'
+import { SubscribeAlertDropdownItem } from '@everynews/components/subscribe-alert-dropdown-item'
 import { Button } from '@everynews/components/ui/button'
 import { db } from '@everynews/database'
 import { AlertSchema, alerts } from '@everynews/schema/alert'
@@ -11,7 +16,7 @@ import {
   subscriptions,
 } from '@everynews/schema/subscription'
 import { and, eq, isNull } from 'drizzle-orm'
-import { Mail, MessageSquare } from 'lucide-react'
+import { ExternalLink, Mail, MessageSquare, Phone, Slack } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -59,39 +64,46 @@ export default async function MySubscriptionsPage() {
   const userChannels = ChannelSchema.array().parse(userChannelsRes)
 
   return (
-    <div className='container mx-auto max-w-6xl px-4 sm:px-6'>
-      <div className='flex items-center justify-between gap-4 mb-6'>
+    <div className='container mx-auto max-w-6xl'>
+      <div className='flex items-center justify-between gap-4 mb-4 sm:mb-6'>
         <div className='flex-1'>
-          <h1 className='text-3xl font-bold'>Subscriptions</h1>
+          <h1 className='text-2xl sm:text-3xl font-bold'>Subscriptions</h1>
           <p className='text-muted-foreground mt-1'>
             Alerts you're subscribed to
           </p>
         </div>
         <Button asChild>
-          <Link href='/alerts'>Browse Alerts</Link>
+          <Link href='/marketplace'>Browse Alerts</Link>
         </Button>
       </div>
 
       {userSubscriptions.length === 0 ? (
-        <div className='text-center text-muted-foreground py-16 border rounded-lg'>
+        <div className='text-center text-muted-foreground py-12 sm:py-16 border rounded-lg'>
           No subscriptions yet. Browse alerts to subscribe to one.
         </div>
       ) : (
-        <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+        <div className='grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3'>
           {userSubscriptions.map(({ subscription, alert, channel }) => (
             <ClickableCard
               key={subscription.id}
               href={`/alerts/${alert.id}`}
               lang={alert.languageCode}
               actions={
-                <div className='flex items-center justify-between'>
-                  <SubscribeAlertButton
+                <CardActionsPopover>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/alerts/${alert.id}`}>
+                      <ExternalLink className='mr-2 size-4' />
+                      View Alert
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <SubscribeAlertDropdownItem
                     alert={alert}
                     channels={userChannels}
                     subscription={subscription}
                     user={user}
                   />
-                </div>
+                </CardActionsPopover>
               }
             >
               <h3 className='font-semibold text-lg line-clamp-1 mb-3'>
@@ -120,6 +132,10 @@ export default async function MySubscriptionsPage() {
                       <>
                         {channel.type === 'email' ? (
                           <Mail className='size-4' />
+                        ) : channel.type === 'phone' ? (
+                          <Phone className='size-4' />
+                        ) : channel.type === 'slack' ? (
+                          <Slack className='size-4' />
                         ) : (
                           <MessageSquare className='size-4' />
                         )}
@@ -136,7 +152,11 @@ export default async function MySubscriptionsPage() {
                 <div className='flex justify-between'>
                   <span>Destination</span>
                   <span className='text-muted-foreground truncate max-w-[150px]'>
-                    {channel ? channel.config.destination : user.email}
+                    {channel
+                      ? channel.type === 'slack' && channel.config.channel
+                        ? `#${channel.config.channel.name}`
+                        : channel.config.destination
+                      : user.email}
                   </span>
                 </div>
                 <div className='flex justify-between'>

@@ -1,13 +1,19 @@
 import { whoami } from '@everynews/auth/session'
+import {
+  CardActionsPopover,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@everynews/components/card-actions-popover'
+import { ChannelStatusBadge } from '@everynews/components/channel-status-badge'
 import { ClickableCard } from '@everynews/components/clickable-card'
-import { DeleteChannelPopover } from '@everynews/components/delete-channel-popover'
-import { SendVerificationButton } from '@everynews/components/send-verification-button'
+import { DeleteChannelDropdownItem } from '@everynews/components/delete-channel-dropdown-item'
+import { SendVerificationDropdownItem } from '@everynews/components/send-verification-dropdown-item'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import { db } from '@everynews/database'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
 import { and, eq, isNull } from 'drizzle-orm'
-import { Mail, Phone, Trash2 } from 'lucide-react'
+import { Edit, Mail, Phone, Slack } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
 
@@ -27,10 +33,10 @@ export default async function MyChannelsPage() {
   const channelList = ChannelSchema.array().parse(res)
 
   return (
-    <div className='container mx-auto max-w-6xl px-4 sm:px-6'>
-      <div className='flex items-center justify-between gap-4 mb-6'>
+    <div className='container mx-auto max-w-6xl'>
+      <div className='flex items-center justify-between gap-4 mb-4 sm:mb-6'>
         <div className='flex-1'>
-          <h1 className='text-3xl font-bold'>Channels</h1>
+          <h1 className='text-2xl sm:text-3xl font-bold'>Channels</h1>
           <p className='text-muted-foreground mt-1'>
             Manage where your alerts are delivered
           </p>
@@ -40,7 +46,7 @@ export default async function MyChannelsPage() {
         </Button>
       </div>
 
-      <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+      <div className='grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3'>
         {/* Default channel card */}
         <div className='border rounded-lg p-4 bg-card'>
           <h3 className='font-semibold text-lg mb-3'>Default Channel</h3>
@@ -80,16 +86,22 @@ export default async function MyChannelsPage() {
             key={item.id}
             href={`/my/channels/${item.id}`}
             actions={
-              <div className='flex items-center justify-between'>
-                <DeleteChannelPopover channel={item}>
-                  <Button size='icon' variant='destructive'>
-                    <Trash2 className='size-4' />
-                  </Button>
-                </DeleteChannelPopover>
-                <div className='flex items-center gap-2'>
-                  {!item.verified && <SendVerificationButton channel={item} />}
-                </div>
-              </div>
+              <CardActionsPopover>
+                <DropdownMenuItem asChild>
+                  <Link href={`/my/channels/${item.id}`}>
+                    <Edit className='mr-2 size-4' />
+                    Edit
+                  </Link>
+                </DropdownMenuItem>
+                {!item.verified && item.type !== 'slack' && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <SendVerificationDropdownItem channel={item} />
+                  </>
+                )}
+                <DropdownMenuSeparator />
+                <DeleteChannelDropdownItem channel={item} />
+              </CardActionsPopover>
             }
           >
             <h3 className='font-semibold text-lg line-clamp-1 mb-3'>
@@ -97,11 +109,9 @@ export default async function MyChannelsPage() {
             </h3>
 
             <div className='space-y-2 text-sm text-muted-foreground mb-4'>
-              <div className='flex justify-between'>
+              <div className='flex justify-between items-center'>
                 <span>Status</span>
-                <span className='text-muted-foreground'>
-                  {item.verified ? 'Verified' : 'Pending'}
-                </span>
+                <ChannelStatusBadge channel={item} />
               </div>
               <div className='flex justify-between'>
                 <span>Type</span>
@@ -110,6 +120,8 @@ export default async function MyChannelsPage() {
                     <Mail className='size-4' />
                   ) : item.type === 'phone' ? (
                     <Phone className='size-4' />
+                  ) : item.type === 'slack' ? (
+                    <Slack className='size-4' />
                   ) : null}
                   <span className='capitalize'>{item.type}</span>
                 </div>
@@ -117,7 +129,9 @@ export default async function MyChannelsPage() {
               <div className='flex justify-between'>
                 <span>Destination</span>
                 <span className='text-muted-foreground truncate max-w-[150px]'>
-                  {item.config.destination}
+                  {item.type === 'slack' && item.config.channel
+                    ? `#${item.config.channel.name}`
+                    : item.config.destination}
                 </span>
               </div>
               <div className='flex justify-between'>

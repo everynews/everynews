@@ -3,6 +3,7 @@ import ChannelVerificationEmail from '@everynews/emails/channel-verification'
 import MagicLinkEmail from '@everynews/emails/magic-link'
 import SubscriptionConfirmationEmail from '@everynews/emails/subscription-confirmation'
 
+export { sendSlackAlert, sendSlackVerification } from './slack'
 export {
   checkSurgeVerification,
   sendSurgeAlert,

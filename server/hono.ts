@@ -5,6 +5,7 @@ import type { WithAuth } from '@everynews/server/bindings/auth'
 import { ChannelRouter } from '@everynews/server/channels'
 import { DrillRouter } from '@everynews/server/drill'
 import { PromptsRouter } from '@everynews/server/prompts'
+import { SlackRouter } from '@everynews/server/slack'
 import { SubscriptionRouter } from '@everynews/server/subscriptions'
 import { Scalar } from '@scalar/hono-api-reference'
 import { Hono } from 'hono'
@@ -17,6 +18,7 @@ const app = new Hono<WithAuth>()
   .route('/channels', ChannelRouter)
   .route('/drill', DrillRouter)
   .route('/prompts', PromptsRouter)
+  .route('/slack', SlackRouter)
   .route('/subscriptions', SubscriptionRouter)
 
 app.get(

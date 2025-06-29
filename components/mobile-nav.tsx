@@ -45,7 +45,9 @@ export const MobileNav = ({ user }: { user?: User | null }) => {
         <p className='px-4 text-xs font-semibold text-muted-foreground'>
           Alerts
         </p>
-        <MobileSidebarLink href='/alerts'>Public Alerts</MobileSidebarLink>
+        <MobileSidebarLink href='/marketplace'>
+          Alert Marketplace
+        </MobileSidebarLink>
         {user && (
           <>
             <MobileSidebarLink href='/my/alerts'>My Alerts</MobileSidebarLink>

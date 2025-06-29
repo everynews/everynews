@@ -2,7 +2,7 @@ import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { Skeleton } from '@everynews/components/ui/skeleton'
-import { Mail, Trash2 } from 'lucide-react'
+import { Link, Mail } from 'lucide-react'
 
 export default function Loading() {
   return (
@@ -14,7 +14,9 @@ export default function Loading() {
             Manage where your alerts are delivered
           </p>
         </div>
-        <Button disabled>Create Channel</Button>
+        <Link href='/my/channels/create'>
+          <Button>Create Channel</Button>
+        </Link>
       </div>
 
       <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
@@ -75,15 +77,6 @@ export default function Loading() {
                   <span>Created</span>
                   <Skeleton className='h-4 w-20' />
                 </div>
-              </div>
-
-              <div className='flex items-center justify-between'>
-                <Button size='icon' variant='destructive' disabled>
-                  <Trash2 className='size-4' />
-                </Button>
-                <Button size='sm' disabled>
-                  Verify
-                </Button>
               </div>
             </CardContent>
           </Card>

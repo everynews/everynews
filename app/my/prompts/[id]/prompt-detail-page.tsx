@@ -57,16 +57,18 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
   }
 
   return (
-    <div className='container mx-auto'>
-      <div className='mb-6'>
-        <h1 className='text-3xl font-bold'>{name || 'Untitled Prompt'}</h1>
+    <>
+      <div className='mb-4 sm:mb-6'>
+        <h1 className='text-2xl sm:text-3xl font-bold'>
+          {name || 'Untitled Prompt'}
+        </h1>
         <p className='text-muted-foreground mt-1'>
           Created {new Date(prompt.createdAt).toLocaleDateString()} • Updated{' '}
           {new Date(prompt.updatedAt).toLocaleDateString()}
         </p>
       </div>
 
-      <div className='space-y-6'>
+      <div className='space-y-4 sm:space-y-6'>
         <div className='space-y-2'>
           <Label htmlFor={nameId}>Name</Label>
           <Input
@@ -87,24 +89,31 @@ export const PromptDetailPage = ({ prompt }: { prompt: Prompt }) => {
           />
         </div>
 
-        <div className='flex flex-row items-center gap-1 justify-between'>
+        <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 justify-between'>
           <DeletePromptPopover prompt={prompt}>
-            <Button variant='destructive'>Delete</Button>
+            <Button variant='destructive' className='w-full sm:w-auto'>
+              Delete
+            </Button>
           </DeletePromptPopover>
           <div className='flex flex-row items-center gap-1'>
             <Button
               type='button'
               variant='outline'
               onClick={() => router.push('/my/prompts')}
+              className='flex-1 sm:flex-none'
             >
               Cancel
             </Button>
-            <SubmitButton onClick={handleSave} loading={isSaving}>
+            <SubmitButton
+              onClick={handleSave}
+              loading={isSaving}
+              className='flex-1 sm:flex-none'
+            >
               Save
             </SubmitButton>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
