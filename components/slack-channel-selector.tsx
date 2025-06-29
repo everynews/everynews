@@ -1,11 +1,29 @@
 import { db } from '@everynews/database'
 import { channels } from '@everynews/schema/channel'
 import { eq } from 'drizzle-orm'
+import { z } from 'zod'
 import { SlackChannelSelectorClient } from './slack-channel-selector-client'
 
 interface SlackChannelSelectorProps {
   channelId: string
 }
+
+// Zod schema for validating Slack channel config
+const SlackConfigSchema = z.object({
+  accessToken: z.string(),
+  channel: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+    })
+    .optional(),
+  destination: z.string().optional(),
+  teamId: z.string(),
+  workspace: z.object({
+    id: z.string(),
+    name: z.string(),
+  }),
+})
 
 // Server component for fetching Slack channels
 export const SlackChannelSelector = async ({
@@ -22,11 +40,15 @@ export const SlackChannelSelector = async ({
     return <div>Channel not found</div>
   }
 
-  const config = channelData.config as {
-    accessToken?: string
-    teamId?: string
-    workspace?: { id: string; name: string }
+  // Validate the config using Zod
+  const configResult = SlackConfigSchema.safeParse(channelData.config)
+
+  if (!configResult.success) {
+    console.error('Invalid Slack channel config:', configResult.error)
+    return <div>Invalid channel configuration</div>
   }
+
+  const config = configResult.data
 
   if (!config.accessToken) {
     return <div>Channel not connected to Slack</div>
@@ -38,6 +60,10 @@ export const SlackChannelSelector = async ({
   let error = null
 
   try {
+    // Create AbortController for timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+
     const slackResponse = await fetch(
       'https://slack.com/api/conversations.list',
       {
@@ -46,8 +72,12 @@ export const SlackChannelSelector = async ({
           'Content-Type': 'application/json',
         },
         method: 'GET',
+        signal: controller.signal,
       },
     )
+
+    // Clear timeout if request completes
+    clearTimeout(timeoutId)
 
     if (slackResponse.ok) {
       const data = await slackResponse.json()
@@ -63,13 +93,21 @@ export const SlackChannelSelector = async ({
             name: ch.name,
           }))
       } else {
-        error = 'Failed to fetch Slack channels'
+        error = 'Unable to retrieve Slack channels. Please try again later.'
       }
     } else {
-      error = 'Failed to connect to Slack'
+      error =
+        'Failed to connect to Slack. Please check your connection and try again.'
     }
   } catch (e) {
-    error = `Error loading Slack channels: ${JSON.stringify(e)}`
+    // Log detailed error for debugging but show generic message to user
+    console.error('Slack API error:', e)
+
+    if (e instanceof Error && e.name === 'AbortError') {
+      error = 'Request timed out. Please try again.'
+    } else {
+      error = 'Unable to load Slack channels. Please try again later.'
+    }
   }
 
   if (error) {

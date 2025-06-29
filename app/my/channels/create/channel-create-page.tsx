@@ -58,10 +58,7 @@ export const ChannelCreatePage = () => {
   // Update form when channel type changes
   useEffect(() => {
     form.setValue('type', channelType)
-    // Set a placeholder destination for Slack to satisfy validation
-    if (channelType === 'slack') {
-      form.setValue('config.destination', 'slack-placeholder')
-    } else {
+    if (channelType !== 'slack') {
       form.setValue('config.destination', '')
     }
   }, [channelType, form])
@@ -156,14 +153,6 @@ export const ChannelCreatePage = () => {
       toastNetworkError(e as Error)
     } finally {
       setIsSubmitting(false)
-    }
-  }
-
-  const handleCreateClick = () => {
-    if (channelType === 'slack') {
-      window.location.href = '/api/slack/install'
-    } else {
-      form.handleSubmit(onSubmit)()
     }
   }
 
@@ -381,9 +370,9 @@ export const ChannelCreatePage = () => {
               >
                 Cancel
               </Button>
-              <SubmitButton onClick={handleCreateClick} loading={isSubmitting}>
+              <Button type='submit' disabled={isSubmitting}>
                 {channelType === 'slack' ? 'Connect Slack' : 'Create'}
-              </SubmitButton>
+              </Button>
             </div>
           </form>
         </Form>

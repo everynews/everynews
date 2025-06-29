@@ -118,7 +118,7 @@ export const SlackRouter = new Hono<WithAuth>()
 
         // Create a temporary Slack channel to store OAuth data
         const slackData = {
-          accessToken: result.access_token,
+          accessToken: await encrypt(result.access_token),
           botUserId: result.bot_user_id || '',
           teamId: result.team?.id || '',
           teamName: result.team?.name || 'Unknown Team',
@@ -127,7 +127,7 @@ export const SlackRouter = new Hono<WithAuth>()
         const [tempChannel] = await db
           .insert(channels)
           .values({
-            config: encrypt(JSON.stringify(slackData)),
+            config: slackData,
             name: `Slack: ${slackData.teamName}`,
             type: 'slack',
             userId: user.id,
@@ -221,7 +221,7 @@ export const SlackRouter = new Hono<WithAuth>()
           teamId: string
           workspace: { id: string; name: string }
         }
-        const accessToken = decrypt(config.accessToken)
+        const accessToken = await decrypt(config.accessToken)
 
         // Initialize Slack client
         const slack = new WebClient(accessToken)
@@ -314,7 +314,7 @@ export const SlackRouter = new Hono<WithAuth>()
           teamId: string
           workspace: { id: string; name: string }
         }
-        const accessToken = decrypt(config.accessToken)
+        const accessToken = await decrypt(config.accessToken)
         const slack = new WebClient(accessToken)
 
         // Send test message

@@ -130,11 +130,16 @@ const buildSlackBlocks = ({
     const contextElements: ContextBlockElement[] = []
 
     if (story.originalUrl) {
-      contextElements.push({
-        emoji: true,
-        text: new URL(story.originalUrl).hostname,
-        type: 'plain_text',
-      } as PlainTextElement)
+      try {
+        const url = new URL(story.originalUrl)
+        contextElements.push({
+          emoji: true,
+          text: url.hostname,
+          type: 'plain_text',
+        } as PlainTextElement)
+      } catch (_error) {
+        // Skip adding hostname if URL is malformed
+      }
     }
 
     // Use createdAt instead of publishedAt

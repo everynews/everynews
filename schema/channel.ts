@@ -54,20 +54,22 @@ const PhoneChannelSchema = BaseChannel.extend({
   type: z.literal('phone').openapi({ example: 'phone' }),
 }).openapi({ ref: 'PhoneChannelSchema' })
 
-const SlackChannelSchema = BaseChannel.extend({
-  config: z.object({
-    accessToken: z.string().openapi({ example: 'xoxb-...' }),
-    channel: z.object({
-      id: z.string().openapi({ example: 'C00000000' }),
-      name: z.string().openapi({ example: 'general' }),
-    }),
-    destination: z.string().openapi({ example: '#general' }),
-    teamId: z.string().openapi({ example: 'T00000000' }),
-    workspace: z.object({
-      id: z.string().openapi({ example: 'T00000000' }),
-      name: z.string().openapi({ example: 'My Workspace' }),
-    }), // For display purposes
+export const SlackChannelConfigSchema = z.object({
+  accessToken: z.string().openapi({ example: 'xoxb-...' }),
+  channel: z.object({
+    id: z.string().openapi({ example: 'C00000000' }),
+    name: z.string().openapi({ example: 'general' }),
   }),
+  destination: z.string().optional().openapi({ example: '#general' }),
+  teamId: z.string().openapi({ example: 'T00000000' }),
+  workspace: z.object({
+    id: z.string().openapi({ example: 'T00000000' }),
+    name: z.string().openapi({ example: 'My Workspace' }),
+  }), // For display purposes
+})
+
+const SlackChannelSchema = BaseChannel.extend({
+  config: SlackChannelConfigSchema,
   type: z.literal('slack').openapi({ example: 'slack' }),
 }).openapi({ ref: 'SlackChannelSchema' })
 
@@ -115,6 +117,11 @@ export const ChannelDtoSchema = z.discriminatedUnion('type', [
 
 export type Channel = z.infer<typeof ChannelSchema>
 export type ChannelDto = z.infer<typeof ChannelDtoSchema>
+
+// Extract individual channel config types
+export type SlackChannelConfig = z.infer<typeof SlackChannelSchema>['config']
+export type EmailChannelConfig = z.infer<typeof EmailChannelSchema>['config']
+export type PhoneChannelConfig = z.infer<typeof PhoneChannelSchema>['config']
 
 export const channelsRelations = relations(channels, ({ one, many }) => ({
   subscriptions: many(subscriptions),

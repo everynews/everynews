@@ -1,4 +1,12 @@
-import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
+import {
+  createCipheriv,
+  createDecipheriv,
+  hkdf,
+  randomBytes,
+} from 'node:crypto'
+import { promisify } from 'node:util'
+
+const hkdfAsync = promisify(hkdf)
 
 const algorithm = 'aes-256-gcm'
 const keyLength = 32 // 256 bits
@@ -27,12 +35,22 @@ const getEncryptionKey = (): Buffer => {
   return keyBuffer
 }
 
-export const encrypt = (text: string): string => {
-  const key = getEncryptionKey()
+// Derive a unique encryption key using HKDF with the provided salt
+const deriveKey = async (baseKey: Buffer, salt: Buffer): Promise<Buffer> => {
+  const info = Buffer.from('everynews-encryption', 'utf8')
+  const derivedKey = await hkdfAsync('sha256', baseKey, salt, info, keyLength)
+  return Buffer.from(derivedKey)
+}
+
+export const encrypt = async (text: string): Promise<string> => {
+  const baseKey = getEncryptionKey()
   const iv = randomBytes(ivLength)
   const salt = randomBytes(saltLength)
 
-  const cipher = createCipheriv(algorithm, key, iv)
+  // Derive a unique key using the salt
+  const derivedKey = await deriveKey(baseKey, salt)
+
+  const cipher = createCipheriv(algorithm, derivedKey, iv)
 
   const encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()])
 
@@ -44,11 +62,24 @@ export const encrypt = (text: string): string => {
   return combined.toString('base64')
 }
 
-export const decrypt = (encryptedText: string): string => {
-  const key = getEncryptionKey()
-  const combined = Buffer.from(encryptedText, 'base64')
+export const decrypt = async (encryptedText: string): Promise<string> => {
+  const baseKey = getEncryptionKey()
+
+  let combined: Buffer
+  try {
+    combined = Buffer.from(encryptedText, 'base64')
+  } catch (_error) {
+    throw new Error('Invalid base64 input for decryption')
+  }
+
+  // Validate combined buffer length
+  const minLength = saltLength + ivLength + tagLength
+  if (combined.length < minLength) {
+    throw new Error('Invalid encrypted data: insufficient length')
+  }
 
   // Extract components
+  const salt = combined.slice(0, saltLength)
   const iv = combined.slice(saltLength, saltLength + ivLength)
   const tag = combined.slice(
     saltLength + ivLength,
@@ -56,15 +87,22 @@ export const decrypt = (encryptedText: string): string => {
   )
   const encrypted = combined.slice(saltLength + ivLength + tagLength)
 
-  const decipher = createDecipheriv(algorithm, key, iv)
-  decipher.setAuthTag(tag)
+  // Derive the same key using the extracted salt
+  const derivedKey = await deriveKey(baseKey, salt)
 
-  const decrypted = Buffer.concat([
-    decipher.update(encrypted),
-    decipher.final(),
-  ])
+  try {
+    const decipher = createDecipheriv(algorithm, derivedKey, iv)
+    decipher.setAuthTag(tag)
 
-  return decrypted.toString('utf8')
+    const decrypted = Buffer.concat([
+      decipher.update(encrypted),
+      decipher.final(),
+    ])
+
+    return decrypted.toString('utf8')
+  } catch (_error) {
+    throw new Error('Decryption failed: invalid data or authentication tag')
+  }
 }
 
 // Helper to generate a new encryption key

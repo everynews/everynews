@@ -20,6 +20,7 @@ import {
   type Channel,
   type ChannelDto,
   ChannelDtoSchema,
+  SlackChannelConfigSchema,
 } from '@everynews/schema/channel'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Slack } from 'lucide-react'
@@ -43,8 +44,19 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
     if (channel.type === 'slack') {
       setIsSubmitting(true)
       try {
+        const parseResult = SlackChannelConfigSchema.safeParse(channel.config)
+        if (!parseResult.success) {
+          toast.error('Invalid Slack channel configuration')
+          setIsSubmitting(false)
+          return
+        }
+        const config = parseResult.data
         const res = await api.channels[':id'].$put({
-          json: { ...values, config: channel.config },
+          json: {
+            config,
+            name: values.name,
+            type: 'slack' as const,
+          },
           param: { id: channel.id },
         })
 

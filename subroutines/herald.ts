@@ -95,13 +95,13 @@ const sendAlertSlack = async (parcel: {
   config: {
     accessToken: string
     channel: { id: string; name: string }
-    destination: string
+    destination?: string
     teamId: string
     workspace: { id: string; name: string }
   }
 }) => {
   await sendSlackAlert({
-    accessToken: decrypt(parcel.config.accessToken),
+    accessToken: await decrypt(parcel.config.accessToken),
     alertName: parcel.alertName,
     channelId: parcel.config.channel.id,
     stories: parcel.stories,
@@ -202,7 +202,7 @@ export const herald = async ({
 
       parcel = {
         alertName,
-        destination: channel.config.destination,
+        destination: channel.config.destination || '',
         readerCount,
         stories,
         strategy,
@@ -218,7 +218,7 @@ export const herald = async ({
           config: channel.config as {
             accessToken: string
             channel: { id: string; name: string }
-            destination: string
+            destination?: string
             teamId: string
             workspace: { id: string; name: string }
           },

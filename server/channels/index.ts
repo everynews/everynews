@@ -9,7 +9,11 @@ import {
   sendSurgeVerification,
 } from '@everynews/messengers'
 import { channels, channelVerifications } from '@everynews/schema'
-import { ChannelDtoSchema, ChannelSchema } from '@everynews/schema/channel'
+import {
+  ChannelDtoSchema,
+  ChannelSchema,
+  type SlackChannelConfig,
+} from '@everynews/schema/channel'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { and, eq, gt, isNull } from 'drizzle-orm'
@@ -435,15 +439,25 @@ export const ChannelRouter = new Hono<WithAuth>()
         })
       } else if (channel.type === 'slack') {
         // For Slack, send a test message to verify the channel
-        const config = channel.config as {
-          accessToken: string
-          channel: { id: string; name: string }
-          destination: string
-          teamId: string
-          workspace: { id: string; name: string }
+        const config = channel.config as SlackChannelConfig
+
+        let decryptedToken: string
+        try {
+          decryptedToken = await decrypt(config.accessToken)
+        } catch (error) {
+          console.error('Failed to decrypt Slack access token:', error)
+          return c.json(
+            {
+              error:
+                'Failed to decrypt access token. Please reconnect to Slack.',
+              success: false,
+            },
+            500,
+          )
         }
+
         await sendSlackVerification({
-          accessToken: decrypt(config.accessToken),
+          accessToken: decryptedToken,
           channelId: config.channel.id,
           channelName: channel.name,
         })
