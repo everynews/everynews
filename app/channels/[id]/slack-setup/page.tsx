@@ -56,7 +56,7 @@ export default async function SlackSetupPage({ params }: SlackSetupPageProps) {
         <h2 className='text-lg font-semibold mb-4'>Select Channel</h2>
         <p className='text-sm text-muted-foreground mb-6'>
           Choose which Slack channel should receive your alert notifications.
-          You can only select channels where the Every.news bot has been added.
+          You can only select channels where the Everynews bot has been added.
         </p>
 
         <SlackChannelSelector channelId={id} />

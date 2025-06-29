@@ -5,8 +5,8 @@ import Link from 'next/link'
 
 export default function Loading() {
   return (
-    <div className='container mx-auto max-w-6xl px-4 sm:px-6'>
-      <div className='flex items-center justify-between gap-4 mb-6'>
+    <div className='container mx-auto max-w-6xl'>
+      <div className='flex items-center justify-between gap-4 mb-4 sm:mb-6'>
         <div className='flex-1'>
           <h1 className='text-3xl font-bold'>Prompts</h1>
           <p className='text-muted-foreground mt-1'>

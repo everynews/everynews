@@ -9,11 +9,11 @@ import { Skeleton } from '@everynews/components/ui/skeleton'
 
 export default function Loading() {
   return (
-    <div className='container mx-auto'>
-      <div className='mb-6'>
-        <h1 className='text-3xl font-bold flex items-center gap-2 justify-between'>
+    <>
+      <div className='mb-4 sm:mb-6'>
+        <h1 className='text-2xl sm:text-3xl font-bold flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:justify-between'>
           Edit Alert
-          <div className='flex gap-2'>
+          <div className='flex gap-2 w-full sm:w-auto'>
             <Button variant='outline' disabled>
               Test
             </Button>
@@ -24,8 +24,8 @@ export default function Loading() {
           Update your alert configuration
         </p>
       </div>
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-        <div className='flex flex-col gap-6'>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>
+        <div className='flex flex-col gap-4 sm:gap-6'>
           {/* Name field */}
           <div>
             <Skeleton className='h-4 w-12 mb-2' />
@@ -120,6 +120,6 @@ export default function Loading() {
           </Card>
         </div>
       </div>
-    </div>
+    </>
   )
 }

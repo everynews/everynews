@@ -44,17 +44,22 @@ export const updateSlackChannel = async (
       typeof existingConfig !== 'object' ||
       !('accessToken' in existingConfig) ||
       !('teamId' in existingConfig) ||
-      !('workspace' in existingConfig) ||
       typeof existingConfig.accessToken !== 'string' ||
-      typeof existingConfig.teamId !== 'string' ||
-      typeof existingConfig.workspace !== 'object' ||
-      !existingConfig.workspace ||
-      !('id' in existingConfig.workspace) ||
-      !('name' in existingConfig.workspace) ||
-      typeof existingConfig.workspace.id !== 'string' ||
-      typeof existingConfig.workspace.name !== 'string'
+      typeof existingConfig.teamId !== 'string'
     ) {
       throw new Error('Invalid channel configuration structure')
+    }
+
+    // Validate workspace if it exists
+    if (
+      existingConfig.workspace &&
+      (typeof existingConfig.workspace !== 'object' ||
+        !('id' in existingConfig.workspace) ||
+        !('name' in existingConfig.workspace) ||
+        typeof existingConfig.workspace.id !== 'string' ||
+        typeof existingConfig.workspace.name !== 'string')
+    ) {
+      throw new Error('Invalid workspace configuration structure')
     }
 
     await db
