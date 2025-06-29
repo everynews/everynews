@@ -7,13 +7,11 @@ export default function GlobalError({
 }) {
   return (
     <div className='container mx-auto px-6 py-10 max-w-2xl mx-auto'>
-      <h2 className='text-2xl font-bold mb-4'>Something went wrong</h2>
+      <h2 className='text-2xl font-bold mb-4'>Oops.</h2>
       <p className='mb-4 text-sm text-muted-foreground'>
-        Please report the following error to support@every.news.
+        Something went wrong. We&apos;re really sorry. Please report the following Error ID to support@every.news.
       </p>
-      <code className='text-sm whitespace-pre-wrap'>
-        {JSON.stringify(error)}
-      </code>
+      <p className='text-sm whitespace-pre-wrap tabular-nums bg-muted p-2 rounded-md'>{error.digest}</p>
     </div>
   )
 }
