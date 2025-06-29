@@ -36,12 +36,14 @@ export const updateSlackChannel = async (
     }
 
     // Validate and extract existing config using Zod
-    const parseResult = SlackChannelConfigSchema.safeParse(existingChannel.config)
-    
+    const parseResult = SlackChannelConfigSchema.safeParse(
+      existingChannel.config,
+    )
+
     if (!parseResult.success) {
       throw new Error('Invalid channel configuration structure')
     }
-    
+
     const existingConfig = parseResult.data
 
     await db
