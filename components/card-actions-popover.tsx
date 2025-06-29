@@ -9,15 +9,17 @@ import {
   DropdownMenuTrigger,
 } from '@everynews/components/ui/dropdown-menu'
 import { MoreVertical } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { type ReactNode, useState } from 'react'
 
 interface CardActionsPopoverProps {
   children: ReactNode
 }
 
 export const CardActionsPopover = ({ children }: CardActionsPopoverProps) => {
+  const [open, setOpen] = useState(false)
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button
           variant='ghost'

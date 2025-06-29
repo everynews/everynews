@@ -50,7 +50,10 @@ export const DeleteAlertDropdownItem = ({ alert }: { alert: Alert }) => {
     <>
       <DropdownMenuItem
         className='text-destructive'
-        onClick={() => setShowDialog(true)}
+        onSelect={(e) => {
+          e.preventDefault()
+          setShowDialog(true)
+        }}
       >
         <Trash2 className='mr-2 size-4 text-destructive' />
         Delete
