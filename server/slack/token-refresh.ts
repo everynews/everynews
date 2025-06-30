@@ -111,6 +111,17 @@ export async function refreshSlackToken(channelId: string): Promise<boolean> {
 }
 
 export async function getValidSlackToken(channelId: string): Promise<string> {
+  await track({
+    channel: 'slack',
+    description: `Getting valid Slack token for channel ${channelId}`,
+    event: 'Token Retrieval Starting',
+    icon: '🔑',
+    tags: {
+      channel_id: channelId,
+      type: 'info',
+    },
+  })
+
   try {
     // First try to refresh the token if needed
     await refreshSlackToken(channelId)
@@ -125,12 +136,64 @@ export async function getValidSlackToken(channelId: string): Promise<string> {
     })
 
     if (!channel) {
+      await track({
+        channel: 'slack',
+        description: `Channel ${channelId} not found in database`,
+        event: 'Channel Not Found',
+        icon: '❌',
+        tags: {
+          channel_id: channelId,
+          type: 'error',
+        },
+      })
       throw new Error('Channel not found')
     }
 
     const config = channel.config as SlackChannelConfig
-    return await decrypt(config.accessToken)
+
+    await track({
+      channel: 'slack',
+      description: `Retrieved Slack config for channel ${channelId}`,
+      event: 'Config Retrieved',
+      icon: '📋',
+      tags: {
+        channel_id: channelId,
+        expires_at: config.expiresAt?.toISOString() || 'never',
+        has_access_token: !!config.accessToken,
+        has_refresh_token: !!config.refreshToken,
+        token_rotation_enabled: config.tokenRotationEnabled || false,
+        type: 'info',
+      },
+    })
+
+    const token = await decrypt(config.accessToken)
+
+    await track({
+      channel: 'slack',
+      description: `Successfully decrypted access token for channel ${channelId}`,
+      event: 'Token Decrypted',
+      icon: '✅',
+      tags: {
+        channel_id: channelId,
+        token_length: token.length,
+        type: 'info',
+      },
+    })
+
+    return token
   } catch (error) {
+    await track({
+      channel: 'slack',
+      description: `Failed to get valid token for channel ${channelId}: ${error}`,
+      event: 'Token Retrieval Failed',
+      icon: '❌',
+      tags: {
+        channel_id: channelId,
+        error: String(error),
+        error_message: error instanceof Error ? error.message : String(error),
+        type: 'error',
+      },
+    })
     throw new Error(`Failed to get valid token: ${error}`)
   }
 }

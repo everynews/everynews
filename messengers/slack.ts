@@ -15,9 +15,36 @@ export const sendSlackAlert = async ({
   alertName: string
   stories: Story[]
 }): Promise<void> => {
+  await track({
+    channel: 'slack',
+    description: `Attempting to send Slack alert "${alertName}" to channel ${channelId}`,
+    event: 'Slack Alert Starting',
+    icon: '🚀',
+    tags: {
+      alert_name: alertName,
+      channel_id: channelId,
+      stories_count: stories.length,
+      token_prefix: `${accessToken.substring(0, 10)}...`,
+      type: 'info',
+    },
+  })
+
   try {
     const slack = new WebClient(accessToken)
     const blocks = buildSlackBlocks(stories)
+
+    await track({
+      channel: 'slack',
+      description: `Built ${blocks.length} blocks for Slack message`,
+      event: 'Slack Blocks Built',
+      icon: '🏗️',
+      tags: {
+        alert_name: alertName,
+        blocks_count: blocks.length,
+        channel_id: channelId,
+        type: 'info',
+      },
+    })
 
     const result = await slack.chat.postMessage({
       blocks,
@@ -34,20 +61,31 @@ export const sendSlackAlert = async ({
         alert_name: alertName,
         channel_id: channelId,
         message_ts: result.ts || '',
+        ok: result.ok || false,
         stories_count: stories.length,
         type: 'info',
       },
     })
   } catch (error) {
+    const errorDetails =
+      error instanceof Error
+        ? {
+            message: error.message,
+            name: error.name,
+            stack: error.stack?.split('\n')[0] || '',
+          }
+        : { raw: String(error) }
+
     await track({
       channel: 'slack',
-      description: `Failed to send Slack alert to channel ${channelId}`,
+      description: `Failed to send Slack alert to channel ${channelId}: ${error instanceof Error ? error.message : String(error)}`,
       event: 'Slack Alert Failed',
       icon: '❌',
       tags: {
         alert_name: alertName,
         channel_id: channelId,
         error: String(error),
+        error_details: JSON.stringify(errorDetails),
         is_token_error: isTokenError(error),
         type: 'error',
       },
@@ -67,15 +105,34 @@ const buildSlackBlocks = (stories: Story[]) => {
   const blocks: KnownBlock[] = []
 
   // Send title with link and then the URL again for preview
-  stories.forEach((story) => {
+  stories.forEach((story, index) => {
     const everynewsUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news'}/stories/${story.id}`
+    const blockText = `<${everynewsUrl}|${story.title}>\n${everynewsUrl}`
+
     blocks.push({
       text: {
-        text: `<${everynewsUrl}|${story.title}>\n${everynewsUrl}`,
+        text: blockText,
         type: 'mrkdwn',
       },
       type: 'section',
     })
+
+    // Log details about each story block
+    if (index === 0) {
+      track({
+        channel: 'slack',
+        description: `First story block: "${story.title?.substring(0, 50)}..."`,
+        event: 'Slack Block Sample',
+        icon: '📄',
+        tags: {
+          block_text_length: blockText.length,
+          everynews_url: everynewsUrl,
+          story_id: story.id,
+          story_title: story.title || 'untitled',
+          type: 'info',
+        },
+      })
+    }
   })
 
   return blocks

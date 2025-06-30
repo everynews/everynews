@@ -104,13 +104,81 @@ const sendAlertSlack = async (parcel: {
     workspace?: { id: string; name: string }
   }
 }) => {
-  const accessToken = await getValidSlackToken(parcel.channelId)
-  await sendSlackAlert({
-    accessToken,
-    alertName: parcel.alertName,
-    channelId: parcel.config.channel.id,
-    stories: parcel.stories,
+  await track({
+    channel: 'herald',
+    description: `Starting Slack delivery for alert "${parcel.alertName}" to channel ${parcel.config.channel.name} (${parcel.config.channel.id})`,
+    event: 'Slack Delivery Starting',
+    icon: '🚀',
+    tags: {
+      alert_name: parcel.alertName,
+      channel_id: parcel.channelId,
+      has_refresh_token: !!parcel.config.refreshToken,
+      slack_channel_id: parcel.config.channel.id,
+      slack_channel_name: parcel.config.channel.name,
+      stories_count: parcel.stories.length,
+      team_id: parcel.config.teamId,
+      token_expires_at: parcel.config.expiresAt?.toISOString() || 'never',
+      token_rotation_enabled: parcel.config.tokenRotationEnabled || false,
+      type: 'info',
+      workspace_name: parcel.config.workspace?.name || 'unknown',
+    },
   })
+
+  try {
+    const accessToken = await getValidSlackToken(parcel.channelId)
+
+    await track({
+      channel: 'herald',
+      description: `Retrieved valid Slack token for channel ${parcel.channelId}`,
+      event: 'Slack Token Retrieved',
+      icon: '🔑',
+      tags: {
+        channel_id: parcel.channelId,
+        token_length: accessToken.length,
+        type: 'info',
+      },
+    })
+
+    await sendSlackAlert({
+      accessToken,
+      alertName: parcel.alertName,
+      channelId: parcel.config.channel.id,
+      stories: parcel.stories,
+    })
+
+    await track({
+      channel: 'herald',
+      description: `Successfully sent Slack alert "${parcel.alertName}" to channel ${parcel.config.channel.name}`,
+      event: 'Slack Delivery Completed',
+      icon: '✅',
+      tags: {
+        alert_name: parcel.alertName,
+        channel_id: parcel.channelId,
+        slack_channel_id: parcel.config.channel.id,
+        slack_channel_name: parcel.config.channel.name,
+        stories_count: parcel.stories.length,
+        type: 'info',
+      },
+    })
+  } catch (error) {
+    await track({
+      channel: 'herald',
+      description: `Failed to send Slack alert "${parcel.alertName}": ${String(error)}`,
+      event: 'Slack Delivery Failed',
+      icon: '❌',
+      tags: {
+        alert_name: parcel.alertName,
+        channel_id: parcel.channelId,
+        error: String(error),
+        error_message: error instanceof Error ? error.message : String(error),
+        error_name: error instanceof Error ? error.name : 'unknown',
+        slack_channel_id: parcel.config.channel.id,
+        slack_channel_name: parcel.config.channel.name,
+        type: 'error',
+      },
+    })
+    throw error
+  }
 }
 
 export const herald = async ({
@@ -216,6 +284,20 @@ export const herald = async ({
 
       // Send the alert for Slack channels with config
       if (channelType === 'slack') {
+        await track({
+          channel: 'herald',
+          description: `Processing Slack channel ${channelId} for alert "${alertName}"`,
+          event: 'Slack Channel Processing',
+          icon: '🔍',
+          tags: {
+            alert_name: alertName,
+            channel_id: channelId,
+            channel_type: channelType,
+            config_keys: Object.keys(channel.config || {}),
+            type: 'info',
+          },
+        })
+
         const slackConfig = channel.config as {
           accessToken: string
           refreshToken?: string
@@ -226,6 +308,24 @@ export const herald = async ({
           teamId: string
           workspace?: { id: string; name: string }
         }
+
+        await track({
+          channel: 'herald',
+          description: `Slack config parsed for channel ${channelId}`,
+          event: 'Slack Config Parsed',
+          icon: '📋',
+          tags: {
+            channel_id: channelId,
+            channel_id_config: slackConfig.channel?.id || 'none',
+            channel_name_config: slackConfig.channel?.name || 'none',
+            has_access_token: !!slackConfig.accessToken,
+            has_channel: !!slackConfig.channel,
+            has_refresh_token: !!slackConfig.refreshToken,
+            team_id: slackConfig.teamId || 'none',
+            type: 'info',
+            workspace_name: slackConfig.workspace?.name || 'none',
+          },
+        })
 
         // Ensure Slack channel is properly configured
         if (!slackConfig.channel?.id) {
