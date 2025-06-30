@@ -306,7 +306,7 @@ export const LandingPageTabs = async () => {
               dancingScript.className,
             )}
           >
-            We just sent out these news.
+            We just sent out these alerts.
           </h2>
         </div>
         <div className='max-w-6xl mx-auto flex flex-col gap-12 w-full'>

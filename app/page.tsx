@@ -18,10 +18,10 @@ export default async function Page() {
       <div className='container mx-auto px-6 pt-20 pb-16 flex flex-col gap-12'>
         <div className='text-center max-w-6xl mx-auto flex flex-col gap-6 w-full  py-24'>
           <div className='text-center flex flex-col gap-4 w-full'>
-            <div className='flex justify-center py-24'>
+            <div className='flex justify-center gap-8'>
               <div className='flex gap-2 items-end'>
                 <div>
-                  <Avatar>
+                  <Avatar className='border'>
                     <AvatarImage src='/logo.png' />
                     <AvatarFallback>E</AvatarFallback>
                   </Avatar>
