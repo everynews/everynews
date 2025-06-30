@@ -42,3 +42,5 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
           BRIGHTDATA_API_KEY: ${{ secrets.BRIGHTDATA_API_KEY }}
+          SURGE_ACCOUNT_ID: ${{ secrets.SURGE_ACCOUNT_ID }}
+          SURGE_API_KEY: ${{ secrets.SURGE_API_KEY }}
