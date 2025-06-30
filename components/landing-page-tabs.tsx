@@ -51,8 +51,9 @@ export const LandingPageTabs = async () => {
     .innerJoin(contents, eq(stories.contentId, contents.id))
     .where(eq(alerts.isPublic, true))
     .orderBy(stories.alertId, sql`${stories.updatedAt} DESC`)
-    .limit(20)
+    .limit(10)
     .then((rows) => rows.map((row) => LatestStorySchema.parse(row)))
+
   return (
     <Tabs defaultValue='saas' className='w-full'>
       <TabsList className='before:bg-border relative h-auto w-full gap-0.5 bg-transparent p-0 before:absolute before:inset-x-0 before:bottom-0 before:h-px'>
@@ -60,13 +61,13 @@ export const LandingPageTabs = async () => {
           value='saas'
           className='bg-muted overflow-hidden rounded-b-none border-x border-t py-2 data-[state=active]:z-10 data-[state=active]:shadow-none'
         >
-          The cliché landing page
+          Cliché Edition
         </TabsTrigger>
         <TabsTrigger
           value='hn'
           className='bg-muted overflow-hidden rounded-b-none border-x border-t py-2 data-[state=active]:z-10 data-[state=active]:shadow-none'
         >
-          The cut-the-bs landing page
+          Cut-the-BS Edition
         </TabsTrigger>
       </TabsList>
 
@@ -298,9 +299,16 @@ export const LandingPageTabs = async () => {
         </div>
       </TabsContent>
       <TabsContent value='hn' className='mt-8'>
-        <p className='text-center text-muted-foreground mb-8'>
-          We just notified a bunch of people these news.
-        </p>
+        <div className='text-center flex flex-col gap-4 w-full mb-8'>
+          <h2
+            className={cn(
+              `text-3xl font-bold text-foreground w-full`,
+              dancingScript.className,
+            )}
+          >
+            We just sent out these news.
+          </h2>
+        </div>
         <div className='max-w-6xl mx-auto flex flex-col gap-12 w-full'>
           <div className='grid md:grid-cols-2 gap-6'>
             {latest.map(({ story, alert: alertInfo }) => (

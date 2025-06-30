@@ -23,27 +23,27 @@ export default async function Page() {
                 <div>
                   <Avatar>
                     <AvatarImage src='/logo.png' />
-                    <AvatarFallback>EN</AvatarFallback>
+                    <AvatarFallback>E</AvatarFallback>
                   </Avatar>
                 </div>
                 <div className='flex flex-col gap-1 items-start'>
                   <div className='relative'>
-                    <div className='bg-blue-500 text-primary-foreground px-4 py-2 rounded-xl'>
+                    <div className='bg-blue-500 text-primary-foreground px-4 py-2 rounded-full'>
                       <span className='text-lg text-white'>
                         bro did u see this
                       </span>
                     </div>
                   </div>
                   <div className='relative'>
-                    <div className='bg-muted text-muted-foreground px-4 py-2 rounded-xl flex items-center gap-2'>
+                    <div className='bg-muted text-muted-foreground px-4 py-2 rounded-full flex items-center gap-1'>
                       <Link className='size-4' />
                       news.ycombinator.com
                     </div>
                   </div>
                   <div className='relative mb-4'>
-                    <div className='bg-blue-500 text-primary-foreground px-4 py-2 rounded-xl rounded-bl-xs'>
+                    <div className='bg-blue-500 text-primary-foreground px-4 py-2 rounded-full rounded-bl-xs'>
                       <span className='text-lg text-white'>
-                        i think theyre your new competitor
+                        think its ur new competitor
                       </span>
                     </div>
                     <div className='absolute -bottom-1 left-0 w-0 h-0 border-t-8 border-t-blue-500 border-r-8 border-r-transparent'></div>
