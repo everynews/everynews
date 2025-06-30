@@ -4,6 +4,7 @@ import { whoami } from '@everynews/auth/session'
 import { db } from '@everynews/database'
 import { channels, SlackChannelConfigSchema } from '@everynews/schema/channel'
 import { eq } from 'drizzle-orm'
+import humanId from 'human-id'
 import { revalidatePath } from 'next/cache'
 import { redirect, unauthorized } from 'next/navigation'
 
@@ -58,7 +59,7 @@ export const updateSlackChannel = async (
           destination: `#${slackChannelName}`,
           tokenRotationEnabled: existingConfig.tokenRotationEnabled ?? false,
         },
-        name: `Slack - ${slackChannelName}`,
+        name: humanId({ capitalize: false, separator: '-' }),
         type: 'slack',
         updatedAt: new Date(),
       })
