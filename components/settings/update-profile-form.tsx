@@ -14,7 +14,6 @@ import { z } from 'zod'
 const updateProfileSchema = z.object({
   email: z.string().email('Invalid email address'),
   name: z.string().min(1, 'Name is required'),
-  phoneNumber: z.string().optional(),
 })
 
 type UpdateProfileFormData = z.infer<typeof updateProfileSchema>
@@ -24,7 +23,6 @@ interface UpdateProfileFormProps {
     id: string
     name: string
     email: string
-    phoneNumber: string | null
   }
 }
 
@@ -36,7 +34,6 @@ export const UpdateProfileForm = ({ user }: UpdateProfileFormProps) => {
     defaultValues: {
       email: user.email,
       name: user.name,
-      phoneNumber: user.phoneNumber || '',
     },
     resolver: zodResolver(updateProfileSchema),
   })
@@ -48,7 +45,6 @@ export const UpdateProfileForm = ({ user }: UpdateProfileFormProps) => {
         json: {
           email: data.email,
           name: data.name,
-          phoneNumber: data.phoneNumber || null,
         },
         param: { id: user.id },
       })
@@ -93,21 +89,6 @@ export const UpdateProfileForm = ({ user }: UpdateProfileFormProps) => {
         {form.formState.errors.email && (
           <p className='text-sm text-destructive'>
             {form.formState.errors.email.message}
-          </p>
-        )}
-      </div>
-
-      <div className='space-y-2'>
-        <Label htmlFor='phoneNumber'>Phone Number</Label>
-        <Input
-          id='phoneNumber'
-          type='tel'
-          {...form.register('phoneNumber')}
-          placeholder='+1234567890'
-        />
-        {form.formState.errors.phoneNumber && (
-          <p className='text-sm text-destructive'>
-            {form.formState.errors.phoneNumber.message}
           </p>
         )}
       </div>

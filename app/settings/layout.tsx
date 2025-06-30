@@ -21,7 +21,19 @@ const SettingsLayout = async ({ children }: { children: React.ReactNode }) => {
   const sidebarItems: SidebarItem[] = [
     {
       href: '/settings',
-      title: 'General',
+      title: 'Profile',
+    },
+    {
+      href: '/settings/accounts',
+      title: 'Connected Accounts',
+    },
+    {
+      href: '/settings/sessions',
+      title: 'Active Sessions',
+    },
+    {
+      href: '/settings/danger',
+      title: 'Danger Zone',
     },
   ]
 

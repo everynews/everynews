@@ -51,14 +51,6 @@ export const DeleteAccountSection = () => {
 
   return (
     <div className='space-y-4'>
-      <div>
-        <h3 className='text-lg font-medium'>Delete Account</h3>
-        <p className='text-sm text-muted-foreground'>
-          Permanently delete your account and all associated data. This action
-          cannot be undone.
-        </p>
-      </div>
-
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogTrigger asChild>
           <Button variant='destructive'>Delete Account</Button>
@@ -66,37 +58,35 @@ export const DeleteAccountSection = () => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription className='space-y-2'>
-              <span>
-                This action cannot be undone. This will permanently delete your
-                account and remove all your data including:
-              </span>
-              <ul className='list-disc list-inside space-y-1 mt-2'>
-                <li>All your alerts and subscriptions</li>
-                <li>All your channels (email, phone, Slack)</li>
-                <li>All your prompts and settings</li>
-                <li>Your entire account history</li>
-              </ul>
-              <div className='mt-4'>
-                <p className='mb-2'>
-                  Type <span className='font-mono font-bold'>DELETE</span> to
-                  confirm:
-                </p>
-                <Input
-                  value={confirmText}
-                  onChange={(e) => setConfirmText(e.target.value)}
-                  placeholder='Type DELETE to confirm'
-                  className='mt-2'
-                />
-              </div>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove all your data including:
             </AlertDialogDescription>
           </AlertDialogHeader>
+          <ul className='list-disc list-inside space-y-1 mt-2 text-sm text-muted-foreground'>
+            <li>All your alerts and subscriptions</li>
+            <li>All your channels (email, phone, Slack)</li>
+            <li>All your prompts and settings</li>
+            <li>Your entire account history</li>
+          </ul>
+          <div className='mt-4'>
+            <p className='mb-2'>
+              Type <span className='font-mono font-bold'>DELETE</span> to
+              confirm:
+            </p>
+            <Input
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder='DELETE'
+              className='mt-2'
+            />
+          </div>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteAccount}
               disabled={confirmText !== 'DELETE' || isDeleting}
-              className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+              className='bg-destructive hover:bg-destructive/50'
             >
               {isDeleting ? 'Deleting...' : 'Delete Account'}
             </AlertDialogAction>

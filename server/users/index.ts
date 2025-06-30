@@ -14,7 +14,6 @@ import { z } from 'zod'
 const UpdateUserSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1),
-  phoneNumber: z.string().nullable().optional(),
 })
 
 export const UserRouter = new Hono<WithAuth>()
@@ -80,7 +79,6 @@ export const UserRouter = new Hono<WithAuth>()
         .set({
           email: data.email,
           name: data.name,
-          phoneNumber: data.phoneNumber ?? null,
           updatedAt: new Date(),
         })
         .where(eq(users.id, id))
