@@ -82,7 +82,7 @@ const MyLayout = async ({ children }: { children: React.ReactNode }) => {
       title: 'Prompts',
     },
     {
-      count: channelCount,
+      count: channelCount + 1, // Default channel
       href: '/my/channels',
       title: 'Channels',
     },
