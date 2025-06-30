@@ -174,26 +174,49 @@ export const processAlert = async (item: Alert) => {
       },
     })
 
+    let anySlowChannelSucceeded = false
     for (const subscriber of slowChannelSubscribers) {
       const user = await db.query.users.findFirst({
         where: eq(users.id, subscriber.userId),
       })
-      await withTimeout(
-        herald({
-          alertName: item.name,
-          channelId: subscriber.channelId,
-          readerCount: allSubscribers.length,
-          stories: slowChannelFilteredStories,
-          strategy: item.strategy,
-          subscriptionId: subscriber.id,
-          user,
-          wait: item.wait,
-        }),
-        30 * 1000,
-        `Herald timeout for user ${user?.email || 'unknown'}`,
-      )
+
+      try {
+        await withTimeout(
+          herald({
+            alertName: item.name,
+            channelId: subscriber.channelId,
+            readerCount: allSubscribers.length,
+            stories: slowChannelFilteredStories,
+            strategy: item.strategy,
+            subscriptionId: subscriber.id,
+            user,
+            wait: item.wait,
+          }),
+          30 * 1000,
+          `Herald timeout for user ${user?.email || 'unknown'}`,
+        )
+        anySlowChannelSucceeded = true
+      } catch (error) {
+        await track({
+          channel: 'worker',
+          description: `Failed to send to slow channel subscriber: ${error instanceof Error ? error.message : String(error)}`,
+          event: 'Slow Channel Delivery Failed',
+          icon: '❌',
+          tags: {
+            alert_id: item.id,
+            alert_name: item.name,
+            channel_id: subscriber.channelId || 'unknown',
+            error: String(error),
+            subscriber_id: subscriber.id,
+            type: 'error',
+            user_email: user?.email || 'unknown',
+          },
+        })
+      }
     }
-    anySent = true
+    if (anySlowChannelSucceeded) {
+      anySent = true
+    }
   } else if (slowChannelSubscribers.length > 0) {
     await track({
       channel: 'worker',
@@ -229,26 +252,49 @@ export const processAlert = async (item: Alert) => {
       },
     })
 
+    let anyFastChannelSucceeded = false
     for (const subscriber of fastChannelSubscribers) {
       const user = await db.query.users.findFirst({
         where: eq(users.id, subscriber.userId),
       })
-      await withTimeout(
-        herald({
-          alertName: item.name,
-          channelId: subscriber.channelId,
-          readerCount: allSubscribers.length,
-          stories: fastChannelFilteredStories,
-          strategy: item.strategy,
-          subscriptionId: subscriber.id,
-          user,
-          wait: item.wait,
-        }),
-        30 * 1000,
-        `Herald timeout for user ${user?.email || 'unknown'}`,
-      )
+
+      try {
+        await withTimeout(
+          herald({
+            alertName: item.name,
+            channelId: subscriber.channelId,
+            readerCount: allSubscribers.length,
+            stories: fastChannelFilteredStories,
+            strategy: item.strategy,
+            subscriptionId: subscriber.id,
+            user,
+            wait: item.wait,
+          }),
+          30 * 1000,
+          `Herald timeout for user ${user?.email || 'unknown'}`,
+        )
+        anyFastChannelSucceeded = true
+      } catch (error) {
+        await track({
+          channel: 'worker',
+          description: `Failed to send to fast channel subscriber: ${error instanceof Error ? error.message : String(error)}`,
+          event: 'Fast Channel Delivery Failed',
+          icon: '❌',
+          tags: {
+            alert_id: item.id,
+            alert_name: item.name,
+            channel_id: subscriber.channelId || 'unknown',
+            error: String(error),
+            subscriber_id: subscriber.id,
+            type: 'error',
+            user_email: user?.email || 'unknown',
+          },
+        })
+      }
     }
-    anySent = true
+    if (anyFastChannelSucceeded) {
+      anySent = true
+    }
   } else if (fastChannelSubscribers.length > 0) {
     await track({
       channel: 'worker',
