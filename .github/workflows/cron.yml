@@ -45,3 +45,7 @@ jobs:
           SURGE_ACCOUNT_ID: ${{ secrets.SURGE_ACCOUNT_ID }}
           SURGE_API_KEY: ${{ secrets.SURGE_API_KEY }}
           ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
+          SLACK_CLIENT_ID: ${{ secrets.SLACK_CLIENT_ID }}
+          SLACK_CLIENT_SECRET: ${{ secrets.SLACK_CLIENT_SECRET }}
+          SLACK_STATE_SECRET: ${{ secrets.SLACK_STATE_SECRET }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}

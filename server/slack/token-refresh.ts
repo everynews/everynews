@@ -1,9 +1,13 @@
 import { db } from '@everynews/database'
 import { decrypt, encrypt } from '@everynews/lib/crypto'
 import { track } from '@everynews/logs'
-import { channels, type SlackChannelConfig } from '@everynews/schema'
-import { WebClient } from '@slack/web-api'
+import {
+  channels,
+  type SlackChannelConfig,
+  SlackChannelConfigSchema,
+} from '@everynews/schema'
 import { and, eq, isNull } from 'drizzle-orm'
+import { refreshAccessToken } from './oauth-installer'
 
 export async function refreshSlackToken(channelId: string): Promise<boolean> {
   try {
@@ -20,7 +24,7 @@ export async function refreshSlackToken(channelId: string): Promise<boolean> {
       throw new Error('Channel not found')
     }
 
-    const config = channel.config as SlackChannelConfig
+    const config = SlackChannelConfigSchema.parse(channel.config)
 
     // Check if token rotation is enabled
     if (!config.tokenRotationEnabled || !config.refreshToken) {
@@ -50,27 +54,23 @@ export async function refreshSlackToken(channelId: string): Promise<boolean> {
     }
 
     // Decrypt the refresh token
-    const refreshToken = await decrypt(config.refreshToken)
+    const decryptedRefreshToken = await decrypt(config.refreshToken)
 
-    // Use the Slack Web API to refresh the token
-    const slack = new WebClient()
-
-    const result = await slack.tooling.tokens.rotate({
-      refresh_token: refreshToken,
-    })
-
-    if (!result.ok || !result.token || !result.refresh_token) {
-      throw new Error('Failed to refresh token')
-    }
+    // Use the OAuth installer to refresh the token
+    const refreshResult = await refreshAccessToken(
+      decryptedRefreshToken,
+      config.teamId,
+    )
 
     // Update the channel with new tokens
     const newConfig: SlackChannelConfig = {
       ...config,
-      accessToken: await encrypt(result.token),
-      expiresAt: result.exp
-        ? new Date(Date.now() + result.exp * 1000)
-        : new Date(Date.now() + 12 * 60 * 60 * 1000),
-      refreshToken: await encrypt(result.refresh_token),
+      accessToken: await encrypt(refreshResult.accessToken),
+      expiresAt:
+        refreshResult.expiresAt || new Date(Date.now() + 12 * 60 * 60 * 1000),
+      refreshToken: refreshResult.refreshToken
+        ? await encrypt(refreshResult.refreshToken)
+        : config.refreshToken,
     }
 
     await db
@@ -124,7 +124,36 @@ export async function getValidSlackToken(channelId: string): Promise<string> {
 
   try {
     // First try to refresh the token if needed
-    await refreshSlackToken(channelId)
+    try {
+      await refreshSlackToken(channelId)
+    } catch (refreshError) {
+      // Log the refresh error but continue to try getting the existing token
+      await track({
+        channel: 'slack',
+        description: `Token refresh failed for channel ${channelId}, will try existing token`,
+        event: 'Token Refresh Error',
+        icon: '⚠️',
+        tags: {
+          channel_id: channelId,
+          error: String(refreshError),
+          error_message:
+            refreshError instanceof Error
+              ? refreshError.message
+              : String(refreshError),
+          type: 'warning',
+        },
+      })
+
+      // If it's an invalid_refresh_token error, we should inform the user
+      if (
+        refreshError instanceof Error &&
+        refreshError.message.includes('invalid_refresh_token')
+      ) {
+        throw new Error(
+          'Your Slack authentication has expired. Please reconnect your Slack workspace.',
+        )
+      }
+    }
 
     // Get the channel with potentially updated token
     const channel = await db.query.channels.findFirst({
@@ -149,7 +178,7 @@ export async function getValidSlackToken(channelId: string): Promise<string> {
       throw new Error('Channel not found')
     }
 
-    const config = channel.config as SlackChannelConfig
+    const config = SlackChannelConfigSchema.parse(channel.config)
 
     await track({
       channel: 'slack',

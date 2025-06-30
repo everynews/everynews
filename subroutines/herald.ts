@@ -6,6 +6,7 @@ import { sendSlackAlert, sendSurgeAlert } from '@everynews/messengers'
 import {
   ChannelSchema,
   channels,
+  SlackChannelConfigSchema,
   type Story,
   type Strategy,
   type WaitSchema,
@@ -93,28 +94,19 @@ const sendAlertSlack = async (parcel: {
   strategy: Strategy
   wait: Wait
   channelId: string
-  config: {
-    accessToken: string
-    refreshToken?: string
-    expiresAt?: Date
-    tokenRotationEnabled?: boolean
-    channel: { id: string; name: string }
-    destination?: string
-    teamId: string
-    workspace?: { id: string; name: string }
-  }
+  config: z.infer<typeof SlackChannelConfigSchema>
 }) => {
   await track({
     channel: 'herald',
-    description: `Starting Slack delivery for alert "${parcel.alertName}" to channel ${parcel.config.channel.name} (${parcel.config.channel.id})`,
+    description: `Starting Slack delivery for alert "${parcel.alertName}" to channel ${parcel.config.channel?.name || 'unknown'} (${parcel.config.channel?.id || 'unknown'})`,
     event: 'Slack Delivery Starting',
     icon: '🚀',
     tags: {
       alert_name: parcel.alertName,
       channel_id: parcel.channelId,
       has_refresh_token: !!parcel.config.refreshToken,
-      slack_channel_id: parcel.config.channel.id,
-      slack_channel_name: parcel.config.channel.name,
+      slack_channel_id: parcel.config.channel?.id || 'unknown',
+      slack_channel_name: parcel.config.channel?.name || 'unknown',
       stories_count: parcel.stories.length,
       team_id: parcel.config.teamId,
       token_expires_at: parcel.config.expiresAt?.toISOString() || 'never',
@@ -125,6 +117,11 @@ const sendAlertSlack = async (parcel: {
   })
 
   try {
+    // Ensure channel is configured
+    if (!parcel.config.channel?.id) {
+      throw new Error('Slack channel not properly configured')
+    }
+
     const accessToken = await getValidSlackToken(parcel.channelId)
 
     await track({
@@ -148,14 +145,14 @@ const sendAlertSlack = async (parcel: {
 
     await track({
       channel: 'herald',
-      description: `Successfully sent Slack alert "${parcel.alertName}" to channel ${parcel.config.channel.name}`,
+      description: `Successfully sent Slack alert "${parcel.alertName}" to channel ${parcel.config.channel?.name || 'unknown'}`,
       event: 'Slack Delivery Completed',
       icon: '✅',
       tags: {
         alert_name: parcel.alertName,
         channel_id: parcel.channelId,
-        slack_channel_id: parcel.config.channel.id,
-        slack_channel_name: parcel.config.channel.name,
+        slack_channel_id: parcel.config.channel?.id || 'unknown',
+        slack_channel_name: parcel.config.channel?.name || 'unknown',
         stories_count: parcel.stories.length,
         type: 'info',
       },
@@ -172,8 +169,8 @@ const sendAlertSlack = async (parcel: {
         error: String(error),
         error_message: error instanceof Error ? error.message : String(error),
         error_name: error instanceof Error ? error.name : 'unknown',
-        slack_channel_id: parcel.config.channel.id,
-        slack_channel_name: parcel.config.channel.name,
+        slack_channel_id: parcel.config.channel?.id || 'unknown',
+        slack_channel_name: parcel.config.channel?.name || 'unknown',
         type: 'error',
       },
     })
@@ -298,16 +295,7 @@ export const herald = async ({
           },
         })
 
-        const slackConfig = channel.config as {
-          accessToken: string
-          refreshToken?: string
-          expiresAt?: Date
-          tokenRotationEnabled?: boolean
-          channel?: { id: string; name: string }
-          destination?: string
-          teamId: string
-          workspace?: { id: string; name: string }
-        }
+        const slackConfig = SlackChannelConfigSchema.parse(channel.config)
 
         await track({
           channel: 'herald',
@@ -347,16 +335,7 @@ export const herald = async ({
         await sendAlertSlack({
           ...parcel,
           channelId,
-          config: slackConfig as {
-            accessToken: string
-            refreshToken?: string
-            expiresAt?: Date
-            tokenRotationEnabled?: boolean
-            channel: { id: string; name: string }
-            destination?: string
-            teamId: string
-            workspace?: { id: string; name: string }
-          },
+          config: slackConfig,
         })
         return
       }
