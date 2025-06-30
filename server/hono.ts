@@ -4,9 +4,11 @@ import { AlertRouter } from '@everynews/server/alerts'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { ChannelRouter } from '@everynews/server/channels'
 import { DrillRouter } from '@everynews/server/drill'
-import { PromptsRouter } from '@everynews/server/prompts'
+import { PromptRouter } from '@everynews/server/prompts'
+import { SessionRouter } from '@everynews/server/sessions'
 import { SlackRouter } from '@everynews/server/slack'
 import { SubscriptionRouter } from '@everynews/server/subscriptions'
+import { UserRouter } from '@everynews/server/users'
 import { Scalar } from '@scalar/hono-api-reference'
 import { Hono } from 'hono'
 import { generateSpecs } from 'hono-openapi'
@@ -17,9 +19,11 @@ const app = new Hono<WithAuth>()
   .route('/alerts', AlertRouter)
   .route('/channels', ChannelRouter)
   .route('/drill', DrillRouter)
-  .route('/prompts', PromptsRouter)
+  .route('/prompts', PromptRouter)
+  .route('/sessions', SessionRouter)
   .route('/slack', SlackRouter)
   .route('/subscriptions', SubscriptionRouter)
+  .route('/users', UserRouter)
 
 app.get(
   '/',

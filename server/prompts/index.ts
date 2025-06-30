@@ -6,7 +6,7 @@ import { zValidator } from '@hono/zod-validator'
 import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 
-export const PromptsRouter = new Hono<WithAuth>()
+export const PromptRouter = new Hono<WithAuth>()
   .use(authMiddleware)
   .get('/', async (c) => {
     const user = c.get('user')

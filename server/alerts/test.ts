@@ -7,10 +7,11 @@ import { subscriptions } from '@everynews/schema/subscription'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { herald } from '@everynews/subroutines/herald'
+import { zValidator } from '@hono/zod-validator'
 import { and, count, desc, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
-import { resolver, validator } from 'hono-openapi/zod'
+import { resolver } from 'hono-openapi/zod'
 import { z } from 'zod'
 
 const TestAlertSchema = z.object({
@@ -57,7 +58,7 @@ export const TestAlertRouter = new Hono<WithAuth>().use(authMiddleware).post(
       },
     },
   }),
-  validator('json', TestAlertSchema),
+  zValidator('json', TestAlertSchema),
   async (c) => {
     const user = c.get('user')
     if (!user) {

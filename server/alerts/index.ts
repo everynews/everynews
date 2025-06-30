@@ -4,10 +4,11 @@ import { alerts, subscriptions } from '@everynews/schema'
 import { AlertDtoSchema, AlertSchema } from '@everynews/schema/alert'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
+import { zValidator } from '@hono/zod-validator'
 import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
-import { resolver, validator } from 'hono-openapi/zod'
+import { resolver } from 'hono-openapi/zod'
 import { TestAlertRouter } from './test'
 
 export const AlertRouter = new Hono<WithAuth>()
@@ -117,7 +118,7 @@ export const AlertRouter = new Hono<WithAuth>()
         },
       },
     }),
-    validator('json', AlertDtoSchema),
+    zValidator('json', AlertDtoSchema),
     async (c) => {
       const {
         name,
@@ -198,7 +199,7 @@ export const AlertRouter = new Hono<WithAuth>()
         },
       },
     }),
-    validator('json', AlertDtoSchema),
+    zValidator('json', AlertDtoSchema),
     async (c) => {
       const { id } = c.req.param()
       const request = await c.req.json()

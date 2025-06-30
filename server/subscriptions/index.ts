@@ -7,10 +7,11 @@ import {
 } from '@everynews/schema/subscription'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
+import { zValidator } from '@hono/zod-validator'
 import { and, eq, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
-import { resolver, validator } from 'hono-openapi/zod'
+import { resolver } from 'hono-openapi/zod'
 import { z } from 'zod'
 
 export const SubscriptionRouter = new Hono<WithAuth>()
@@ -32,7 +33,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
       },
     }),
 
-    validator('json', SubscriptionDtoSchema),
+    zValidator('json', SubscriptionDtoSchema),
 
     async (c) => {
       const { alertId, channelId, userId } = await c.req.json()

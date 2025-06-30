@@ -110,3 +110,17 @@ The application follows a hybrid approach for data handling:
 - Do not use arrow directly as unicode. Use Lucide icons such as <ArrowLeft />.
 - Inside a button, do not use an icon. Only put plain text in it.
 - Prefer Tailwind shorthand notations, such as `size-`.
+
+## API Router Conventions
+
+- Use singular form for router names (e.g., `UserRouter`, `AlertRouter`, `ChannelRouter`) instead of plural forms
+- Keep route paths plural (e.g., `/users`, `/alerts`, `/channels`) even though router names are singular
+- Prefer `zValidator` from `@hono/zod-validator` over `validator` from `hono-openapi/zod` for request validation
+- Use `zValidator('json', schema)` for body validation and `zValidator('param', schema)` for parameter validation
+
+## User Settings Architecture
+
+- User settings live at `/settings` (not under `/my/settings`) with its own layout and sidebar
+- Settings page fetches full user data from database since session user object has limited fields
+- Settings link should be accessible from the user profile dropdown in the main navigation
+- Use toast notifications from `sonner` package (not custom hooks) for user feedback

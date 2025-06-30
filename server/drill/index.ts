@@ -4,9 +4,10 @@ import { AlertDtoSchema } from '@everynews/schema/alert'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { aspirant } from '@everynews/subroutines/aspirant'
+import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
-import { resolver, validator } from 'hono-openapi/zod'
+import { resolver } from 'hono-openapi/zod'
 
 export const DrillRouter = new Hono<WithAuth>().use(authMiddleware).post(
   '/',
@@ -23,7 +24,7 @@ export const DrillRouter = new Hono<WithAuth>().use(authMiddleware).post(
       },
     },
   }),
-  validator('json', AlertDtoSchema),
+  zValidator('json', AlertDtoSchema),
   async (c) => {
     const user = c.get('user')
     if (!user) {

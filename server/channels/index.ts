@@ -16,10 +16,11 @@ import {
 } from '@everynews/schema/channel'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
+import { zValidator } from '@hono/zod-validator'
 import { and, eq, gt, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
-import { resolver, validator } from 'hono-openapi/zod'
+import { resolver } from 'hono-openapi/zod'
 import { z } from 'zod'
 
 export const ChannelRouter = new Hono<WithAuth>()
@@ -88,7 +89,7 @@ export const ChannelRouter = new Hono<WithAuth>()
         },
       },
     }),
-    validator('json', ChannelDtoSchema),
+    zValidator('json', ChannelDtoSchema),
     async (c) => {
       const { name, type, config } = await c.req.json()
       const user = c.get('user')
@@ -166,7 +167,7 @@ export const ChannelRouter = new Hono<WithAuth>()
         },
       },
     }),
-    validator('json', ChannelDtoSchema),
+    zValidator('json', ChannelDtoSchema),
     async (c) => {
       const { id } = c.req.param()
       const request = await c.req.json()
@@ -598,7 +599,7 @@ export const ChannelRouter = new Hono<WithAuth>()
         },
       },
     }),
-    validator('json', z.object({ code: z.string().regex(/^[0-9]{6}$/) })),
+    zValidator('json', z.object({ code: z.string().regex(/^[0-9]{6}$/) })),
     async (c) => {
       const { id } = c.req.param()
       const { code } = await c.req.json()
