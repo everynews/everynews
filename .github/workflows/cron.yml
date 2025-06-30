@@ -44,3 +44,4 @@ jobs:
           BRIGHTDATA_API_KEY: ${{ secrets.BRIGHTDATA_API_KEY }}
           SURGE_ACCOUNT_ID: ${{ secrets.SURGE_ACCOUNT_ID }}
           SURGE_API_KEY: ${{ secrets.SURGE_API_KEY }}
+          ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
