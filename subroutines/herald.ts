@@ -293,7 +293,7 @@ export const herald = async ({
             alert_name: alertName,
             channel_id: channelId,
             channel_type: channelType,
-            config_keys: Object.keys(channel.config || {}),
+            config_keys: String(Object.keys(channel.config || {})),
             type: 'info',
           },
         })
