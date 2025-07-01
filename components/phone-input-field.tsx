@@ -29,6 +29,8 @@ export const PhoneInputField = React.forwardRef<
       countrySelectComponent={CountrySelect}
       inputComponent={PhoneInput}
       onChange={onChange}
+      countries={['US', 'CA']}
+      defaultCountry="US"
       {...props}
     />
   )
