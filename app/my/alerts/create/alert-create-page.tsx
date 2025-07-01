@@ -39,7 +39,11 @@ import { Switch } from '@everynews/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
 import { Textarea } from '@everynews/components/ui/textarea'
 import { toastNetworkError } from '@everynews/lib/error'
-import { getHourLabel, localToUtc } from '@everynews/lib/timezone'
+import {
+  getHourIntervalLabel,
+  getUserTimezone,
+  localToUtc,
+} from '@everynews/lib/timezone'
 import { type AlertDto, AlertDtoSchema } from '@everynews/schema/alert'
 import { getLanguageOptions } from '@everynews/schema/language'
 import type { Prompt } from '@everynews/schema/prompt'
@@ -581,7 +585,7 @@ export const AlertCreatePage = ({
                       <FormItem>
                         <FormLabel>Schedule</FormLabel>
                         <div className='text-muted-foreground text-xs mb-2'>
-                          Times shown in your local timezone
+                          Times shown in your local timezone ({getUserTimezone()})
                         </div>
                         <div className='grid grid-cols-2 gap-8'>
                           <div className='flex flex-col gap-2'>
@@ -637,7 +641,7 @@ export const AlertCreatePage = ({
                                     }}
                                   />
                                   <label htmlFor={`${id}-hour-${h}`}>
-                                    {getHourLabel(h)}
+                                    {getHourIntervalLabel(h)}
                                   </label>
                                 </div>
                               ))}

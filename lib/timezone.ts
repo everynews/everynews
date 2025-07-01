@@ -14,7 +14,24 @@ export const localToUtc = (localHour: number): number => {
 
 // Get display label for hour (already in local time)
 export const getHourLabel = (localHour: number): string => {
-  const period = localHour < 12 ? 'AM' : 'PM'
-  const displayHour = localHour % 12 === 0 ? 12 : localHour % 12
-  return `${displayHour} ${period}`
+  // Normalize hour to 0-23 range
+  const normalizedHour = ((localHour % 24) + 24) % 24
+  const displayHour = normalizedHour % 12 === 0 ? 12 : normalizedHour % 12
+  const period = normalizedHour >= 12 ? 'pm' : 'am'
+  return `${displayHour}${period}`
+}
+
+// Get display label for hour interval (already in local time)
+export const getHourIntervalLabel = (startHour: number): string => {
+  const startDisplayHour = getHourLabel(startHour)
+
+  const endHour = (startHour + 1) % 24
+  const endDisplayHour = getHourLabel(endHour)
+
+  return `${startDisplayHour}-${endDisplayHour}`
+}
+
+// Get user's timezone name
+export const getUserTimezone = (): string => {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone
 }

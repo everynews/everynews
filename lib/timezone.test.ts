@@ -1,5 +1,11 @@
 import { beforeAll, describe, expect, it } from 'bun:test'
-import { getHourLabel, localToUtc, utcToLocal } from './timezone'
+import {
+  getHourIntervalLabel,
+  getHourLabel,
+  getUserTimezone,
+  localToUtc,
+  utcToLocal,
+} from './timezone'
 
 describe('timezone', () => {
   let originalDate: typeof Date
@@ -91,51 +97,51 @@ describe('timezone', () => {
 
   describe('getHourLabel', () => {
     it('should format midnight correctly', () => {
-      expect(getHourLabel(0)).toBe('12 AM')
+      expect(getHourLabel(0)).toBe('12am')
     })
 
     it('should format noon correctly', () => {
-      expect(getHourLabel(12)).toBe('12 PM')
+      expect(getHourLabel(12)).toBe('12pm')
     })
 
     it('should format morning hours correctly', () => {
-      expect(getHourLabel(1)).toBe('1 AM')
-      expect(getHourLabel(5)).toBe('5 AM')
-      expect(getHourLabel(11)).toBe('11 AM')
+      expect(getHourLabel(1)).toBe('1am')
+      expect(getHourLabel(5)).toBe('5am')
+      expect(getHourLabel(11)).toBe('11am')
     })
 
     it('should format afternoon/evening hours correctly', () => {
-      expect(getHourLabel(13)).toBe('1 PM')
-      expect(getHourLabel(17)).toBe('5 PM')
-      expect(getHourLabel(23)).toBe('11 PM')
+      expect(getHourLabel(13)).toBe('1pm')
+      expect(getHourLabel(17)).toBe('5pm')
+      expect(getHourLabel(23)).toBe('11pm')
     })
 
     it('should handle all 24 hours', () => {
       const expectedLabels = [
-        '12 AM',
-        '1 AM',
-        '2 AM',
-        '3 AM',
-        '4 AM',
-        '5 AM',
-        '6 AM',
-        '7 AM',
-        '8 AM',
-        '9 AM',
-        '10 AM',
-        '11 AM',
-        '12 PM',
-        '1 PM',
-        '2 PM',
-        '3 PM',
-        '4 PM',
-        '5 PM',
-        '6 PM',
-        '7 PM',
-        '8 PM',
-        '9 PM',
-        '10 PM',
-        '11 PM',
+        '12am',
+        '1am',
+        '2am',
+        '3am',
+        '4am',
+        '5am',
+        '6am',
+        '7am',
+        '8am',
+        '9am',
+        '10am',
+        '11am',
+        '12pm',
+        '1pm',
+        '2pm',
+        '3pm',
+        '4pm',
+        '5pm',
+        '6pm',
+        '7pm',
+        '8pm',
+        '9pm',
+        '10pm',
+        '11pm',
       ]
 
       for (let hour = 0; hour < 24; hour++) {
@@ -144,25 +150,114 @@ describe('timezone', () => {
     })
 
     it('should handle hours beyond 24', () => {
-      expect(getHourLabel(24)).toBe('12 PM') // 24 % 12 = 0, but 24 >= 12 so PM
-      expect(getHourLabel(25)).toBe('1 PM') // 25 % 12 = 1, and 25 >= 12 so PM
-      expect(getHourLabel(36)).toBe('12 PM') // 36 % 12 = 0, and 36 >= 12 so PM
+      expect(getHourLabel(24)).toBe('12am') // 24 wraps to 0 (midnight)
+      expect(getHourLabel(25)).toBe('1am') // 25 wraps to 1
+      expect(getHourLabel(36)).toBe('12pm') // 36 wraps to 12 (noon)
     })
 
     it('should handle negative hours', () => {
-      // Negative numbers aren't handled as wraparound in the function
-      expect(getHourLabel(-1)).toBe('-1 AM') // -1 < 12 so AM
-      expect(getHourLabel(-12)).toBe('12 AM') // -12 % 12 = 0, -12 < 12 so AM
-      expect(getHourLabel(-24)).toBe('12 AM') // -24 % 12 = 0, -24 < 12 so AM
+      // Negative numbers should wrap around properly
+      expect(getHourLabel(-1)).toBe('11pm') // -1 wraps to 23
+      expect(getHourLabel(-12)).toBe('12pm') // -12 wraps to 12
+      expect(getHourLabel(-24)).toBe('12am') // -24 wraps to 0
     })
 
     it('should have consistent spacing', () => {
-      // All labels should have exactly one space between number and period
+      // All labels should have no space between number and period
       for (let hour = 0; hour < 24; hour++) {
         const label = getHourLabel(hour)
-        expect(label).toMatch(/^\d{1,2} (AM|PM)$/)
-        expect(label.split(' ')).toHaveLength(2)
+        expect(label).toMatch(/^\d{1,2}(am|pm)$/)
       }
+    })
+  })
+
+  describe('getHourIntervalLabel', () => {
+    it('should format midnight interval correctly', () => {
+      expect(getHourIntervalLabel(0)).toBe('12am-1am')
+    })
+
+    it('should format noon interval correctly', () => {
+      expect(getHourIntervalLabel(12)).toBe('12pm-1pm')
+    })
+
+    it('should format morning hour intervals correctly', () => {
+      expect(getHourIntervalLabel(1)).toBe('1am-2am')
+      expect(getHourIntervalLabel(5)).toBe('5am-6am')
+      expect(getHourIntervalLabel(11)).toBe('11am-12pm')
+    })
+
+    it('should format afternoon/evening hour intervals correctly', () => {
+      expect(getHourIntervalLabel(13)).toBe('1pm-2pm')
+      expect(getHourIntervalLabel(17)).toBe('5pm-6pm')
+      expect(getHourIntervalLabel(23)).toBe('11pm-12am')
+    })
+
+    it('should handle transition from AM to PM correctly', () => {
+      expect(getHourIntervalLabel(11)).toBe('11am-12pm')
+    })
+
+    it('should handle transition from PM to AM correctly', () => {
+      expect(getHourIntervalLabel(23)).toBe('11pm-12am')
+    })
+
+    it('should handle all 24 hours', () => {
+      const expectedLabels = [
+        '12am-1am',
+        '1am-2am',
+        '2am-3am',
+        '3am-4am',
+        '4am-5am',
+        '5am-6am',
+        '6am-7am',
+        '7am-8am',
+        '8am-9am',
+        '9am-10am',
+        '10am-11am',
+        '11am-12pm',
+        '12pm-1pm',
+        '1pm-2pm',
+        '2pm-3pm',
+        '3pm-4pm',
+        '4pm-5pm',
+        '5pm-6pm',
+        '6pm-7pm',
+        '7pm-8pm',
+        '8pm-9pm',
+        '9pm-10pm',
+        '10pm-11pm',
+        '11pm-12am',
+      ]
+
+      for (let hour = 0; hour < 24; hour++) {
+        expect(getHourIntervalLabel(hour)).toBe(expectedLabels[hour])
+      }
+    })
+
+    it('should have consistent formatting', () => {
+      // All labels should match the pattern
+      for (let hour = 0; hour < 24; hour++) {
+        const label = getHourIntervalLabel(hour)
+        expect(label).toMatch(/^\d{1,2}(am|pm)-\d{1,2}(am|pm)$/)
+      }
+    })
+  })
+
+  describe('getUserTimezone', () => {
+    it('should return a valid timezone string', () => {
+      const timezone = getUserTimezone()
+      expect(typeof timezone).toBe('string')
+      expect(timezone.length).toBeGreaterThan(0)
+      // Should contain a forward slash (e.g., 'America/New_York', 'Europe/London')
+      // or be a valid timezone abbreviation (e.g., 'UTC')
+      expect(
+        timezone.includes('/') || timezone === 'UTC' || timezone.length >= 3,
+      ).toBe(true)
+    })
+
+    it('should return the same timezone on multiple calls', () => {
+      const timezone1 = getUserTimezone()
+      const timezone2 = getUserTimezone()
+      expect(timezone1).toBe(timezone2)
     })
   })
 
@@ -188,19 +283,11 @@ describe('timezone', () => {
     it('should handle DST transitions gracefully', () => {
       // Mock Date during DST transition
       const mockDateDST = class extends originalDate {
-        constructor(...args: ConstructorParameters<typeof Date>) {
-          super(...args)
-          if (args.length === 0) {
-            // Set date during DST transition
-            this.setFullYear(2024, 2, 10) // March 10, 2024
-            this.setHours(2, 0, 0, 0)
-          }
-        }
         getTimezoneOffset() {
           return -240 // EDT (UTC-4)
         }
-      } as DateConstructor
-      global.Date = mockDateDST
+      }
+      global.Date = mockDateDST as unknown as DateConstructor
 
       // Should still produce valid hours
       const utcResult = localToUtc(2)
