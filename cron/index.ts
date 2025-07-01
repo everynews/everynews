@@ -4,7 +4,7 @@ import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
 import { AlertSchema, alerts } from '@everynews/schema'
 import { custodian } from '@everynews/subroutines/custodian'
-import { and, asc, eq, lt } from 'drizzle-orm'
+import { and, asc, eq, isNull, lt } from 'drizzle-orm'
 import PQueue from 'p-queue'
 
 const withTimeout = async <T>(
@@ -33,7 +33,11 @@ const main = async () => {
   const found = AlertSchema.array().parse(
     await db.query.alerts.findMany({
       orderBy: asc(alerts.lastRun),
-      where: and(eq(alerts.active, true), lt(alerts.nextRun, new Date())),
+      where: and(
+        eq(alerts.active, true),
+        lt(alerts.nextRun, new Date()),
+        isNull(alerts.deletedAt),
+      ),
     }),
   )
 
