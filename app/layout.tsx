@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   creator: '@anaclumos',
   description: siteConfig.description,
   icons: {
-    apple: '/logo.png',
+    apple: '/apple.png',
     icon: '/logo.png',
   },
   metadataBase: new URL(siteConfig.url),
