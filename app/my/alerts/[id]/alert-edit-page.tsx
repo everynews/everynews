@@ -597,7 +597,8 @@ export const AlertEditPage = ({
                       <FormItem>
                         <FormLabel>Schedule</FormLabel>
                         <div className='text-muted-foreground text-xs mb-2'>
-                          Times shown in your local timezone ({getUserTimezone()})
+                          Times shown in your local timezone (
+                          {getUserTimezone()})
                         </div>
                         <div className='grid grid-cols-2 gap-4 sm:gap-8'>
                           <div className='flex flex-col gap-2'>
