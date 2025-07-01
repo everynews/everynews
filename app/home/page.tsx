@@ -53,7 +53,7 @@ export default async function Page() {
       <div className='grid grid-cols-1 gap-4'>
         {triggeredStories.map(({ story, alert: alertInfo }) => (
           <Link
-            key={story.id}
+            key={`${story.id}-${alertInfo.id}`}
             href={`/stories/${story.id}`}
             lang={story.languageCode}
           >
@@ -84,7 +84,7 @@ export default async function Page() {
                     <div className='space-y-2'>
                       {story.keyFindings.slice(0, 2).map((finding, index) => (
                         <div
-                          key={`${story.id}-finding-${index}`}
+                          key={`${story.id}-${alertInfo.id}-finding-${index}`}
                           className='flex items-center gap-2'
                         >
                           <Badge

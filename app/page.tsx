@@ -21,7 +21,7 @@ export default async function Page() {
             <div className='flex justify-center gap-8'>
               <div className='flex gap-2 items-end'>
                 <div>
-                  <Avatar className='border'>
+                  <Avatar>
                     <AvatarImage src='/logo.png' />
                     <AvatarFallback>E</AvatarFallback>
                   </Avatar>
