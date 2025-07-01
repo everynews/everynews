@@ -25,7 +25,9 @@ export const SendVerificationDropdownItem = ({
       })
 
       if (!response.ok) {
-        toast.error('Failed to send verification')
+        toast.error('Failed to send verification', {
+          description: JSON.stringify(response.json()),
+        })
         return
       }
 

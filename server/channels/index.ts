@@ -341,6 +341,22 @@ export const ChannelRouter = new Hono<WithAuth>()
           },
           description: 'Verification email sent',
         },
+        422: {
+          content: {
+            'application/json': {
+              schema: resolver(
+                z.object({
+                  error: z.object({
+                    detail: z.record(z.string(), z.array(z.string())),
+                    message: z.string(),
+                    type: z.string(),
+                  }),
+                }),
+              ),
+            },
+          },
+          description: 'Validation error',
+        },
       },
     }),
     async (c) => {
