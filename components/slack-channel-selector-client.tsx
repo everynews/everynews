@@ -39,6 +39,31 @@ export const SlackChannelSelectorClient = ({
     await updateSlackChannel(channelId, channel.id, channel.name)
   }
 
+  // Check if no channels are available
+  if (channels.length === 0) {
+    return (
+      <div className='space-y-3 sm:space-y-4'>
+        <div>
+          <label
+            htmlFor='slack-channel'
+            className='text-xs sm:text-sm font-medium'
+          >
+            Select Slack Channel
+          </label>
+          <Select disabled>
+            <SelectTrigger id='slack-channel' disabled>
+              <SelectValue placeholder='No channels available' />
+            </SelectTrigger>
+          </Select>
+          <p className='mt-2 text-xs sm:text-sm text-muted-foreground'>
+            Everynews is not invited to any channels yet. Could you invite us so
+            that we can send alerts?
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <form action={handleSubmit} className='space-y-3 sm:space-y-4'>
       <div>

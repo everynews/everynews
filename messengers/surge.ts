@@ -150,8 +150,8 @@ export const sendSurgeAlert = async ({
   }
 
   try {
-    // Format the alert message
-    const messageBody = formatAlertMessage({
+    // Format the alert messages (one URL per story)
+    const messageUrls = formatAlertMessage({
       alertName,
       stories,
       strategy,
@@ -164,41 +164,74 @@ export const sendSurgeAlert = async ({
       throw new Error('SURGE_ACCOUNT_ID not configured')
     }
 
-    const response = await fetch(
-      `${SURGE_API_BASE}/accounts/${accountId}/messages`,
-      {
-        body: JSON.stringify({
-          body: messageBody,
-          conversation: {
-            contact: {
-              phone_number: phoneNumber,
-            },
-          },
-        }),
-        headers: {
-          Authorization: `Bearer ${SURGE_API_KEY}`,
-          'Content-Type': 'application/json',
+    // Send each URL as a separate message
+    for (let i = 0; i < messageUrls.length; i++) {
+      const messageBody = messageUrls[i]
+
+      await track({
+        channel: 'surge',
+        description: `Sending SMS ${i + 1} of ${messageUrls.length} to ${phoneNumber}`,
+        event: 'SMS Message Sending',
+        icon: '📤',
+        tags: {
+          alert_name: alertName,
+          destination: phoneNumber,
+          message_index: i,
+          message_url: messageBody,
+          type: 'info',
         },
-        method: 'POST',
-      },
-    )
+      })
 
-    if (!response.ok) {
-      const error = await response.text()
-      throw new Error(`Surge API error: ${response.status} - ${error}`)
+      const response = await fetch(
+        `${SURGE_API_BASE}/accounts/${accountId}/messages`,
+        {
+          body: JSON.stringify({
+            body: messageBody,
+            conversation: {
+              contact: {
+                phone_number: phoneNumber,
+              },
+            },
+          }),
+          headers: {
+            Authorization: `Bearer ${SURGE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+        },
+      )
+
+      if (!response.ok) {
+        const error = await response.text()
+        throw new Error(`Surge API error: ${response.status} - ${error}`)
+      }
+
+      const data = await response.json()
+
+      await track({
+        channel: 'surge',
+        description: `Sent SMS ${i + 1} to ${phoneNumber}`,
+        event: 'SMS Message Sent',
+        icon: '📱',
+        tags: {
+          alert_name: alertName,
+          destination: phoneNumber,
+          message_id: data.id,
+          message_index: i,
+          message_url: messageBody,
+          type: 'info',
+        },
+      })
     }
-
-    const data = await response.json()
 
     await track({
       channel: 'surge',
-      description: `Sent SMS alert to ${phoneNumber}`,
-      event: 'SMS Alert Sent',
-      icon: '📱',
+      description: `Sent all ${messageUrls.length} SMS messages to ${phoneNumber}`,
+      event: 'SMS Alert Complete',
+      icon: '✅',
       tags: {
         alert_name: alertName,
         destination: phoneNumber,
-        message_id: data.id,
         stories_count: stories.length,
         type: 'info',
       },
@@ -221,28 +254,16 @@ export const sendSurgeAlert = async ({
 }
 
 function formatAlertMessage({
-  alertName,
   stories,
 }: {
   alertName: string
   stories: Story[]
   strategy: Strategy
   wait: Wait
-}): string {
-  // For single story, provide more detail
-  if (stories.length === 1) {
-    const story = stories[0]
-    return `${alertName}: ${story.title}\n\nRead more: ${story.url}`
-  }
-
-  // For multiple stories
-  const storyList = stories
-    .slice(0, 3) // Limit to 3 stories for SMS
-    .map((story, index) => `${index + 1}. ${story.title}`)
-    .join('\n')
-
-  const totalCount =
-    stories.length > 3 ? `\n\n+${stories.length - 3} more stories` : ''
-
-  return `${alertName} (${stories.length} stories):\n\n${storyList}${totalCount}\n\nView all: ${process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news'}`
+}): string[] {
+  // Return an array of URLs, one for each story
+  return stories.map(
+    (story) =>
+      `${process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news'}/stories/${story.id}`,
+  )
 }

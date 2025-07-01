@@ -1,7 +1,6 @@
 import { track } from '@everynews/logs'
 import type { Story } from '@everynews/schema'
 import { isTokenError } from '@everynews/server/slack/token-refresh'
-import type { KnownBlock } from '@slack/types'
 import { WebClient } from '@slack/web-api'
 
 export const sendSlackAlert = async ({
@@ -31,37 +30,56 @@ export const sendSlackAlert = async ({
 
   try {
     const slack = new WebClient(accessToken)
-    const blocks = buildSlackBlocks(stories)
+
+    // Send each story URL as a separate message
+    for (let i = 0; i < stories.length; i++) {
+      const story = stories[i]
+      const everynewsUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news'}/stories/${story.id}`
+
+      await track({
+        channel: 'slack',
+        description: `Sending story ${i + 1} of ${stories.length} to Slack`,
+        event: 'Slack Message Sending',
+        icon: '📤',
+        tags: {
+          alert_name: alertName,
+          channel_id: channelId,
+          story_index: i,
+          story_url: everynewsUrl,
+          type: 'info',
+        },
+      })
+
+      const result = await slack.chat.postMessage({
+        channel: channelId,
+        text: everynewsUrl,
+      })
+
+      await track({
+        channel: 'slack',
+        description: `Sent story ${i + 1} to channel ${channelId}`,
+        event: 'Slack Message Sent',
+        icon: '💬',
+        tags: {
+          alert_name: alertName,
+          channel_id: channelId,
+          message_ts: result.ts || '',
+          ok: result.ok || false,
+          story_index: i,
+          story_url: everynewsUrl,
+          type: 'info',
+        },
+      })
+    }
 
     await track({
       channel: 'slack',
-      description: `Built ${blocks.length} blocks for Slack message`,
-      event: 'Slack Blocks Built',
-      icon: '🏗️',
-      tags: {
-        alert_name: alertName,
-        blocks_count: blocks.length,
-        channel_id: channelId,
-        type: 'info',
-      },
-    })
-
-    const result = await slack.chat.postMessage({
-      blocks,
-      channel: channelId,
-      text: `${alertName}: ${stories.length} new ${stories.length === 1 ? 'story' : 'stories'}`,
-    })
-
-    await track({
-      channel: 'slack',
-      description: `Sent Slack alert to channel ${channelId}`,
-      event: 'Slack Alert Sent',
-      icon: '💬',
+      description: `Sent all ${stories.length} messages to channel ${channelId}`,
+      event: 'Slack Alert Complete',
+      icon: '✅',
       tags: {
         alert_name: alertName,
         channel_id: channelId,
-        message_ts: result.ts || '',
-        ok: result.ok || false,
         stories_count: stories.length,
         type: 'info',
       },
@@ -99,43 +117,6 @@ export const sendSlackAlert = async ({
 
     throw error
   }
-}
-
-const buildSlackBlocks = (stories: Story[]) => {
-  const blocks: KnownBlock[] = []
-
-  // Send title with link and then the URL again for preview
-  stories.forEach((story, index) => {
-    const everynewsUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news'}/stories/${story.id}`
-    const blockText = `<${everynewsUrl}|${story.title}>\n${everynewsUrl}`
-
-    blocks.push({
-      text: {
-        text: blockText,
-        type: 'mrkdwn',
-      },
-      type: 'section',
-    })
-
-    // Log details about each story block
-    if (index === 0) {
-      track({
-        channel: 'slack',
-        description: `First story block: "${story.title?.substring(0, 50)}..."`,
-        event: 'Slack Block Sample',
-        icon: '📄',
-        tags: {
-          block_text_length: blockText.length,
-          everynews_url: everynewsUrl,
-          story_id: story.id,
-          story_title: story.title || 'untitled',
-          type: 'info',
-        },
-      })
-    }
-  })
-
-  return blocks
 }
 
 export const sendSlackVerification = async ({
