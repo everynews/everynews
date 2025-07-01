@@ -188,7 +188,7 @@ describe('timezone', () => {
     it('should handle DST transitions gracefully', () => {
       // Mock Date during DST transition
       const mockDateDST = class extends originalDate {
-        constructor(...args: any[]) {
+        constructor(...args: ConstructorParameters<typeof Date>) {
           super(...args)
           if (args.length === 0) {
             // Set date during DST transition
@@ -199,7 +199,7 @@ describe('timezone', () => {
         getTimezoneOffset() {
           return -240 // EDT (UTC-4)
         }
-      } as any
+      } as DateConstructor
       global.Date = mockDateDST
 
       // Should still produce valid hours

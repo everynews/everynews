@@ -19,7 +19,7 @@ const mockFetch = mock((url: string) => {
   return Promise.reject(new Error('Unknown URL'))
 })
 
-global.fetch = mockFetch as any
+global.fetch = mockFetch as typeof fetch
 
 describe('prompts', () => {
   describe('DEFAULT_PROMPT_PLACEHOLDER', () => {

@@ -77,7 +77,11 @@ describe('error', () => {
       })
 
       it('should handle errors with custom properties', () => {
-        const originalError = new Error('Sensitive error') as any
+        interface CustomError extends Error {
+          code?: string
+          details?: { password: string }
+        }
+        const originalError = new Error('Sensitive error') as CustomError
         originalError.code = 'DB_AUTH_FAILED'
         originalError.details = { password: 'secret123' }
 
@@ -87,8 +91,8 @@ describe('error', () => {
         })
 
         expect(result.message).toBe('Generic error')
-        expect((result as any).code).toBeUndefined()
-        expect((result as any).details).toBeUndefined()
+        expect((result as CustomError).code).toBeUndefined()
+        expect((result as CustomError).details).toBeUndefined()
       })
     })
 
@@ -113,7 +117,11 @@ describe('error', () => {
       })
 
       it('should preserve error properties in development', () => {
-        const originalError = new Error('Dev error') as any
+        interface DevError extends Error {
+          code?: string
+          customProp?: string
+        }
+        const originalError = new Error('Dev error') as DevError
         originalError.code = 'DETAILED_ERROR_CODE'
         originalError.stack = 'Detailed stack trace'
         originalError.customProp = 'custom value'
@@ -124,9 +132,9 @@ describe('error', () => {
         })
 
         expect(result).toBe(originalError)
-        expect((result as any).code).toBe('DETAILED_ERROR_CODE')
+        expect((result as DevError).code).toBe('DETAILED_ERROR_CODE')
         expect(result.stack).toBe('Detailed stack trace')
-        expect((result as any).customProp).toBe('custom value')
+        expect((result as DevError).customProp).toBe('custom value')
       })
     })
 
@@ -184,7 +192,7 @@ describe('error', () => {
       it('should handle null-like errors gracefully', () => {
         process.env.NODE_ENV = 'production'
 
-        const nullError = { message: null } as any
+        const nullError = { message: null } as { message: null }
         const result = redactError({
           error: nullError,
           safeAlternateString: 'Safe error',

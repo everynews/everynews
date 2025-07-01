@@ -19,8 +19,38 @@ mock.module('@everynews/logs', () => ({
   track: mockTrack,
 }))
 
+// Type for our minimal mock context
+type MockContext = Pick<Context, 'req' | 'set'>
+
+// Helper function to create a mock context with only the properties we need
+function createMockContext(
+  method = 'GET',
+  path = '/api/test',
+  headers: Record<string, string> = {
+    authorization: 'Bearer token123',
+    'user-agent': 'Mozilla/5.0',
+  },
+): MockContext {
+  const mockRequest = new Request(`http://localhost${path}`, {
+    headers,
+    method,
+  })
+
+  return {
+    req: {
+      header: mock((name: string) => {
+        return mockRequest.headers.get(name)
+      }),
+      method,
+      path,
+      raw: mockRequest,
+    },
+    set: mock(),
+  }
+}
+
 describe('authMiddleware', () => {
-  let mockContext: Context
+  let mockContext: MockContext
   let mockNext: typeof mock
 
   beforeEach(() => {
@@ -28,25 +58,7 @@ describe('authMiddleware', () => {
     mockTrack.mockClear()
 
     mockNext = mock(() => Promise.resolve())
-
-    // Create a mock context
-    mockContext = {
-      req: {
-        header: mock((name: string) => {
-          if (name === 'user-agent') return 'Mozilla/5.0'
-          return null
-        }),
-        method: 'GET',
-        path: '/api/test',
-        raw: {
-          headers: new Headers({
-            authorization: 'Bearer token123',
-            'user-agent': 'Mozilla/5.0',
-          }),
-        },
-      },
-      set: mock(),
-    } as any
+    mockContext = createMockContext()
   })
 
   describe('successful authentication', () => {
@@ -132,7 +144,9 @@ describe('authMiddleware', () => {
 
     it('should handle missing user-agent header', async () => {
       mockGetSession.mockResolvedValue(null)
-      mockContext.req.header = mock(() => null)
+      mockContext = createMockContext('GET', '/api/test', {
+        authorization: 'Bearer token123',
+      })
 
       await authMiddleware(mockContext, mockNext)
 
@@ -152,7 +166,7 @@ describe('authMiddleware', () => {
 
       for (const method of methods) {
         mockTrack.mockClear()
-        mockContext.req.method = method
+        mockContext = createMockContext(method)
 
         await authMiddleware(mockContext, mockNext)
 
@@ -225,7 +239,27 @@ describe('authMiddleware', () => {
 
   describe('edge cases', () => {
     it('should handle missing headers', async () => {
-      mockContext.req.raw.headers = undefined as any
+      // Create a mock request without headers
+      const mockRequest = new Request('http://localhost/api/test', {
+        method: 'GET',
+      })
+
+      // Delete headers to simulate undefined
+      Object.defineProperty(mockRequest, 'headers', {
+        value: undefined,
+        writable: true,
+      })
+
+      mockContext = {
+        req: {
+          header: mock(() => null),
+          method: 'GET',
+          path: '/api/test',
+          raw: mockRequest,
+        },
+        set: mock(),
+      }
+
       mockGetSession.mockResolvedValue(null)
 
       await authMiddleware(mockContext, mockNext)
