@@ -38,10 +38,7 @@ export default async function Page() {
                   <div className='relative'>
                     <div className='bg-muted text-muted-foreground px-4 py-2 rounded-full flex items-center gap-1'>
                       <LinkIcon className='size-4' />
-                      <Link
-                        href='https://youtu.be/dQw4w9WgXcQ'
-                        target='_blank'
-                      >
+                      <Link href='https://youtu.be/dQw4w9WgXcQ' target='_blank'>
                         news.ycombinator.com
                       </Link>
                     </div>
