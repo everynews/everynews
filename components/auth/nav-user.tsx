@@ -72,6 +72,11 @@ export const NavUser = ({ user }: { user: User }) => {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
+          <Link href='/support' className='cursor-pointer'>
+            <span>Support</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
           <Link href='/settings' className='cursor-pointer'>
             <span>Settings</span>
           </Link>

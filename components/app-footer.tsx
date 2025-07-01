@@ -54,6 +54,7 @@ export const AppFooter = ({
   policies = [
     { href: '/privacy', text: 'Privacy Policy' },
     { href: '/terms', text: 'Terms of Service' },
+    { href: '/support', text: 'Support' },
   ],
   showThemeToggle = true,
   className,
