@@ -95,7 +95,9 @@
     "next:dev": "next dev --turbopack",
     "next:start": "next start",
     "style:check": "biome check --write .",
-    "tidy": "concurrently --names 'FORMAT,SCHEMA,NEXTJS' --prefix-colors 'blue,yellow,green' 'bun run style:check' 'bun run db:check' 'bun run build'"
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "tidy": "concurrently --names 'FORMAT,SCHEMA,TESTS,NEXTJS' --prefix-colors 'blue,yellow,magenta,green' 'bun run style:check' 'bun run db:check' 'bun run test' 'bun run build'"
   },
   "trustedDependencies": [
     "@tailwindcss/oxide",
