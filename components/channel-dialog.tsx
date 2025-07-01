@@ -382,13 +382,15 @@ export const ChannelDialog = ({
                     {channelType === 'phone' && (
                       <div className='space-y-2'>
                         <p className='text-xs text-muted-foreground'>
-                          <strong>Note:</strong> SMS notifications are currently only available for US and Canada phone numbers.
+                          <strong>Note:</strong> SMS notifications are currently
+                          only available for US and Canada phone numbers.
                         </p>
                         <p className='text-xs text-muted-foreground'>
-                          By providing your phone number, you authorize Everynews
-                          to send automated text alerts to the number provided.
-                          Messages and Data rates apply. Message frequency may
-                          vary. Text HELP for help or STOP to opt out. See{' '}
+                          By providing your phone number, you authorize
+                          Everynews to send automated text alerts to the number
+                          provided. Messages and Data rates apply. Message
+                          frequency may vary. Text HELP for help or STOP to opt
+                          out. See{' '}
                           <Link
                             href='/terms'
                             className='underline hover:text-primary'
