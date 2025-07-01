@@ -44,7 +44,7 @@
     "human-id": "^4.1.1",
     "lucide-react": "^0.525.0",
     "nanoid": "^5.1.5",
-    "next": "^15.4.0-canary.108",
+    "next": "^15.4.0-canary.109",
     "next-themes": "^0.4.6",
     "normalize-url": "^8.0.2",
     "openai": "^5.8.2",
