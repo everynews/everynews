@@ -1,5 +1,5 @@
 export const siteConfig = {
-  description: 'Agentic Google Alerts',
+  description: 'that one "bro did you see this?" friend.',
   name: 'Everynews',
   url: 'https://every.news',
 }
