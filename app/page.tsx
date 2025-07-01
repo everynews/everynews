@@ -5,7 +5,8 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@everynews/components/ui/avatar'
-import { Link } from 'lucide-react'
+import { LinkIcon } from 'lucide-react'
+import Link from 'next/link'
 
 export const metadata = {
   description: siteConfig.description,
@@ -36,8 +37,13 @@ export default async function Page() {
                   </div>
                   <div className='relative'>
                     <div className='bg-muted text-muted-foreground px-4 py-2 rounded-full flex items-center gap-1'>
-                      <Link className='size-4' />
-                      news.ycombinator.com
+                      <LinkIcon className='size-4' />
+                      <Link
+                        href='https://youtu.be/dQw4w9WgXcQ'
+                        target='_blank'
+                      >
+                        news.ycombinator.com
+                      </Link>
                     </div>
                   </div>
                   <div className='relative mb-4'>
