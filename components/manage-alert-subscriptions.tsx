@@ -14,16 +14,7 @@ import { toastNetworkError } from '@everynews/lib/error'
 import type { Alert } from '@everynews/schema/alert'
 import type { Channel } from '@everynews/schema/channel'
 import type { Subscription } from '@everynews/schema/subscription'
-import {
-  Edit,
-  Mail,
-  MessageSquare,
-  Phone,
-  Plus,
-  Settings,
-  Slack,
-  X,
-} from 'lucide-react'
+import { Edit, Mail, MessageSquare, Phone, Plus, Slack, X } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -222,9 +213,8 @@ export const ManageAlertSubscriptions = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant='ghost' size='sm' className='h-8 w-8 p-0'>
-          <Settings className='size-4' />
-          <span className='sr-only'>Manage subscriptions</span>
+        <Button variant='outline' size='sm'>
+          Manage
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-lg'>{content}</DialogContent>

@@ -4,6 +4,7 @@ import { AlertRouter } from '@everynews/server/alerts'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { ChannelRouter } from '@everynews/server/channels'
 import { DrillRouter } from '@everynews/server/drill'
+import { InvitationRouter } from '@everynews/server/invitations'
 import { PromptRouter } from '@everynews/server/prompts'
 import { SessionRouter } from '@everynews/server/sessions'
 import { SlackRouter } from '@everynews/server/slack'
@@ -19,6 +20,7 @@ const app = new Hono<WithAuth>()
   .route('/alerts', AlertRouter)
   .route('/channels', ChannelRouter)
   .route('/drill', DrillRouter)
+  .route('/invitations', InvitationRouter)
   .route('/prompts', PromptRouter)
   .route('/sessions', SessionRouter)
   .route('/slack', SlackRouter)

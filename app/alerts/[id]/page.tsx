@@ -146,13 +146,22 @@ export default async function AlertStoriesPage({
           <h1 className='text-2xl font-bold'>{alertInfo.name}</h1>
           <div className='flex items-center gap-2'>
             {user && (
-              <ManageAlertSubscriptions
-                alert={AlertSchema.parse(alertInfo)}
-                channels={userChannels}
-                subscriptions={userSubscriptions}
-                user={user}
-                isOwner={isOwner}
-              />
+              <>
+                <ManageAlertSubscriptions
+                  alert={AlertSchema.parse(alertInfo)}
+                  channels={userChannels}
+                  subscriptions={userSubscriptions}
+                  user={user}
+                  isOwner={isOwner}
+                />
+                {alertInfo.isPublic && (
+                  <Link href={`/alerts/${alertInfo.id}/invite`}>
+                    <Button variant='outline' size='sm'>
+                      Invite
+                    </Button>
+                  </Link>
+                )}
+              </>
             )}
             {!user && (
               <OneClickSubscribeForm alert={AlertSchema.parse(alertInfo)} />
