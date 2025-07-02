@@ -2,7 +2,11 @@ import { whoami } from '@everynews/auth/session'
 import { SlackChannelSelector } from '@everynews/components/slack-channel-selector'
 import { SlackTestButton } from '@everynews/components/slack-test-button'
 import { db } from '@everynews/database'
-import { ChannelSchema, channels } from '@everynews/schema/channel'
+import {
+  ChannelSchema,
+  channels,
+  SlackChannelConfigSchema,
+} from '@everynews/schema/channel'
 import { and, eq, isNull } from 'drizzle-orm'
 import { notFound, unauthorized } from 'next/navigation'
 
@@ -39,7 +43,7 @@ export default async function SlackSetupPage({ params }: SlackSetupPageProps) {
   // Type assertion since we already filtered for slack type
   if (channel.type !== 'slack') return notFound()
 
-  const config = channel.config
+  const config = SlackChannelConfigSchema.parse(channel.config)
 
   return (
     <div className='container mx-auto max-w-3xl px-4 py-6 md:py-8'>

@@ -37,6 +37,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { z } from 'zod'
 import { SubmitButton } from './submit-button'
 
 export const ChannelDialog = ({
@@ -172,8 +173,21 @@ export const ChannelDialog = ({
         }
       } else {
         // Check if destination was changed for update mode
-        const destinationChanged =
-          original?.config.destination !== values.config.destination
+        let destinationChanged = false
+        if (
+          original &&
+          (original.type === 'email' || original.type === 'phone') &&
+          (values.type === 'email' || values.type === 'phone')
+        ) {
+          const destinationSchema = z.object({ destination: z.string() })
+          const originalParsed = destinationSchema.safeParse(original.config)
+          const newParsed = destinationSchema.safeParse(values.config)
+
+          if (originalParsed.success && newParsed.success) {
+            destinationChanged =
+              originalParsed.data.destination !== newParsed.data.destination
+          }
+        }
         const wasVerified = original?.verified
 
         if (destinationChanged && wasVerified) {

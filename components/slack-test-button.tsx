@@ -4,6 +4,7 @@ import { api } from '@everynews/app/api'
 import { Button } from '@everynews/components/ui/button'
 import { toastNetworkError } from '@everynews/lib/error'
 import type { Channel } from '@everynews/schema/channel'
+import { SlackChannelConfigSchema } from '@everynews/schema/channel'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -44,8 +45,14 @@ export const SlackTestButton = ({
         return
       }
 
+      const parsed = SlackChannelConfigSchema.safeParse(channel.config)
+      const channelName =
+        parsed.success && parsed.data.channel?.name
+          ? `#${parsed.data.channel.name}`
+          : 'your Slack channel'
+
       toast.success('Test message sent!', {
-        description: `Check ${channel.config.channel?.name ? `#${channel.config.channel.name}` : 'your Slack channel'} for the test message.`,
+        description: `Check ${channelName} for the test message.`,
       })
     } catch (e) {
       toastNetworkError(e as Error)
@@ -56,10 +63,13 @@ export const SlackTestButton = ({
 
   if (channel.type !== 'slack') return null
 
+  const parsed = SlackChannelConfigSchema.safeParse(channel.config)
+  const hasChannelId = parsed.success && !!parsed.data.channel?.id
+
   return (
     <Button
       onClick={handleTest}
-      disabled={isLoading || !channel.config.channel?.id}
+      disabled={isLoading || !hasChannelId}
       variant={variant}
       size={size}
       className={className}

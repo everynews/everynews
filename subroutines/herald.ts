@@ -13,7 +13,7 @@ import {
 } from '@everynews/schema'
 import { getValidSlackToken } from '@everynews/server/slack/token-refresh'
 import { and, eq, isNull } from 'drizzle-orm'
-import type { z } from 'zod'
+import { z } from 'zod'
 
 type Wait = z.infer<typeof WaitSchema>
 
@@ -268,9 +268,35 @@ export const herald = async ({
         throw new Error(`Channel ${channelId} not found`)
       }
 
+      // Parse destination for email/phone channels
+      let destination = ''
+      if (channel.type === 'email' || channel.type === 'phone') {
+        const parsed = z
+          .object({ destination: z.string() })
+          .safeParse(channel.config)
+        if (parsed.success) {
+          destination = parsed.data.destination
+        } else {
+          await track({
+            channel: 'herald',
+            description: `Invalid config for ${channel.type} channel ${channelId}`,
+            event: 'Invalid Channel Config',
+            icon: '❌',
+            tags: {
+              channel_id: channelId,
+              channel_type: channel.type,
+              type: 'error',
+            },
+          })
+          throw new Error(
+            `Invalid config for ${channel.type} channel ${channelId}`,
+          )
+        }
+      }
+
       parcel = {
         alertName,
-        destination: channel.config.destination || '',
+        destination,
         readerCount,
         stories,
         strategy,

@@ -83,10 +83,16 @@ const SlackChannelSchema = BaseChannel.extend({
   type: z.literal('slack').openapi({ example: 'slack' }),
 }).openapi({ ref: 'SlackChannelSchema' })
 
-export const ChannelSchema = z.discriminatedUnion('type', [
+const UnknownChannelSchema = BaseChannel.extend({
+  config: z.unknown(),
+  type: z.string(),
+}).openapi({ ref: 'UnknownChannelSchema' })
+
+export const ChannelSchema = z.union([
   EmailChannelSchema,
   PhoneChannelSchema,
   SlackChannelSchema,
+  UnknownChannelSchema,
 ])
 
 const EmailChannelDtoSchema = EmailChannelSchema.omit({
@@ -119,10 +125,21 @@ const SlackChannelDtoSchema = SlackChannelSchema.omit({
   verifiedAt: true,
 }).openapi({ ref: 'SlackChannelDtoSchema' })
 
-export const ChannelDtoSchema = z.discriminatedUnion('type', [
+const UnknownChannelDtoSchema = UnknownChannelSchema.omit({
+  createdAt: true,
+  deletedAt: true,
+  id: true,
+  updatedAt: true,
+  userId: true,
+  verified: true,
+  verifiedAt: true,
+}).openapi({ ref: 'UnknownChannelDtoSchema' })
+
+export const ChannelDtoSchema = z.union([
   EmailChannelDtoSchema,
   PhoneChannelDtoSchema,
   SlackChannelDtoSchema,
+  UnknownChannelDtoSchema,
 ])
 
 export type Channel = z.infer<typeof ChannelSchema>

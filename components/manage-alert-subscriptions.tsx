@@ -13,12 +13,14 @@ import {
 import { toastNetworkError } from '@everynews/lib/error'
 import type { Alert } from '@everynews/schema/alert'
 import type { Channel } from '@everynews/schema/channel'
+import { SlackChannelConfigSchema } from '@everynews/schema/channel'
 import type { Subscription } from '@everynews/schema/subscription'
 import { Edit, Mail, MessageSquare, Phone, Plus, Slack, X } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { z } from 'zod'
 import { SendTestAlertButton } from './send-test-alert-button'
 import { SubscribeAlertDialog } from './subscribe-alert-dialog'
 
@@ -177,7 +179,26 @@ export const ManageAlertSubscriptions = ({
                       </p>
                       <p className='text-sm text-muted-foreground'>
                         {channel
-                          ? `${channel.type}: ${channel.config.destination}`
+                          ? channel.type === 'slack'
+                            ? (() => {
+                                const parsed =
+                                  SlackChannelConfigSchema.safeParse(
+                                    channel.config,
+                                  )
+                                if (parsed.success) {
+                                  return `Slack: #${parsed.data.channel?.name || 'Unknown channel'}`
+                                }
+                                return 'Slack: Not configured'
+                              })()
+                            : (() => {
+                                const parsed = z
+                                  .object({ destination: z.string() })
+                                  .safeParse(channel.config)
+                                if (parsed.success) {
+                                  return `${channel.type}: ${parsed.data.destination}`
+                                }
+                                return `${channel.type}: Not configured`
+                              })()
                           : `Email: ${user?.email}`}
                       </p>
                     </div>

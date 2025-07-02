@@ -9,7 +9,11 @@ import { SubscribeAlertDropdownItem } from '@everynews/components/subscribe-aler
 import { Button } from '@everynews/components/ui/button'
 import { db } from '@everynews/database'
 import { AlertSchema, alerts } from '@everynews/schema/alert'
-import { ChannelSchema, channels } from '@everynews/schema/channel'
+import {
+  ChannelSchema,
+  channels,
+  SlackChannelConfigSchema,
+} from '@everynews/schema/channel'
 import { LANGUAGE_LABELS } from '@everynews/schema/language'
 import {
   SubscriptionSchema,
@@ -19,10 +23,32 @@ import { and, eq, isNull } from 'drizzle-orm'
 import { ExternalLink, Mail, MessageSquare, Phone, Slack } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
+import { z } from 'zod'
 
 export const metadata = {
   description: "Review alerts you're subscribed to.",
   title: 'Subscriptions',
+}
+
+const getChannelDestination = (
+  channel: z.infer<typeof ChannelSchema> | null,
+  userEmail: string,
+) => {
+  if (!channel) return userEmail
+
+  if (channel.type === 'slack') {
+    const config = SlackChannelConfigSchema.safeParse(channel.config)
+    if (config.success && config.data.channel) {
+      return `#${config.data.channel.name}`
+    }
+    return 'Not selected'
+  } else if (channel.type === 'email' || channel.type === 'phone') {
+    const config = z
+      .object({ destination: z.string() })
+      .safeParse(channel.config)
+    return config.success ? config.data.destination : userEmail
+  }
+  return userEmail
 }
 
 export default async function MySubscriptionsPage() {
@@ -152,11 +178,7 @@ export default async function MySubscriptionsPage() {
                 <div className='flex justify-between'>
                   <span>Destination</span>
                   <span className='text-muted-foreground truncate max-w-[150px]'>
-                    {channel
-                      ? channel.type === 'slack' && channel.config.channel
-                        ? `#${channel.config.channel.name}`
-                        : channel.config.destination
-                      : user.email}
+                    {getChannelDestination(channel, user.email)}
                   </span>
                 </div>
                 <div className='flex justify-between'>
