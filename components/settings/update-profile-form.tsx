@@ -1,7 +1,7 @@
 'use client'
 
 import { api } from '@everynews/app/api'
-import { Button } from '@everynews/components/ui/button'
+import { SubmitButton } from '@everynews/components/submit-button'
 import { Input } from '@everynews/components/ui/input'
 import { Label } from '@everynews/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -93,9 +93,9 @@ export const UpdateProfileForm = ({ user }: UpdateProfileFormProps) => {
         )}
       </div>
 
-      <Button type='submit' disabled={isLoading}>
-        {isLoading ? 'Saving...' : 'Save Changes'}
-      </Button>
+      <SubmitButton type='submit' disabled={isLoading} loading={isLoading}>
+        Save Changes
+      </SubmitButton>
     </form>
   )
 }

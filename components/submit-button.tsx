@@ -5,11 +5,12 @@ import { Loader2 } from 'lucide-react'
 type SubmitButtonProps = {
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost'
   size?: 'default' | 'sm' | 'lg' | 'icon'
-  onClick: () => void
+  onClick?: () => void
   loading: boolean
   children: React.ReactNode
   disabled?: boolean
   className?: string
+  type?: 'button' | 'submit' | 'reset'
 }
 
 export const SubmitButton = ({
@@ -20,8 +21,10 @@ export const SubmitButton = ({
   size,
   disabled,
   className,
+  type = 'button',
 }: SubmitButtonProps) => (
   <Button
+    type={type}
     variant={variant}
     size={size}
     onClick={onClick}

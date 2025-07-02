@@ -8,8 +8,9 @@ import {
 } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
 import { alerts } from '@everynews/schema/alert'
+import { invitations } from '@everynews/schema/invitation'
 import { subscriptions } from '@everynews/schema/subscription'
-import { and, eq, isNull } from 'drizzle-orm'
+import { and, eq, gt, isNull } from 'drizzle-orm'
 import { CheckCircle2, Home, Settings } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -17,10 +18,14 @@ import { redirect } from 'next/navigation'
 export default async function SubscriptionSuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ alertId?: string; error?: string }>
+  searchParams: Promise<{
+    alertId?: string
+    error?: string
+    invitationToken?: string
+  }>
 }) {
   const params = await searchParams
-  const { alertId, error } = params
+  const { alertId, error, invitationToken } = params
 
   // Handle error cases
   if (error) {
@@ -89,6 +94,20 @@ export default async function SubscriptionSuccessPage({
     } catch (_error) {
       return redirect(`/subscriptions/success?error=already_exists`)
     }
+  }
+
+  // If this is from an invitation, mark it as accepted
+  if (invitationToken) {
+    await db
+      .update(invitations)
+      .set({ acceptedAt: new Date() })
+      .where(
+        and(
+          eq(invitations.token, invitationToken),
+          isNull(invitations.acceptedAt),
+          gt(invitations.expiresAt, new Date()),
+        ),
+      )
   }
 
   return (

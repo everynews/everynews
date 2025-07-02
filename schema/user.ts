@@ -35,6 +35,8 @@ export const UserSchema = z
   })
   .openapi({ ref: 'UserSchema' })
 
+export type User = z.infer<typeof UserSchema>
+
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   alerts: many(alerts),
