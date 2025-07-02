@@ -26,18 +26,19 @@ export const alerts = pgTable(
     createdAt: timestamp('created_at').notNull().defaultNow(),
     deletedAt: timestamp('deleted_at'),
     description: text('description'),
+    fastLastSent: timestamp('fast_last_sent'),
     id: text('id').primaryKey().$defaultFn(nanoid),
     isPublic: boolean('is_public').notNull().default(true),
     languageCode: text('language_code', { enum: LANGUAGE_CODES })
       .notNull()
       .default('en'),
     lastRun: timestamp('last_run').defaultNow(),
-    lastSent: timestamp('last_sent'),
     name: text('name').notNull(),
     nextRun: timestamp('next_run').defaultNow(),
     promptId: text('prompt_id').references(() => prompt.id, {
       onDelete: 'set null',
     }),
+    slowLastSent: timestamp('slow_last_sent'),
     strategy: json('strategy').notNull(),
     threshold: integer('threshold').notNull().default(70),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
@@ -63,17 +64,18 @@ export const AlertSchema = z
       .string()
       .nullable()
       .openapi({ example: 'A brief description of the alert' }),
+    fastLastSent: z.coerce.date().nullable().openapi({ example: new Date() }),
     id: z.coerce.string().openapi({ example: '123' }),
     isPublic: z.coerce.boolean().openapi({ example: true }),
     languageCode: LanguageCodeSchema,
     lastRun: z.coerce.date().nullable().openapi({ example: new Date() }),
-    lastSent: z.coerce.date().nullable().openapi({ example: new Date() }),
     name: z.coerce
       .string()
       .min(1, 'Name is required')
       .openapi({ example: 'News' }),
     nextRun: z.coerce.date().nullable().openapi({ example: new Date() }),
     promptId: z.coerce.string().nullable().openapi({ example: '123' }),
+    slowLastSent: z.coerce.date().nullable().openapi({ example: new Date() }),
     strategy: strategySchema,
     threshold: z.coerce.number().int().min(0).max(100).openapi({ example: 70 }),
     updatedAt: z.coerce.date().openapi({ example: new Date() }),
@@ -85,10 +87,11 @@ export const AlertSchema = z
 export const AlertDtoSchema = AlertSchema.omit({
   createdAt: true,
   deletedAt: true,
+  fastLastSent: true,
   id: true,
   lastRun: true,
-  lastSent: true,
   nextRun: true,
+  slowLastSent: true,
   updatedAt: true,
   userId: true,
 })

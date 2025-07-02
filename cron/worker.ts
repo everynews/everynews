@@ -91,36 +91,37 @@ export const processAlert = async (item: Alert) => {
     }
   }
 
-  // Filter stories for slow channels (since lastSent)
+  // Filter stories for slow channels (since slowLastSent)
   const slowChannelFilteredStories = stories.filter((story) => {
     if (story.userMarkedIrrelevant || story.systemMarkedIrrelevant) {
       return false
     }
-    if (!item.lastSent) return true
-    return story.createdAt > item.lastSent
+    if (!item.slowLastSent) return true
+    return story.createdAt > item.slowLastSent
   })
 
-  // Filter stories for fast channels (since lastRun)
+  // Filter stories for fast channels (since fastLastSent)
   const fastChannelFilteredStories = stories.filter((story) => {
     if (story.userMarkedIrrelevant || story.systemMarkedIrrelevant) {
       return false
     }
-    if (!item.lastRun) return true
-    return story.createdAt > item.lastRun
+    if (!item.fastLastSent) return true
+    return story.createdAt > item.fastLastSent
   })
 
   await track({
     channel: 'worker',
-    description: `Slow channels: ${slowChannelFilteredStories.length} new stories since lastSent. Fast channels: ${fastChannelFilteredStories.length} new stories since lastRun`,
+    description: `Slow channels: ${slowChannelFilteredStories.length} new stories since slowLastSent. Fast channels: ${fastChannelFilteredStories.length} new stories since fastLastSent`,
     event: 'Stories Filtered by Channel Speed',
     icon: '🔍',
     tags: {
       alert_id: item.id,
       alert_name: item.name,
+      fast_last_sent: item.fastLastSent?.toISOString() || 'null',
       fast_stories: fastChannelFilteredStories.length,
       fast_subscribers: fastChannelSubscribers.length,
       last_run: item.lastRun?.toISOString() || 'null',
-      last_sent: item.lastSent?.toISOString() || 'null',
+      slow_last_sent: item.slowLastSent?.toISOString() || 'null',
       slow_stories: slowChannelFilteredStories.length,
       slow_subscribers: slowChannelSubscribers.length,
       stories_total: stories.length,
@@ -156,7 +157,8 @@ export const processAlert = async (item: Alert) => {
   // Fast channels always send immediately if there are new stories
   const shouldSendFastChannels = fastChannelFilteredStories.length > 0
 
-  let anySent = false
+  let anySlowChannelSucceeded = false
+  let anyFastChannelSucceeded = false
 
   // Send to slow channel subscribers if conditions are met
   if (shouldSendSlowChannels && slowChannelSubscribers.length > 0) {
@@ -174,7 +176,6 @@ export const processAlert = async (item: Alert) => {
       },
     })
 
-    let anySlowChannelSucceeded = false
     for (const subscriber of slowChannelSubscribers) {
       const user = await db.query.users.findFirst({
         where: eq(users.id, subscriber.userId),
@@ -214,16 +215,13 @@ export const processAlert = async (item: Alert) => {
         })
       }
     }
-    if (anySlowChannelSucceeded) {
-      anySent = true
-    }
   } else if (slowChannelSubscribers.length > 0) {
     await track({
       channel: 'worker',
       description:
         item.wait.type === 'count'
           ? `Slow channels: Found ${slowChannelFilteredStories.length} stories, waiting for ${item.wait.value}`
-          : `Slow channels: No new stories since last sent`,
+          : `Slow channels: No new stories since slowLastSent`,
       event: 'Slow Channel Alert Delivery Skipped',
       icon: '⏭️',
       tags: {
@@ -252,7 +250,6 @@ export const processAlert = async (item: Alert) => {
       },
     })
 
-    let anyFastChannelSucceeded = false
     for (const subscriber of fastChannelSubscribers) {
       const user = await db.query.users.findFirst({
         where: eq(users.id, subscriber.userId),
@@ -292,13 +289,10 @@ export const processAlert = async (item: Alert) => {
         })
       }
     }
-    if (anyFastChannelSucceeded) {
-      anySent = true
-    }
   } else if (fastChannelSubscribers.length > 0) {
     await track({
       channel: 'worker',
-      description: `Fast channels: No new stories since last run`,
+      description: `Fast channels: No new stories since fastLastSent`,
       event: 'Fast Channel Alert Delivery Skipped',
       icon: '⏭️',
       tags: {
@@ -310,12 +304,24 @@ export const processAlert = async (item: Alert) => {
     })
   }
 
-  // Update lastSent only if any messages were actually sent
-  if (anySent) {
-    await db
-      .update(alerts)
-      .set({ lastSent: currentTime })
-      .where(eq(alerts.id, item.id))
+  // Update lastSent fields based on what was actually sent
+  const updates: { slowLastSent?: Date; fastLastSent?: Date } = {}
+  if (
+    shouldSendSlowChannels &&
+    slowChannelSubscribers.length > 0 &&
+    anySlowChannelSucceeded
+  ) {
+    updates.slowLastSent = currentTime
+  }
+  if (
+    shouldSendFastChannels &&
+    fastChannelSubscribers.length > 0 &&
+    anyFastChannelSucceeded
+  ) {
+    updates.fastLastSent = currentTime
+  }
+  if (Object.keys(updates).length > 0) {
+    await db.update(alerts).set(updates).where(eq(alerts.id, item.id))
   }
 
   if (allSubscribers.length === 0) {
