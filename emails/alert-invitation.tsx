@@ -75,6 +75,11 @@ const AlertInvitationEmail = ({
               <Heading className='text-[24px] text-gray-700 m-0 font-bold text-center mb-4'>
                 {alertName}
               </Heading>
+              {alertDescription && (
+                <Text className='text-[14px] text-gray-600 text-center m-0 mb-4'>
+                  {alertDescription}
+                </Text>
+              )}
               <Hr className='border-gray-200 my-6' />
 
               {message && (
@@ -129,7 +134,8 @@ const AlertInvitationEmail = ({
 
               <Text className='text-[12px] text-gray-500 text-center mt-6'>
                 This invitation expires in 30 days. If you didn't expect this
-                invitation, you can safely ignore this email.
+                invitation from {inviterEmail}, you can safely ignore this
+                email.
               </Text>
             </Section>
           </Container>
