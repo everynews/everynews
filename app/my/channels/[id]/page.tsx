@@ -2,7 +2,7 @@ import { whoami } from '@everynews/auth/session'
 import { db } from '@everynews/database'
 import { redirectToSignIn } from '@everynews/lib/auth-redirect'
 import { ChannelSchema, channels } from '@everynews/schema/channel'
-import { and, eq, isNull } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import { ChannelEditPage } from './channel-edit-page'
 
@@ -33,13 +33,4 @@ export default async function EditChannelPage({
   }
 
   return <ChannelEditPage channel={channelData} />
-}
-
-export const generateStaticParams = async () => {
-  const rows = await db
-    .select({ id: channels.id })
-    .from(channels)
-    .where(isNull(channels.deletedAt))
-
-  return rows.map(({ id }) => ({ id }))
 }

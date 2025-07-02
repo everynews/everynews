@@ -151,12 +151,3 @@ export default async function Page({
     </>
   )
 }
-
-export const generateStaticParams = async () => {
-  const rows = await db
-    .select({ id: alerts.id })
-    .from(alerts)
-    .where(isNull(alerts.deletedAt))
-
-  return rows.map(({ id }) => ({ id }))
-}

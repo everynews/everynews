@@ -276,21 +276,3 @@ export default async function AlertStoriesPage({
     </div>
   )
 }
-
-export const generateStaticParams = async () => {
-  const rows = await db
-    .select({ id: alerts.id })
-    .from(alerts)
-    .where(isNull(alerts.deletedAt))
-
-  const params: { id: string; pageId: string }[] = []
-
-  // For each alert, generate up to 5 initial pages
-  for (const row of rows) {
-    for (let page = 1; page <= 5; page++) {
-      params.push({ id: row.id, pageId: page.toString() })
-    }
-  }
-
-  return params
-}

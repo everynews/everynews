@@ -1,7 +1,5 @@
 import { promises as fs } from 'node:fs'
 import { join } from 'node:path'
-import { db } from '@everynews/database'
-import { stories } from '@everynews/schema/story'
 import { ImageResponse } from 'next/og'
 
 export const GET = async (request: Request) => {
@@ -96,14 +94,4 @@ export const GET = async (request: Request) => {
   image.headers.set('Cache-Control', 'public, max-age=31536000, immutable')
 
   return image
-}
-
-export const generateStaticParams = async () => {
-  const allStories = await db.select().from(stories)
-  return allStories.map((story) => ({
-    description: Array.isArray(story.keyFindings)
-      ? story.keyFindings.join(' ')
-      : story.keyFindings,
-    title: story.title,
-  }))
 }
