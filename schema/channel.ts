@@ -83,10 +83,35 @@ const SlackChannelSchema = BaseChannel.extend({
   type: z.literal('slack').openapi({ example: 'slack' }),
 }).openapi({ ref: 'SlackChannelSchema' })
 
+export const DiscordChannelConfigSchema = z.object({
+  botToken: z.string().openapi({ example: 'MTI3NjE3...' }),
+  channel: z
+    .object({
+      id: z.string().openapi({ example: '1234567890123456789' }),
+      name: z.string().openapi({ example: 'general' }),
+      type: z.number().openapi({ example: 0 }), // Discord channel type
+    })
+    .optional(),
+  destination: z.string().optional().openapi({ example: '#general' }),
+  guild: z
+    .object({
+      id: z.string().openapi({ example: '1234567890123456789' }),
+      name: z.string().openapi({ example: 'My Discord Server' }),
+    })
+    .optional(), // For display purposes
+  guildId: z.string().openapi({ example: '1234567890123456789' }),
+})
+
+const DiscordChannelSchema = BaseChannel.extend({
+  config: DiscordChannelConfigSchema,
+  type: z.literal('discord').openapi({ example: 'discord' }),
+}).openapi({ ref: 'DiscordChannelSchema' })
+
 export const ChannelSchema = z.discriminatedUnion('type', [
   EmailChannelSchema,
   PhoneChannelSchema,
   SlackChannelSchema,
+  DiscordChannelSchema,
 ])
 
 const EmailChannelDtoSchema = EmailChannelSchema.omit({
@@ -119,10 +144,21 @@ const SlackChannelDtoSchema = SlackChannelSchema.omit({
   verifiedAt: true,
 }).openapi({ ref: 'SlackChannelDtoSchema' })
 
+const DiscordChannelDtoSchema = DiscordChannelSchema.omit({
+  createdAt: true,
+  deletedAt: true,
+  id: true,
+  updatedAt: true,
+  userId: true,
+  verified: true,
+  verifiedAt: true,
+}).openapi({ ref: 'DiscordChannelDtoSchema' })
+
 export const ChannelDtoSchema = z.discriminatedUnion('type', [
   EmailChannelDtoSchema,
   PhoneChannelDtoSchema,
   SlackChannelDtoSchema,
+  DiscordChannelDtoSchema,
 ])
 
 export type Channel = z.infer<typeof ChannelSchema>
@@ -132,6 +168,9 @@ export type ChannelDto = z.infer<typeof ChannelDtoSchema>
 export type SlackChannelConfig = z.infer<typeof SlackChannelSchema>['config']
 export type EmailChannelConfig = z.infer<typeof EmailChannelSchema>['config']
 export type PhoneChannelConfig = z.infer<typeof PhoneChannelSchema>['config']
+export type DiscordChannelConfig = z.infer<
+  typeof DiscordChannelSchema
+>['config']
 
 export const channelsRelations = relations(channels, ({ one, many }) => ({
   subscriptions: many(subscriptions),

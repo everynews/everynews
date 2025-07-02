@@ -3,6 +3,7 @@ import { url } from '@everynews/lib/url'
 import { AlertRouter } from '@everynews/server/alerts'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { ChannelRouter } from '@everynews/server/channels'
+import { DiscordRouter } from '@everynews/server/discord'
 import { DrillRouter } from '@everynews/server/drill'
 import { InvitationRouter } from '@everynews/server/invitations'
 import { PromptRouter } from '@everynews/server/prompts'
@@ -19,6 +20,7 @@ const app = new Hono<WithAuth>()
   .on(['POST', 'GET'], '/auth/*', (c) => auth.handler(c.req.raw))
   .route('/alerts', AlertRouter)
   .route('/channels', ChannelRouter)
+  .route('/discord', DiscordRouter)
   .route('/drill', DrillRouter)
   .route('/invitations', InvitationRouter)
   .route('/prompts', PromptRouter)

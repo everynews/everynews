@@ -7,6 +7,7 @@ import {
 import { ChannelStatusBadge } from '@everynews/components/channel-status-badge'
 import { ClickableCard } from '@everynews/components/clickable-card'
 import { DeleteChannelDropdownItem } from '@everynews/components/delete-channel-dropdown-item'
+import { DiscordIcon } from '@everynews/components/discord-icon'
 import { SendVerificationDropdownItem } from '@everynews/components/send-verification-dropdown-item'
 import { Button } from '@everynews/components/ui/button'
 import { db } from '@everynews/database'
@@ -93,12 +94,14 @@ export default async function MyChannelsPage() {
                     Edit
                   </Link>
                 </DropdownMenuItem>
-                {!item.verified && item.type !== 'slack' && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <SendVerificationDropdownItem channel={item} />
-                  </>
-                )}
+                {!item.verified &&
+                  item.type !== 'slack' &&
+                  item.type !== 'discord' && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <SendVerificationDropdownItem channel={item} />
+                    </>
+                  )}
                 <DropdownMenuSeparator />
                 <DeleteChannelDropdownItem channel={item} />
               </CardActionsPopover>
@@ -122,6 +125,8 @@ export default async function MyChannelsPage() {
                     <Phone className='size-3 sm:size-4' />
                   ) : item.type === 'slack' ? (
                     <Slack className='size-3 sm:size-4' />
+                  ) : item.type === 'discord' ? (
+                    <DiscordIcon className='size-3 sm:size-4' />
                   ) : null}
                   <span className='capitalize'>{item.type}</span>
                 </div>
@@ -131,7 +136,9 @@ export default async function MyChannelsPage() {
                 <span className='text-muted-foreground truncate max-w-[120px] sm:max-w-[150px]'>
                   {item.type === 'slack' && item.config.channel
                     ? `#${item.config.channel.name}`
-                    : item.config.destination}
+                    : item.type === 'discord' && item.config.channel
+                      ? `#${item.config.channel.name}`
+                      : item.config.destination}
                 </span>
               </div>
               <div className='flex justify-between'>

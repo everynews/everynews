@@ -2,6 +2,7 @@
 
 import { api } from '@everynews/app/api'
 import { ChannelStatusBadge } from '@everynews/components/channel-status-badge'
+import { DiscordTestButton } from '@everynews/components/discord-test-button'
 import { SlackTestButton } from '@everynews/components/slack-test-button'
 import { SubmitButton } from '@everynews/components/submit-button'
 import { Button } from '@everynews/components/ui/button'
@@ -20,9 +21,10 @@ import {
   type Channel,
   type ChannelDto,
   ChannelDtoSchema,
+  DiscordChannelConfigSchema,
   SlackChannelConfigSchema,
 } from '@everynews/schema/channel'
-import { Slack } from 'lucide-react'
+import { MessageCircle, Slack } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -76,6 +78,43 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
             config,
             name: values.name,
             type: 'slack' as const,
+          },
+          param: { id: channel.id },
+        })
+
+        if (!res.ok) {
+          const errorData = await res.json()
+          const errorMessage = errorData?.error || 'Failed to update channel'
+          toast.error(errorMessage)
+          return
+        }
+
+        toast.success(`Channel "${form.watch('name')}" updated.`)
+        router.push('/my/channels')
+      } catch (e) {
+        toastNetworkError(e as Error)
+      } finally {
+        setIsSubmitting(false)
+      }
+      return
+    }
+
+    // Discord channels can't update destination through this form
+    if (channel.type === 'discord') {
+      setIsSubmitting(true)
+      try {
+        const parseResult = DiscordChannelConfigSchema.safeParse(channel.config)
+        if (!parseResult.success) {
+          toast.error('Invalid Discord channel configuration')
+          setIsSubmitting(false)
+          return
+        }
+        const config = parseResult.data
+        const res = await api.channels[':id'].$put({
+          json: {
+            config,
+            name: values.name,
+            type: 'discord' as const,
           },
           param: { id: channel.id },
         })
@@ -221,6 +260,58 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
                 <p className='text-xs text-muted-foreground text-center md:text-left'>
                   To connect a different workspace, create a new Everynews
                   channel.
+                </p>
+              </div>
+            </div>
+          ) : channel.type === 'discord' ? (
+            <div className='space-y-6'>
+              <div>
+                <p className='text-sm font-medium mb-3'>
+                  Discord Configuration
+                </p>
+                <div className='rounded-lg border bg-muted/50 p-4 md:p-6 space-y-3 md:space-y-4'>
+                  <div className='flex items-center justify-between gap-4'>
+                    <span className='text-sm text-muted-foreground'>
+                      Server
+                    </span>
+                    <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
+                      {channel.config.guild?.name ||
+                        channel.config.guildId ||
+                        'Unknown'}
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between gap-4'>
+                    <span className='text-sm text-muted-foreground'>
+                      Channel
+                    </span>
+                    <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
+                      {channel.config.channel?.name
+                        ? `#${channel.config.channel.name}`
+                        : 'Not selected'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className='space-y-4'>
+                <div className='flex flex-col md:flex-row gap-2 md:gap-3'>
+                  <Button
+                    asChild
+                    variant='outline'
+                    className='flex-1 md:flex-initial'
+                  >
+                    <Link href={`/channels/${channel.id}/discord-setup`}>
+                      <MessageCircle className='size-4 mr-2' />
+                      Change Discord Channel
+                    </Link>
+                  </Button>
+                  <DiscordTestButton
+                    channel={channel}
+                    className='flex-1 md:flex-initial'
+                  />
+                </div>
+                <p className='text-xs text-muted-foreground text-center md:text-left'>
+                  To connect a different server, create a new Everynews channel.
                 </p>
               </div>
             </div>

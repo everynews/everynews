@@ -37,6 +37,37 @@ export const ChannelStatusBadge = ({ channel }: ChannelStatusBadgeProps) => {
     )
   }
 
+  // Discord channels have different status logic
+  if (channel.type === 'discord') {
+    const hasChannel = channel.config.channel?.id
+    const hasBotToken = channel.config.botToken
+
+    if (!hasBotToken) {
+      return (
+        <span className='flex items-center gap-1 text-destructive'>
+          <AlertCircle className='size-3' />
+          Disconnected
+        </span>
+      )
+    }
+
+    if (!hasChannel) {
+      return (
+        <span className='flex items-center gap-1 text-muted-foreground'>
+          <Circle className='size-3' />
+          Setup Required
+        </span>
+      )
+    }
+
+    return (
+      <span className='flex items-center gap-1'>
+        <CheckCircle className='size-3' />
+        Connected
+      </span>
+    )
+  }
+
   // Regular channels use verification status
   if (channel.verified) {
     return (

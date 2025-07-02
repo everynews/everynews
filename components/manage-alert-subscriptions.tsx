@@ -14,7 +14,16 @@ import { toastNetworkError } from '@everynews/lib/error'
 import type { Alert } from '@everynews/schema/alert'
 import type { Channel } from '@everynews/schema/channel'
 import type { Subscription } from '@everynews/schema/subscription'
-import { Edit, Mail, MessageSquare, Phone, Plus, Slack, X } from 'lucide-react'
+import {
+  Edit,
+  Mail,
+  MessageCircle,
+  MessageSquare,
+  Phone,
+  Plus,
+  Slack,
+  X,
+} from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -30,6 +39,8 @@ const getChannelIcon = (type: string) => {
       return <Phone className='size-4' />
     case 'slack':
       return <Slack className='size-4' />
+    case 'discord':
+      return <MessageCircle className='size-4' />
     default:
       return <MessageSquare className='size-4' />
   }

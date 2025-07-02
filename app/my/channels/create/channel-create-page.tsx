@@ -1,6 +1,7 @@
 'use client'
 
 import { api } from '@everynews/app/api'
+import { DiscordIcon } from '@everynews/components/discord-icon'
 import { PhoneInputField } from '@everynews/components/phone-input-field'
 import { SubmitButton } from '@everynews/components/submit-button'
 import { Button } from '@everynews/components/ui/button'
@@ -37,10 +38,11 @@ export const ChannelCreatePage = () => {
   const emailId = useId()
   const phoneId = useId()
   const slackId = useId()
+  const discordId = useId()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [channelType, setChannelType] = useState<'email' | 'phone' | 'slack'>(
-    'email',
-  )
+  const [channelType, setChannelType] = useState<
+    'email' | 'phone' | 'slack' | 'discord'
+  >('email')
   const [verificationCode, setVerificationCode] = useState('')
   const [showVerificationInput, setShowVerificationInput] = useState(false)
   const [verificationChannelId, setVerificationChannelId] = useState<
@@ -73,7 +75,7 @@ export const ChannelCreatePage = () => {
   // Update form when channel type changes
   useEffect(() => {
     form.setValue('type', channelType)
-    if (channelType !== 'slack') {
+    if (channelType !== 'slack' && channelType !== 'discord') {
       form.setValue('config.destination', '')
     }
   }, [channelType, form])
@@ -82,6 +84,12 @@ export const ChannelCreatePage = () => {
     // Handle Slack channel type differently
     if (channelType === 'slack') {
       window.location.href = '/api/slack/install'
+      return
+    }
+
+    // Handle Discord channel type differently
+    if (channelType === 'discord') {
+      window.location.href = '/api/discord/install'
       return
     }
 
@@ -232,7 +240,9 @@ export const ChannelCreatePage = () => {
                           ? 'My SMS Channel'
                           : channelType === 'slack'
                             ? 'My Slack Channel'
-                            : 'My Email Channel'
+                            : channelType === 'discord'
+                              ? 'My Discord Channel'
+                              : 'My Email Channel'
                       }
                       {...field}
                     />
@@ -249,7 +259,9 @@ export const ChannelCreatePage = () => {
               <RadioGroup
                 value={channelType}
                 onValueChange={(value) =>
-                  setChannelType(value as 'email' | 'phone' | 'slack')
+                  setChannelType(
+                    value as 'email' | 'phone' | 'slack' | 'discord',
+                  )
                 }
                 className='gap-2 lg:grid lg:grid-cols-3'
               >
@@ -333,6 +345,33 @@ export const ChannelCreatePage = () => {
                     </div>
                   </div>
                 </label>
+
+                <label
+                  htmlFor={discordId}
+                  className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none cursor-pointer'
+                >
+                  <RadioGroupItem
+                    value='discord'
+                    id={discordId}
+                    aria-describedby={`${discordId}-description`}
+                    className='order-1 after:absolute after:inset-0'
+                  />
+                  <div className='flex grow items-start gap-3'>
+                    <div className='grid grow gap-2'>
+                      <span className='font-medium flex items-center gap-2'>
+                        <DiscordIcon className='size-3 sm:size-4' />
+                        Discord
+                      </span>
+                      <p
+                        id={`${discordId}-description`}
+                        className='text-muted-foreground text-sm'
+                      >
+                        Send alerts to Discord channels for community and team
+                        collaboration.
+                      </p>
+                    </div>
+                  </div>
+                </label>
               </RadioGroup>
             </FormItem>
 
@@ -347,6 +386,17 @@ export const ChannelCreatePage = () => {
                 <p className='text-xs sm:text-sm text-muted-foreground'>
                   Make sure you have permission to install apps in your Slack
                   workspace.
+                </p>
+              </div>
+            ) : channelType === 'discord' ? (
+              <div className='rounded-lg border bg-muted/50 p-3 sm:p-4'>
+                <p className='text-xs sm:text-sm text-muted-foreground mb-2'>
+                  You'll be redirected to Discord to add the Everynews bot to
+                  your server and select a channel.
+                </p>
+                <p className='text-xs sm:text-sm text-muted-foreground'>
+                  Make sure you have permission to add bots to your Discord
+                  server.
                 </p>
               </div>
             ) : (
@@ -423,6 +473,10 @@ export const ChannelCreatePage = () => {
               {channelType === 'slack' ? (
                 <Button asChild>
                   <Link href='/api/slack/install'>Connect Slack</Link>
+                </Button>
+              ) : channelType === 'discord' ? (
+                <Button asChild>
+                  <Link href='/api/discord/install'>Connect Discord</Link>
                 </Button>
               ) : (
                 <Button type='submit' disabled={isSubmitting}>
