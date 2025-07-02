@@ -123,7 +123,11 @@ export default async function MyChannelsPage() {
                   ) : item.type === 'slack' ? (
                     <Slack className='size-3 sm:size-4' />
                   ) : null}
-                  <span className='capitalize'>{item.type}</span>
+                  <span className='capitalize'>
+                    {['email', 'phone', 'slack'].includes(item.type)
+                      ? item.type
+                      : 'unknown channel'}
+                  </span>
                 </div>
               </div>
               <div className='flex justify-between'>
@@ -131,7 +135,9 @@ export default async function MyChannelsPage() {
                 <span className='text-muted-foreground truncate max-w-[120px] sm:max-w-[150px]'>
                   {item.type === 'slack' && item.config.channel
                     ? `#${item.config.channel.name}`
-                    : item.config.destination}
+                    : item.type === 'email' || item.type === 'phone'
+                    ? item.config.destination
+                    : 'N/A'}
                 </span>
               </div>
               <div className='flex justify-between'>
