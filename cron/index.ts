@@ -100,7 +100,7 @@ const main = async () => {
 
   await track({
     channel: 'cron',
-    description: `Alert processing completed - processed ${successfulAlerts.length}/${found.length} alerts successfully, ${failedAlerts.length} failed, cleaned up ${custodianResult.deletedCount} empty stories`,
+    description: `Alert processing completed - processed ${successfulAlerts.length}/${found.length} alerts successfully, ${failedAlerts.length} failed, cleaned up ${custodianResult.deletedCount} empty stories and ${custodianResult.orphanedSubscriptionsCount} orphaned subscriptions`,
     event: 'Alert Processing Completed',
     icon: failedAlerts.length > 0 ? '⚠️' : '🎉',
     tags: {
@@ -108,6 +108,8 @@ const main = async () => {
       alerts_processed: found.length,
       alerts_successful: successfulAlerts.length,
       empty_stories_deleted: custodianResult.deletedCount,
+      orphaned_subscriptions_deleted:
+        custodianResult.orphanedSubscriptionsCount,
       timestamp: new Date().toISOString(),
       triggered_by: 'api',
       type: failedAlerts.length > 0 ? 'warning' : 'info',
