@@ -2,13 +2,7 @@
 
 import { updateDiscordChannel } from '@everynews/app/actions/discord-channel'
 import { SubmitButton } from '@everynews/components/submit-button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@everynews/components/ui/select'
+import { Combobox } from '@everynews/components/ui/combobox'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -61,11 +55,12 @@ export const DiscordChannelSelectorClient = ({
           >
             Select Discord Channel
           </label>
-          <Select disabled>
-            <SelectTrigger id='discord-channel' disabled>
-              <SelectValue placeholder='No channels available' />
-            </SelectTrigger>
-          </Select>
+          <Combobox
+            options={[]}
+            value={null}
+            placeholder='No channels available'
+            disabled
+          />
           <p className='mt-2 text-xs sm:text-sm text-muted-foreground'>
             No text channels found in your Discord server. Please create a text
             channel first.
@@ -75,27 +70,25 @@ export const DiscordChannelSelectorClient = ({
     )
   }
 
+  const comboboxOptions = channels.map((channel) => ({
+    label: `#${channel.name}`,
+    value: channel.id,
+  }))
+
   return (
     <form action={handleSubmit} className='space-y-3 sm:space-y-4'>
       <div>
-        <Select
-          name='channel'
+        <input type='hidden' name='channel' value={form.watch('channel')} />
+        <Combobox
+          options={comboboxOptions}
           value={form.watch('channel')}
           onValueChange={(value) =>
-            form.setValue('channel', value, { shouldValidate: true })
+            form.setValue('channel', value || '', { shouldValidate: true })
           }
-        >
-          <SelectTrigger id='discord-channel'>
-            <SelectValue placeholder='Choose a channel' />
-          </SelectTrigger>
-          <SelectContent>
-            {channels.map((channel) => (
-              <SelectItem key={channel.id} value={channel.id}>
-                #{channel.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          placeholder='Choose a channel'
+          searchPlaceholder='Search channels...'
+          emptyText='No channel found.'
+        />
       </div>
 
       <SubmitButton

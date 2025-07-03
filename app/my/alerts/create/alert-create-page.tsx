@@ -1,6 +1,14 @@
 'use client'
 
 import { api } from '@everynews/app/api'
+import {
+  DAYS_OF_WEEK,
+  HOURS_2_INTERVAL,
+  LanguageSelector,
+  PromptSelector,
+  STRATEGY_WITH_QUERY,
+  ThresholdSlider,
+} from '@everynews/components/alert-form'
 import { AlertPreview } from '@everynews/components/alert-preview'
 import { DadJokes } from '@everynews/components/dad-jokes'
 import { PromptDialog } from '@everynews/components/prompt-dialog'
@@ -26,15 +34,7 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from '@everynews/components/ui/radio-group'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@everynews/components/ui/select'
 import { Separator } from '@everynews/components/ui/separator'
-import { Slider } from '@everynews/components/ui/slider'
 import { Switch } from '@everynews/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
 import { Textarea } from '@everynews/components/ui/textarea'
@@ -45,7 +45,6 @@ import {
   localToUtc,
 } from '@everynews/lib/timezone'
 import { type AlertDto, AlertDtoSchema } from '@everynews/schema/alert'
-import { getLanguageOptions } from '@everynews/schema/language'
 import type { Prompt } from '@everynews/schema/prompt'
 import { type Story, StorySchema } from '@everynews/schema/story'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -53,20 +52,6 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-
-const STRATEGY_WITH_QUERY = ['google']
-
-const DAYS_OF_WEEK = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
-] as const
-
-const HOURS_2_INTERVAL = Array.from({ length: 12 }, (_, i) => i * 2) // 0-22
 
 export const AlertCreatePage = ({
   name,
@@ -222,17 +207,6 @@ export const AlertCreatePage = ({
     )
   }
 
-  const handlePromptButtonClick = () => {
-    if (selectedPromptId === null) {
-      setPromptDialogMode('create')
-      setSelectedPrompt(undefined)
-    } else {
-      setPromptDialogMode('edit')
-      setSelectedPrompt(localPrompts.find((p) => p.id === selectedPromptId))
-    }
-    setPromptDialogOpen(true)
-  }
-
   return (
     <div className='container mx-auto max-w-7xl'>
       <div className='mb-4 sm:mb-6'>
@@ -297,101 +271,26 @@ export const AlertCreatePage = ({
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name='languageCode'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Language</FormLabel>
-                    <FormControl>
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder='Select a language' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {getLanguageOptions().map((language) => (
-                            <SelectItem
-                              key={language.code}
-                              value={language.code}
-                            >
-                              {language.code} ({language.label})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+              <LanguageSelector form={form} />
+
+              <PromptSelector
+                form={form}
+                prompts={localPrompts}
+                onEditClick={() => {
+                  if (selectedPromptId === null) {
+                    setPromptDialogMode('create')
+                    setSelectedPrompt(undefined)
+                  } else {
+                    setPromptDialogMode('edit')
+                    setSelectedPrompt(
+                      localPrompts.find((p) => p.id === selectedPromptId),
+                    )
+                  }
+                  setPromptDialogOpen(true)
+                }}
               />
 
-              <FormField
-                control={form.control}
-                name='promptId'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Prompt</FormLabel>
-                    <div className='flex gap-2'>
-                      <FormControl>
-                        <Select
-                          key={localPrompts.length}
-                          value={field.value === null ? 'default' : field.value}
-                          onValueChange={(value) =>
-                            field.onChange(value === 'default' ? null : value)
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder='Select a prompt' />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value='default'>
-                              Default Prompt
-                            </SelectItem>
-                            {localPrompts.map((prompt) => (
-                              <SelectItem key={prompt.id} value={prompt.id}>
-                                {prompt.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <Button
-                        type='button'
-                        variant='outline'
-                        onClick={handlePromptButtonClick}
-                      >
-                        {selectedPromptId === null
-                          ? 'Create New Prompt'
-                          : 'Edit Prompt'}
-                      </Button>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='threshold'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Relevance Threshold ({field.value}%)</FormLabel>
-                    <FormControl>
-                      <Slider
-                        min={0}
-                        max={100}
-                        step={1}
-                        value={[field.value]}
-                        onValueChange={(val) => field.onChange(val[0])}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <ThresholdSlider form={form} />
 
               <Separator />
 

@@ -1,6 +1,11 @@
 'use client'
 
 import { api } from '@everynews/app/api'
+import {
+  DAYS_OF_WEEK,
+  HOURS_2_INTERVAL,
+  STRATEGY_WITH_QUERY,
+} from '@everynews/components/alert-form'
 import { AlertPreview } from '@everynews/components/alert-preview'
 import { DadJokes } from '@everynews/components/dad-jokes'
 import { PromptDialog } from '@everynews/components/prompt-dialog'
@@ -13,6 +18,7 @@ import {
   CardTitle,
 } from '@everynews/components/ui/card'
 import { Checkbox } from '@everynews/components/ui/checkbox'
+import { Combobox } from '@everynews/components/ui/combobox'
 import {
   Form,
   FormControl,
@@ -26,15 +32,7 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from '@everynews/components/ui/radio-group'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@everynews/components/ui/select'
 import { Separator } from '@everynews/components/ui/separator'
-import { Slider } from '@everynews/components/ui/slider'
 import { Switch } from '@everynews/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
 import { Textarea } from '@everynews/components/ui/textarea'
@@ -58,20 +56,6 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-
-const STRATEGY_WITH_QUERY = ['google']
-
-const DAYS_OF_WEEK = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
-] as const
-
-const HOURS_2_INTERVAL = Array.from({ length: 12 }, (_, i) => i * 2) // 0-22
 
 export const AlertEditPage = ({
   alert,
@@ -315,77 +299,78 @@ export const AlertEditPage = ({
               <FormField
                 control={form.control}
                 name='languageCode'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Language</FormLabel>
-                    <FormControl>
-                      <Select
-                        value={field.value || 'en'}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder='Select a language' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {getLanguageOptions().map((language) => (
-                            <SelectItem
-                              key={language.code}
-                              value={language.code}
-                            >
-                              {language.code} ({language.label})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const languageOptions = getLanguageOptions()
+                  const comboboxOptions = languageOptions.map((option) => ({
+                    label: `${option.code} (${option.label})`,
+                    value: option.code,
+                  }))
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Language</FormLabel>
+                      <FormControl>
+                        <Combobox
+                          options={comboboxOptions}
+                          value={field.value || 'en'}
+                          onValueChange={field.onChange}
+                          placeholder='Select a language'
+                          searchPlaceholder='Search languages...'
+                          emptyText='No language found.'
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )
+                }}
               />
 
               <FormField
                 control={form.control}
                 name='promptId'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Prompt</FormLabel>
-                    <div className='flex gap-2'>
-                      <FormControl>
-                        <Select
-                          key={localPrompts.length}
-                          value={field.value === null ? 'default' : field.value}
-                          onValueChange={(value) =>
-                            field.onChange(value === 'default' ? null : value)
-                          }
+                render={({ field }) => {
+                  const comboboxOptions = [
+                    { label: 'Default Prompt', value: 'default' },
+                    ...localPrompts.map((prompt) => ({
+                      label: prompt.name,
+                      value: prompt.id,
+                    })),
+                  ]
+
+                  return (
+                    <FormItem>
+                      <FormLabel>Prompt</FormLabel>
+                      <div className='flex gap-2'>
+                        <FormControl>
+                          <Combobox
+                            key={localPrompts.length}
+                            options={comboboxOptions}
+                            value={
+                              field.value === null ? 'default' : field.value
+                            }
+                            onValueChange={(value) =>
+                              field.onChange(value === 'default' ? null : value)
+                            }
+                            placeholder='Select a prompt'
+                            searchPlaceholder='Search prompts...'
+                            emptyText='No prompt found.'
+                            className='flex-1'
+                          />
+                        </FormControl>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          onClick={handlePromptButtonClick}
                         >
-                          <SelectTrigger>
-                            <SelectValue placeholder='Select a prompt' />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value='default'>
-                              Default Prompt
-                            </SelectItem>
-                            {localPrompts.map((prompt) => (
-                              <SelectItem key={prompt.id} value={prompt.id}>
-                                {prompt.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <Button
-                        type='button'
-                        variant='outline'
-                        onClick={handlePromptButtonClick}
-                      >
-                        {selectedPromptId === null
-                          ? 'Create New Prompt'
-                          : 'Edit Prompt'}
-                      </Button>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                          {selectedPromptId === null
+                            ? 'Create New Prompt'
+                            : 'Edit Prompt'}
+                        </Button>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )
+                }}
               />
 
               <FormField

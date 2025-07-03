@@ -2,6 +2,7 @@
 
 import { api } from '@everynews/app/api'
 import { Button } from '@everynews/components/ui/button'
+import { Combobox } from '@everynews/components/ui/combobox'
 import {
   Dialog,
   DialogContent,
@@ -19,13 +20,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@everynews/components/ui/form'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@everynews/components/ui/select'
 import { toastNetworkError } from '@everynews/lib/error'
 import type { Alert } from '@everynews/schema/alert'
 import type { Channel } from '@everynews/schema/channel'
@@ -134,55 +128,62 @@ export const SubscribeAlertDialog = ({
             <FormField
               control={form.control}
               name='channelId'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Channel</FormLabel>
-                  <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue placeholder='Select a channel' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {user && !hasDefaultSubscription && (
-                          <SelectItem value='default'>
-                            Default Channel (email: {user.email})
-                          </SelectItem>
-                        )}
-                        {availableChannels.map((channel) => {
-                          const configDisplay =
-                            channel.type === 'slack'
-                              ? (() => {
-                                  const parsed =
-                                    SlackChannelConfigSchema.safeParse(
-                                      channel.config,
-                                    )
-                                  if (parsed.success) {
-                                    return `#${parsed.data.channel?.name || 'Unknown channel'}`
-                                  }
-                                  return 'Not configured'
-                                })()
-                              : (() => {
-                                  const parsed = z
-                                    .object({ destination: z.string() })
-                                    .safeParse(channel.config)
-                                  if (parsed.success) {
-                                    return parsed.data.destination
-                                  }
-                                  return 'Not configured'
-                                })()
+              render={({ field }) => {
+                const comboboxOptions = [
+                  ...(user && !hasDefaultSubscription
+                    ? [
+                        {
+                          label: `Default Channel (email: ${user.email})`,
+                          value: 'default',
+                        },
+                      ]
+                    : []),
+                  ...availableChannels.map((channel) => {
+                    const configDisplay =
+                      channel.type === 'slack'
+                        ? (() => {
+                            const parsed = SlackChannelConfigSchema.safeParse(
+                              channel.config,
+                            )
+                            if (parsed.success) {
+                              return `#${parsed.data.channel?.name || 'Unknown channel'}`
+                            }
+                            return 'Not configured'
+                          })()
+                        : (() => {
+                            const parsed = z
+                              .object({ destination: z.string() })
+                              .safeParse(channel.config)
+                            if (parsed.success) {
+                              return parsed.data.destination
+                            }
+                            return 'Not configured'
+                          })()
 
-                          return (
-                            <SelectItem key={channel.id} value={channel.id}>
-                              {channel.name} ({channel.type}: {configDisplay})
-                            </SelectItem>
-                          )
-                        })}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+                    return {
+                      label: `${channel.name} (${channel.type}: ${configDisplay})`,
+                      value: channel.id,
+                    }
+                  }),
+                ]
+
+                return (
+                  <FormItem>
+                    <FormLabel>Channel</FormLabel>
+                    <FormControl>
+                      <Combobox
+                        options={comboboxOptions}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        placeholder='Select a channel'
+                        searchPlaceholder='Search channels...'
+                        emptyText='No channels found.'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )
+              }}
             />
             <DialogFooter>
               <Button
