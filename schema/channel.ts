@@ -35,22 +35,30 @@ const BaseChannel = z
   })
   .openapi({ ref: 'BaseChannel' })
 
-const EmailChannelSchema = BaseChannel.extend({
-  config: z.object({
+export const EmailChannelConfigSchema = z
+  .object({
     destination: z.string().email().openapi({ example: 'email@example.com' }),
-  }),
+  })
+  .openapi({ ref: 'EmailChannelConfigSchema' })
+
+export const EmailChannelSchema = BaseChannel.extend({
+  config: EmailChannelConfigSchema,
   type: z.literal('email').openapi({ example: 'email' }),
 }).openapi({ ref: 'EmailChannelSchema' })
 
-const PhoneChannelSchema = BaseChannel.extend({
-  config: z.object({
+export const PhoneChannelConfigSchema = z
+  .object({
     destination: z
       .string()
       .regex(/^\+[1-9]\d{6,14}$/, {
         message: 'Phone number must be in E.164 format (e.g., +1234567890)',
       })
       .openapi({ example: '+18015551234' }),
-  }),
+  })
+  .openapi({ ref: 'PhoneChannelConfigSchema' })
+
+export const PhoneChannelSchema = BaseChannel.extend({
+  config: PhoneChannelConfigSchema,
   type: z.literal('phone').openapi({ example: 'phone' }),
 }).openapi({ ref: 'PhoneChannelSchema' })
 

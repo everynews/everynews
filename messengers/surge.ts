@@ -5,7 +5,7 @@ import type { Story } from '@everynews/schema'
 const SURGE_API_KEY = process.env.SURGE_API_KEY
 const SURGE_API_BASE = 'https://api.surge.app'
 
-export const sendSurgeVerification = async ({
+export const sendPhoneVerification = async ({
   phoneNumber,
 }: {
   phoneNumber: string
@@ -62,7 +62,7 @@ export const sendSurgeVerification = async ({
   }
 }
 
-export const checkSurgeVerification = async ({
+export const checkPhoneVerification = async ({
   verificationId,
   code,
 }: {
@@ -130,7 +130,7 @@ export const checkSurgeVerification = async ({
   }
 }
 
-export const sendSurgeAlert = async ({
+export const sendSmsAlert = async ({
   phoneNumber,
   alertName,
   stories,

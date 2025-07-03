@@ -3,14 +3,21 @@ import { decrypt } from '@everynews/lib/crypto'
 import { url } from '@everynews/lib/url'
 import { track } from '@everynews/logs'
 import {
-  checkSurgeVerification,
   sendChannelVerification,
   sendDiscordVerification,
   sendSlackVerification,
-  sendSurgeVerification,
 } from '@everynews/messengers'
+import {
+  checkPhoneVerification,
+  sendPhoneVerification,
+} from '@everynews/messengers/surge'
 import { channels, channelVerifications } from '@everynews/schema'
-import type { DiscordChannelConfig } from '@everynews/schema/channel'
+import {
+  DiscordChannelConfigSchema,
+  EmailChannelConfigSchema,
+  PhoneChannelConfigSchema,
+  SlackChannelConfigSchema,
+} from '@everynews/schema/channel'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { and, eq, gt, isNull } from 'drizzle-orm'
 import type { Context } from 'hono'
@@ -64,28 +71,32 @@ export const sendVerification = async (c: Context<WithAuth>) => {
   }
 
   try {
-    if (channel.type === 'surge') {
-      await sendSurgeVerification({
-        channelId: channel.id,
-        config: channel.config as { surgeAlertId: string },
+    if (channel.type === 'phone') {
+      const config = PhoneChannelConfigSchema.parse(channel.config)
+      await sendPhoneVerification({
+        phoneNumber: config.destination,
       })
     } else if (channel.type === 'slack') {
       const config = SlackChannelConfigSchema.parse(channel.config)
-      const decryptedToken = decrypt(config.token)
+      const decryptedToken = await decrypt(config.accessToken)
       await sendSlackVerification({
-        channelConfig: { ...config, token: decryptedToken },
-        channelId: channel.id,
+        accessToken: decryptedToken,
+        channelId: config.channel?.id ?? '',
+        channelName: config.channel?.name ?? '',
       })
     } else if (channel.type === 'discord') {
-      const config = channel.config as DiscordChannelConfig
+      const config = DiscordChannelConfigSchema.parse(channel.config)
       await sendDiscordVerification({
-        channelConfig: config,
-        channelId: channel.id,
+        botToken: config.botToken,
+        channelId: config.channel?.id ?? '',
+        channelName: config.channel?.name ?? '',
       })
     } else {
+      const config = EmailChannelConfigSchema.parse(channel.config)
       await sendChannelVerification({
-        channel,
-        url: url('verify/channel'),
+        channelName: channel.name,
+        email: config.destination,
+        verificationLink: `${url}/verify/channel`,
       })
     }
 
@@ -151,21 +162,19 @@ export const checkVerification = async (c: Context<WithAuth>) => {
   try {
     let isValid = false
 
-    if (channel.type === 'surge') {
-      isValid = await checkSurgeVerification({
-        channelId: channel.id,
+    if (channel.type === 'phone') {
+      isValid = await checkPhoneVerification({
         code,
-        config: channel.config as { surgeAlertId: string },
+        verificationId: channel.id,
       })
     } else {
-      // Check verification code in database
       const [verification] = await db
         .select()
         .from(channelVerifications)
         .where(
           and(
             eq(channelVerifications.channelId, id),
-            eq(channelVerifications.code, code),
+            eq(channelVerifications.token, code),
             gt(channelVerifications.expiresAt, new Date()),
           ),
         )

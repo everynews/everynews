@@ -95,7 +95,8 @@ export const DeleteChannelDropdownItem = ({
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Channel</AlertDialogTitle>
             <AlertDialogDescription className='space-y-2'>
-              <p>Are you sure you want to delete "{channel.name}"?</p>
+              Are you sure you want to delete{' '}
+              <span className='font-medium'>"{channel.name}"?</span>
               {fetchingCount && (
                 <p className='text-muted-foreground'>
                   Checking subscriptions...
@@ -107,7 +108,7 @@ export const DeleteChannelDropdownItem = ({
                   {subscriptionCount > 1 ? 's' : ''} linked to this channel.
                 </p>
               )}
-              <p>This action cannot be undone.</p>
+              This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -6,9 +6,9 @@ import SubscriptionConfirmationEmail from '@everynews/emails/subscription-confir
 export { sendDiscordAlert, sendDiscordVerification } from './discord'
 export { sendSlackAlert, sendSlackVerification } from './slack'
 export {
-  checkSurgeVerification,
-  sendSurgeAlert,
-  sendSurgeVerification,
+  checkPhoneVerification,
+  sendPhoneVerification,
+  sendSmsAlert,
 } from './surge'
 
 export const sendMagicLink = async (

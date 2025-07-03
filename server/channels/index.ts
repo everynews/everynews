@@ -3,11 +3,11 @@ import { decrypt } from '@everynews/lib/crypto'
 import { url } from '@everynews/lib/url'
 import { track } from '@everynews/logs'
 import {
-  checkSurgeVerification,
+  checkPhoneVerification,
   sendChannelVerification,
   sendDiscordVerification,
+  sendPhoneVerification,
   sendSlackVerification,
-  sendSurgeVerification,
 } from '@everynews/messengers'
 import { channels, channelVerifications } from '@everynews/schema'
 import {
@@ -561,7 +561,7 @@ export const ChannelRouter = new Hono<WithAuth>()
         if (!parsed.success) {
           return c.json({ error: 'Invalid phone channel configuration' }, 400)
         }
-        const verificationId = await sendSurgeVerification({
+        const verificationId = await sendPhoneVerification({
           phoneNumber: parsed.data.destination,
         })
 
@@ -854,7 +854,7 @@ export const ChannelRouter = new Hono<WithAuth>()
       }
 
       // Check the code with Surge
-      const isValid = await checkSurgeVerification({
+      const isValid = await checkPhoneVerification({
         code, // We stored the Surge verification ID as token
         verificationId: verification.token,
       })

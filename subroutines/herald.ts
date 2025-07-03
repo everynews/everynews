@@ -6,7 +6,7 @@ import { track } from '@everynews/logs'
 import {
   sendDiscordAlert,
   sendSlackAlert,
-  sendSurgeAlert,
+  sendSmsAlert,
 } from '@everynews/messengers'
 import {
   ChannelSchema,
@@ -73,21 +73,6 @@ const sendAlertEmail = async (parcel: {
     })
     throw error
   }
-}
-
-const sendAlertPhone = async (parcel: {
-  alertName: string
-  destination: string
-  readerCount: number
-  stories: Story[]
-  strategy: Strategy
-  wait: Wait
-}) => {
-  await sendSurgeAlert({
-    alertName: parcel.alertName,
-    phoneNumber: parcel.destination,
-    stories: parcel.stories,
-  })
 }
 
 const sendAlertSlack = async (parcel: {
@@ -520,7 +505,12 @@ export const herald = async ({
 
     // Send the alert for email/phone channels
     if (channelType === 'email') await sendAlertEmail(parcel)
-    else if (channelType === 'phone') await sendAlertPhone(parcel)
+    else if (channelType === 'phone')
+      await sendSmsAlert({
+        alertName: parcel.alertName,
+        phoneNumber: parcel.destination,
+        stories: parcel.stories,
+      })
     else {
       await track({
         channel: 'herald',
