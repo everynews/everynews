@@ -16,14 +16,14 @@ export const SidebarLinkWithBadge = ({
   badge?: string | number
 }) => {
   const pathname = usePathname()
-  const isActive = pathname === href
+  const isActive = pathname.startsWith(href)
 
   return (
     <Link
       href={href}
       className={cn(
         'block p-3 rounded-md transition-colors',
-        isActive ? 'bg-muted' : 'bg-card hover:bg-accent border-border',
+        isActive ? 'bg-muted' : 'hover:bg-accent border-border',
       )}
     >
       <div className='flex items-center justify-between'>
