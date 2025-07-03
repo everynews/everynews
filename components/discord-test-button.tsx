@@ -29,7 +29,7 @@ export const DiscordTestButton = ({
   const [isLoading, setIsLoading] = useState(false)
 
   const handleTest = async () => {
-    if (channel.type !== 'discord') return
+    if (!channel || channel?.type !== 'discord') return
 
     setIsLoading(true)
     try {

@@ -29,7 +29,7 @@ export const SlackTestButton = ({
   const [isLoading, setIsLoading] = useState(false)
 
   const handleTest = async () => {
-    if (channel.type !== 'slack') return
+    if (!channel || channel?.type !== 'slack') return
 
     setIsLoading(true)
     try {
