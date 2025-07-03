@@ -4,6 +4,7 @@ import { api } from '@everynews/app/api'
 import { Button } from '@everynews/components/ui/button'
 import { toastNetworkError } from '@everynews/lib/error'
 import type { Channel } from '@everynews/schema/channel'
+import { DiscordChannelConfigSchema } from '@everynews/schema/channel'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -44,8 +45,9 @@ export const DiscordTestButton = ({
         return
       }
 
+      const config = DiscordChannelConfigSchema.parse(channel.config)
       toast.success('Test message sent!', {
-        description: `Check ${channel.config.channel?.name ? `#${channel.config.channel.name}` : 'your Discord channel'} for the test message.`,
+        description: `Check ${config.channel?.name ? `#${config.channel.name}` : 'your Discord channel'} for the test message.`,
       })
     } catch (e) {
       toastNetworkError(e as Error)
@@ -56,10 +58,13 @@ export const DiscordTestButton = ({
 
   if (channel?.type !== 'discord') return null
 
+  const config = DiscordChannelConfigSchema.safeParse(channel.config)
+  const hasChannel = config.success && config.data.channel?.id
+
   return (
     <Button
       onClick={handleTest}
-      disabled={isLoading || !channel?.config?.channel?.id}
+      disabled={isLoading || !hasChannel}
       variant={variant}
       size={size}
       className={className}
