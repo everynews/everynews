@@ -45,8 +45,6 @@ const INTEREST_CHIPS = [
   'Quantum Computing',
 ]
 
-const searchableProviders = ['google']
-
 export default function OnboardingPage() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)

@@ -15,13 +15,11 @@ import {
   SlackChannelConfigSchema,
   type Story,
   type Strategy,
-  type WaitSchema,
+  type Wait,
 } from '@everynews/schema'
 import { getValidSlackToken } from '@everynews/server/slack/token-refresh'
 import { and, eq, isNull } from 'drizzle-orm'
 import { z } from 'zod'
-
-type Wait = z.infer<typeof WaitSchema>
 
 const sendAlertEmail = async (parcel: {
   alertName: string

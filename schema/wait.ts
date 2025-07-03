@@ -13,3 +13,5 @@ export const WaitSchema = z
     }),
   ])
   .openapi({ ref: 'WaitSchema' })
+
+export type Wait = z.infer<typeof WaitSchema>
