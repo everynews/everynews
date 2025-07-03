@@ -9,15 +9,12 @@ export const SlackConnectButton = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleConnect = () => {
-    setIsLoading(true)  
+    setIsLoading(true)
     router.push('/api/slack/install')
   }
 
   return (
-    <SubmitButton
-      onClick={handleConnect}
-      loading={isLoading}
-    >
+    <SubmitButton onClick={handleConnect} loading={isLoading}>
       Connect Slack
     </SubmitButton>
   )
