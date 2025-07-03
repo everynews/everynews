@@ -16,7 +16,7 @@ import { toastNetworkError } from '@everynews/lib/error'
 import type { Channel } from '@everynews/schema/channel'
 import { Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 export const DeleteChannelDropdownItem = ({
@@ -26,7 +26,35 @@ export const DeleteChannelDropdownItem = ({
 }) => {
   const [loading, setLoading] = useState(false)
   const [showDialog, setShowDialog] = useState(false)
+  const [subscriptionCount, setSubscriptionCount] = useState<number | null>(
+    null,
+  )
+  const [fetchingCount, setFetchingCount] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    const fetchSubscriptionCount = async () => {
+      if (!showDialog) return
+
+      setFetchingCount(true)
+      try {
+        const response = await api.channels[':id']['subscription-count'].$get({
+          param: { id: channel.id },
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          setSubscriptionCount(data.count)
+        }
+      } catch (error) {
+        console.error('Failed to fetch subscription count:', error)
+      } finally {
+        setFetchingCount(false)
+      }
+    }
+
+    fetchSubscriptionCount()
+  }, [showDialog, channel.id])
 
   const handleDelete = async () => {
     setLoading(true)
@@ -66,9 +94,20 @@ export const DeleteChannelDropdownItem = ({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Channel</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete "{channel.name}"? This action
-              cannot be undone.
+            <AlertDialogDescription className='space-y-2'>
+              <p>Are you sure you want to delete "{channel.name}"?</p>
+              {fetchingCount && (
+                <p className='text-muted-foreground'>
+                  Checking subscriptions...
+                </p>
+              )}
+              {subscriptionCount !== null && subscriptionCount > 0 && (
+                <p className='font-medium text-destructive'>
+                  Warning: This will delete {subscriptionCount} subscription
+                  {subscriptionCount > 1 ? 's' : ''} linked to this channel.
+                </p>
+              )}
+              <p>This action cannot be undone.</p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

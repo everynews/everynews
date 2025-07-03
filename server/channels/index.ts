@@ -283,6 +283,55 @@ export const ChannelRouter = new Hono<WithAuth>()
       return c.json(result)
     },
   )
+  .get(
+    '/:id/subscription-count',
+    describeRoute({
+      description: 'Get subscription count for a channel',
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: resolver(z.object({ count: z.number() })),
+            },
+          },
+          description: 'Subscription count',
+        },
+      },
+    }),
+    async (c) => {
+      const { id } = c.req.param()
+      const user = c.get('user')
+      if (!user) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      // Verify channel ownership
+      const channel = await db.query.channels.findFirst({
+        where: and(
+          eq(channels.id, id),
+          eq(channels.userId, user.id),
+          isNull(channels.deletedAt),
+        ),
+      })
+
+      if (!channel) {
+        return c.json({ error: 'Channel not found' }, 404)
+      }
+
+      // Import subscriptions at the top of the function to avoid circular dependency
+      const { subscriptions } = await import('@everynews/schema/subscription')
+
+      // Count active subscriptions for this channel
+      const [{ count }] = await db
+        .select({ count: db.$count(subscriptions) })
+        .from(subscriptions)
+        .where(
+          and(eq(subscriptions.channelId, id), isNull(subscriptions.deletedAt)),
+        )
+
+      return c.json({ count })
+    },
+  )
   .delete(
     '/:id',
     describeRoute({
@@ -314,6 +363,56 @@ export const ChannelRouter = new Hono<WithAuth>()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
+      // Import subscriptions at the top of the function to avoid circular dependency
+      const { subscriptions } = await import('@everynews/schema/subscription')
+
+      // Get channel and count subscriptions
+      const channel = await db.query.channels.findFirst({
+        where: and(
+          eq(channels.id, id),
+          eq(channels.userId, user.id),
+          isNull(channels.deletedAt),
+        ),
+      })
+
+      if (!channel) {
+        return c.json({ error: 'Channel not found' }, 404)
+      }
+
+      // Count subscriptions that will be affected
+      const [{ count: subscriptionCount }] = await db
+        .select({ count: db.$count(subscriptions) })
+        .from(subscriptions)
+        .where(
+          and(eq(subscriptions.channelId, id), isNull(subscriptions.deletedAt)),
+        )
+
+      // Soft delete subscriptions linked to this channel
+      if (subscriptionCount > 0) {
+        await db
+          .update(subscriptions)
+          .set({ deletedAt: new Date() })
+          .where(
+            and(
+              eq(subscriptions.channelId, id),
+              isNull(subscriptions.deletedAt),
+            ),
+          )
+
+        await track({
+          channel: 'channels',
+          description: `Soft deleted ${subscriptionCount} subscriptions linked to channel: ${id}`,
+          event: 'Subscriptions Soft Deleted',
+          icon: '🔗',
+          tags: {
+            channel_id: id,
+            subscription_count: subscriptionCount,
+            type: 'info',
+          },
+          user_id: user.id,
+        })
+      }
+
       // Soft delete by setting deletedAt
       const result = await db
         .update(channels)
@@ -329,11 +428,12 @@ export const ChannelRouter = new Hono<WithAuth>()
 
       await track({
         channel: 'channels',
-        description: `Deleted channel: ${id}`,
+        description: `Deleted channel: ${id} (with ${subscriptionCount} subscriptions)`,
         event: 'Channel Deleted',
         icon: '🗑️',
         tags: {
           channel_id: id,
+          subscription_count: subscriptionCount,
           type: 'info',
         },
         user_id: user.id,
