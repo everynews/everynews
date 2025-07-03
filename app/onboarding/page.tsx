@@ -72,7 +72,10 @@ export default function OnboardingPage() {
   const onTest = async () => {
     const values = form.getValues()
 
-    if (!values.strategy.query?.trim()) {
+    if (
+      values.strategy.provider === 'google' &&
+      !values.strategy.query?.trim()
+    ) {
       form.setError('strategy.query', {
         message: 'Please enter what you are interested in',
         type: 'manual',
@@ -87,12 +90,13 @@ export default function OnboardingPage() {
     try {
       const apiData: AlertDto = {
         ...values,
-        strategy: searchableProviders.includes(values.strategy.provider)
-          ? {
-              provider: values.strategy.provider,
-              query: values.strategy.query,
-            }
-          : values.strategy,
+        strategy:
+          values.strategy.provider === 'google' && 'query' in values.strategy
+            ? {
+                provider: values.strategy.provider,
+                query: values.strategy.query,
+              }
+            : values.strategy,
       }
 
       const res = await api.drill.$post({ json: apiData })
@@ -121,7 +125,10 @@ export default function OnboardingPage() {
   }
 
   const onSubmit = async (values: AlertDto) => {
-    if (!values.strategy.query?.trim()) {
+    if (
+      values.strategy.provider === 'google' &&
+      !values.strategy.query?.trim()
+    ) {
       form.setError('strategy.query', {
         message: 'Please enter what you are interested in',
         type: 'manual',
@@ -133,12 +140,13 @@ export default function OnboardingPage() {
     try {
       const apiData: AlertDto = {
         ...values,
-        strategy: searchableProviders.includes(values.strategy.provider)
-          ? {
-              provider: values.strategy.provider,
-              query: values.strategy.query,
-            }
-          : values.strategy,
+        strategy:
+          values.strategy.provider === 'google' && 'query' in values.strategy
+            ? {
+                provider: values.strategy.provider,
+                query: values.strategy.query,
+              }
+            : values.strategy,
       }
 
       const res = await api.alerts.$post({ json: apiData })

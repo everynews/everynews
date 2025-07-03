@@ -113,14 +113,15 @@ export default async function AlertsPage() {
                       </span>
                     </div>
                   </div>
-                  {alertInfo.strategy.query && (
-                    <Badge
-                      className='text-muted-foreground text-xs'
-                      variant='outline'
-                    >
-                      {alertInfo.strategy.query}
-                    </Badge>
-                  )}
+                  {'query' in alertInfo.strategy &&
+                    alertInfo.strategy.query && (
+                      <Badge
+                        className='text-muted-foreground text-xs'
+                        variant='outline'
+                      >
+                        {alertInfo.strategy.query}
+                      </Badge>
+                    )}
                 </div>
               </CardContent>
             </Card>

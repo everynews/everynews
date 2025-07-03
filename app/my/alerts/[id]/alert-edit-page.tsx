@@ -454,6 +454,30 @@ export const AlertEditPage = ({
                             </div>
                           </div>
                         </label>
+
+                        <label
+                          htmlFor={`${id}-github`}
+                          className=' border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'
+                        >
+                          <RadioGroupItem
+                            value='github'
+                            id={`${id}-github`}
+                            aria-describedby={`${id}-github-description`}
+                            className='order-1 after:absolute after:inset-0 cursor-pointer'
+                          />
+                          <div className='flex grow items-start gap-3'>
+                            <div className='grid grow gap-2'>
+                              <span>GitHub Feeds</span>
+                              <p
+                                id={`${id}-github-description`}
+                                className='text-muted-foreground text-sm'
+                              >
+                                Monitor GitHub activity feeds. Requires a GitHub
+                                personal access token.
+                              </p>
+                            </div>
+                          </div>
+                        </label>
                       </RadioGroup>
                     </FormControl>
                     <FormMessage />
@@ -474,6 +498,30 @@ export const AlertEditPage = ({
                           <Textarea
                             placeholder='artificial intelligence'
                             {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+
+              {strategyProvider === 'github' && (
+                <>
+                  <Separator />
+                  <FormField
+                    control={form.control}
+                    name='strategy.token'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>GitHub Token</FormLabel>
+                        <FormControl>
+                          <Input
+                            type='password'
+                            placeholder='ghp_xxxxxxxxxxxxx'
+                            {...field}
+                            value={field.value || ''}
                           />
                         </FormControl>
                         <FormMessage />
