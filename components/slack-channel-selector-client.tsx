@@ -9,20 +9,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@everynews/components/ui/select'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { z } from 'zod'
 
 interface SlackChannelSelectorClientProps {
   channelId: string
   channels: Array<{ id: string; name: string; is_private: boolean }>
 }
 
+const SlackSelectChannelSchema = z.object({
+  channel: z.string().min(1, 'Please select a channel'),
+})
+
+type SlackSelectChannelForm = z.infer<typeof SlackSelectChannelSchema>
+
 export const SlackChannelSelectorClient = ({
   channelId,
   channels,
 }: SlackChannelSelectorClientProps) => {
-  const form = useForm<{ channel: string }>({
+  const form = useForm<SlackSelectChannelForm>({
     defaultValues: { channel: '' },
+    resolver: zodResolver(SlackSelectChannelSchema),
   })
 
   const handleSubmit = async (formData: FormData) => {

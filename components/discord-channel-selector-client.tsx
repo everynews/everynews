@@ -9,20 +9,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@everynews/components/ui/select'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { z } from 'zod'
 
 interface DiscordChannelSelectorClientProps {
   channelId: string
   channels: Array<{ id: string; name: string; type: number }>
 }
 
+const DiscordSelectChannelSchema = z.object({
+  channel: z.string().min(1, 'Please select a channel'),
+})
+
+type DiscordSelectChannelForm = z.infer<typeof DiscordSelectChannelSchema>
+
 export const DiscordChannelSelectorClient = ({
   channelId,
   channels,
 }: DiscordChannelSelectorClientProps) => {
-  const form = useForm<{ channel: string }>({
+  const form = useForm<DiscordSelectChannelForm>({
     defaultValues: { channel: '' },
+    resolver: zodResolver(DiscordSelectChannelSchema),
   })
 
   const handleSubmit = async (formData: FormData) => {
