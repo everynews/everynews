@@ -33,6 +33,7 @@ import {
   RadioGroupItem,
 } from '@everynews/components/ui/radio-group'
 import { Separator } from '@everynews/components/ui/separator'
+import { Slider } from '@everynews/components/ui/slider'
 import { Switch } from '@everynews/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@everynews/components/ui/tabs'
 import { Textarea } from '@everynews/components/ui/textarea'
