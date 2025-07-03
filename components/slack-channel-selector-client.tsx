@@ -1,7 +1,7 @@
 'use client'
 
 import { updateSlackChannel } from '@everynews/app/actions/slack-channel'
-import { Button } from '@everynews/components/ui/button'
+import { SubmitButton } from '@everynews/components/submit-button'
 import {
   Select,
   SelectContent,
@@ -96,13 +96,14 @@ export const SlackChannelSelectorClient = ({
         </Select>
       </div>
 
-      <Button
-        type='submit'
-        disabled={!form.formState.isValid || !form.watch('channel')}
+      <SubmitButton
+        loading={form.formState.isSubmitting}
+        disabled={!form.watch('channel')}
         className='w-full sm:w-auto'
+        type='submit'
       >
         Save Channel
-      </Button>
+      </SubmitButton>
     </form>
   )
 }

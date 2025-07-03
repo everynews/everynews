@@ -1,7 +1,7 @@
 'use client'
 
 import { updateDiscordChannel } from '@everynews/app/actions/discord-channel'
-import { Button } from '@everynews/components/ui/button'
+import { SubmitButton } from '@everynews/components/submit-button'
 import {
   Select,
   SelectContent,
@@ -81,7 +81,9 @@ export const DiscordChannelSelectorClient = ({
         <Select
           name='channel'
           value={form.watch('channel')}
-          onValueChange={(value) => form.setValue('channel', value)}
+          onValueChange={(value) =>
+            form.setValue('channel', value, { shouldValidate: true })
+          }
         >
           <SelectTrigger id='discord-channel'>
             <SelectValue placeholder='Choose a channel' />
@@ -96,13 +98,14 @@ export const DiscordChannelSelectorClient = ({
         </Select>
       </div>
 
-      <Button
-        type='submit'
-        disabled={!form.formState.isValid || !form.watch('channel')}
+      <SubmitButton
+        loading={form.formState.isSubmitting}
+        disabled={!form.watch('channel')}
         className='w-full sm:w-auto'
+        type='submit'
       >
         Save Channel
-      </Button>
+      </SubmitButton>
     </form>
   )
 }

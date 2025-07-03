@@ -155,7 +155,7 @@ export default async function MyChannelsPage() {
                     <DiscordIcon className='size-3 sm:size-4' />
                   ) : null}
                   <span className='capitalize'>
-                    {['email', 'phone', 'slack'].includes(item.type)
+                    {['email', 'phone', 'slack', 'discord'].includes(item.type)
                       ? item.type
                       : 'unknown channel'}
                   </span>

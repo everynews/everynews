@@ -1,33 +1,12 @@
 import { db } from '@everynews/database'
 import { decrypt } from '@everynews/lib/crypto'
-import { channels } from '@everynews/schema/channel'
+import { channels, DiscordChannelConfigSchema } from '@everynews/schema/channel'
 import { eq } from 'drizzle-orm'
-import { z } from 'zod'
 import { DiscordChannelSelectorClient } from './discord-channel-selector-client'
 
 interface DiscordChannelSelectorProps {
   channelId: string
 }
-
-// Zod schema for validating Discord channel config
-const DiscordConfigSchema = z.object({
-  botToken: z.string(),
-  channel: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-      type: z.number(),
-    })
-    .optional(),
-  destination: z.string().optional(),
-  guild: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-    })
-    .optional(),
-  guildId: z.string(),
-})
 
 // Server component for fetching Discord channels
 export const DiscordChannelSelector = async ({
@@ -45,7 +24,7 @@ export const DiscordChannelSelector = async ({
   }
 
   // Validate the config using Zod
-  const configResult = DiscordConfigSchema.safeParse(channelData.config)
+  const configResult = DiscordChannelConfigSchema.safeParse(channelData.config)
 
   if (!configResult.success) {
     console.error('Invalid Discord channel config:', configResult.error)

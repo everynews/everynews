@@ -1,3 +1,4 @@
+import { SubmitButton } from '@everynews/components/submit-button'
 import { Button } from '@everynews/components/ui/button'
 import { Card, CardContent } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
@@ -6,14 +7,23 @@ import { eq } from 'drizzle-orm'
 import { CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { useActionState } from 'react'
 
-const unsubscribe = async (subscriptionId: string) => {
+const unsubscribe = async (
+  state: { success: boolean; loading: boolean },
+  formData: FormData,
+) => {
   'use server'
-
+  state.loading = true
   await db
     .update(subscriptions)
     .set({ deletedAt: new Date() })
-    .where(eq(subscriptions.id, subscriptionId))
+    .where(eq(subscriptions.id, formData.get('subscriptionId') as string))
+  state.loading = false
+  return {
+    loading: false,
+    success: true,
+  }
 }
 
 export default async function UnsubscribePage({
@@ -22,7 +32,10 @@ export default async function UnsubscribePage({
   params: Promise<{ subscriptionId: string }>
 }) {
   const { subscriptionId } = await params
-
+  const [state, formAction] = useActionState(unsubscribe, {
+    loading: false,
+    success: false,
+  })
   const subscription = await db.query.subscriptions.findFirst({
     where: eq(subscriptions.id, subscriptionId),
     with: {
@@ -72,16 +85,20 @@ export default async function UnsubscribePage({
                 You will no longer receive notifications for this alert.
               </p>
 
-              <form
-                action={async () => {
-                  'use server'
-                  await unsubscribe(subscriptionId)
-                }}
-                className='w-full mt-4'
-              >
-                <Button type='submit' variant='destructive' className='w-full'>
+              <form action={formAction} className='w-full mt-4'>
+                <input
+                  type='hidden'
+                  name='subscriptionId'
+                  value={subscriptionId}
+                />
+                <SubmitButton
+                  type='submit'
+                  variant='destructive'
+                  className='w-full'
+                  loading={state.loading}
+                >
                   Yes, Unsubscribe
-                </Button>
+                </SubmitButton>
               </form>
 
               <Link href='/' className='w-full'>
