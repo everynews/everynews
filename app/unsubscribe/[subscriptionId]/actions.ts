@@ -5,17 +5,17 @@ import { subscriptions } from '@everynews/schema'
 import { eq } from 'drizzle-orm'
 
 export const unsubscribeAction = async (
-  state: { success: boolean; loading: boolean },
+  state: { success: boolean },
   formData: FormData,
 ) => {
-  state.loading = true
+  const subscriptionId = formData.get('subscriptionId') as string
+
   await db
     .update(subscriptions)
     .set({ deletedAt: new Date() })
-    .where(eq(subscriptions.id, formData.get('subscriptionId') as string))
-  state.loading = false
+    .where(eq(subscriptions.id, subscriptionId))
+
   return {
-    loading: false,
     success: true,
   }
 }

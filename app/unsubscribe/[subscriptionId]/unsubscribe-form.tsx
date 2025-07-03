@@ -6,6 +6,7 @@ import { Card, CardContent } from '@everynews/components/ui/card'
 import { CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useActionState } from 'react'
+import { useFormStatus } from 'react-dom'
 import { unsubscribeAction } from './actions'
 
 interface UnsubscribeFormProps {
@@ -15,6 +16,21 @@ interface UnsubscribeFormProps {
   isAlreadyUnsubscribed: boolean
 }
 
+const UnsubscribeSubmitButton = () => {
+  const { pending } = useFormStatus()
+
+  return (
+    <SubmitButton
+      type='submit'
+      variant='destructive'
+      className='w-full'
+      loading={pending}
+    >
+      Yes, Unsubscribe
+    </SubmitButton>
+  )
+}
+
 export const UnsubscribeForm = ({
   subscriptionId,
   userName,
@@ -22,7 +38,6 @@ export const UnsubscribeForm = ({
   isAlreadyUnsubscribed,
 }: UnsubscribeFormProps) => {
   const [state, formAction] = useActionState(unsubscribeAction, {
-    loading: false,
     success: false,
   })
 
@@ -62,14 +77,7 @@ export const UnsubscribeForm = ({
 
           <form action={formAction} className='w-full mt-4'>
             <input type='hidden' name='subscriptionId' value={subscriptionId} />
-            <SubmitButton
-              type='submit'
-              variant='destructive'
-              className='w-full'
-              loading={state.loading}
-            >
-              Yes, Unsubscribe
-            </SubmitButton>
+            <UnsubscribeSubmitButton />
           </form>
 
           <Link href='/' className='w-full'>
