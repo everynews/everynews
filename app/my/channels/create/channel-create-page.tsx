@@ -1,8 +1,10 @@
 'use client'
 
 import { api } from '@everynews/app/api'
+import { DiscordConnectButton } from '@everynews/components/discord-connect-button'
 import { DiscordIcon } from '@everynews/components/discord-icon'
 import { PhoneInputField } from '@everynews/components/phone-input-field'
+import { SlackConnectButton } from '@everynews/components/slack-connect-button'
 import { SubmitButton } from '@everynews/components/submit-button'
 import { Button } from '@everynews/components/ui/button'
 import {
@@ -471,17 +473,17 @@ export const ChannelCreatePage = () => {
                 Cancel
               </Button>
               {channelType === 'slack' ? (
-                <Button asChild>
-                  <Link href='/api/slack/install'>Connect Slack</Link>
-                </Button>
+                <SlackConnectButton />
               ) : channelType === 'discord' ? (
-                <Button asChild>
-                  <Link href='/api/discord/install'>Connect Discord</Link>
-                </Button>
+                <DiscordConnectButton />
               ) : (
-                <Button type='submit' disabled={isSubmitting}>
+                <SubmitButton
+                  type='submit'
+                  disabled={isSubmitting}
+                  loading={isSubmitting}
+                >
                   Create
-                </Button>
+                </SubmitButton>
               )}
             </div>
           </form>

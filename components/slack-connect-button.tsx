@@ -1,25 +1,24 @@
 'use client'
 
-import { Button } from '@everynews/components/ui/button'
-import { Slack } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { SubmitButton } from './submit-button'
 
 export const SlackConnectButton = () => {
-  const _router = useRouter()
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleConnect = () => {
-    // Redirect to Slack OAuth flow
-    window.location.href = '/api/slack/install'
+    setIsLoading(true)  
+    router.push('/api/slack/install')
   }
 
   return (
-    <Button
+    <SubmitButton
       onClick={handleConnect}
-      variant='outline'
-      className='flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto justify-center'
+      loading={isLoading}
     >
-      <Slack className='size-3 sm:size-4' />
-      Connect Slack Workspace
-    </Button>
+      Connect Slack
+    </SubmitButton>
   )
 }
