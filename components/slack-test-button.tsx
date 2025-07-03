@@ -54,12 +54,12 @@ export const SlackTestButton = ({
     }
   }
 
-  if (channel.type !== 'slack') return null
+  if (channel?.type !== 'slack') return null
 
   return (
     <Button
       onClick={handleTest}
-      disabled={isLoading || !channel.config.channel?.id}
+      disabled={isLoading || !channel?.config?.channel?.id}
       variant={variant}
       size={size}
       className={className}

@@ -54,12 +54,12 @@ export const DiscordTestButton = ({
     }
   }
 
-  if (channel.type !== 'discord') return null
+  if (channel?.type !== 'discord') return null
 
   return (
     <Button
       onClick={handleTest}
-      disabled={isLoading || !channel.config.channel?.id}
+      disabled={isLoading || !channel?.config?.channel?.id}
       variant={variant}
       size={size}
       className={className}
