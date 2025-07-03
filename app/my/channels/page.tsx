@@ -11,15 +11,41 @@ import { DiscordIcon } from '@everynews/components/discord-icon'
 import { SendVerificationDropdownItem } from '@everynews/components/send-verification-dropdown-item'
 import { Button } from '@everynews/components/ui/button'
 import { db } from '@everynews/database'
-import { ChannelSchema, channels } from '@everynews/schema/channel'
+import {
+  ChannelSchema,
+  channels,
+  DiscordChannelConfigSchema,
+  SlackChannelConfigSchema,
+} from '@everynews/schema/channel'
 import { and, eq, isNull } from 'drizzle-orm'
 import { CheckCircle, Edit, Mail, Phone, Slack } from 'lucide-react'
 import Link from 'next/link'
 import { unauthorized } from 'next/navigation'
+import { z } from 'zod'
 
 export const metadata = {
   description: 'Manage where your alerts are delivered.',
   title: 'Channels',
+}
+
+const getChannelDestination = (item: z.infer<typeof ChannelSchema>) => {
+  if (item.type === 'slack') {
+    const config = SlackChannelConfigSchema.safeParse(item.config)
+    if (config.success && config.data.channel) {
+      return `#${config.data.channel.name}`
+    }
+    return 'Not selected'
+  } else if (item.type === 'discord') {
+    const config = DiscordChannelConfigSchema.safeParse(item.config)
+    if (config.success && config.data.channel) {
+      return `#${config.data.channel.name}`
+    }
+    return 'Not selected'
+  } else if (item.type === 'email' || item.type === 'phone') {
+    const config = z.object({ destination: z.string() }).safeParse(item.config)
+    return config.success ? config.data.destination : 'N/A'
+  }
+  return 'N/A'
 }
 
 export default async function MyChannelsPage() {
@@ -128,17 +154,17 @@ export default async function MyChannelsPage() {
                   ) : item.type === 'discord' ? (
                     <DiscordIcon className='size-3 sm:size-4' />
                   ) : null}
-                  <span className='capitalize'>{item.type}</span>
+                  <span className='capitalize'>
+                    {['email', 'phone', 'slack'].includes(item.type)
+                      ? item.type
+                      : 'unknown channel'}
+                  </span>
                 </div>
               </div>
               <div className='flex justify-between'>
                 <span>Destination</span>
                 <span className='text-muted-foreground truncate max-w-[120px] sm:max-w-[150px]'>
-                  {item.type === 'slack' && item.config.channel
-                    ? `#${item.config.channel.name}`
-                    : item.type === 'discord' && item.config.channel
-                      ? `#${item.config.channel.name}`
-                      : item.config.destination}
+                  {getChannelDestination(item)}
                 </span>
               </div>
               <div className='flex justify-between'>

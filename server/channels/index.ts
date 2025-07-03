@@ -14,7 +14,7 @@ import {
   ChannelDtoSchema,
   ChannelSchema,
   type DiscordChannelConfig,
-  type SlackChannelConfig,
+  SlackChannelConfigSchema,
 } from '@everynews/schema/channel'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
@@ -109,7 +109,8 @@ export const ChannelRouter = new Hono<WithAuth>()
       }
 
       // Check if the destination email is the same as the user's sign-in email
-      if (config.destination === user.email) {
+      const parsed = z.object({ destination: z.string() }).safeParse(config)
+      if (parsed.success && parsed.data.destination === user.email) {
         await track({
           channel: 'channels',
           description: 'User tried to create channel with sign-in email',
@@ -201,7 +202,13 @@ export const ChannelRouter = new Hono<WithAuth>()
       }
 
       // Check if the destination email is the same as the user's sign-in email
-      if (request.config.destination === user.email) {
+      const parsedConfig = z
+        .object({ destination: z.string() })
+        .safeParse(request.config)
+      if (
+        parsedConfig.success &&
+        parsedConfig.data.destination === user.email
+      ) {
         await track({
           channel: 'channels',
           description: 'User tried to update channel with sign-in email',
@@ -223,9 +230,16 @@ export const ChannelRouter = new Hono<WithAuth>()
       }
 
       // Check if email address has changed
+      const existingParsed = z
+        .object({ destination: z.string() })
+        .safeParse(ChannelSchema.parse(existingChannel).config)
+      const newParsed = z
+        .object({ destination: z.string() })
+        .safeParse(ChannelDtoSchema.parse(request).config)
       const emailChanged =
-        ChannelSchema.parse(existingChannel).config.destination !==
-        ChannelDtoSchema.parse(request).config.destination
+        existingParsed.success &&
+        newParsed.success &&
+        existingParsed.data.destination !== newParsed.data.destination
 
       // If email changed and channel was verified, mark as unverified
       const updateData = {
@@ -271,6 +285,55 @@ export const ChannelRouter = new Hono<WithAuth>()
       return c.json(result)
     },
   )
+  .get(
+    '/:id/subscription-count',
+    describeRoute({
+      description: 'Get subscription count for a channel',
+      responses: {
+        200: {
+          content: {
+            'application/json': {
+              schema: resolver(z.object({ count: z.number() })),
+            },
+          },
+          description: 'Subscription count',
+        },
+      },
+    }),
+    async (c) => {
+      const { id } = c.req.param()
+      const user = c.get('user')
+      if (!user) {
+        return c.json({ error: 'Unauthorized' }, 401)
+      }
+
+      // Verify channel ownership
+      const channel = await db.query.channels.findFirst({
+        where: and(
+          eq(channels.id, id),
+          eq(channels.userId, user.id),
+          isNull(channels.deletedAt),
+        ),
+      })
+
+      if (!channel) {
+        return c.json({ error: 'Channel not found' }, 404)
+      }
+
+      // Import subscriptions at the top of the function to avoid circular dependency
+      const { subscriptions } = await import('@everynews/schema/subscription')
+
+      // Count active subscriptions for this channel
+      const [{ count }] = await db
+        .select({ count: db.$count(subscriptions) })
+        .from(subscriptions)
+        .where(
+          and(eq(subscriptions.channelId, id), isNull(subscriptions.deletedAt)),
+        )
+
+      return c.json({ count })
+    },
+  )
   .delete(
     '/:id',
     describeRoute({
@@ -302,6 +365,56 @@ export const ChannelRouter = new Hono<WithAuth>()
         return c.json({ error: 'Unauthorized' }, 401)
       }
 
+      // Import subscriptions at the top of the function to avoid circular dependency
+      const { subscriptions } = await import('@everynews/schema/subscription')
+
+      // Get channel and count subscriptions
+      const channel = await db.query.channels.findFirst({
+        where: and(
+          eq(channels.id, id),
+          eq(channels.userId, user.id),
+          isNull(channels.deletedAt),
+        ),
+      })
+
+      if (!channel) {
+        return c.json({ error: 'Channel not found' }, 404)
+      }
+
+      // Count subscriptions that will be affected
+      const [{ count: subscriptionCount }] = await db
+        .select({ count: db.$count(subscriptions) })
+        .from(subscriptions)
+        .where(
+          and(eq(subscriptions.channelId, id), isNull(subscriptions.deletedAt)),
+        )
+
+      // Soft delete subscriptions linked to this channel
+      if (subscriptionCount > 0) {
+        await db
+          .update(subscriptions)
+          .set({ deletedAt: new Date() })
+          .where(
+            and(
+              eq(subscriptions.channelId, id),
+              isNull(subscriptions.deletedAt),
+            ),
+          )
+
+        await track({
+          channel: 'channels',
+          description: `Soft deleted ${subscriptionCount} subscriptions linked to channel: ${id}`,
+          event: 'Subscriptions Soft Deleted',
+          icon: '🔗',
+          tags: {
+            channel_id: id,
+            subscription_count: subscriptionCount,
+            type: 'info',
+          },
+          user_id: user.id,
+        })
+      }
+
       // Soft delete by setting deletedAt
       const result = await db
         .update(channels)
@@ -317,11 +430,12 @@ export const ChannelRouter = new Hono<WithAuth>()
 
       await track({
         channel: 'channels',
-        description: `Deleted channel: ${id}`,
+        description: `Deleted channel: ${id} (with ${subscriptionCount} subscriptions)`,
         event: 'Channel Deleted',
         icon: '🗑️',
         tags: {
           channel_id: id,
+          subscription_count: subscriptionCount,
           type: 'info',
         },
         user_id: user.id,
@@ -416,9 +530,15 @@ export const ChannelRouter = new Hono<WithAuth>()
 
       // Handle different channel types
       if (channel.type === 'email') {
+        const parsed = z
+          .object({ destination: z.string() })
+          .safeParse(channel.config)
+        if (!parsed.success) {
+          return c.json({ error: 'Invalid email channel configuration' }, 400)
+        }
         await sendChannelVerification({
           channelName: channel.name,
-          email: channel.config.destination,
+          email: parsed.data.destination,
           verificationLink,
         })
 
@@ -435,8 +555,14 @@ export const ChannelRouter = new Hono<WithAuth>()
         })
       } else if (channel.type === 'phone') {
         // For phone, store the verification ID from Surge
+        const parsed = z
+          .object({ destination: z.string() })
+          .safeParse(channel.config)
+        if (!parsed.success) {
+          return c.json({ error: 'Invalid phone channel configuration' }, 400)
+        }
         const verificationId = await sendSurgeVerification({
-          phoneNumber: channel.config.destination,
+          phoneNumber: parsed.data.destination,
         })
 
         // Update the verification record with the Surge verification ID
@@ -458,7 +584,11 @@ export const ChannelRouter = new Hono<WithAuth>()
         })
       } else if (channel.type === 'slack') {
         // For Slack, send a test message to verify the channel
-        const config = channel.config as SlackChannelConfig
+        const parsedSlack = SlackChannelConfigSchema.safeParse(channel.config)
+        if (!parsedSlack.success) {
+          return c.json({ error: 'Invalid Slack channel configuration' }, 400)
+        }
+        const config = parsedSlack.data
 
         let decryptedToken: string
         try {

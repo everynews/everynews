@@ -5,9 +5,14 @@ import { Button } from '@everynews/components/ui/button'
 import { toastNetworkError } from '@everynews/lib/error'
 import type { Alert } from '@everynews/schema/alert'
 import type { Channel } from '@everynews/schema/channel'
+import {
+  DiscordChannelConfigSchema,
+  SlackChannelConfigSchema,
+} from '@everynews/schema/channel'
 import type { Subscription } from '@everynews/schema/subscription'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { z } from 'zod'
 
 interface SendTestAlertButtonProps {
   alert: Alert
@@ -52,13 +57,33 @@ export const SendTestAlertButton = ({
       }
 
       const channelName = channel
-        ? channel.type === 'email'
-          ? channel.config.destination
-          : channel.type === 'phone'
-            ? channel.config.destination
-            : channel.type === 'slack' && 'channel' in channel.config
-              ? `#${channel.config.channel?.name || 'your Slack channel'}`
-              : 'your channel'
+        ? channel.type === 'slack'
+          ? (() => {
+              const parsed = SlackChannelConfigSchema.safeParse(channel.config)
+              if (parsed.success) {
+                return `#${parsed.data.channel?.name || 'your Slack channel'}`
+              }
+              return 'your Slack channel'
+            })()
+          : channel.type === 'discord'
+            ? (() => {
+                const parsed = DiscordChannelConfigSchema.safeParse(
+                  channel.config,
+                )
+                if (parsed.success) {
+                  return `#${parsed.data.channel?.name || 'your Discord channel'}`
+                }
+                return 'your Discord channel'
+              })()
+            : (() => {
+                const parsed = z
+                  .object({ destination: z.string() })
+                  .safeParse(channel.config)
+                if (parsed.success) {
+                  return parsed.data.destination
+                }
+                return 'your channel'
+              })()
         : 'your email'
 
       toast.success('Test alert sent!', {

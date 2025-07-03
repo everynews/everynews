@@ -29,12 +29,12 @@ export async function generateMetadata({
   return {
     description:
       Array.isArray(post?.keyFindings) && post.keyFindings.length > 0
-        ? post.keyFindings.slice(0, 3).join(' ')
+        ? post.keyFindings.slice(0, 5).join(' ')
         : null,
     openGraph: {
       images: [
         {
-          url: `/api/og?title=${post?.title}&description=${Array.isArray(post?.keyFindings) && post.keyFindings.length > 0 ? post.keyFindings.slice(0, 3).join(' ') : ''}`,
+          url: `/api/og?title=${post?.title}&description=${Array.isArray(post?.keyFindings) && post.keyFindings.length > 0 ? post.keyFindings.slice(0, 5).join(' ') : ''}`,
         },
       ],
     },

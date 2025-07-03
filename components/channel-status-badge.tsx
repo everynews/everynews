@@ -1,4 +1,7 @@
-import type { Channel } from '@everynews/schema/channel'
+import {
+  type Channel,
+  SlackChannelConfigSchema,
+} from '@everynews/schema/channel'
 import { AlertCircle, CheckCircle, Circle } from 'lucide-react'
 
 interface ChannelStatusBadgeProps {
@@ -8,8 +11,18 @@ interface ChannelStatusBadgeProps {
 export const ChannelStatusBadge = ({ channel }: ChannelStatusBadgeProps) => {
   // Slack channels have different status logic
   if (channel.type === 'slack') {
-    const hasChannel = channel.config.channel?.id
-    const hasAccessToken = channel.config.accessToken
+    const config = SlackChannelConfigSchema.safeParse(channel.config)
+    if (!config.success) {
+      return (
+        <span className='flex items-center gap-1 text-destructive'>
+          <AlertCircle className='size-3' />
+          Invalid Config
+        </span>
+      )
+    }
+
+    const hasChannel = config.data.channel?.id
+    const hasAccessToken = config.data.accessToken
 
     if (!hasAccessToken) {
       return (

@@ -29,6 +29,7 @@ import {
 import { toastNetworkError } from '@everynews/lib/error'
 import type { Alert } from '@everynews/schema/alert'
 import type { Channel } from '@everynews/schema/channel'
+import { SlackChannelConfigSchema } from '@everynews/schema/channel'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -147,12 +148,35 @@ export const SubscribeAlertDialog = ({
                             Default Channel (email: {user.email})
                           </SelectItem>
                         )}
-                        {availableChannels.map((channel) => (
-                          <SelectItem key={channel.id} value={channel.id}>
-                            {channel.name} ({channel.type}:{' '}
-                            {channel.config.destination})
-                          </SelectItem>
-                        ))}
+                        {availableChannels.map((channel) => {
+                          const configDisplay =
+                            channel.type === 'slack'
+                              ? (() => {
+                                  const parsed =
+                                    SlackChannelConfigSchema.safeParse(
+                                      channel.config,
+                                    )
+                                  if (parsed.success) {
+                                    return `#${parsed.data.channel?.name || 'Unknown channel'}`
+                                  }
+                                  return 'Not configured'
+                                })()
+                              : (() => {
+                                  const parsed = z
+                                    .object({ destination: z.string() })
+                                    .safeParse(channel.config)
+                                  if (parsed.success) {
+                                    return parsed.data.destination
+                                  }
+                                  return 'Not configured'
+                                })()
+
+                          return (
+                            <SelectItem key={channel.id} value={channel.id}>
+                              {channel.name} ({channel.type}: {configDisplay})
+                            </SelectItem>
+                          )
+                        })}
                       </SelectContent>
                     </Select>
                   </FormControl>

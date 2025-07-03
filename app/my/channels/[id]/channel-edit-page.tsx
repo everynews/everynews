@@ -31,6 +31,103 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
+import { z } from 'zod'
+
+const SlackConfigurationDisplay = ({ channel }: { channel: Channel }) => {
+  if (channel.type !== 'slack') return null
+
+  const config = SlackChannelConfigSchema.parse(channel.config)
+
+  return (
+    <div className='space-y-6'>
+      <div>
+        <p className='text-sm font-medium mb-3'>Slack Configuration</p>
+        <div className='rounded-lg border bg-muted/50 p-4 md:p-6 space-y-3 md:space-y-4'>
+          <div className='flex items-center justify-between gap-4'>
+            <span className='text-sm text-muted-foreground'>Workspace</span>
+            <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
+              {config.workspace?.name || config.teamId || 'Unknown'}
+            </span>
+          </div>
+          <div className='flex items-center justify-between gap-4'>
+            <span className='text-sm text-muted-foreground'>Channel</span>
+            <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
+              {config.channel?.name
+                ? `#${config.channel.name}`
+                : 'Not selected'}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className='space-y-4'>
+        <div className='flex flex-col md:flex-row gap-2 md:gap-3'>
+          <Button asChild variant='outline' className='flex-1 md:flex-initial'>
+            <Link href={`/channels/${channel.id}/slack-setup`}>
+              <Slack className='size-4' />
+              Change Slack Channel
+            </Link>
+          </Button>
+          <SlackTestButton
+            channel={channel}
+            className='flex-1 md:flex-initial'
+          />
+        </div>
+        <p className='text-xs text-muted-foreground text-center md:text-left'>
+          To connect a different workspace, create a new Everynews channel.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+const DiscordConfigurationDisplay = ({ channel }: { channel: Channel }) => {
+  if (channel.type !== 'discord') return null
+
+  const config = DiscordChannelConfigSchema.parse(channel.config)
+
+  return (
+    <div className='space-y-6'>
+      <div>
+        <p className='text-sm font-medium mb-3'>Discord Configuration</p>
+        <div className='rounded-lg border bg-muted/50 p-4 md:p-6 space-y-3 md:space-y-4'>
+          <div className='flex items-center justify-between gap-4'>
+            <span className='text-sm text-muted-foreground'>Server</span>
+            <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
+              {config.guild?.name || config.guildId || 'Unknown'}
+            </span>
+          </div>
+          <div className='flex items-center justify-between gap-4'>
+            <span className='text-sm text-muted-foreground'>Channel</span>
+            <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
+              {config.channel?.name
+                ? `#${config.channel.name}`
+                : 'Not selected'}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className='space-y-4'>
+        <div className='flex flex-col md:flex-row gap-2 md:gap-3'>
+          <Button asChild variant='outline' className='flex-1 md:flex-initial'>
+            <Link href={`/channels/${channel.id}/discord-setup`}>
+              <DiscordIcon className='size-4' />
+              Change Discord Channel
+            </Link>
+          </Button>
+          <DiscordTestButton
+            channel={channel}
+            className='flex-1 md:flex-initial'
+          />
+        </div>
+        <p className='text-xs text-muted-foreground text-center md:text-left'>
+          To connect a different server, create a new Everynews channel.
+        </p>
+      </div>
+    </div>
+  )
+}
 
 export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
   const router = useRouter()
@@ -63,6 +160,17 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
   })
 
   const onSubmit = async (values: ChannelDto) => {
+    // Unknown channel types can't be edited
+    if (
+      channel.type !== 'email' &&
+      channel.type !== 'phone' &&
+      channel.type !== 'slack' &&
+      channel.type !== 'discord'
+    ) {
+      toast.error('This channel type cannot be edited')
+      return
+    }
+
     // Slack channels can't update destination through this form
     if (channel.type === 'slack') {
       setIsSubmitting(true)
@@ -152,9 +260,23 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
         return
       }
 
-      // Check if destination was changed
-      const destinationChanged =
-        channel.config.destination !== values.config.destination
+      // Check if destination was changed for email/phone channels
+      let destinationChanged = false
+      if (
+        (channel.type === 'email' || channel.type === 'phone') &&
+        (values.type === 'email' || values.type === 'phone')
+      ) {
+        // Since we know the types, we can safely access destination
+        const destinationSchema = z.object({ destination: z.string() })
+        const oldParsed = destinationSchema.safeParse(channel.config)
+        const newParsed = destinationSchema.safeParse(values.config)
+
+        if (oldParsed.success && newParsed.success) {
+          destinationChanged =
+            oldParsed.data.destination !== newParsed.data.destination
+        }
+      }
+
       const wasVerified = channel.verified
 
       if (destinationChanged && wasVerified) {
@@ -214,112 +336,10 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
           <Separator />
 
           {channel.type === 'slack' ? (
-            <div className='space-y-6'>
-              <div>
-                <p className='text-sm font-medium mb-3'>Slack Configuration</p>
-                <div className='rounded-lg border bg-muted/50 p-4 md:p-6 space-y-3 md:space-y-4'>
-                  <div className='flex items-center justify-between gap-4'>
-                    <span className='text-sm text-muted-foreground'>
-                      Workspace
-                    </span>
-                    <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
-                      {channel.config.workspace?.name ||
-                        channel.config.teamId ||
-                        'Unknown'}
-                    </span>
-                  </div>
-                  <div className='flex items-center justify-between gap-4'>
-                    <span className='text-sm text-muted-foreground'>
-                      Channel
-                    </span>
-                    <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
-                      {channel.config.channel?.name
-                        ? `#${channel.config.channel.name}`
-                        : 'Not selected'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className='space-y-4'>
-                <div className='flex flex-col md:flex-row gap-2 md:gap-3'>
-                  <Button
-                    asChild
-                    variant='outline'
-                    className='flex-1 md:flex-initial'
-                  >
-                    <Link href={`/channels/${channel.id}/slack-setup`}>
-                      <Slack className='size-4 mr-2' />
-                      Change Slack Channel
-                    </Link>
-                  </Button>
-                  <SlackTestButton
-                    channel={channel}
-                    className='flex-1 md:flex-initial'
-                  />
-                </div>
-                <p className='text-xs text-muted-foreground text-center md:text-left'>
-                  To connect a different workspace, create a new Everynews
-                  channel.
-                </p>
-              </div>
-            </div>
+            <SlackConfigurationDisplay channel={channel} />
           ) : channel.type === 'discord' ? (
-            <div className='space-y-6'>
-              <div>
-                <p className='text-sm font-medium mb-3'>
-                  Discord Configuration
-                </p>
-                <div className='rounded-lg border bg-muted/50 p-4 md:p-6 space-y-3 md:space-y-4'>
-                  <div className='flex items-center justify-between gap-4'>
-                    <span className='text-sm text-muted-foreground'>
-                      Server
-                    </span>
-                    <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
-                      {channel.config.guild?.name ||
-                        channel.config.guildId ||
-                        'Unknown'}
-                    </span>
-                  </div>
-                  <div className='flex items-center justify-between gap-4'>
-                    <span className='text-sm text-muted-foreground'>
-                      Channel
-                    </span>
-                    <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
-                      {channel.config.channel?.name
-                        ? `#${channel.config.channel.name}`
-                        : 'Not selected'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className='space-y-4'>
-                <div className='flex flex-col md:flex-row gap-2 md:gap-3'>
-                  <Button
-                    asChild
-                    variant='outline'
-                    className='flex-1 md:flex-initial'
-                  >
-                    <Link
-                      href={`/channels/${channel.id}/discord-setup`}
-                      className='flex items-center gap-2'
-                    >
-                      <DiscordIcon className='size-4' />
-                      Change Discord Channel
-                    </Link>
-                  </Button>
-                  <DiscordTestButton
-                    channel={channel}
-                    className='flex-1 md:flex-initial'
-                  />
-                </div>
-                <p className='text-xs text-muted-foreground text-center md:text-left'>
-                  To connect a different server, create a new Everynews channel.
-                </p>
-              </div>
-            </div>
-          ) : (
+            <DiscordConfigurationDisplay channel={channel} />
+          ) : channel.type === 'email' || channel.type === 'phone' ? (
             <FormField
               control={form.control}
               name='config.destination'
@@ -346,6 +366,12 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
                 </FormItem>
               )}
             />
+          ) : (
+            <div className='rounded-lg border bg-muted/50 p-4 md:p-6'>
+              <p className='text-sm text-muted-foreground'>
+                This channel type is not currently supported for editing.
+              </p>
+            </div>
           )}
 
           <div className='flex flex-col-reverse md:flex-row justify-end gap-2 pt-4'>

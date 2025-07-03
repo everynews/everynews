@@ -2,7 +2,11 @@ import { whoami } from '@everynews/auth/session'
 import { DiscordChannelSelector } from '@everynews/components/discord-channel-selector'
 import { DiscordTestButton } from '@everynews/components/discord-test-button'
 import { db } from '@everynews/database'
-import { ChannelSchema, channels } from '@everynews/schema/channel'
+import {
+  ChannelSchema,
+  channels,
+  DiscordChannelConfigSchema,
+} from '@everynews/schema/channel'
 import { and, eq, isNull } from 'drizzle-orm'
 import { notFound, unauthorized } from 'next/navigation'
 
@@ -41,7 +45,7 @@ export default async function DiscordSetupPage({
   // Type assertion since we already filtered for discord type
   if (channel.type !== 'discord') return notFound()
 
-  const config = channel.config
+  const config = DiscordChannelConfigSchema.parse(channel.config)
 
   return (
     <div className='container mx-auto max-w-3xl px-4 py-6 md:py-8'>

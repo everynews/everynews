@@ -107,11 +107,17 @@ const DiscordChannelSchema = BaseChannel.extend({
   type: z.literal('discord').openapi({ example: 'discord' }),
 }).openapi({ ref: 'DiscordChannelSchema' })
 
-export const ChannelSchema = z.discriminatedUnion('type', [
+const UnknownChannelSchema = BaseChannel.extend({
+  config: z.unknown(),
+  type: z.string(),
+}).openapi({ ref: 'UnknownChannelSchema' })
+
+export const ChannelSchema = z.union([
   EmailChannelSchema,
   PhoneChannelSchema,
   SlackChannelSchema,
   DiscordChannelSchema,
+  UnknownChannelSchema,
 ])
 
 const EmailChannelDtoSchema = EmailChannelSchema.omit({
@@ -154,12 +160,14 @@ const DiscordChannelDtoSchema = DiscordChannelSchema.omit({
   verifiedAt: true,
 }).openapi({ ref: 'DiscordChannelDtoSchema' })
 
-export const ChannelDtoSchema = z.discriminatedUnion('type', [
-  EmailChannelDtoSchema,
-  PhoneChannelDtoSchema,
-  SlackChannelDtoSchema,
-  DiscordChannelDtoSchema,
-])
+export const ChannelDtoSchema = z
+  .union([
+    EmailChannelDtoSchema,
+    PhoneChannelDtoSchema,
+    SlackChannelDtoSchema,
+    DiscordChannelDtoSchema,
+  ])
+  .openapi({ ref: 'ChannelDtoSchema' })
 
 export type Channel = z.infer<typeof ChannelSchema>
 export type ChannelDto = z.infer<typeof ChannelDtoSchema>
