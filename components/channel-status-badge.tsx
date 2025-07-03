@@ -1,5 +1,6 @@
 import {
   type Channel,
+  DiscordChannelConfigSchema,
   SlackChannelConfigSchema,
 } from '@everynews/schema/channel'
 import { AlertCircle, CheckCircle, Circle } from 'lucide-react'
@@ -52,8 +53,9 @@ export const ChannelStatusBadge = ({ channel }: ChannelStatusBadgeProps) => {
 
   // Discord channels have different status logic
   if (channel.type === 'discord') {
-    const hasChannel = channel.config.channel?.id
-    const hasBotToken = channel.config.botToken
+    const config = DiscordChannelConfigSchema.parse(channel.config)
+    const hasChannel = config.channel?.id
+    const hasBotToken = config.botToken
 
     if (!hasBotToken) {
       return (
