@@ -47,20 +47,14 @@ export default async function SlackSetupPage({ params }: SlackSetupPageProps) {
         <h1 className='text-2xl md:text-3xl font-bold'>Setup Slack Channel</h1>
         <p className='text-base text-muted-foreground mt-2'>
           {config.workspace?.name || config.teamId
-            ? `Connected to ${config.workspace?.name || config.teamId}`
-            : 'Select a channel to receive your alerts'}
+            ? `Currently connected to ${config.workspace?.name || config.teamId}. `
+            : 'Select a channel to receive your alerts. '}
+          Everynews bot must have permission to send messages in the selected
+          channel.
         </p>
       </div>
 
       <div className='rounded-lg border bg-card p-6 md:p-8'>
-        <h2 className='text-lg md:text-xl font-semibold mb-4'>
-          Select Channel
-        </h2>
-        <p className='text-sm text-muted-foreground mb-6 md:mb-8'>
-          Choose which Slack channel should receive your alert notifications.
-          You can only select channels where the Everynews bot has been added.
-        </p>
-
         <SlackChannelSelector channelId={id} />
 
         {config.channel?.id && (

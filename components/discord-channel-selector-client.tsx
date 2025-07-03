@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@everynews/components/ui/select'
-import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 interface DiscordChannelSelectorClientProps {
@@ -21,7 +21,9 @@ export const DiscordChannelSelectorClient = ({
   channelId,
   channels,
 }: DiscordChannelSelectorClientProps) => {
-  const [selectedChannel, setSelectedChannel] = useState<string>('')
+  const form = useForm<{ channel: string }>({
+    defaultValues: { channel: '' },
+  })
 
   const handleSubmit = async (formData: FormData) => {
     const channelValue = formData.get('channel') as string
@@ -67,16 +69,10 @@ export const DiscordChannelSelectorClient = ({
   return (
     <form action={handleSubmit} className='space-y-3 sm:space-y-4'>
       <div>
-        <label
-          htmlFor='discord-channel'
-          className='text-xs sm:text-sm font-medium'
-        >
-          Select Discord Channel
-        </label>
         <Select
           name='channel'
-          value={selectedChannel}
-          onValueChange={setSelectedChannel}
+          value={form.watch('channel')}
+          onValueChange={(value) => form.setValue('channel', value)}
         >
           <SelectTrigger id='discord-channel'>
             <SelectValue placeholder='Choose a channel' />
@@ -93,7 +89,7 @@ export const DiscordChannelSelectorClient = ({
 
       <Button
         type='submit'
-        disabled={!selectedChannel}
+        disabled={!form.formState.isValid || !form.watch('channel')}
         className='w-full sm:w-auto'
       >
         Save Channel

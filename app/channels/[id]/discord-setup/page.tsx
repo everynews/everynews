@@ -51,21 +51,14 @@ export default async function DiscordSetupPage({
         </h1>
         <p className='text-base text-muted-foreground mt-2'>
           {config.guild?.name || config.guildId
-            ? `Connected to ${config.guild?.name || config.guildId}`
-            : 'Select a channel to receive your alerts'}
+            ? `Currently connected to ${config.guild?.name || config.guildId}. `
+            : 'Select a channel to receive your alerts. '}
+          Everynews bot must have permission to send messages in the selected
+          channel.
         </p>
       </div>
 
       <div className='rounded-lg border bg-card p-6 md:p-8'>
-        <h2 className='text-lg md:text-xl font-semibold mb-4'>
-          Select Channel
-        </h2>
-        <p className='text-sm text-muted-foreground mb-6 md:mb-8'>
-          Choose which Discord channel should receive your alert notifications.
-          The Everynews bot must have permission to send messages in the
-          selected channel.
-        </p>
-
         <DiscordChannelSelector channelId={id} />
 
         {config.channel?.id && (

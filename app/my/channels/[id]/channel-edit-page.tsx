@@ -2,6 +2,7 @@
 
 import { api } from '@everynews/app/api'
 import { ChannelStatusBadge } from '@everynews/components/channel-status-badge'
+import { DiscordIcon } from '@everynews/components/discord-icon'
 import { DiscordTestButton } from '@everynews/components/discord-test-button'
 import { SlackTestButton } from '@everynews/components/slack-test-button'
 import { SubmitButton } from '@everynews/components/submit-button'
@@ -24,7 +25,7 @@ import {
   DiscordChannelConfigSchema,
   SlackChannelConfigSchema,
 } from '@everynews/schema/channel'
-import { MessageCircle, Slack } from 'lucide-react'
+import { Slack } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -300,8 +301,11 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
                     variant='outline'
                     className='flex-1 md:flex-initial'
                   >
-                    <Link href={`/channels/${channel.id}/discord-setup`}>
-                      <MessageCircle className='size-4 mr-2' />
+                    <Link
+                      href={`/channels/${channel.id}/discord-setup`}
+                      className='flex items-center gap-2'
+                    >
+                      <DiscordIcon className='size-4' />
                       Change Discord Channel
                     </Link>
                   </Button>
