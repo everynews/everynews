@@ -10,7 +10,9 @@ export const SlackConnectButton = () => {
 
   const handleConnect = () => {
     setIsLoading(true)
-    router.push('/api/slack/install')
+    if (typeof window !== 'undefined') {
+      window.location.href = '/api/slack/install'
+    }
   }
 
   return (

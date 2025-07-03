@@ -10,7 +10,9 @@ export const DiscordConnectButton = () => {
 
   const handleClick = () => {
     setIsLoading(true)
-    router.push('/api/discord/install')
+    if (typeof window !== 'undefined') {
+      window.location.href = '/api/discord/install'
+    }
   }
 
   return (
