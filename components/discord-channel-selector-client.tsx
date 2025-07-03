@@ -1,6 +1,6 @@
 'use client'
 
-import { updateSlackChannel } from '@everynews/app/actions/slack-channel'
+import { updateDiscordChannel } from '@everynews/app/actions/discord-channel'
 import { SubmitButton } from '@everynews/components/submit-button'
 import {
   Select,
@@ -14,24 +14,24 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-interface SlackChannelSelectorClientProps {
+interface DiscordChannelSelectorClientProps {
   channelId: string
-  channels: Array<{ id: string; name: string; is_private: boolean }>
+  channels: Array<{ id: string; name: string; type: number }>
 }
 
-const SlackSelectChannelSchema = z.object({
+const DiscordSelectChannelSchema = z.object({
   channel: z.string().min(1, 'Please select a channel'),
 })
 
-type SlackSelectChannelForm = z.infer<typeof SlackSelectChannelSchema>
+type DiscordSelectChannelForm = z.infer<typeof DiscordSelectChannelSchema>
 
-export const SlackChannelSelectorClient = ({
+export const DiscordChannelSelectorClient = ({
   channelId,
   channels,
-}: SlackChannelSelectorClientProps) => {
-  const form = useForm<SlackSelectChannelForm>({
+}: DiscordChannelSelectorClientProps) => {
+  const form = useForm<DiscordSelectChannelForm>({
     defaultValues: { channel: '' },
-    resolver: zodResolver(SlackSelectChannelSchema),
+    resolver: zodResolver(DiscordSelectChannelSchema),
   })
 
   const handleSubmit = async (formData: FormData) => {
@@ -47,7 +47,7 @@ export const SlackChannelSelectorClient = ({
       return
     }
 
-    await updateSlackChannel(channelId, channel.id, channel.name)
+    await updateDiscordChannel(channelId, channel.id, channel.name)
   }
 
   // Check if no channels are available
@@ -56,19 +56,19 @@ export const SlackChannelSelectorClient = ({
       <div className='space-y-3 sm:space-y-4'>
         <div>
           <label
-            htmlFor='slack-channel'
+            htmlFor='discord-channel'
             className='text-xs sm:text-sm font-medium'
           >
-            Select Slack Channel
+            Select Discord Channel
           </label>
           <Select disabled>
-            <SelectTrigger id='slack-channel' disabled>
+            <SelectTrigger id='discord-channel' disabled>
               <SelectValue placeholder='No channels available' />
             </SelectTrigger>
           </Select>
           <p className='mt-2 text-xs sm:text-sm text-muted-foreground'>
-            Everynews is not invited to any channels yet. Could you invite us so
-            that we can send alerts?
+            No text channels found in your Discord server. Please create a text
+            channel first.
           </p>
         </div>
       </div>
@@ -81,15 +81,17 @@ export const SlackChannelSelectorClient = ({
         <Select
           name='channel'
           value={form.watch('channel')}
-          onValueChange={(value) => form.setValue('channel', value)}
+          onValueChange={(value) =>
+            form.setValue('channel', value, { shouldValidate: true })
+          }
         >
-          <SelectTrigger id='slack-channel'>
+          <SelectTrigger id='discord-channel'>
             <SelectValue placeholder='Choose a channel' />
           </SelectTrigger>
           <SelectContent>
             {channels.map((channel) => (
               <SelectItem key={channel.id} value={channel.id}>
-                #{channel.name} {channel.is_private && '🔒'}
+                #{channel.name}
               </SelectItem>
             ))}
           </SelectContent>

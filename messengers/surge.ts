@@ -1,8 +1,6 @@
+import { url } from '@everynews/lib/url'
 import { track } from '@everynews/logs'
-import type { Story, Strategy, WaitSchema } from '@everynews/schema'
-import type { z } from 'zod'
-
-type Wait = z.infer<typeof WaitSchema>
+import type { Story } from '@everynews/schema'
 
 const SURGE_API_KEY = process.env.SURGE_API_KEY
 const SURGE_API_BASE = 'https://api.surge.app'
@@ -136,14 +134,10 @@ export const sendSurgeAlert = async ({
   phoneNumber,
   alertName,
   stories,
-  strategy,
-  wait,
 }: {
   phoneNumber: string
   alertName: string
   stories: Story[]
-  strategy: Strategy
-  wait: Wait
 }): Promise<void> => {
   if (!SURGE_API_KEY) {
     throw new Error('SURGE_API_KEY not configured')
@@ -151,12 +145,7 @@ export const sendSurgeAlert = async ({
 
   try {
     // Format the alert messages (one URL per story)
-    const messageUrls = formatAlertMessage({
-      alertName,
-      stories,
-      strategy,
-      wait,
-    })
+    const messageUrls = stories.map((story) => `${url}/stories/${story.id}`)
 
     // Get the Surge account ID from environment
     const accountId = process.env.SURGE_ACCOUNT_ID
@@ -251,19 +240,4 @@ export const sendSurgeAlert = async ({
     })
     throw error
   }
-}
-
-function formatAlertMessage({
-  stories,
-}: {
-  alertName: string
-  stories: Story[]
-  strategy: Strategy
-  wait: Wait
-}): string[] {
-  // Return an array of URLs, one for each story
-  return stories.map(
-    (story) =>
-      `${process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news'}/stories/${story.id}`,
-  )
 }

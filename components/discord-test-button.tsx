@@ -4,11 +4,11 @@ import { api } from '@everynews/app/api'
 import { Button } from '@everynews/components/ui/button'
 import { toastNetworkError } from '@everynews/lib/error'
 import type { Channel } from '@everynews/schema/channel'
-import { SlackChannelConfigSchema } from '@everynews/schema/channel'
+import { DiscordChannelConfigSchema } from '@everynews/schema/channel'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-interface SlackTestButtonProps {
+interface DiscordTestButtonProps {
   channel: Channel
   variant?:
     | 'default'
@@ -21,20 +21,20 @@ interface SlackTestButtonProps {
   className?: string
 }
 
-export const SlackTestButton = ({
+export const DiscordTestButton = ({
   channel,
   variant = 'outline',
   size = 'default',
   className,
-}: SlackTestButtonProps) => {
+}: DiscordTestButtonProps) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleTest = async () => {
-    if (!channel || channel?.type !== 'slack') return
+    if (!channel || channel?.type !== 'discord') return
 
     setIsLoading(true)
     try {
-      const res = await api.slack.test.$post({
+      const res = await api.discord.test.$post({
         json: { channelId: channel.id },
       })
 
@@ -45,14 +45,9 @@ export const SlackTestButton = ({
         return
       }
 
-      const parsed = SlackChannelConfigSchema.safeParse(channel.config)
-      const channelName =
-        parsed.success && parsed.data.channel?.name
-          ? `#${parsed.data.channel.name}`
-          : 'your Slack channel'
-
+      const config = DiscordChannelConfigSchema.parse(channel.config)
       toast.success('Test message sent!', {
-        description: `Check ${channelName} for the test message.`,
+        description: `Check ${config.channel?.name ? `#${config.channel.name}` : 'your Discord channel'} for the test message.`,
       })
     } catch (e) {
       toastNetworkError(e as Error)
@@ -61,15 +56,15 @@ export const SlackTestButton = ({
     }
   }
 
-  if (channel?.type !== 'slack') return null
+  if (channel?.type !== 'discord') return null
 
-  const parsed = SlackChannelConfigSchema.safeParse(channel.config)
-  const hasChannelId = parsed.success && !!parsed.data.channel?.id
+  const config = DiscordChannelConfigSchema.safeParse(channel.config)
+  const hasChannel = config.success && config.data.channel?.id
 
   return (
     <Button
       onClick={handleTest}
-      disabled={isLoading || !hasChannelId}
+      disabled={isLoading || !hasChannel}
       variant={variant}
       size={size}
       className={className}

@@ -1,11 +1,17 @@
 import { db } from '@everynews/database'
 import { sendTemplateEmail } from '@everynews/emails'
 import Alert from '@everynews/emails/alert'
+import { decrypt } from '@everynews/lib/crypto'
 import { track } from '@everynews/logs'
-import { sendSlackAlert, sendSurgeAlert } from '@everynews/messengers'
+import {
+  sendDiscordAlert,
+  sendSlackAlert,
+  sendSurgeAlert,
+} from '@everynews/messengers'
 import {
   ChannelSchema,
   channels,
+  DiscordChannelConfigSchema,
   SlackChannelConfigSchema,
   type Story,
   type Strategy,
@@ -81,8 +87,6 @@ const sendAlertPhone = async (parcel: {
     alertName: parcel.alertName,
     phoneNumber: parcel.destination,
     stories: parcel.stories,
-    strategy: parcel.strategy,
-    wait: parcel.wait,
   })
 }
 
@@ -178,6 +182,94 @@ const sendAlertSlack = async (parcel: {
   }
 }
 
+const sendAlertDiscord = async (parcel: {
+  alertName: string
+  destination: string
+  readerCount: number
+  stories: Story[]
+  strategy: Strategy
+  wait: Wait
+  channelId: string
+  config: z.infer<typeof DiscordChannelConfigSchema>
+}) => {
+  await track({
+    channel: 'herald',
+    description: `Starting Discord delivery for alert "${parcel.alertName}" to channel ${parcel.config.channel?.name || 'unknown'} (${parcel.config.channel?.id || 'unknown'})`,
+    event: 'Discord Delivery Starting',
+    icon: '🚀',
+    tags: {
+      alert_name: parcel.alertName,
+      channel_id: parcel.channelId,
+      discord_channel_id: parcel.config.channel?.id || 'unknown',
+      discord_channel_name: parcel.config.channel?.name || 'unknown',
+      guild_id: parcel.config.guildId,
+      guild_name: parcel.config.guild?.name || 'unknown',
+      stories_count: parcel.stories.length,
+      type: 'info',
+    },
+  })
+
+  try {
+    // Ensure channel is configured
+    if (!parcel.config.channel?.id) {
+      throw new Error('Discord channel not properly configured')
+    }
+
+    const botToken = await decrypt(parcel.config.botToken)
+
+    await track({
+      channel: 'herald',
+      description: `Retrieved Discord bot token for channel ${parcel.channelId}`,
+      event: 'Discord Token Retrieved',
+      icon: '🔑',
+      tags: {
+        channel_id: parcel.channelId,
+        type: 'info',
+      },
+    })
+
+    await sendDiscordAlert({
+      alertName: parcel.alertName,
+      botToken,
+      channelId: parcel.config.channel.id,
+      stories: parcel.stories,
+    })
+
+    await track({
+      channel: 'herald',
+      description: `Successfully sent Discord alert "${parcel.alertName}" to channel ${parcel.config.channel?.name || 'unknown'}`,
+      event: 'Discord Delivery Completed',
+      icon: '✅',
+      tags: {
+        alert_name: parcel.alertName,
+        channel_id: parcel.channelId,
+        discord_channel_id: parcel.config.channel?.id || 'unknown',
+        discord_channel_name: parcel.config.channel?.name || 'unknown',
+        stories_count: parcel.stories.length,
+        type: 'info',
+      },
+    })
+  } catch (error) {
+    await track({
+      channel: 'herald',
+      description: `Failed to send Discord alert "${parcel.alertName}": ${String(error)}`,
+      event: 'Discord Delivery Failed',
+      icon: '❌',
+      tags: {
+        alert_name: parcel.alertName,
+        channel_id: parcel.channelId,
+        discord_channel_id: parcel.config.channel?.id || 'unknown',
+        discord_channel_name: parcel.config.channel?.name || 'unknown',
+        error: String(error),
+        error_message: error instanceof Error ? error.message : String(error),
+        error_name: error instanceof Error ? error.name : 'unknown',
+        type: 'error',
+      },
+    })
+    throw error
+  }
+}
+
 export const herald = async ({
   channelId,
   alertName,
@@ -220,7 +312,7 @@ export const herald = async ({
       subscriptionId?: string
       wait: Wait
     }
-    let channelType: 'email' | 'phone' | 'slack' = 'email'
+    let channelType: 'email' | 'phone' | 'slack' | 'discord' = 'email'
 
     if (!channelId) {
       // Handle default channel (user's email)
@@ -303,7 +395,7 @@ export const herald = async ({
         subscriptionId,
         wait,
       }
-      channelType = channel.type as 'email' | 'phone' | 'slack'
+      channelType = channel.type as 'email' | 'phone' | 'slack' | 'discord'
 
       // Send the alert for Slack channels with config
       if (channelType === 'slack') {
@@ -362,6 +454,65 @@ export const herald = async ({
           ...parcel,
           channelId,
           config: slackConfig,
+        })
+        return
+      }
+
+      // Send the alert for Discord channels with config
+      if (channelType === 'discord') {
+        await track({
+          channel: 'herald',
+          description: `Processing Discord channel ${channelId} for alert "${alertName}"`,
+          event: 'Discord Channel Processing',
+          icon: '🔍',
+          tags: {
+            alert_name: alertName,
+            channel_id: channelId,
+            channel_type: channelType,
+            config_keys: String(Object.keys(channel.config || {})),
+            type: 'info',
+          },
+        })
+
+        const discordConfig = DiscordChannelConfigSchema.parse(channel.config)
+
+        await track({
+          channel: 'herald',
+          description: `Parsed Discord config for channel ${channelId}`,
+          event: 'Discord Config Parsed',
+          icon: '✅',
+          tags: {
+            channel_id: channelId,
+            discord_channel_id: discordConfig.channel?.id || 'not set',
+            discord_channel_name: discordConfig.channel?.name || 'not set',
+            guild_id: discordConfig.guildId,
+            guild_name: discordConfig.guild?.name || 'unknown',
+            has_bot_token: !!discordConfig.botToken,
+            has_channel: !!discordConfig.channel,
+            type: 'info',
+          },
+        })
+
+        if (!discordConfig.channel?.id) {
+          await track({
+            channel: 'herald',
+            description: `Discord channel not configured for channel ${channelId}`,
+            event: 'Discord Channel Not Configured',
+            icon: '⚠️',
+            tags: {
+              channel_id: channelId,
+              type: 'error',
+            },
+          })
+          throw new Error(
+            `Discord channel ${channelId} is not properly configured. Please select a channel.`,
+          )
+        }
+
+        await sendAlertDiscord({
+          ...parcel,
+          channelId,
+          config: discordConfig,
         })
         return
       }

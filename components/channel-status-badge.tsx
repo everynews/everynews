@@ -1,5 +1,6 @@
 import {
   type Channel,
+  DiscordChannelConfigSchema,
   SlackChannelConfigSchema,
 } from '@everynews/schema/channel'
 import { AlertCircle, CheckCircle, Circle } from 'lucide-react'
@@ -25,6 +26,38 @@ export const ChannelStatusBadge = ({ channel }: ChannelStatusBadgeProps) => {
     const hasAccessToken = config.data.accessToken
 
     if (!hasAccessToken) {
+      return (
+        <span className='flex items-center gap-1 text-destructive'>
+          <AlertCircle className='size-3' />
+          Disconnected
+        </span>
+      )
+    }
+
+    if (!hasChannel) {
+      return (
+        <span className='flex items-center gap-1 text-muted-foreground'>
+          <Circle className='size-3' />
+          Setup Required
+        </span>
+      )
+    }
+
+    return (
+      <span className='flex items-center gap-1'>
+        <CheckCircle className='size-3' />
+        Connected
+      </span>
+    )
+  }
+
+  // Discord channels have different status logic
+  if (channel.type === 'discord') {
+    const config = DiscordChannelConfigSchema.parse(channel.config)
+    const hasChannel = config.channel?.id
+    const hasBotToken = config.botToken
+
+    if (!hasBotToken) {
       return (
         <span className='flex items-center gap-1 text-destructive'>
           <AlertCircle className='size-3' />

@@ -4,7 +4,6 @@ import {
   type Alert,
   alerts,
   type Content,
-  channels,
   subscriptions,
   users,
 } from '@everynews/schema'
@@ -60,6 +59,9 @@ export const processAlert = async (item: Alert) => {
       eq(subscriptions.alertId, item.id),
       isNull(subscriptions.deletedAt),
     ),
+    with: {
+      channel: true,
+    },
   })
 
   // Separate subscribers by channel speed type
@@ -67,21 +69,16 @@ export const processAlert = async (item: Alert) => {
   const slowChannelSubscribers = []
 
   for (const subscriber of allSubscribers) {
-    if (!subscriber.channelId) {
+    if (!subscriber.channel) {
       // No channel ID means default email channel (slow)
       slowChannelSubscribers.push(subscriber)
     } else {
-      const channel = await db.query.channels.findFirst({
-        where: and(
-          eq(channels.id, subscriber.channelId),
-          isNull(channels.deletedAt),
-        ),
-      })
-      // Fast channels: phone, push, slack, etc.
+      // Fast channels: phone, push, slack, discord, etc.
       if (
-        channel?.type === 'phone' ||
-        channel?.type === 'push' ||
-        channel?.type === 'slack'
+        subscriber.channel.type === 'phone' ||
+        subscriber.channel.type === 'push' ||
+        subscriber.channel.type === 'slack' ||
+        subscriber.channel.type === 'discord'
       ) {
         fastChannelSubscribers.push(subscriber)
       } else {

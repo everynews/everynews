@@ -200,7 +200,7 @@ export const LandingPageTabs = async () => {
                   </li>
                   <li className='flex items-start gap-2'>
                     <CheckCircle className='w-4 h-4 text-green-500 flex-shrink-0' />
-                    <span>Email, Slack, webhooks & APIs</span>
+                    <span>Email, Slack, Discord & SMS</span>
                   </li>
                 </ul>
               </CardContent>

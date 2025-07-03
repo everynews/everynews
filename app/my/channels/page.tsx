@@ -7,12 +7,14 @@ import {
 import { ChannelStatusBadge } from '@everynews/components/channel-status-badge'
 import { ClickableCard } from '@everynews/components/clickable-card'
 import { DeleteChannelDropdownItem } from '@everynews/components/delete-channel-dropdown-item'
+import { DiscordIcon } from '@everynews/components/discord-icon'
 import { SendVerificationDropdownItem } from '@everynews/components/send-verification-dropdown-item'
 import { Button } from '@everynews/components/ui/button'
 import { db } from '@everynews/database'
 import {
   ChannelSchema,
   channels,
+  DiscordChannelConfigSchema,
   SlackChannelConfigSchema,
 } from '@everynews/schema/channel'
 import { and, eq, isNull } from 'drizzle-orm'
@@ -29,6 +31,12 @@ export const metadata = {
 const getChannelDestination = (item: z.infer<typeof ChannelSchema>) => {
   if (item.type === 'slack') {
     const config = SlackChannelConfigSchema.safeParse(item.config)
+    if (config.success && config.data.channel) {
+      return `#${config.data.channel.name}`
+    }
+    return 'Not selected'
+  } else if (item.type === 'discord') {
+    const config = DiscordChannelConfigSchema.safeParse(item.config)
     if (config.success && config.data.channel) {
       return `#${config.data.channel.name}`
     }
@@ -112,12 +120,14 @@ export default async function MyChannelsPage() {
                     Edit
                   </Link>
                 </DropdownMenuItem>
-                {!item.verified && item.type !== 'slack' && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <SendVerificationDropdownItem channel={item} />
-                  </>
-                )}
+                {!item.verified &&
+                  item.type !== 'slack' &&
+                  item.type !== 'discord' && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <SendVerificationDropdownItem channel={item} />
+                    </>
+                  )}
                 <DropdownMenuSeparator />
                 <DeleteChannelDropdownItem channel={item} />
               </CardActionsPopover>
@@ -141,9 +151,11 @@ export default async function MyChannelsPage() {
                     <Phone className='size-3 sm:size-4' />
                   ) : item.type === 'slack' ? (
                     <Slack className='size-3 sm:size-4' />
+                  ) : item.type === 'discord' ? (
+                    <DiscordIcon className='size-3 sm:size-4' />
                   ) : null}
                   <span className='capitalize'>
-                    {['email', 'phone', 'slack'].includes(item.type)
+                    {['email', 'phone', 'slack', 'discord'].includes(item.type)
                       ? item.type
                       : 'unknown channel'}
                   </span>

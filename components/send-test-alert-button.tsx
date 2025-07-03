@@ -5,7 +5,10 @@ import { Button } from '@everynews/components/ui/button'
 import { toastNetworkError } from '@everynews/lib/error'
 import type { Alert } from '@everynews/schema/alert'
 import type { Channel } from '@everynews/schema/channel'
-import { SlackChannelConfigSchema } from '@everynews/schema/channel'
+import {
+  DiscordChannelConfigSchema,
+  SlackChannelConfigSchema,
+} from '@everynews/schema/channel'
 import type { Subscription } from '@everynews/schema/subscription'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -62,15 +65,25 @@ export const SendTestAlertButton = ({
               }
               return 'your Slack channel'
             })()
-          : (() => {
-              const parsed = z
-                .object({ destination: z.string() })
-                .safeParse(channel.config)
-              if (parsed.success) {
-                return parsed.data.destination
-              }
-              return 'your channel'
-            })()
+          : channel.type === 'discord'
+            ? (() => {
+                const parsed = DiscordChannelConfigSchema.safeParse(
+                  channel.config,
+                )
+                if (parsed.success) {
+                  return `#${parsed.data.channel?.name || 'your Discord channel'}`
+                }
+                return 'your Discord channel'
+              })()
+            : (() => {
+                const parsed = z
+                  .object({ destination: z.string() })
+                  .safeParse(channel.config)
+                if (parsed.success) {
+                  return parsed.data.destination
+                }
+                return 'your channel'
+              })()
         : 'your email'
 
       toast.success('Test alert sent!', {

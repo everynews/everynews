@@ -130,13 +130,13 @@ export default async function SubscriptionSuccessPage({
             </Link>
             <Link href='/my/subscriptions'>
               <Button variant='outline' className='w-full'>
-                <Settings className='size-4 mr-2' />
+                <Settings className='size-4' />
                 Manage Subscriptions
               </Button>
             </Link>
             <Link href='/'>
               <Button variant='ghost' className='w-full'>
-                <Home className='size-4 mr-2' />
+                <Home className='size-4' />
                 Go to Homepage
               </Button>
             </Link>

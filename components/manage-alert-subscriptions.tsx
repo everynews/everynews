@@ -13,7 +13,10 @@ import {
 import { toastNetworkError } from '@everynews/lib/error'
 import type { Alert } from '@everynews/schema/alert'
 import type { Channel } from '@everynews/schema/channel'
-import { SlackChannelConfigSchema } from '@everynews/schema/channel'
+import {
+  DiscordChannelConfigSchema,
+  SlackChannelConfigSchema,
+} from '@everynews/schema/channel'
 import type { Subscription } from '@everynews/schema/subscription'
 import { Edit, Mail, MessageSquare, Phone, Plus, Slack, X } from 'lucide-react'
 import Link from 'next/link'
@@ -21,6 +24,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { DiscordIcon } from './discord-icon'
 import { SendTestAlertButton } from './send-test-alert-button'
 import { SubscribeAlertDialog } from './subscribe-alert-dialog'
 
@@ -32,6 +36,8 @@ const getChannelIcon = (type: string) => {
       return <Phone className='size-4' />
     case 'slack':
       return <Slack className='size-4' />
+    case 'discord':
+      return <DiscordIcon className='size-4' />
     default:
       return <MessageSquare className='size-4' />
   }
@@ -117,7 +123,7 @@ export const ManageAlertSubscriptions = ({
               onClick={() => setOpen(false)}
             >
               <Button variant='outline' className='w-full justify-start'>
-                <Edit className='size-4 mr-2' />
+                <Edit className='size-4' />
                 Edit Alert Details
               </Button>
             </Link>
@@ -190,15 +196,26 @@ export const ManageAlertSubscriptions = ({
                                 }
                                 return 'Slack: Not configured'
                               })()
-                            : (() => {
-                                const parsed = z
-                                  .object({ destination: z.string() })
-                                  .safeParse(channel.config)
-                                if (parsed.success) {
-                                  return `${channel.type}: ${parsed.data.destination}`
-                                }
-                                return `${channel.type}: Not configured`
-                              })()
+                            : channel.type === 'discord'
+                              ? (() => {
+                                  const parsed =
+                                    DiscordChannelConfigSchema.safeParse(
+                                      channel.config,
+                                    )
+                                  if (parsed.success) {
+                                    return `Discord: #${parsed.data.channel?.name || 'Unknown channel'}`
+                                  }
+                                  return 'Discord: Not configured'
+                                })()
+                              : (() => {
+                                  const parsed = z
+                                    .object({ destination: z.string() })
+                                    .safeParse(channel.config)
+                                  if (parsed.success) {
+                                    return `${channel.type}: ${parsed.data.destination}`
+                                  }
+                                  return `${channel.type}: Not configured`
+                                })()
                           : `Email: ${user?.email}`}
                       </p>
                     </div>

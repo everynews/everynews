@@ -1,3 +1,4 @@
+import { url } from '@everynews/lib/url'
 import { track } from '@everynews/logs'
 import type { Story } from '@everynews/schema'
 import { isTokenError } from '@everynews/server/slack/token-refresh'
@@ -34,7 +35,7 @@ export const sendSlackAlert = async ({
     // Send each story URL as a separate message
     for (let i = 0; i < stories.length; i++) {
       const story = stories[i]
-      const everynewsUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news'}/stories/${story.id}`
+      const everynewsUrl = `${url}/stories/${story.id}`
 
       await track({
         channel: 'slack',
@@ -151,7 +152,7 @@ export const sendSlackVerification = async ({
         {
           elements: [
             {
-              text: `Connected by <${process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news'}|Everynews>`,
+              text: `Connected by <${url}|Everynews>`,
               type: 'mrkdwn',
             },
           ],
