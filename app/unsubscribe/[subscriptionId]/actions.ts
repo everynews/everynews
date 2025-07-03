@@ -5,7 +5,7 @@ import { subscriptions } from '@everynews/schema'
 import { eq } from 'drizzle-orm'
 
 export const unsubscribeAction = async (
-  state: { success: boolean },
+  _state: { success: boolean },
   formData: FormData,
 ) => {
   const subscriptionId = formData.get('subscriptionId') as string
