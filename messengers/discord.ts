@@ -1,3 +1,4 @@
+import { url } from '@everynews/lib/url'
 import { track } from '@everynews/logs'
 import type { Story } from '@everynews/schema'
 
@@ -29,7 +30,7 @@ export const sendDiscordAlert = async ({
     // Send each story URL as a separate message
     for (let i = 0; i < stories.length; i++) {
       const story = stories[i]
-      const everynewsUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news'}/stories/${story.id}`
+      const everynewsUrl = `${url}/stories/${story.id}`
 
       await track({
         channel: 'discord',
@@ -142,7 +143,7 @@ export const sendDiscordVerification = async ({
             {
               author: {
                 name: 'Everynews',
-                url: process.env.NEXT_PUBLIC_SITE_URL || 'https://every.news',
+                url,
               },
               color: 0x00ff00, // Green color
               description: `✅ This Discord channel is now connected to Everynews!\n\nYour alerts for **${channelName}** will be delivered here.`,

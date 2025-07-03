@@ -87,8 +87,6 @@ const sendAlertPhone = async (parcel: {
     alertName: parcel.alertName,
     phoneNumber: parcel.destination,
     stories: parcel.stories,
-    strategy: parcel.strategy,
-    wait: parcel.wait,
   })
 }
 

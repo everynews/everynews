@@ -1,15 +1,27 @@
 import { db } from '@everynews/database'
 import { encrypt } from '@everynews/lib/crypto'
+import { url } from '@everynews/lib/url'
 import { track } from '@everynews/logs'
 import { channels } from '@everynews/schema'
+
+if (process.env.SLACK_CLIENT_ID === undefined) {
+  throw new Error('SLACK_CLIENT_ID is not set')
+}
+
+if (process.env.SLACK_CLIENT_SECRET === undefined) {
+  throw new Error('SLACK_CLIENT_SECRET is not set')
+}
+
+if (process.env.SLACK_STATE_SECRET === undefined) {
+  throw new Error('SLACK_STATE_SECRET is not set')
+}
 
 // Helper to generate OAuth URL
 export async function generateInstallUrl(userId: string): Promise<string> {
   const clientId = process.env.SLACK_CLIENT_ID
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-  const stateSecret = process.env.SLACK_STATE_SECRET || 'default-state-secret'
+  const stateSecret = process.env.SLACK_STATE_SECRET
 
-  if (!clientId || !siteUrl) {
+  if (!clientId || !stateSecret) {
     throw new Error('Missing Slack OAuth configuration')
   }
 
@@ -20,7 +32,7 @@ export async function generateInstallUrl(userId: string): Promise<string> {
 
   const params = new URLSearchParams({
     client_id: clientId,
-    redirect_uri: `${siteUrl}/api/slack/callback`,
+    redirect_uri: `${url}/api/slack/callback`,
     scope: 'channels:read,chat:write,chat:write.public',
     state,
   })
@@ -36,10 +48,9 @@ export async function handleOAuthCallback(
 ): Promise<string> {
   const clientId = process.env.SLACK_CLIENT_ID
   const clientSecret = process.env.SLACK_CLIENT_SECRET
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-  const stateSecret = process.env.SLACK_STATE_SECRET || 'default-state-secret'
+  const stateSecret = process.env.SLACK_STATE_SECRET
 
-  if (!clientId || !clientSecret || !siteUrl) {
+  if (!clientId || !clientSecret || !stateSecret) {
     throw new Error('Missing Slack OAuth configuration')
   }
 
@@ -59,7 +70,7 @@ export async function handleOAuthCallback(
       client_id: clientId,
       client_secret: clientSecret,
       code,
-      redirect_uri: `${siteUrl}/api/slack/callback`,
+      redirect_uri: `${url}/api/slack/callback`,
     }),
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',

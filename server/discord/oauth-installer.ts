@@ -1,16 +1,31 @@
 import { db } from '@everynews/database'
 import { encrypt } from '@everynews/lib/crypto'
+import { url } from '@everynews/lib/url'
 import { track } from '@everynews/logs'
 import { channels } from '@everynews/schema'
 
 // Helper to generate OAuth URL
+if (process.env.DISCORD_STATE_SECRET === undefined) {
+  throw new Error('DISCORD_STATE_SECRET is not set')
+}
+
+if (process.env.DISCORD_CLIENT_ID === undefined) {
+  throw new Error('DISCORD_CLIENT_ID is not set')
+}
+
+if (process.env.DISCORD_CLIENT_SECRET === undefined) {
+  throw new Error('DISCORD_CLIENT_SECRET is not set')
+}
+
+if (process.env.DISCORD_BOT_TOKEN === undefined) {
+  throw new Error('DISCORD_BOT_TOKEN is not set')
+}
+
 export async function generateInstallUrl(userId: string): Promise<string> {
   const clientId = process.env.DISCORD_CLIENT_ID
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-  const stateSecret =
-    process.env.DISCORD_STATE_SECRET || 'default-discord-state-secret'
+  const stateSecret = process.env.DISCORD_STATE_SECRET
 
-  if (!clientId || !siteUrl) {
+  if (!clientId || !stateSecret) {
     throw new Error('Missing Discord OAuth configuration')
   }
 
@@ -23,7 +38,7 @@ export async function generateInstallUrl(userId: string): Promise<string> {
   const params = new URLSearchParams({
     client_id: clientId,
     permissions: '2048', // Send Messages permission
-    redirect_uri: `${siteUrl}/api/discord/callback`,
+    redirect_uri: `${url}/api/discord/callback`,
     response_type: 'code',
     scope: 'bot applications.commands',
     state,
@@ -41,11 +56,9 @@ export async function handleOAuthCallback(
   const clientId = process.env.DISCORD_CLIENT_ID
   const clientSecret = process.env.DISCORD_CLIENT_SECRET
   const botToken = process.env.DISCORD_BOT_TOKEN
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-  const stateSecret =
-    process.env.DISCORD_STATE_SECRET || 'default-discord-state-secret'
+  const stateSecret = process.env.DISCORD_STATE_SECRET
 
-  if (!clientId || !clientSecret || !botToken || !siteUrl) {
+  if (!clientId || !clientSecret || !botToken || !stateSecret) {
     throw new Error('Missing Discord OAuth configuration')
   }
 
@@ -66,7 +79,7 @@ export async function handleOAuthCallback(
       client_secret: clientSecret,
       code,
       grant_type: 'authorization_code',
-      redirect_uri: `${siteUrl}/api/discord/callback`,
+      redirect_uri: `${url}/api/discord/callback`,
     }),
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
