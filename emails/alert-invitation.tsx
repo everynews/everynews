@@ -97,7 +97,7 @@ const AlertInvitationEmail = ({
                     Recent Stories
                   </Text>
                   <div className='space-y-4'>
-                    {recentStories.slice(0, 5).map((story) => (
+                    {recentStories.slice(0, 3).map((story) => (
                       <div
                         key={story.title}
                         className='border border-gray-200 rounded-md p-4'
