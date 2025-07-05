@@ -1,4 +1,5 @@
-import { z } from '@hono/zod-openapi'
+import { z } from 'zod'
+import 'zod-openapi/extend'
 
 // Strategy is a JSON field in the news table, so there is no pgTable definition
 export const strategySchema = z
@@ -16,6 +17,6 @@ export const strategySchema = z
       token: z.string().optional().openapi({ example: 'ghp_xxxxxxxxxxxxx' }),
     }),
   ])
-  .openapi('StrategySchema')
+  .openapi({ ref: 'StrategySchema' })
 
 export type Strategy = z.infer<typeof strategySchema>

@@ -1,5 +1,6 @@
+import { z } from 'zod'
+import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
-import { z } from '@hono/zod-openapi'
 import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { alerts } from './alert'
@@ -26,13 +27,13 @@ export const SubscriptionSchema = z
   .object({
     alertId: z.string().openapi({ example: 'alert123' }),
     channelId: z.string().nullable().openapi({ example: 'channel123' }),
-    createdAt: z.coerce.date().openapi({ example: new Date().toISOString() }),
+    createdAt: z.coerce.date().openapi({ example: new Date() }),
     deletedAt: z.coerce.date().nullable().openapi({ example: null }),
     id: z.string().openapi({ example: '123' }),
-    updatedAt: z.coerce.date().openapi({ example: new Date().toISOString() }),
+    updatedAt: z.coerce.date().openapi({ example: new Date() }),
     userId: z.string().openapi({ example: 'user123' }),
   })
-  .openapi('SubscriptionSchema')
+  .openapi({ ref: 'SubscriptionSchema' })
 
 export const SubscriptionDtoSchema = SubscriptionSchema.omit({
   createdAt: true,
@@ -43,7 +44,7 @@ export const SubscriptionDtoSchema = SubscriptionSchema.omit({
   .extend({
     channelId: z.string().nullable().openapi({ example: 'channel123' }),
   })
-  .openapi('SubscriptionDtoSchema')
+  .openapi({ ref: 'SubscriptionDtoSchema' })
 
 export type Subscription = z.infer<typeof SubscriptionSchema>
 

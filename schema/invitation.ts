@@ -1,5 +1,6 @@
+import { z } from 'zod'
+import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
-import { z } from '@hono/zod-openapi'
 import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { alerts } from './alert'
@@ -27,8 +28,8 @@ export const InvitationSchema = z
   .object({
     acceptedAt: z.coerce.date().nullable().openapi({ example: null }),
     alertId: z.string().openapi({ example: 'alert123' }),
-    createdAt: z.coerce.date().openapi({ example: new Date().toISOString() }),
-    expiresAt: z.coerce.date().openapi({ example: new Date().toISOString() }),
+    createdAt: z.coerce.date().openapi({ example: new Date() }),
+    expiresAt: z.coerce.date().openapi({ example: new Date() }),
     id: z.string().openapi({ example: '123' }),
     inviteeEmail: z
       .string()
@@ -41,7 +42,7 @@ export const InvitationSchema = z
       .openapi({ example: 'Check out this alert!' }),
     token: z.string().openapi({ example: 'token123' }),
   })
-  .openapi('InvitationSchema')
+  .openapi({ ref: 'InvitationSchema' })
 
 export const InvitationCreateSchema = z
   .object({
@@ -58,7 +59,7 @@ export const InvitationCreateSchema = z
       example: 'I think you would find this alert interesting!',
     }),
   })
-  .openapi('InvitationCreateSchema')
+  .openapi({ ref: 'InvitationCreateSchema' })
 
 export type Invitation = z.infer<typeof InvitationSchema>
 export type InvitationCreate = z.infer<typeof InvitationCreateSchema>

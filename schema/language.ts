@@ -1,4 +1,5 @@
-import { z } from '@hono/zod-openapi'
+import { z } from 'zod'
+import 'zod-openapi/extend'
 
 export const LANGUAGE_CODES = [
   'af',

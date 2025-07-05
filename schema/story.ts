@@ -1,5 +1,5 @@
+import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
-import { z } from '@hono/zod-openapi'
 import { relations } from 'drizzle-orm'
 import {
   boolean,
@@ -9,6 +9,7 @@ import {
   timestamp,
   unique,
 } from 'drizzle-orm/pg-core'
+import { z } from 'zod'
 import { alerts } from './alert'
 import { contents } from './content'
 import { LANGUAGE_CODES, LanguageCodeSchema } from './language'
@@ -55,7 +56,7 @@ export const StorySchema = z
   .object({
     alertId: z.coerce.string().openapi({ example: 'alert123' }),
     contentId: z.coerce.string().openapi({ example: 'content123' }),
-    createdAt: z.coerce.date().openapi({ example: new Date().toISOString() }),
+    createdAt: z.coerce.date().openapi({ example: new Date() }),
     deletedAt: z.date().nullable().openapi({ example: null }),
     id: z.coerce.string().openapi({ example: '123' }),
     keyFindings: z
@@ -69,11 +70,11 @@ export const StorySchema = z
     promptId: z.coerce.string().nullable().openapi({ example: 'prompt123' }),
     systemMarkedIrrelevant: z.boolean().openapi({ example: false }),
     title: z.string().openapi({ example: 'Title' }),
-    updatedAt: z.coerce.date().openapi({ example: new Date().toISOString() }),
+    updatedAt: z.coerce.date().openapi({ example: new Date() }),
     url: z.string().openapi({ example: 'https://example.com' }),
     userMarkedIrrelevant: z.boolean().openapi({ example: false }),
   })
-  .openapi('StorySchema')
+  .openapi({ ref: 'StorySchema' })
 
 export const StoryDtoSchema = StorySchema.omit({
   alertId: true,
@@ -85,7 +86,7 @@ export const StoryDtoSchema = StorySchema.omit({
   systemMarkedIrrelevant: true,
   updatedAt: true,
   userMarkedIrrelevant: true,
-}).openapi('StoryDtoSchema')
+}).openapi({ ref: 'StoryDtoSchema' })
 
 export type Story = z.infer<typeof StorySchema>
 

@@ -1,3 +1,4 @@
+import 'zod-openapi/extend'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
 export const verifications = pgTable('verifications', {

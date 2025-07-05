@@ -1,4 +1,5 @@
-import { z } from '@hono/zod-openapi'
+import { z } from 'zod'
+import 'zod-openapi/extend'
 
 export const WaitSchema = z
   .discriminatedUnion('type', [
@@ -11,6 +12,6 @@ export const WaitSchema = z
       value: z.coerce.string().openapi({ example: '0 0 * * *' }),
     }),
   ])
-  .openapi('WaitSchema')
+  .openapi({ ref: 'WaitSchema' })
 
 export type Wait = z.infer<typeof WaitSchema>
