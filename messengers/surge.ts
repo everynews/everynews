@@ -144,8 +144,10 @@ export const sendSmsAlert = async ({
   }
 
   try {
-    // Format the alert messages (one URL per story)
-    const messageUrls = stories.map((story) => `${url}/stories/${story.id}`)
+    // Format the alert messages as "title link" (one per story)
+    const messageUrls = stories.map(
+      (story) => `${story.title} ${url}/stories/${story.id}`,
+    )
 
     // Get the Surge account ID from environment
     const accountId = process.env.SURGE_ACCOUNT_ID
@@ -153,7 +155,7 @@ export const sendSmsAlert = async ({
       throw new Error('SURGE_ACCOUNT_ID not configured')
     }
 
-    // Send each URL as a separate message
+    // Send each entry as a separate message
     for (let i = 0; i < messageUrls.length; i++) {
       const messageBody = messageUrls[i]
 
