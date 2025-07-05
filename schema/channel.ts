@@ -1,6 +1,5 @@
-import { z } from 'zod'
-import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
+import { z } from '@hono/zod-openapi'
 import { relations } from 'drizzle-orm'
 import { boolean, json, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { channelVerifications } from './channel-verification'
@@ -33,18 +32,18 @@ const BaseChannel = z
     verified: z.boolean(),
     verifiedAt: z.coerce.date().nullable(),
   })
-  .openapi({ ref: 'BaseChannel' })
+  .openapi('BaseChannel')
 
 export const EmailChannelConfigSchema = z
   .object({
     destination: z.string().email().openapi({ example: 'email@example.com' }),
   })
-  .openapi({ ref: 'EmailChannelConfigSchema' })
+  .openapi('EmailChannelConfigSchema')
 
 export const EmailChannelSchema = BaseChannel.extend({
   config: EmailChannelConfigSchema,
   type: z.literal('email').openapi({ example: 'email' }),
-}).openapi({ ref: 'EmailChannelSchema' })
+}).openapi('EmailChannelSchema')
 
 export const PhoneChannelConfigSchema = z
   .object({
@@ -55,12 +54,12 @@ export const PhoneChannelConfigSchema = z
       })
       .openapi({ example: '+18015551234' }),
   })
-  .openapi({ ref: 'PhoneChannelConfigSchema' })
+  .openapi('PhoneChannelConfigSchema')
 
 export const PhoneChannelSchema = BaseChannel.extend({
   config: PhoneChannelConfigSchema,
   type: z.literal('phone').openapi({ example: 'phone' }),
-}).openapi({ ref: 'PhoneChannelSchema' })
+}).openapi('PhoneChannelSchema')
 
 export const SlackChannelConfigSchema = z.object({
   accessToken: z.string().openapi({ example: 'xoxb-...' }),
@@ -89,7 +88,7 @@ export const SlackChannelConfigSchema = z.object({
 const SlackChannelSchema = BaseChannel.extend({
   config: SlackChannelConfigSchema,
   type: z.literal('slack').openapi({ example: 'slack' }),
-}).openapi({ ref: 'SlackChannelSchema' })
+}).openapi('SlackChannelSchema')
 
 export const DiscordChannelConfigSchema = z.object({
   botToken: z.string().openapi({ example: 'MTI3NjE3...' }),
@@ -113,12 +112,12 @@ export const DiscordChannelConfigSchema = z.object({
 const DiscordChannelSchema = BaseChannel.extend({
   config: DiscordChannelConfigSchema,
   type: z.literal('discord').openapi({ example: 'discord' }),
-}).openapi({ ref: 'DiscordChannelSchema' })
+}).openapi('DiscordChannelSchema')
 
 const UnknownChannelSchema = BaseChannel.extend({
   config: z.unknown(),
   type: z.string(),
-}).openapi({ ref: 'UnknownChannelSchema' })
+}).openapi('UnknownChannelSchema')
 
 export const ChannelSchema = z.union([
   EmailChannelSchema,
@@ -136,7 +135,7 @@ const EmailChannelDtoSchema = EmailChannelSchema.omit({
   userId: true,
   verified: true,
   verifiedAt: true,
-}).openapi({ ref: 'EmailChannelDtoSchema' })
+}).openapi('EmailChannelDtoSchema')
 
 const PhoneChannelDtoSchema = PhoneChannelSchema.omit({
   createdAt: true,
@@ -146,7 +145,7 @@ const PhoneChannelDtoSchema = PhoneChannelSchema.omit({
   userId: true,
   verified: true,
   verifiedAt: true,
-}).openapi({ ref: 'PhoneChannelDtoSchema' })
+}).openapi('PhoneChannelDtoSchema')
 
 const SlackChannelDtoSchema = SlackChannelSchema.omit({
   createdAt: true,
@@ -156,7 +155,7 @@ const SlackChannelDtoSchema = SlackChannelSchema.omit({
   userId: true,
   verified: true,
   verifiedAt: true,
-}).openapi({ ref: 'SlackChannelDtoSchema' })
+}).openapi('SlackChannelDtoSchema')
 
 const DiscordChannelDtoSchema = DiscordChannelSchema.omit({
   createdAt: true,
@@ -166,7 +165,7 @@ const DiscordChannelDtoSchema = DiscordChannelSchema.omit({
   userId: true,
   verified: true,
   verifiedAt: true,
-}).openapi({ ref: 'DiscordChannelDtoSchema' })
+}).openapi('DiscordChannelDtoSchema')
 
 export const ChannelDtoSchema = z
   .union([
@@ -175,7 +174,7 @@ export const ChannelDtoSchema = z
     SlackChannelDtoSchema,
     DiscordChannelDtoSchema,
   ])
-  .openapi({ ref: 'ChannelDtoSchema' })
+  .openapi('ChannelDtoSchema')
 
 export type Channel = z.infer<typeof ChannelSchema>
 export type ChannelDto = z.infer<typeof ChannelDtoSchema>

@@ -1,4 +1,5 @@
 import { nanoid } from '@everynews/lib/id'
+import { z } from '@hono/zod-openapi'
 import { relations } from 'drizzle-orm'
 import {
   boolean,
@@ -9,8 +10,7 @@ import {
   text,
   timestamp,
 } from 'drizzle-orm/pg-core'
-import { z } from 'zod'
-import 'zod-openapi/extend'
+
 import { LANGUAGE_CODES, LanguageCodeSchema } from './language'
 import { prompt } from './prompt'
 import { stories } from './story'
@@ -58,31 +58,43 @@ export const alerts = pgTable(
 export const AlertSchema = z
   .object({
     active: z.coerce.boolean().openapi({ example: true }),
-    createdAt: z.coerce.date().openapi({ example: new Date() }),
+    createdAt: z.coerce.date().openapi({ example: new Date().toISOString() }),
     deletedAt: z.coerce.date().nullable().openapi({ example: null }),
     description: z.coerce
       .string()
       .nullable()
       .openapi({ example: 'A brief description of the alert' }),
-    fastLastSent: z.coerce.date().nullable().openapi({ example: new Date() }),
+    fastLastSent: z.coerce
+      .date()
+      .nullable()
+      .openapi({ example: new Date().toISOString() }),
     id: z.coerce.string().openapi({ example: '123' }),
     isPublic: z.coerce.boolean().openapi({ example: true }),
     languageCode: LanguageCodeSchema,
-    lastRun: z.coerce.date().nullable().openapi({ example: new Date() }),
+    lastRun: z.coerce
+      .date()
+      .nullable()
+      .openapi({ example: new Date().toISOString() }),
     name: z.coerce
       .string()
       .min(1, 'Name is required')
       .openapi({ example: 'News' }),
-    nextRun: z.coerce.date().nullable().openapi({ example: new Date() }),
+    nextRun: z.coerce
+      .date()
+      .nullable()
+      .openapi({ example: new Date().toISOString() }),
     promptId: z.coerce.string().nullable().openapi({ example: '123' }),
-    slowLastSent: z.coerce.date().nullable().openapi({ example: new Date() }),
+    slowLastSent: z.coerce
+      .date()
+      .nullable()
+      .openapi({ example: new Date().toISOString() }),
     strategy: strategySchema,
     threshold: z.coerce.number().int().min(0).max(100).openapi({ example: 70 }),
-    updatedAt: z.coerce.date().openapi({ example: new Date() }),
+    updatedAt: z.coerce.date().openapi({ example: new Date().toISOString() }),
     userId: z.coerce.string().openapi({ example: '123' }),
     wait: WaitSchema,
   })
-  .openapi({ ref: 'Alert' })
+  .openapi('AlertSchema')
 
 export const AlertDtoSchema = AlertSchema.omit({
   createdAt: true,

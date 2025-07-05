@@ -1,8 +1,7 @@
-import { z } from 'zod'
-import 'zod-openapi/extend'
+import { z } from '@hono/zod-openapi'
 
 export const WorkerStatusSchema = z
   .object({
     ok: z.boolean().openapi({ example: true }),
   })
-  .openapi({ ref: 'WorkerStatus' })
+  .openapi('WorkerStatusSchema')

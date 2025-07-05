@@ -1,8 +1,7 @@
-import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
+import { z } from '@hono/zod-openapi'
 import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
-import { z } from 'zod'
 import { stories } from './story'
 
 export const contents = pgTable('contents', {
@@ -19,24 +18,24 @@ export const contents = pgTable('contents', {
 
 export const ContentSchema = z
   .object({
-    createdAt: z.coerce.date().openapi({ example: new Date() }),
+    createdAt: z.coerce.date().openapi({ example: new Date().toISOString() }),
     deletedAt: z.coerce.date().nullable().openapi({ example: null }),
     htmlBlobUrl: z.string().openapi({ example: 'articles/example.com.html' }),
     id: z.coerce.string().openapi({ example: '123' }),
     markdownBlobUrl: z.string().openapi({ example: 'articles/example.com.md' }),
     originalUrl: z.string().openapi({ example: 'https://example.com' }),
     title: z.string().openapi({ example: 'Title' }),
-    updatedAt: z.coerce.date().openapi({ example: new Date() }),
+    updatedAt: z.coerce.date().openapi({ example: new Date().toISOString() }),
     url: z.string().openapi({ example: 'https://example.com' }),
   })
-  .openapi({ ref: 'ContentSchema' })
+  .openapi('ContentSchema')
 
 export const ContentDtoSchema = ContentSchema.omit({
   createdAt: true,
   deletedAt: true,
   id: true,
   updatedAt: true,
-}).openapi({ ref: 'ContentDtoSchema' })
+}).openapi('ContentDtoSchema')
 
 export type Content = z.infer<typeof ContentSchema>
 

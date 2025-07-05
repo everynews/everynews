@@ -1,6 +1,5 @@
-import { z } from 'zod'
-import 'zod-openapi/extend'
 import { nanoid } from '@everynews/lib/id'
+import { z } from '@hono/zod-openapi'
 import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { alerts } from './alert'
@@ -25,17 +24,17 @@ export const PromptSchema = z
       .string()
       .min(1, 'Content is required')
       .openapi({ example: 'Custom prompt instructions...' }),
-    createdAt: z.coerce.date().openapi({ example: new Date() }),
+    createdAt: z.coerce.date().openapi({ example: new Date().toISOString() }),
     deletedAt: z.coerce.date().nullable().openapi({ example: null }),
     id: z.coerce.string().openapi({ example: '123' }),
     name: z.coerce
       .string()
       .min(1, 'Name is required')
       .openapi({ example: 'My Custom Prompt' }),
-    updatedAt: z.coerce.date().openapi({ example: new Date() }),
+    updatedAt: z.coerce.date().openapi({ example: new Date().toISOString() }),
     userId: z.coerce.string().openapi({ example: '123' }),
   })
-  .openapi({ ref: 'Prompt' })
+  .openapi('PromptSchema')
 
 export const PromptDtoSchema = PromptSchema.omit({
   createdAt: true,

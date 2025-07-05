@@ -1,7 +1,7 @@
+import { z } from '@hono/zod-openapi'
 import { relations } from 'drizzle-orm'
 import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
-import { z } from 'zod'
-import 'zod-openapi/extend'
+
 import { accounts } from './account'
 import { alerts } from './alert'
 import { channels } from './channel'
@@ -33,7 +33,7 @@ export const UserSchema = z
     phoneNumberVerified: z.boolean().nullable(),
     updatedAt: z.coerce.date(),
   })
-  .openapi({ ref: 'UserSchema' })
+  .openapi('UserSchema')
 
 export type User = z.infer<typeof UserSchema>
 
