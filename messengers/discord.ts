@@ -27,7 +27,7 @@ export const sendDiscordAlert = async ({
   })
 
   try {
-    // Send each story URL as a separate message
+    // Send each story title and link as a separate message
     for (let i = 0; i < stories.length; i++) {
       const story = stories[i]
       const everynewsUrl = `${url}/stories/${story.id}`
@@ -50,7 +50,7 @@ export const sendDiscordAlert = async ({
         `https://discord.com/api/v10/channels/${channelId}/messages`,
         {
           body: JSON.stringify({
-            content: everynewsUrl,
+            content: `${story.title} ${everynewsUrl}`,
           }),
           headers: {
             Authorization: `Bot ${botToken}`,

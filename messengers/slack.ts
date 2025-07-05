@@ -32,7 +32,7 @@ export const sendSlackAlert = async ({
   try {
     const slack = new WebClient(accessToken)
 
-    // Send each story URL as a separate message
+    // Send each story title and link as a separate message
     for (let i = 0; i < stories.length; i++) {
       const story = stories[i]
       const everynewsUrl = `${url}/stories/${story.id}`
@@ -53,7 +53,7 @@ export const sendSlackAlert = async ({
 
       const result = await slack.chat.postMessage({
         channel: channelId,
-        text: everynewsUrl,
+        text: `${story.title} ${everynewsUrl}`,
       })
 
       await track({
