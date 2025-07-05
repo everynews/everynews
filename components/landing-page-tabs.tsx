@@ -341,7 +341,7 @@ export const LandingPageTabs = async () => {
                       <CardContent className='pt-0'>
                         <div className='flex flex-col gap-2'>
                           {story.keyFindings
-                            .slice(0, 2)
+                            .slice(0, 3)
                             .map((finding, index) => (
                               <div
                                 key={`${story.id}-finding-${index}`}

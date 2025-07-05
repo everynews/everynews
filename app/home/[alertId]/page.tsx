@@ -110,7 +110,7 @@ export default async function Page({
                 story.keyFindings.length > 0 && (
                   <CardContent className='pt-0'>
                     <div className='space-y-2'>
-                      {story.keyFindings.slice(0, 2).map((finding, index) => (
+                      {story.keyFindings.slice(0, 3).map((finding, index) => (
                         <div
                           key={`${story.id}-finding-${index}`}
                           className='flex items-center gap-2'

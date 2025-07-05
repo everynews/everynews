@@ -34,7 +34,7 @@ export async function generateMetadata({
     openGraph: {
       images: [
         {
-          url: `/api/og?title=${post?.title}&description=${Array.isArray(post?.keyFindings) && post.keyFindings.length > 0 ? post.keyFindings.slice(0, 2).join(' ') : ''}`,
+          url: `/api/og?title=${post?.title}&description=${Array.isArray(post?.keyFindings) && post.keyFindings.length > 0 ? post.keyFindings.slice(0, 3).join(' ') : ''}`,
         },
       ],
     },
