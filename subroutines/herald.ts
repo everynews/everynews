@@ -23,6 +23,7 @@ import { z } from 'zod'
 
 const sendAlertEmail = async (parcel: {
   alertName: string
+  alertId: string
   destination: string
   readerCount: number
   stories: Story[]
@@ -34,6 +35,7 @@ const sendAlertEmail = async (parcel: {
     await sendTemplateEmail({
       subject: parcel.stories[0].title ?? parcel.alertName,
       template: Alert({
+        alertId: parcel.alertId,
         alertName: parcel.alertName,
         readerCount: parcel.readerCount,
         stories: parcel.stories,
@@ -256,6 +258,7 @@ const sendAlertDiscord = async (parcel: {
 export const herald = async ({
   channelId,
   alertName,
+  alertId,
   readerCount,
   stories,
   strategy,
@@ -265,6 +268,7 @@ export const herald = async ({
 }: {
   channelId: string | null
   alertName: string
+  alertId: string
   readerCount: number
   stories: Story[]
   strategy: Strategy
@@ -288,6 +292,7 @@ export const herald = async ({
 
     let parcel: {
       alertName: string
+      alertId: string
       destination: string
       readerCount: number
       stories: Story[]
@@ -313,6 +318,7 @@ export const herald = async ({
       }
 
       parcel = {
+        alertId,
         alertName,
         destination: user.email,
         readerCount,
@@ -370,6 +376,7 @@ export const herald = async ({
       }
 
       parcel = {
+        alertId,
         alertName,
         destination,
         readerCount,

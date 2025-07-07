@@ -165,6 +165,7 @@ export const TestAlertRouter = new Hono<WithAuth>().use(authMiddleware).post(
 
       // Send the test alert using herald
       await herald({
+        alertId,
         alertName: `[TEST] ${alert.name}`,
         channelId,
         readerCount,

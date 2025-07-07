@@ -181,6 +181,7 @@ export const processAlert = async (item: Alert) => {
       try {
         await withTimeout(
           herald({
+            alertId: item.id,
             alertName: item.name,
             channelId: subscriber.channelId,
             readerCount: allSubscribers.length,
@@ -255,6 +256,7 @@ export const processAlert = async (item: Alert) => {
       try {
         await withTimeout(
           herald({
+            alertId: item.id,
             alertName: item.name,
             channelId: subscriber.channelId,
             readerCount: allSubscribers.length,

@@ -16,6 +16,7 @@ import {
 const Alert = ({
   alertName,
   readerCount,
+  alertId,
   stories,
   strategy,
   subscriptionId,
@@ -23,6 +24,7 @@ const Alert = ({
 }: {
   alertName: string
   readerCount: number
+  alertId: string
   stories: Story[]
   strategy: Strategy
   subscriptionId?: string
@@ -50,7 +52,13 @@ const Alert = ({
                 {wait.type === 'count'
                   ? `after ${wait.value} stories`
                   : formatSchedule(wait.value)}{' '}
-                · {readerCount} {readerCount !== 1 ? 'readers' : 'reader'}
+                · {readerCount} {readerCount !== 1 ? 'readers' : 'reader'} ·{' '}
+                <Link
+                  href={`${url}/alerts/${alertId}/invite`}
+                  className='text-orange-500'
+                >
+                  Invite More Friends
+                </Link>
               </Text>
             </Section>
             {stories?.length ? (
@@ -97,11 +105,11 @@ const Alert = ({
 }
 
 Alert.PreviewProps = {
+  alertId: '6JTQMD8N8BMD',
   alertName: 'Tech Digest',
   readerCount: 123,
   stories: [
     {
-      alertId: '6JTQMD8N8BMD',
       contentId: 'CMR4XRW20ECJ',
       createdAt: new Date('2025-06-04T08:40:24.919Z'),
       id: '00AK3NF069VT',
@@ -116,7 +124,6 @@ Alert.PreviewProps = {
       url: 'https://os2museum.com/wp/ai-responses-may-include-mistakes',
     },
     {
-      alertId: '6JTQMD8N8BMD',
       contentId: '1B2N47W0FXJB',
       createdAt: new Date('2025-06-04T08:40:36.233Z'),
       id: '0738HMRMVS00',
