@@ -61,8 +61,6 @@ const CommandGroup = ({
     {...props}
   />
 )
-
-
 const CommandItem = ({
   className,
   ...props
