@@ -62,15 +62,6 @@ const CommandGroup = ({
   />
 )
 
-const CommandSeparator = ({
-  className,
-  ...props
-}: React.ComponentProps<typeof CommandPrimitive.Separator>) => (
-  <CommandPrimitive.Separator
-    className={cn('bg-border -mx-1 h-px', className)}
-    {...props}
-  />
-)
 
 const CommandItem = ({
   className,
@@ -93,5 +84,4 @@ export {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
 }

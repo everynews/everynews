@@ -1,6 +1,6 @@
 import { toast } from 'sonner'
 
-export const redactError = ({
+const redactError = ({
   error,
   safeAlternateString,
 }: {

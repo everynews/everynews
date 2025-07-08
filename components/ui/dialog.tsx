@@ -17,19 +17,13 @@ export const DialogTrigger = ({
   <DialogPrimitive.Trigger data-slot='dialog-trigger' {...props} />
 )
 
-export const DialogPortal = ({
+const DialogPortal = ({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Portal>) => (
   <DialogPrimitive.Portal data-slot='dialog-portal' {...props} />
 )
 
-export const DialogClose = ({
-  ...props
-}: React.ComponentProps<typeof DialogPrimitive.Close>) => (
-  <DialogPrimitive.Close data-slot='dialog-close' {...props} />
-)
-
-export const DialogOverlay = ({
+const DialogOverlay = ({
   className,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Overlay>) => (

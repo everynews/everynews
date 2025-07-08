@@ -13,7 +13,7 @@ export const localToUtc = (localHour: number): number => {
 }
 
 // Get display label for hour (already in local time)
-export const getHourLabel = (localHour: number): string => {
+const getHourLabel = (localHour: number): string => {
   // Normalize hour to 0-23 range
   const normalizedHour = ((localHour % 24) + 24) % 24
   const displayHour = normalizedHour % 12 === 0 ? 12 : normalizedHour % 12

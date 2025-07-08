@@ -21,14 +21,4 @@ const MetaKeyIcon = ({ className }: { className?: string }) => {
   )
 }
 
-export const useMetaKeyString = () => {
-  const [isMac, setIsMac] = useState(false)
-
-  useEffect(() => {
-    setIsMac(navigator.userAgent.toLowerCase().includes('mac'))
-  }, [])
-
-  return isMac ? '⌘' : '⌃'
-}
-
 export default MetaKeyIcon

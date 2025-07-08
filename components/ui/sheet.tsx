@@ -23,13 +23,13 @@ export const SheetClose = ({
   <SheetPrimitive.Close data-slot='sheet-close' {...props} />
 )
 
-export const SheetPortal = ({
+const SheetPortal = ({
   ...props
 }: ComponentProps<typeof SheetPrimitive.Portal>) => (
   <SheetPrimitive.Portal data-slot='sheet-portal' {...props} />
 )
 
-export const SheetOverlay = ({
+const SheetOverlay = ({
   className,
   ...props
 }: ComponentProps<typeof SheetPrimitive.Overlay>) => (
@@ -101,17 +101,6 @@ export const SheetTitle = ({
   <SheetPrimitive.Title
     data-slot='sheet-title'
     className={cn('text-foreground font-semibold', className)}
-    {...props}
-  />
-)
-
-export const SheetDescription = ({
-  className,
-  ...props
-}: ComponentProps<typeof SheetPrimitive.Description>) => (
-  <SheetPrimitive.Description
-    data-slot='sheet-description'
-    className={cn('text-muted-foreground text-sm', className)}
     {...props}
   />
 )

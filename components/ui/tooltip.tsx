@@ -4,7 +4,7 @@ import { cn } from '@everynews/lib/utils'
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import type * as React from 'react'
 
-export const TooltipProvider = ({
+const TooltipProvider = ({
   delayDuration = 0,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Provider>) => {

@@ -2,42 +2,7 @@ import { track } from '@everynews/logs'
 import { omit } from 'es-toolkit'
 import { plunkProvider } from './providers/plunk'
 import { resendProvider } from './providers/resend'
-import type { SendSignInEmailParams, SendTemplateEmailParams } from './types'
-
-export const sendSignInEmail = async (params: SendSignInEmailParams) => {
-  try {
-    plunkProvider.signIn(params)
-    return
-  } catch (error) {
-    await track({
-      channel: 'worker',
-      description: 'Failed to send email with Plunk',
-      event: 'Email Delivery Skipped',
-      icon: '⏭️',
-      tags: {
-        type: 'error',
-        ...params,
-        error: JSON.stringify(error),
-      },
-    })
-  }
-  try {
-    resendProvider.signIn(params)
-    return
-  } catch (error) {
-    await track({
-      channel: 'worker',
-      description: 'Failed to send email with Resend',
-      event: 'Email Delivery Skipped',
-      icon: '⏭️',
-      tags: {
-        type: 'error',
-        ...params,
-        error: JSON.stringify(error),
-      },
-    })
-  }
-}
+import type { SendTemplateEmailParams } from './types'
 
 export const sendTemplateEmail = async (params: SendTemplateEmailParams) => {
   try {

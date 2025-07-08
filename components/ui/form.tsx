@@ -121,22 +121,6 @@ const FormControl = ({ ...props }: React.ComponentProps<typeof Slot>) => {
   )
 }
 
-const FormDescription = ({
-  className,
-  ...props
-}: React.ComponentProps<'p'>) => {
-  const { formDescriptionId } = useFormField()
-
-  return (
-    <p
-      data-slot='form-description'
-      id={formDescriptionId}
-      className={cn('text-muted-foreground text-sm', className)}
-      {...props}
-    />
-  )
-}
-
 const FormMessage = ({ className, ...props }: React.ComponentProps<'p'>) => {
   const { error, formMessageId } = useFormField()
   const body = error ? String(error?.message ?? '') : props.children
@@ -157,13 +141,4 @@ const FormMessage = ({ className, ...props }: React.ComponentProps<'p'>) => {
   )
 }
 
-export {
-  useFormField,
-  Form,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-  FormField,
-}
+export { Form, FormControl, FormField, FormItem, FormLabel, FormMessage }

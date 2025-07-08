@@ -104,8 +104,3 @@ export const decrypt = async (encryptedText: string): Promise<string> => {
     throw new Error('Decryption failed: invalid data or authentication tag')
   }
 }
-
-// Helper to generate a new encryption key
-export const generateEncryptionKey = (): string => {
-  return randomBytes(keyLength).toString('hex')
-}

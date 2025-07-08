@@ -36,10 +36,4 @@ const PopoverContent = ({
   </PopoverPrimitive.Portal>
 )
 
-const PopoverAnchor = ({
-  ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Anchor>) => (
-  <PopoverPrimitive.Anchor data-slot='popover-anchor' {...props} />
-)
-
-export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor }
+export { Popover, PopoverTrigger, PopoverContent }
