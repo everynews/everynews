@@ -149,6 +149,22 @@ export default function TermsPage() {
         </section>
 
         <section className='mb-8'>
+          <h2 className='text-2xl font-semibold mb-4'>Sibling Product Communications</h2>
+          <p>
+            By using Everynews, you acknowledge that we may send you communications 
+            about other products and services offered by Everynews or our affiliated 
+            companies. You may opt out of these communications at any time by contacting{' '}
+            <Link
+              href='mailto:products@every.news'
+              className='text-orange-500 hover:underline'
+            >
+              products@every.news
+            </Link>
+            .
+          </p>
+        </section>
+
+        <section className='mb-8'>
           <h2 className='text-2xl font-semibold mb-4'>Contact</h2>
           <p>
             Contact us at{' '}
