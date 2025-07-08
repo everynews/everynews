@@ -36,7 +36,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
     zValidator('json', SubscriptionDtoSchema),
 
     async (c) => {
-      const { alertId, channelId, userId } = await c.req.json()
+      const { alertId, channelId } = await c.req.json()
       const user = c.get('user')
       if (!user?.id) {
         await track({
@@ -91,7 +91,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
         .values({
           alertId,
           channelId: channelId ?? null,
-          userId: userId ?? user.id,
+          userId: user.id,
         })
         .returning()
 
@@ -106,7 +106,7 @@ export const SubscriptionRouter = new Hono<WithAuth>()
           channel_id: channelId || 'default',
           type: 'info',
         },
-        user_id: userId ?? user.id,
+        user_id: user.id,
       })
 
       return c.json(result)

@@ -40,6 +40,7 @@ export const SubscriptionDtoSchema = SubscriptionSchema.omit({
   deletedAt: true,
   id: true,
   updatedAt: true,
+  userId: true,
 })
   .extend({
     channelId: z.string().nullable().openapi({ example: 'channel123' }),
