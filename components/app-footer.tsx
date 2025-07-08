@@ -49,13 +49,21 @@ export const AppFooter = ({
       ],
       title: 'Socials',
     },
+    {
+      links: [{ href: '/api', text: 'API Documentation' }],
+      title: 'API',
+    },
+    {
+      links: [
+        { href: '/privacy', text: 'Privacy Policy' },
+        { href: '/terms', text: 'Terms of Service' },
+        { href: '/support', text: 'Support' },
+      ],
+      title: 'Legal',
+    },
   ],
   copyright = '© 2025 Everynews. All rights reserved.',
-  policies = [
-    { href: '/privacy', text: 'Privacy Policy' },
-    { href: '/terms', text: 'Terms of Service' },
-    { href: '/support', text: 'Support' },
-  ],
+  policies = [],
   showThemeToggle = true,
   className,
 }: FooterProps) => {
