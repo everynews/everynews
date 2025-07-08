@@ -194,20 +194,22 @@ export default function PrivacyPage() {
         </section>
 
         <section className='mb-8'>
-          <h2 className='text-2xl font-semibold mb-4'>Sibling Product Communications</h2>
+          <h2 className='text-2xl font-semibold mb-4'>
+            Sibling Product Communications
+          </h2>
           <p>
-            From time to time, we may send you emails about other products and services 
-            offered by Everynews or our affiliated companies that we believe may be of 
-            interest to you. You may opt out of receiving these sibling product emails 
-            at any time by contacting{' '}
+            From time to time, we may send you emails about other products and
+            services offered by Everynews or our affiliated companies that we
+            believe may be of interest to you. You may opt out of receiving
+            these sibling product emails at any time by contacting{' '}
             <Link
               href='mailto:products@every.news'
               className='text-orange-500 hover:underline'
             >
               products@every.news
             </Link>
-            . This opt-out will not affect your receipt of service-related emails 
-            regarding your Everynews account.
+            . This opt-out will not affect your receipt of service-related
+            emails regarding your Everynews account.
           </p>
         </section>
 
