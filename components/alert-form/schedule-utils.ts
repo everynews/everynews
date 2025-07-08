@@ -1,6 +1,6 @@
 import { localToUtc, utcToLocal } from '@everynews/lib/timezone'
 
-export interface ScheduleData {
+interface ScheduleData {
   days: string[]
   hours: number[]
 }

@@ -8,7 +8,7 @@ export type SendTemplateEmailParams = {
   template: React.ReactElement
 }
 
-export type EmailResponse = {
+type EmailResponse = {
   id?: string
   [key: string]: unknown
 }

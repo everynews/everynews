@@ -8,7 +8,7 @@ if (!process.env.LOGSNAG_PROJECT_ID) {
   throw new Error('LOGSNAG_PROJECT_ID is not set')
 }
 
-export const logsnag = new LogSnag({
+const logsnag = new LogSnag({
   project: process.env.LOGSNAG_PROJECT_ID,
   token: process.env.LOGSNAG_PROJECT_TOKEN,
 })
