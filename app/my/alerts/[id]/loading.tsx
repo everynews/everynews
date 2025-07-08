@@ -14,6 +14,9 @@ export default function Loading() {
         <h1 className='text-2xl sm:text-3xl font-bold flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:justify-between'>
           Edit Alert
           <div className='flex gap-2 w-full sm:w-auto'>
+            <Button variant='destructive' disabled>
+              Delete
+            </Button>
             <Button variant='outline' disabled>
               Test
             </Button>
@@ -91,7 +94,7 @@ export default function Loading() {
 
           {/* Action buttons */}
           <div className='flex justify-between gap-2'>
-            <Button variant='destructive' disabled>
+            <Button variant='outline' disabled>
               Cancel
             </Button>
             <div className='flex gap-2'>

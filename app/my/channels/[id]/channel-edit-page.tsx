@@ -2,6 +2,7 @@
 
 import { api } from '@everynews/app/api'
 import { ChannelStatusBadge } from '@everynews/components/channel-status-badge'
+import { DeletePopover } from '@everynews/components/delete-popover'
 import { DiscordIcon } from '@everynews/components/discord-icon'
 import { DiscordTestButton } from '@everynews/components/discord-test-button'
 import { SlackTestButton } from '@everynews/components/slack-test-button'
@@ -159,6 +160,24 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
     },
   })
 
+  const onDelete = async () => {
+    try {
+      const res = await api.channels[':id'].$delete({
+        param: { id: channel.id },
+      })
+
+      if (!res.ok) {
+        toast.error('Failed to delete channel')
+        return
+      }
+
+      toast.success(`Channel "${channel.name}" deleted successfully`)
+      router.push('/my/channels')
+    } catch (e) {
+      toastNetworkError(e as Error)
+    }
+  }
+
   const onSubmit = async (values: ChannelDto) => {
     // Unknown channel types can't be edited
     if (
@@ -307,7 +326,18 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
               Update your delivery channel settings
             </p>
           </div>
-          <ChannelStatusBadge channel={channel} />
+          <div className='flex items-center gap-2'>
+            <DeletePopover
+              itemName={channel.name}
+              onDelete={onDelete}
+              successMessage={`Channel "${channel.name}" deleted successfully`}
+            >
+              <Button variant='destructive' size='default'>
+                Delete
+              </Button>
+            </DeletePopover>
+            <ChannelStatusBadge channel={channel} />
+          </div>
         </div>
       </div>
       <Form {...form}>

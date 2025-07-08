@@ -8,6 +8,7 @@ import {
 } from '@everynews/components/alert-form'
 import { AlertPreview } from '@everynews/components/alert-preview'
 import { DadJokes } from '@everynews/components/dad-jokes'
+import { DeletePopover } from '@everynews/components/delete-popover'
 import { PromptDialog } from '@everynews/components/prompt-dialog'
 import { SubmitButton } from '@everynews/components/submit-button'
 import { Button } from '@everynews/components/ui/button'
@@ -149,6 +150,24 @@ export const AlertEditPage = ({
     }
   }
 
+  const onDelete = async () => {
+    try {
+      const res = await api.alerts[':id'].$delete({
+        param: { id: alert.id },
+      })
+
+      if (!res.ok) {
+        toast.error('Failed to delete alert')
+        return
+      }
+
+      toast.success(`Alert "${alert.name}" deleted successfully`)
+      router.push('/my/alerts')
+    } catch (e) {
+      toastNetworkError(e as Error)
+    }
+  }
+
   const onTest = async () => {
     const values = form.getValues()
     setIsTesting(true)
@@ -239,6 +258,15 @@ export const AlertEditPage = ({
         <h1 className='text-2xl sm:text-3xl font-bold flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:justify-between'>
           Edit Alert
           <div className='flex gap-2 w-full sm:w-auto'>
+            <DeletePopover
+              itemName={alert.name}
+              onDelete={onDelete}
+              successMessage={`Alert "${alert.name}" deleted successfully`}
+            >
+              <Button variant='destructive' size='default'>
+                Delete
+              </Button>
+            </DeletePopover>
             <SubmitButton
               variant='outline'
               onClick={onTest}
@@ -758,15 +786,13 @@ export const AlertEditPage = ({
               </div>
 
               <div className='flex justify-between gap-2'>
-                <div className='flex gap-2'>
-                  <Button
-                    type='button'
-                    variant='destructive'
-                    onClick={() => router.push('/my/alerts')}
-                  >
-                    Cancel
-                  </Button>
-                </div>
+                <Button
+                  type='button'
+                  variant='outline'
+                  onClick={() => router.push('/my/alerts')}
+                >
+                  Cancel
+                </Button>
                 <div className='flex gap-2'>
                   <SubmitButton
                     variant='outline'
