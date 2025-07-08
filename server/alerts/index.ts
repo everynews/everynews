@@ -14,7 +14,7 @@ import { InvitationCreateSchema } from '@everynews/schema/invitation'
 import type { WithAuth } from '@everynews/server/bindings/auth'
 import { authMiddleware } from '@everynews/server/middleware/auth'
 import { zValidator } from '@hono/zod-validator'
-import { and, desc, eq, isNull } from 'drizzle-orm'
+import { and, desc, eq, gte, isNull } from 'drizzle-orm'
 import { Hono } from 'hono'
 import { describeRoute } from 'hono-openapi'
 import { resolver } from 'hono-openapi/zod'
@@ -419,10 +419,30 @@ export const AlertRouter = new Hono<WithAuth>()
 
       // Create invitations and send emails
       let sentCount = 0
+      let skippedCount = 0
       const baseUrl = process.env.NEXT_PUBLIC_URL || 'https://every.news'
 
       for (const email of emails) {
         try {
+          // Check if there's already a pending invitation for this email and alert
+          const existingInvitation = await db
+            .select()
+            .from(invitations)
+            .where(
+              and(
+                eq(invitations.alertId, id),
+                eq(invitations.inviteeEmail, email),
+                isNull(invitations.acceptedAt),
+                gte(invitations.expiresAt, new Date()),
+              ),
+            )
+            .limit(1)
+
+          if (existingInvitation.length > 0) {
+            skippedCount++
+            continue
+          }
+
           // Create invitation record
           const [invitation] = await db
             .insert(invitations)
@@ -477,19 +497,20 @@ export const AlertRouter = new Hono<WithAuth>()
 
       await track({
         channel: 'alerts',
-        description: `Sent ${sentCount} invitations for alert: ${alert.name}`,
+        description: `Sent ${sentCount} invitations for alert: ${alert.name} (${skippedCount} skipped)`,
         event: 'Invitations Sent',
         icon: '📧',
         tags: {
           alert_id: id,
           sent_count: sentCount,
+          skipped_count: skippedCount,
           total_emails: emails.length,
           type: 'info',
         },
         user_id: user.id,
       })
 
-      return c.json({ sent: sentCount })
+      return c.json({ sent: sentCount, skipped: skippedCount })
     },
   )
   .route('/test', TestAlertRouter)

@@ -23,6 +23,7 @@ export const InviteToAlertForm = ({ alert }: InviteToAlertFormProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [invitationsSent, setInvitationsSent] = useState(false)
   const [sentCount, setSentCount] = useState(0)
+  const [skippedCount, setSkippedCount] = useState(0)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,10 +69,14 @@ export const InviteToAlertForm = ({ alert }: InviteToAlertFormProps) => {
 
       const result = await response.json()
       setSentCount(result.sent)
+      setSkippedCount(result.skipped || 0)
       setInvitationsSent(true)
-      toast.success(
-        `${result.sent} invitation${result.sent === 1 ? '' : 's'} sent successfully`,
-      )
+
+      let toastMessage = `${result.sent} invitation${result.sent === 1 ? '' : 's'} sent successfully`
+      if (result.skipped > 0) {
+        toastMessage += ` (${result.skipped} skipped - already invited)`
+      }
+      toast.success(toastMessage)
     } catch (error) {
       toastNetworkError(error as Error)
     } finally {
@@ -89,11 +94,18 @@ export const InviteToAlertForm = ({ alert }: InviteToAlertFormProps) => {
             </div>
             <div className='flex flex-col gap-2'>
               <p className='text-lg font-medium'>Invitations sent!</p>
-              <div className='flex items-center justify-center gap-1 text-sm text-muted-foreground'>
-                <Mail className='size-4' />
-                <span>
-                  {sentCount} invitation{sentCount === 1 ? '' : 's'} sent
-                </span>
+              <div className='flex flex-col items-center gap-1'>
+                <div className='flex items-center justify-center gap-1 text-sm text-muted-foreground'>
+                  <Mail className='size-4' />
+                  <span>
+                    {sentCount} invitation{sentCount === 1 ? '' : 's'} sent
+                  </span>
+                </div>
+                {skippedCount > 0 && (
+                  <p className='text-sm text-muted-foreground'>
+                    {skippedCount} skipped (already invited)
+                  </p>
+                )}
               </div>
             </div>
             <div className='flex gap-2'>
@@ -104,6 +116,7 @@ export const InviteToAlertForm = ({ alert }: InviteToAlertFormProps) => {
                   setEmails('')
                   setMessage('')
                   setSentCount(0)
+                  setSkippedCount(0)
                 }}
                 loading={false}
               >
