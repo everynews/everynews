@@ -33,7 +33,7 @@ export const InviteToAlertForm = ({ alert }: InviteToAlertFormProps) => {
       .split('\n')
       .map((email) => email.trim())
       .filter((email) => email.length > 0)
-    
+
     const emailList = [...new Set(totalEmailList)]
 
     if (emailList.length === 0) {
