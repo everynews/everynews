@@ -1,0 +1,16 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": [
+    "app/**/*.{ts,tsx}",
+    "server/**/*.ts",
+    "subroutines/**/*.ts"
+  ],
+  "project": [
+    "**/*.{ts,tsx,js,jsx}"
+  ],
+  "ignore": [
+    "node_modules/**",
+    ".next/**",
+    "drizzle/**"
+  ]
+}
