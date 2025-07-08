@@ -126,7 +126,7 @@ export const InviteToAlertForm = ({ alert }: InviteToAlertFormProps) => {
         <Label htmlFor='emails'>Email addresses</Label>
         <Textarea
           id='emails'
-          placeholder='email1@example.com\nemail2@example.com\nemail3@example.com'
+          placeholder='email@example.com'
           value={emails}
           onChange={(e) => setEmails(e.target.value)}
           required
