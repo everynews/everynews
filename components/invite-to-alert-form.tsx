@@ -28,9 +28,9 @@ export const InviteToAlertForm = ({ alert }: InviteToAlertFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Parse and validate emails
+    // Parse and validate emails (one per line)
     const emailList = emails
-      .split(',')
+      .split('\n')
       .map((email) => email.trim())
       .filter((email) => email.length > 0)
 
@@ -126,7 +126,7 @@ export const InviteToAlertForm = ({ alert }: InviteToAlertFormProps) => {
         <Label htmlFor='emails'>Email addresses</Label>
         <Textarea
           id='emails'
-          placeholder='email1@example.com, email2@example.com, email3@example.com'
+          placeholder='email1@example.com\nemail2@example.com\nemail3@example.com'
           value={emails}
           onChange={(e) => setEmails(e.target.value)}
           required
@@ -134,7 +134,7 @@ export const InviteToAlertForm = ({ alert }: InviteToAlertFormProps) => {
           className='resize-none'
         />
         <p className='text-xs text-muted-foreground'>
-          Separate multiple emails with commas
+          Enter one email address per line
         </p>
       </div>
 
