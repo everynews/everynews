@@ -29,10 +29,12 @@ export const InviteToAlertForm = ({ alert }: InviteToAlertFormProps) => {
     e.preventDefault()
 
     // Parse and validate emails (one per line)
-    const emailList = emails
+    const totalEmailList = emails
       .split('\n')
       .map((email) => email.trim())
       .filter((email) => email.length > 0)
+    
+    const emailList = [...new Set(totalEmailList)]
 
     if (emailList.length === 0) {
       toast.error('Please enter at least one email address')
