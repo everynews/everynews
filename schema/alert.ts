@@ -82,7 +82,7 @@ export const AlertSchema = z
     userId: z.coerce.string().openapi({ example: '123' }),
     wait: WaitSchema,
   })
-  .openapi({ ref: 'Alert' })
+  .openapi({ ref: 'AlertSchema' })
 
 export const AlertDtoSchema = AlertSchema.omit({
   createdAt: true,
