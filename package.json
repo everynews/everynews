@@ -64,11 +64,11 @@
     "tailwind-merge": "^3.3.1",
     "turndown": "^7.2.0",
     "ws": "^8.18.3",
-    "zod": "^3.25.75",
+    "zod": "^3.25.76",
     "zod-openapi": "^4.2.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.6",
+    "@biomejs/biome": "^2.1.0",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/bun": "^1.2.18",
     "@types/node": "^24.0.10",
