@@ -161,21 +161,10 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
   })
 
   const onDelete = async () => {
-    try {
-      const res = await api.channels[':id'].$delete({
-        param: { id: channel.id },
-      })
-
-      if (!res.ok) {
-        toast.error('Failed to delete channel')
-        return
-      }
-
-      toast.success(`Channel "${channel.name}" deleted successfully`)
-      router.push('/my/channels')
-    } catch (e) {
-      toastNetworkError(e as Error)
-    }
+    await api.channels[':id'].$delete({
+      param: { id: channel.id },
+    })
+    router.push('/my/channels')
   }
 
   const onSubmit = async (values: ChannelDto) => {

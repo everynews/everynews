@@ -151,21 +151,10 @@ export const AlertEditPage = ({
   }
 
   const onDelete = async () => {
-    try {
-      const res = await api.alerts[':id'].$delete({
-        param: { id: alert.id },
-      })
-
-      if (!res.ok) {
-        toast.error('Failed to delete alert')
-        return
-      }
-
-      toast.success(`Alert "${alert.name}" deleted successfully`)
-      router.push('/my/alerts')
-    } catch (e) {
-      toastNetworkError(e as Error)
-    }
+    await api.alerts[':id'].$delete({
+      param: { id: alert.id },
+    })
+    router.push('/my/alerts')
   }
 
   const onTest = async () => {
@@ -258,11 +247,7 @@ export const AlertEditPage = ({
         <h1 className='text-2xl sm:text-3xl font-bold flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:justify-between'>
           Edit Alert
           <div className='flex gap-2 w-full sm:w-auto'>
-            <DeletePopover
-              itemName={alert.name}
-              onDelete={onDelete}
-              successMessage={`Alert "${alert.name}" deleted successfully`}
-            >
+            <DeletePopover itemName={alert.name} onDelete={onDelete}>
               <Button variant='destructive' size='default'>
                 Delete
               </Button>
