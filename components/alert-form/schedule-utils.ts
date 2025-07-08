@@ -1,5 +1,3 @@
-import { localToUtc, utcToLocal } from '@everynews/lib/timezone'
-
 interface ScheduleData {
   days: string[]
   hours: number[]
@@ -20,20 +18,4 @@ export const parseScheduleValue = (
 
 export const stringifySchedule = (data: ScheduleData): string => {
   return JSON.stringify(data)
-}
-
-export const convertScheduleToUtc = (schedule: ScheduleData): ScheduleData => {
-  return {
-    days: schedule.days,
-    hours: schedule.hours.map(localToUtc),
-  }
-}
-
-export const convertScheduleToLocal = (
-  schedule: ScheduleData,
-): ScheduleData => {
-  return {
-    days: schedule.days,
-    hours: schedule.hours.map(utcToLocal),
-  }
 }
