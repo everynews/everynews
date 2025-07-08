@@ -71,7 +71,7 @@
     "drizzle-kit": "^0.31.4",
     "knip": "^5.61.3",
     "postcss": "^8.5.6",
-    "react-email": "^4.0.17"
+    "react-email": "^4.1.0"
   },
   "name": "everynews",
   "scripts": {
