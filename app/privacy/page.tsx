@@ -12,7 +12,7 @@ export default function PrivacyPage() {
 
       <div className='prose prose-gray max-w-none dark:prose-invert'>
         <p className='text-lg text-muted-foreground mb-8'>
-          Last updated June 20, 2025
+          Last updated July 8, 2025
         </p>
 
         <section className='mb-8'>
