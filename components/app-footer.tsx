@@ -50,7 +50,7 @@ export const AppFooter = ({
       title: 'Socials',
     },
     {
-      links: [{ href: '/api', text: 'API Documentation' }],
+      links: [{ href: '/api', text: 'Documentation' }],
       title: 'API',
     },
     {
@@ -72,7 +72,7 @@ export const AppFooter = ({
       <div className='container mx-auto'>
         <Footer>
           <FooterContent>
-            <FooterColumn className='col-span-2 sm:col-span-3 md:col-span-1'>
+            <FooterColumn>
               <div className='flex items-center gap-2'>
                 {logo}
                 <h3 className='text-xl font-bold'>{name}</h3>
