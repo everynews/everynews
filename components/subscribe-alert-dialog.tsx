@@ -76,7 +76,6 @@ export const SubscribeAlertDialog = ({
         json: {
           alertId: alert.id,
           channelId: data.channelId === 'default' ? null : data.channelId,
-          userId: user?.id ?? '',
         },
       })
 

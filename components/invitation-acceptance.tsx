@@ -82,7 +82,6 @@ export const InvitationAcceptance = ({
           json: {
             alertId: alert.id,
             channelId: null, // Default email channel
-            userId: user.id,
           },
         })
 
