@@ -130,8 +130,7 @@ export const InviteToAlertForm = ({ alert }: InviteToAlertFormProps) => {
           value={emails}
           onChange={(e) => setEmails(e.target.value)}
           required
-          rows={3}
-          className='resize-none'
+          rows={10}
         />
         <p className='text-xs text-muted-foreground'>
           Enter one email address per line
