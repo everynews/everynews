@@ -287,13 +287,12 @@ export const LandingPageTabs = async () => {
         <div className='max-w-6xl mx-auto flex flex-col items-center gap-4 w-full'>
           <Button asChild size='lg' className='text-lg px-8 py-6'>
             <Link href='/sign-in'>
-              Ready to know{' '}
+              Ready for{' '}
               <span
                 className={cn('italic mx-1 text-2xl', dancingScript.className)}
               >
-                Every News
+                Everynews?
               </span>
-              ?
             </Link>
           </Button>
         </div>
