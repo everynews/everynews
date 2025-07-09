@@ -129,27 +129,18 @@ export const processAlert = async (item: Alert) => {
   // Update lastRun to current time before setting nextRun
   const currentTime = new Date()
 
-  let nextRun: Date | null = null
-  if (item.wait.type === 'count') {
-    nextRun = new Date(Date.now() + 60 * 60 * 1000)
-    await db
-      .update(alerts)
-      .set({ lastRun: currentTime, nextRun })
-      .where(eq(alerts.id, item.id))
-  }
-  if (item.wait.type === 'schedule') {
-    nextRun = findNextRunDateBasedOnSchedule(item.wait.value)
-    await db
-      .update(alerts)
-      .set({ lastRun: currentTime, nextRun })
-      .where(eq(alerts.id, item.id))
-  }
+  const nextRun = new Date(Date.now() + 60 * 60 * 1000)
 
-  // Calculate whether to send for each channel type
+  await db
+    .update(alerts)
+    .set({ lastRun: currentTime, nextRun })
+    .where(eq(alerts.id, item.id))
+
   const shouldSendSlowChannels =
     item.wait.type === 'count'
       ? slowChannelFilteredStories.length >= item.wait.value
-      : slowChannelFilteredStories.length > 0
+      : (findNextSlowSendDateBasedOnSchedule(item.wait.value) || currentTime) <=
+        currentTime
 
   // Fast channels always send immediately if there are new stories
   const shouldSendFastChannels = fastChannelFilteredStories.length > 0
@@ -349,7 +340,10 @@ export const processAlert = async (item: Alert) => {
       fast_stories: fastChannelFilteredStories.length,
       fast_subscribers: fastChannelSubscribers.length,
       next_run: nextRun?.toISOString() || 'unknown',
-      slow_sent: shouldSendSlowChannels && slowChannelSubscribers.length > 0,
+      slow_sent:
+        shouldSendSlowChannels && slowChannelSubscribers.length > 0
+          ? 'true'
+          : 'false',
       slow_stories: slowChannelFilteredStories.length,
       slow_subscribers: slowChannelSubscribers.length,
       stories_total: stories.length,
@@ -360,7 +354,7 @@ export const processAlert = async (item: Alert) => {
   })
 }
 
-const findNextRunDateBasedOnSchedule = (schedule: string) => {
+const findNextSlowSendDateBasedOnSchedule = (schedule: string): Date | null => {
   const { days, hours } =
     typeof schedule === 'string' ? JSON.parse(schedule) : schedule
   const sortedHours = [...hours].sort((a, b) => a - b)

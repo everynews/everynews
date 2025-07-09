@@ -533,7 +533,9 @@ export const AlertCreatePage = ({
                         <FormLabel>Schedule</FormLabel>
                         <div className='text-muted-foreground text-xs mb-2'>
                           Times shown in your local timezone (
-                          {getUserTimezone()})
+                          {getUserTimezone()}) This only applies to "slow"
+                          channels, like email. Fast channels, like Slack, will
+                          always send immediately on discovery.
                         </div>
                         <div className='grid grid-cols-2 gap-8'>
                           <div className='flex flex-col gap-2'>
