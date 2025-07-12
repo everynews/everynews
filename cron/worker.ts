@@ -139,8 +139,7 @@ export const processAlert = async (item: Alert) => {
   const shouldSendSlowChannels =
     item.wait.type === 'count'
       ? slowChannelFilteredStories.length >= item.wait.value
-      : (findNextSlowSendDateBasedOnSchedule(item.wait.value) || currentTime) <=
-        currentTime
+      : shouldSendScheduledAlert(item.wait.value, item.slowLastSent)
 
   // Fast channels always send immediately if there are new stories
   const shouldSendFastChannels = fastChannelFilteredStories.length > 0
@@ -205,20 +204,25 @@ export const processAlert = async (item: Alert) => {
       }
     }
   } else if (slowChannelSubscribers.length > 0) {
+    const skipReason =
+      item.wait.type === 'count'
+        ? `Found ${slowChannelFilteredStories.length} stories, waiting for ${item.wait.value}`
+        : `Not in scheduled window or already sent this hour`
+
     await track({
       channel: 'worker',
-      description:
-        item.wait.type === 'count'
-          ? `Slow channels: Found ${slowChannelFilteredStories.length} stories, waiting for ${item.wait.value}`
-          : `Slow channels: No new stories since slowLastSent`,
+      description: `Slow channels: ${skipReason}`,
       event: 'Slow Channel Alert Delivery Skipped',
       icon: '⏭️',
       tags: {
         alert_id: item.id,
         alert_name: item.name,
+        slow_last_sent: item.slowLastSent?.toISOString() || 'never',
         stories_found: slowChannelFilteredStories.length,
         type: 'info',
-        wait_threshold: item.wait.type === 'count' ? item.wait.value : 'n/a',
+        wait_threshold:
+          item.wait.type === 'count' ? item.wait.value : 'schedule',
+        wait_type: item.wait.type,
       },
     })
   }
@@ -354,23 +358,44 @@ export const processAlert = async (item: Alert) => {
   })
 }
 
-const findNextSlowSendDateBasedOnSchedule = (schedule: string): Date | null => {
+const shouldSendScheduledAlert = (
+  schedule: string,
+  lastSent: Date | null,
+): boolean => {
   const { days, hours } =
     typeof schedule === 'string' ? JSON.parse(schedule) : schedule
-  const sortedHours = [...hours].sort((a, b) => a - b)
   const now = new Date()
+  const currentDayName = now.toLocaleString('en-us', { weekday: 'long' })
+  const currentHour = now.getHours()
 
-  for (let offset = 0; offset < 7; offset++) {
-    const candidate = new Date(now)
-    candidate.setDate(now.getDate() + offset)
-    const dayName = candidate.toLocaleString('en-us', { weekday: 'long' })
-    if (!days.includes(dayName)) continue
-
-    for (const h of sortedHours) {
-      candidate.setHours(h, 0, 0, 0)
-      if (candidate > now) return candidate
-    }
+  // Check if today is a scheduled day
+  if (!days.includes(currentDayName)) {
+    return false
   }
 
-  return null
+  // Check if current hour is in the scheduled hours
+  if (!hours.includes(currentHour)) {
+    return false
+  }
+
+  // If we've never sent before, send now
+  if (!lastSent) {
+    return true
+  }
+
+  // Check if we've already sent during this scheduled window
+  // A scheduled window is defined as the same day and hour
+  const lastSentDay = lastSent.toLocaleString('en-us', { weekday: 'long' })
+  const lastSentHour = lastSent.getHours()
+
+  // If we sent on the same day and hour, don't send again
+  if (
+    lastSentDay === currentDayName &&
+    lastSentHour === currentHour &&
+    lastSent.toDateString() === now.toDateString()
+  ) {
+    return false
+  }
+
+  return true
 }
