@@ -403,7 +403,41 @@ export const herald = async ({
           },
         })
 
-        const slackConfig = SlackChannelConfigSchema.parse(channel.config)
+        // Check if config exists before parsing
+        if (!channel.config) {
+          await track({
+            channel: 'herald',
+            description: `Slack channel ${channelId} has no configuration`,
+            event: 'Slack Channel Config Missing',
+            icon: '❌',
+            tags: {
+              channel_id: channelId,
+              type: 'error',
+            },
+          })
+          throw new Error(`Slack channel ${channelId} has no configuration`)
+        }
+
+        let slackConfig: z.infer<typeof SlackChannelConfigSchema>
+        try {
+          slackConfig = SlackChannelConfigSchema.parse(channel.config)
+        } catch (parseError) {
+          await track({
+            channel: 'herald',
+            description: `Failed to parse Slack channel config: ${parseError instanceof Error ? parseError.message : String(parseError)}`,
+            event: 'Slack Channel Config Parse Error',
+            icon: '❌',
+            tags: {
+              channel_id: channelId,
+              config: JSON.stringify(channel.config),
+              error: String(parseError),
+              type: 'error',
+            },
+          })
+          throw new Error(
+            `Invalid Slack channel configuration for channel ${channelId}`,
+          )
+        }
 
         await track({
           channel: 'herald',
@@ -464,7 +498,41 @@ export const herald = async ({
           },
         })
 
-        const discordConfig = DiscordChannelConfigSchema.parse(channel.config)
+        // Check if config exists before parsing
+        if (!channel.config) {
+          await track({
+            channel: 'herald',
+            description: `Discord channel ${channelId} has no configuration`,
+            event: 'Discord Channel Config Missing',
+            icon: '❌',
+            tags: {
+              channel_id: channelId,
+              type: 'error',
+            },
+          })
+          throw new Error(`Discord channel ${channelId} has no configuration`)
+        }
+
+        let discordConfig: z.infer<typeof DiscordChannelConfigSchema>
+        try {
+          discordConfig = DiscordChannelConfigSchema.parse(channel.config)
+        } catch (parseError) {
+          await track({
+            channel: 'herald',
+            description: `Failed to parse Discord channel config: ${parseError instanceof Error ? parseError.message : String(parseError)}`,
+            event: 'Discord Channel Config Parse Error',
+            icon: '❌',
+            tags: {
+              channel_id: channelId,
+              config: JSON.stringify(channel.config),
+              error: String(parseError),
+              type: 'error',
+            },
+          })
+          throw new Error(
+            `Invalid Discord channel configuration for channel ${channelId}`,
+          )
+        }
 
         await track({
           channel: 'herald',
