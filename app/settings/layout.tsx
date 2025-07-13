@@ -20,7 +20,7 @@ const MobileSidebar = ({ items }: { items: SidebarItem[] }) => (
 const SettingsLayout = async ({ children }: { children: React.ReactNode }) => {
   const sidebarItems: SidebarItem[] = [
     {
-      href: '/settings',
+      href: '/settings/profile',
       title: 'Profile',
     },
     {
