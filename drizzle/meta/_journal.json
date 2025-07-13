@@ -21,6 +21,13 @@
       "tag": "0002_purple_night_thrasher",
       "version": "7",
       "when": 1752414404107
+    },
+    {
+      "breakpoints": true,
+      "idx": 3,
+      "tag": "0003_secret_frank_castle",
+      "version": "7",
+      "when": 1752414570983
     }
   ],
   "version": "7"
