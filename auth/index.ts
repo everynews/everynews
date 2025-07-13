@@ -3,7 +3,7 @@ import { sendMagicLink } from '@everynews/messengers'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { nextCookies } from 'better-auth/next-js'
-import { magicLink, openAPI } from 'better-auth/plugins'
+import { admin, magicLink, openAPI } from 'better-auth/plugins'
 
 if (!process.env.AUTH_SECRET) {
   throw new Error('AUTH_SECRET is not defined')
@@ -24,6 +24,7 @@ export const auth = betterAuth({
     openAPI({
       disableDefaultReference: true,
     }),
+    admin(),
   ],
   secret: process.env.AUTH_SECRET,
 })

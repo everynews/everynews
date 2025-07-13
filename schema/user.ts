@@ -10,15 +10,23 @@ import { sessions } from './session'
 import { subscriptions } from './subscription'
 
 export const users = pgTable('users', {
-  createdAt: timestamp('created_at').notNull(),
+  banExpires: timestamp('ban_expires'),
+  banned: boolean('banned'),
+  banReason: text('ban_reason'),
+  createdAt: timestamp('created_at')
+    .$defaultFn(() => new Date())
+    .notNull(),
   email: text('email').notNull().unique(),
-  emailVerified: boolean('email_verified').notNull(),
+  emailVerified: boolean('email_verified')
+    .$defaultFn(() => false)
+    .notNull(),
   id: text('id').primaryKey(),
   image: text('image'),
   name: text('name').notNull(),
-  phoneNumber: text('phone_number').unique(),
-  phoneNumberVerified: boolean('phone_number_verified'),
-  updatedAt: timestamp('updated_at').notNull(),
+  role: text('role'),
+  updatedAt: timestamp('updated_at')
+    .$defaultFn(() => new Date())
+    .notNull(),
 })
 
 export const UserSchema = z

@@ -7,6 +7,7 @@ export const sessions = pgTable('sessions', {
   createdAt: timestamp('created_at').notNull(),
   expiresAt: timestamp('expires_at').notNull(),
   id: text('id').primaryKey(),
+  impersonatedBy: text('impersonated_by'),
   ipAddress: text('ip_address'),
   token: text('token').notNull().unique(),
   updatedAt: timestamp('updated_at').notNull(),
