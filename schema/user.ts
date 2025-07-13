@@ -2,7 +2,6 @@ import { relations } from 'drizzle-orm'
 import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { z } from 'zod'
 import 'zod-openapi/extend'
-import { accounts } from './account'
 import { alerts } from './alert'
 import { channels } from './channel'
 import { prompt } from './prompt'
@@ -46,7 +45,6 @@ export const UserSchema = z
 export type User = z.infer<typeof UserSchema>
 
 export const usersRelations = relations(users, ({ many }) => ({
-  accounts: many(accounts),
   alerts: many(alerts),
   channels: many(channels),
   prompts: many(prompt),
