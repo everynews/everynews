@@ -14,6 +14,13 @@
       "tag": "0001_legal_typhoid_mary",
       "version": "7",
       "when": 1752413310731
+    },
+    {
+      "breakpoints": true,
+      "idx": 2,
+      "tag": "0002_purple_night_thrasher",
+      "version": "7",
+      "when": 1752414404107
     }
   ],
   "version": "7"
