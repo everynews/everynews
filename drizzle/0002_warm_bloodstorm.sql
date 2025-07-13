@@ -1,1 +1,0 @@
-ALTER TABLE "alerts" ADD COLUMN "last_sent" timestamp;

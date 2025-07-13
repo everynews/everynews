@@ -19,6 +19,7 @@ CREATE TABLE "alerts" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp,
 	"description" text,
+	"fast_last_sent" timestamp,
 	"id" text PRIMARY KEY NOT NULL,
 	"is_public" boolean DEFAULT true NOT NULL,
 	"language_code" text DEFAULT 'en' NOT NULL,
@@ -26,6 +27,7 @@ CREATE TABLE "alerts" (
 	"name" text NOT NULL,
 	"next_run" timestamp DEFAULT now(),
 	"prompt_id" text,
+	"slow_last_sent" timestamp,
 	"strategy" json NOT NULL,
 	"threshold" integer DEFAULT 70 NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
@@ -70,6 +72,19 @@ CREATE TABLE "contents" (
 	CONSTRAINT "contents_url_unique" UNIQUE("url")
 );
 --> statement-breakpoint
+CREATE TABLE "invitations" (
+	"accepted_at" timestamp,
+	"alert_id" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"expires_at" timestamp NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"invitee_email" text NOT NULL,
+	"inviter_id" text NOT NULL,
+	"message" text,
+	"token" text NOT NULL,
+	CONSTRAINT "invitations_token_unique" UNIQUE("token")
+);
+--> statement-breakpoint
 CREATE TABLE "prompt" (
 	"content" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -84,6 +99,7 @@ CREATE TABLE "sessions" (
 	"created_at" timestamp NOT NULL,
 	"expires_at" timestamp NOT NULL,
 	"id" text PRIMARY KEY NOT NULL,
+	"impersonated_by" text,
 	"ip_address" text,
 	"token" text NOT NULL,
 	"updated_at" timestamp NOT NULL,
@@ -101,14 +117,13 @@ CREATE TABLE "stories" (
 	"key_findings" json,
 	"language_code" text DEFAULT 'en' NOT NULL,
 	"original_url" text NOT NULL,
-	"prompt_hash" text NOT NULL,
 	"prompt_id" text,
 	"system_marked_irrelevant" boolean DEFAULT false,
 	"title" text NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"url" text NOT NULL,
 	"user_marked_irrelevant" boolean DEFAULT false,
-	CONSTRAINT "stories_url_prompt_hash_language_code_unique" UNIQUE("url","prompt_hash","language_code")
+	CONSTRAINT "stories_url_prompt_id_language_code_unique" UNIQUE("url","prompt_id","language_code")
 );
 --> statement-breakpoint
 CREATE TABLE "subscriptions" (
@@ -122,17 +137,18 @@ CREATE TABLE "subscriptions" (
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
+	"ban_expires" timestamp,
+	"banned" boolean,
+	"ban_reason" text,
 	"created_at" timestamp NOT NULL,
 	"email" text NOT NULL,
 	"email_verified" boolean NOT NULL,
 	"id" text PRIMARY KEY NOT NULL,
 	"image" text,
 	"name" text NOT NULL,
-	"phone_number" text,
-	"phone_number_verified" boolean,
+	"role" text,
 	"updated_at" timestamp NOT NULL,
-	CONSTRAINT "users_email_unique" UNIQUE("email"),
-	CONSTRAINT "users_phone_number_unique" UNIQUE("phone_number")
+	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 CREATE TABLE "verifications" (
@@ -149,6 +165,8 @@ ALTER TABLE "alerts" ADD CONSTRAINT "alerts_prompt_id_prompt_id_fk" FOREIGN KEY 
 ALTER TABLE "alerts" ADD CONSTRAINT "alerts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "channels" ADD CONSTRAINT "channels_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "channel_verifications" ADD CONSTRAINT "channel_verifications_channel_id_channels_id_fk" FOREIGN KEY ("channel_id") REFERENCES "public"."channels"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "invitations" ADD CONSTRAINT "invitations_alert_id_alerts_id_fk" FOREIGN KEY ("alert_id") REFERENCES "public"."alerts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "invitations" ADD CONSTRAINT "invitations_inviter_id_users_id_fk" FOREIGN KEY ("inviter_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "prompt" ADD CONSTRAINT "prompt_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "stories" ADD CONSTRAINT "stories_alert_id_alerts_id_fk" FOREIGN KEY ("alert_id") REFERENCES "public"."alerts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

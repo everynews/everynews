@@ -1,48 +1,13 @@
 {
+  "version": "7",
   "dialect": "postgresql",
   "entries": [
     {
-      "breakpoints": true,
       "idx": 0,
-      "tag": "0000_gigantic_ravenous",
       "version": "7",
-      "when": 1750352813361
-    },
-    {
-      "breakpoints": true,
-      "idx": 1,
-      "tag": "0001_strange_mac_gargan",
-      "version": "7",
-      "when": 1750401854853
-    },
-    {
-      "breakpoints": true,
-      "idx": 2,
-      "tag": "0002_warm_bloodstorm",
-      "version": "7",
-      "when": 1750819627336
-    },
-    {
-      "breakpoints": true,
-      "idx": 3,
-      "tag": "0003_quiet_black_widow",
-      "version": "7",
-      "when": 1751458008631
-    },
-    {
-      "breakpoints": true,
-      "idx": 4,
-      "tag": "0004_dizzy_fenris",
-      "version": "7",
-      "when": 1751460400581
-    },
-    {
-      "breakpoints": true,
-      "idx": 5,
-      "tag": "0005_short_sunset_bain",
-      "version": "7",
-      "when": 1752412364915
+      "when": 1752412996389,
+      "tag": "0000_stiff_gauntlet",
+      "breakpoints": true
     }
-  ],
-  "version": "7"
+  ]
 }
