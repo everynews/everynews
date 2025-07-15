@@ -48,7 +48,7 @@ export default async function DiscordSetupPage({
   const config = DiscordChannelConfigSchema.parse(channel.config)
 
   return (
-    <div className='container mx-auto max-w-3xl px-4 py-6 md:py-8'>
+    <>
       <div className='mb-6 md:mb-8'>
         <h1 className='text-2xl md:text-3xl font-bold'>
           Setup Discord Channel
@@ -62,19 +62,19 @@ export default async function DiscordSetupPage({
         </p>
       </div>
 
-      <div className='rounded-lg border bg-card p-6 md:p-8'>
-        <DiscordChannelSelector channelId={id} />
-
-        {config.channel?.id && (
-          <div className='mt-6 md:mt-8 pt-6 md:pt-8 border-t'>
-            <DiscordTestButton
-              channel={channel}
-              variant='outline'
-              className='w-full md:w-auto'
-            />
+      <DiscordChannelSelector channelId={id} />
+      {config.channel?.id && (
+        <div className='mt-6 md:mt-8 pt-6 md:pt-8 border-t'>
+          <div className='text-sm text-muted-foreground mb-2'>
+            To test other channels, first save and refresh the page.
           </div>
-        )}
-      </div>
-    </div>
+          <DiscordTestButton
+            channel={channel}
+            variant='outline'
+            className='w-full md:w-auto'
+          />
+        </div>
+      )}
+    </>
   )
 }

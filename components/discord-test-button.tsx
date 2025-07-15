@@ -60,6 +60,10 @@ export const DiscordTestButton = ({
 
   const config = DiscordChannelConfigSchema.safeParse(channel.config)
   const hasChannel = config.success && config.data.channel?.id
+  const channelName =
+    config.success && config.data.channel?.name
+      ? `#${config.data.channel.name}`
+      : 'Unknown'
 
   return (
     <Button
@@ -69,7 +73,7 @@ export const DiscordTestButton = ({
       size={size}
       className={className}
     >
-      {isLoading ? 'Sending...' : 'Send Test Message'}
+      {isLoading ? 'Sending...' : `Test ${channelName}`}
     </Button>
   )
 }

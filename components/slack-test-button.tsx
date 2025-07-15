@@ -65,6 +65,10 @@ export const SlackTestButton = ({
 
   const parsed = SlackChannelConfigSchema.safeParse(channel.config)
   const hasChannelId = parsed.success && !!parsed.data.channel?.id
+  const channelName =
+    parsed.success && parsed.data.channel?.name
+      ? `#${parsed.data.channel.name}`
+      : 'Unknown'
 
   return (
     <Button
@@ -74,7 +78,7 @@ export const SlackTestButton = ({
       size={size}
       className={className}
     >
-      {isLoading ? 'Sending...' : 'Send Test Message'}
+      {isLoading ? 'Sending...' : `Test ${channelName}`}
     </Button>
   )
 }
