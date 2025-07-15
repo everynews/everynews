@@ -89,7 +89,7 @@ export const SlackRouter = new Hono<WithAuth>()
         const channelId = await handleOAuthCallback(code, state, user.id)
 
         // Redirect to channel selection page
-        return c.redirect(`/channels/${channelId}/slack-setup`)
+        return c.redirect(`/my/channels/${channelId}/slack-setup`)
       } catch (error) {
         await track({
           channel: 'slack',
@@ -102,7 +102,7 @@ export const SlackRouter = new Hono<WithAuth>()
           },
           user_id: user.id,
         })
-        return c.redirect('/channels?error=slack_callback_error')
+        return c.redirect('/my/channels?error=slack_callback_error')
       }
     },
   )

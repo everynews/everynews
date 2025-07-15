@@ -87,7 +87,7 @@ export const DiscordRouter = new Hono<WithAuth>()
         const channelId = await handleOAuthCallback(code, state, user.id)
 
         // Redirect to channel selection page
-        return c.redirect(`/channels/${channelId}/discord-setup`)
+        return c.redirect(`/my/channels/${channelId}/discord-setup`)
       } catch (error) {
         await track({
           channel: 'discord',

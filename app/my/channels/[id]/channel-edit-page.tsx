@@ -64,7 +64,7 @@ const SlackConfigurationDisplay = ({ channel }: { channel: Channel }) => {
       <div className='space-y-4'>
         <div className='flex flex-col md:flex-row gap-2 md:gap-3'>
           <Button asChild variant='outline' className='flex-1 md:flex-initial'>
-            <Link href={`/channels/${channel.id}/slack-setup`}>
+            <Link href={`/my/channels/${channel.id}/slack-setup`}>
               <Slack className='size-4' />
               Change Slack Channel
             </Link>
@@ -112,7 +112,7 @@ const DiscordConfigurationDisplay = ({ channel }: { channel: Channel }) => {
       <div className='space-y-4'>
         <div className='flex flex-col md:flex-row gap-2 md:gap-3'>
           <Button asChild variant='outline' className='flex-1 md:flex-initial'>
-            <Link href={`/channels/${channel.id}/discord-setup`}>
+            <Link href={`/my/channels/${channel.id}/discord-setup`}>
               <DiscordIcon className='size-4' />
               Change Discord Channel
             </Link>

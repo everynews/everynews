@@ -3,6 +3,7 @@ import { encrypt } from '@everynews/lib/crypto'
 import { url } from '@everynews/lib/url'
 import { track } from '@everynews/logs'
 import { channels } from '@everynews/schema'
+import humanId from 'human-id'
 
 if (process.env.SLACK_CLIENT_ID === undefined) {
   throw new Error('SLACK_CLIENT_ID is not set')
@@ -114,7 +115,10 @@ export async function handleOAuthCallback(
     .insert(channels)
     .values({
       config: slackData,
-      name: `Slack: ${data.team?.name || 'Unknown Workspace'}`,
+      name: humanId({
+        capitalize: false,
+        separator: '-',
+      }),
       type: 'slack',
       userId,
     })
