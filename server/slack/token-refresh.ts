@@ -227,14 +227,14 @@ export async function getValidSlackToken(channelId: string): Promise<string> {
   }
 }
 
-// Helper to check if a Slack API error is due to invalid token
 export function isTokenError(error: unknown): boolean {
   const err = error as { data?: { error?: string }; code?: string }
-  const errorCode = err?.data?.error || err?.code
-  return (
-    errorCode === 'invalid_auth' ||
-    errorCode === 'token_revoked' ||
-    errorCode === 'token_expired' ||
-    errorCode === 'invalid_refresh_token'
-  )
+  const errorCode = err?.data?.error || err?.code || ''
+  return [
+    'invalid_auth',
+    'token_revoked',
+    'token_expired',
+    'invalid_refresh_token',
+    'missing_scope',
+  ].includes(errorCode)
 }

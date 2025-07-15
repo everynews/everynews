@@ -33,7 +33,13 @@ export async function generateInstallUrl(userId: string): Promise<string> {
   const params = new URLSearchParams({
     client_id: clientId,
     redirect_uri: `${url}/api/slack/callback`,
-    scope: 'channels:read,chat:write,chat:write.public',
+    scope: [
+      'channels:read',
+      'groups:read',
+      'conversations:read',
+      'chat:write',
+      'chat:write.public',
+    ].join(','),
     state,
   })
 
