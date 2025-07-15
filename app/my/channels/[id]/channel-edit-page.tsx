@@ -17,7 +17,6 @@ import {
   FormMessage,
 } from '@everynews/components/ui/form'
 import { Input } from '@everynews/components/ui/input'
-import { Separator } from '@everynews/components/ui/separator'
 import { toastNetworkError } from '@everynews/lib/error'
 import {
   type Channel,
@@ -26,7 +25,6 @@ import {
   DiscordChannelConfigSchema,
   SlackChannelConfigSchema,
 } from '@everynews/schema/channel'
-import { Slack } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -42,20 +40,25 @@ const SlackConfigurationDisplay = ({ channel }: { channel: Channel }) => {
   return (
     <div className='space-y-6'>
       <div>
-        <p className='text-sm font-medium mb-3'>Slack Configuration</p>
         <div className='rounded-lg border bg-muted/50 p-4 md:p-6 space-y-3 md:space-y-4'>
           <div className='flex items-center justify-between gap-4'>
             <span className='text-sm text-muted-foreground'>Workspace</span>
-            <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
+            <span className='text-sm font-medium truncate max-w-64 md:max-w-xs'>
               {config.workspace?.name || config.teamId || 'Unknown'}
             </span>
           </div>
           <div className='flex items-center justify-between gap-4'>
             <span className='text-sm text-muted-foreground'>Channel</span>
-            <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
+            <span className='text-sm font-medium truncate max-w-64 md:max-w-xs'>
               {config.channel?.name
                 ? `#${config.channel.name}`
                 : 'Not selected'}
+            </span>
+          </div>
+          <div className='flex items-center justify-between gap-4'>
+            <span className='text-sm text-muted-foreground'>Status</span>
+            <span className='text-sm font-medium'>
+              <ChannelStatusBadge channel={channel} />
             </span>
           </div>
         </div>
@@ -65,7 +68,6 @@ const SlackConfigurationDisplay = ({ channel }: { channel: Channel }) => {
         <div className='flex flex-col md:flex-row gap-2 md:gap-3'>
           <Button asChild variant='outline' className='flex-1 md:flex-initial'>
             <Link href={`/my/channels/${channel.id}/slack-setup`}>
-              <Slack className='size-4' />
               Change Slack Channel
             </Link>
           </Button>
@@ -90,21 +92,24 @@ const DiscordConfigurationDisplay = ({ channel }: { channel: Channel }) => {
   return (
     <div className='space-y-6'>
       <div>
-        <p className='text-sm font-medium mb-3'>Discord Configuration</p>
         <div className='rounded-lg border bg-muted/50 p-4 md:p-6 space-y-3 md:space-y-4'>
           <div className='flex items-center justify-between gap-4'>
             <span className='text-sm text-muted-foreground'>Server</span>
-            <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
+            <span className='text-sm font-medium truncate max-w-64 md:max-w-xs'>
               {config.guild?.name || config.guildId || 'Unknown'}
             </span>
           </div>
           <div className='flex items-center justify-between gap-4'>
             <span className='text-sm text-muted-foreground'>Channel</span>
-            <span className='text-sm font-medium truncate max-w-[150px] md:max-w-xs'>
+            <span className='text-sm font-medium truncate max-w-64 md:max-w-xs'>
               {config.channel?.name
                 ? `#${config.channel.name}`
                 : 'Not selected'}
             </span>
+          </div>
+          <div className='flex items-center justify-between gap-4'>
+            <span className='text-sm text-muted-foreground'>Status</span>
+            <ChannelStatusBadge channel={channel} />
           </div>
         </div>
       </div>
@@ -308,26 +313,10 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
   return (
     <>
       <div className='mb-6 md:mb-8'>
-        <div className='flex flex-col md:flex-row items-start md:items-center justify-between gap-4'>
-          <div>
-            <h1 className='text-2xl md:text-3xl font-bold'>Edit Channel</h1>
-            <p className='text-muted-foreground mt-1'>
-              Update your delivery channel settings
-            </p>
-          </div>
-          <div className='flex items-center gap-2'>
-            <DeletePopover
-              itemName={channel.name}
-              onDelete={onDelete}
-              successMessage={`Channel "${channel.name}" deleted successfully`}
-            >
-              <Button variant='destructive' size='default'>
-                Delete
-              </Button>
-            </DeletePopover>
-            <ChannelStatusBadge channel={channel} />
-          </div>
-        </div>
+        <h1 className='text-2xl md:text-3xl font-bold'>Edit Channel</h1>
+        <p className='text-muted-foreground mt-1'>
+          Update your delivery channel settings
+        </p>
       </div>
       <Form {...form}>
         <form
@@ -352,39 +341,47 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
             )}
           />
 
-          <Separator />
-
           {channel.type === 'slack' ? (
             <SlackConfigurationDisplay channel={channel} />
           ) : channel.type === 'discord' ? (
             <DiscordConfigurationDisplay channel={channel} />
           ) : channel.type === 'email' || channel.type === 'phone' ? (
-            <FormField
-              control={form.control}
-              name='config.destination'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {channel.type === 'phone'
-                      ? 'Phone Number'
-                      : 'Email Address'}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder={
-                        channel.type === 'phone'
-                          ? '+1234567890'
-                          : 'you@example.com'
-                      }
-                      type={channel.type === 'phone' ? 'tel' : 'email'}
-                      {...field}
-                      className='md:max-w-md'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className='space-y-6'>
+              <div className='rounded-lg border bg-muted/50 p-4 md:p-6 space-y-3 md:space-y-4'>
+                <FormField
+                  control={form.control}
+                  name='config.destination'
+                  render={({ field }) => (
+                    <FormItem className='space-y-0'>
+                      <div className='flex items-center justify-between gap-4'>
+                        <FormLabel className='text-sm text-muted-foreground font-normal'>
+                          {channel.type === 'phone'
+                            ? 'Phone Number'
+                            : 'Email Address'}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={
+                              channel.type === 'phone'
+                                ? '+1234567890'
+                                : 'you@example.com'
+                            }
+                            type={channel.type === 'phone' ? 'tel' : 'email'}
+                            {...field}
+                            className='max-w-64 md:max-w-xs text-sm text-right'
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className='flex items-center justify-between gap-4'>
+                  <span className='text-sm text-muted-foreground'>Status</span>
+                  <ChannelStatusBadge channel={channel} />
+                </div>
+              </div>
+            </div>
           ) : (
             <div className='rounded-lg border bg-muted/50 p-4 md:p-6'>
               <p className='text-sm text-muted-foreground'>
@@ -393,20 +390,31 @@ export const ChannelEditPage = ({ channel }: { channel: Channel }) => {
             </div>
           )}
 
-          <div className='flex flex-col-reverse md:flex-row justify-end gap-2 pt-4'>
-            <Button
-              type='button'
-              variant='outline'
-              onClick={() => router.push('/my/channels')}
+          <div className='flex flex-col-reverse md:flex-row justify-between gap-2 pt-4'>
+            <DeletePopover
+              itemName={channel.name}
+              onDelete={onDelete}
+              successMessage={`Channel "${channel.name}" deleted successfully`}
             >
-              Cancel
-            </Button>
-            <SubmitButton
-              onClick={form.handleSubmit(onSubmit)}
-              loading={isSubmitting}
-            >
-              Update
-            </SubmitButton>
+              <Button variant='destructive' size='default'>
+                Delete
+              </Button>
+            </DeletePopover>
+            <div className='flex flex-col-reverse md:flex-row gap-2'>
+              <Button
+                type='button'
+                variant='outline'
+                onClick={() => router.push('/my/channels')}
+              >
+                Cancel
+              </Button>
+              <SubmitButton
+                onClick={form.handleSubmit(onSubmit)}
+                loading={isSubmitting}
+              >
+                Update
+              </SubmitButton>
+            </div>
           </div>
         </form>
       </Form>
