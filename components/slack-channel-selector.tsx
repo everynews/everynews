@@ -99,7 +99,8 @@ export const SlackChannelSelector = async ({
             name: ch.name,
           }))
       } else {
-        error = 'Unable to retrieve Slack channels. Please try again later.'
+        error =
+          'Unable to retrieve Slack channels. Did you revoke access? Make sure Everynews bot is added to the workspace.'
       }
     } else {
       error =

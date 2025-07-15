@@ -96,24 +96,23 @@ export const DeleteChannelDropdownItem = ({
             <AlertDialogTitle>Delete Channel</AlertDialogTitle>
             <AlertDialogDescription className='space-y-2'>
               Are you sure you want to delete{' '}
-              <span className='font-medium'>"{channel.name}"?</span>
-              {fetchingCount && (
-                <p className='text-muted-foreground'>
-                  Checking subscriptions...
-                </p>
-              )}
+              <span className='font-medium'>{channel.name}</span>? This action
+              cannot be undone.{' '}
               {subscriptionCount !== null && subscriptionCount > 0 && (
-                <p className='font-medium text-destructive'>
-                  Warning: This will delete {subscriptionCount} subscription
-                  {subscriptionCount > 1 ? 's' : ''} linked to this channel.
-                </p>
+                <span className='font-medium text-destructive'>
+                  This will delete {subscriptionCount}{' '}
+                  {subscriptionCount > 1 ? 'subscriptions' : 'subscription'}{' '}
+                  linked to this channel.
+                </span>
               )}
-              This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} disabled={loading}>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={loading || fetchingCount}
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
