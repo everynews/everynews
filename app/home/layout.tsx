@@ -54,6 +54,7 @@ export default async function HomeLayout({
             <div className='space-y-2'>
               {/* All Alerts option */}
               <SidebarLinkWithBadge
+                exact
                 href='/home'
                 title='All Alerts'
                 description='View all triggered stories'

@@ -9,14 +9,16 @@ export const SidebarLinkWithBadge = ({
   title,
   description,
   badge,
+  exact,
 }: {
   href: string
   title: string
   description?: string
   badge?: string | number
+  exact?: boolean
 }) => {
   const pathname = usePathname()
-  const isActive = pathname.startsWith(href)
+  const isActive = exact ? pathname === href : pathname.startsWith(href)
 
   return (
     <Link
