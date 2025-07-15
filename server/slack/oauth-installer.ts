@@ -39,6 +39,12 @@ export async function generateInstallUrl(userId: string): Promise<string> {
       'groups:read',
       'chat:write',
       'chat:write.public',
+      'im:write',
+      'im:read',
+      'im:write.topic',
+      'mpim:read',
+      'mpim:write.topic',
+      'mpim:write',
     ].join(','),
     state,
   })
