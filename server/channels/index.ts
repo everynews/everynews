@@ -324,14 +324,14 @@ export const ChannelRouter = new Hono<WithAuth>()
       const { subscriptions } = await import('@everynews/schema/subscription')
 
       // Count active subscriptions for this channel
-      const [{ count }] = await db
+      const [obj] = await db
         .select({ count: db.$count(subscriptions) })
         .from(subscriptions)
         .where(
           and(eq(subscriptions.channelId, id), isNull(subscriptions.deletedAt)),
         )
 
-      return c.json({ count })
+      return c.json({ count: obj?.count || 0 })
     },
   )
   .delete(
@@ -382,12 +382,14 @@ export const ChannelRouter = new Hono<WithAuth>()
       }
 
       // Count subscriptions that will be affected
-      const [{ count: subscriptionCount }] = await db
+      const [obj] = await db
         .select({ count: db.$count(subscriptions) })
         .from(subscriptions)
         .where(
           and(eq(subscriptions.channelId, id), isNull(subscriptions.deletedAt)),
         )
+
+      const subscriptionCount = obj?.count || 0
 
       // Soft delete subscriptions linked to this channel
       if (subscriptionCount > 0) {
