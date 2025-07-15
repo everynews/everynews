@@ -36,7 +36,6 @@ export async function generateInstallUrl(userId: string): Promise<string> {
     scope: [
       'channels:read',
       'groups:read',
-      'conversations:read',
       'chat:write',
       'chat:write.public',
     ].join(','),
