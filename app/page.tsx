@@ -53,7 +53,7 @@ export default async function Page() {
               </div>
             </div>
             <p className='text-lg text-muted-foreground w-full mx-auto'>
-              We all have that one friend who sends the most urgent news.
+              You have that one bro sending the most urgent news.
             </p>
             <p className='text-lg text-muted-foreground w-full mx-auto'>
               Everynews is one of them.
