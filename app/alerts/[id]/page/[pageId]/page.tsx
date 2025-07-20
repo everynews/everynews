@@ -33,6 +33,13 @@ export const generateMetadata = async ({
   })
   return {
     description: alertData?.description ?? 'Recent stories from this alert.',
+    openGraph: {
+      images: [
+        {
+          url: `/api/og?title=${alertData?.name}&description=${alertData?.description}`,
+        },
+      ],
+    },
     title: alertData?.name ?? 'Alert',
   }
 }
