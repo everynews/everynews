@@ -1,5 +1,5 @@
 import { url } from '@everynews/lib/url'
-import { ResendResponseSchema } from '@everynews/schema'
+import { EmailProviderResponseSchema } from '@everynews/schema'
 import { Resend } from 'resend'
 import MagicLinkEmail from '../magic-link'
 import type {
@@ -29,7 +29,7 @@ export const resendProvider: EmailProvider = {
     if (result.error) {
       throw new Error(`Failed to send email: ${result.error.message}`)
     }
-    return ResendResponseSchema.parse(result.data || {})
+    return EmailProviderResponseSchema.parse(result.data || {})
   },
   template: async ({ to, subject, template }: SendTemplateEmailParams) => {
     const result = await resend.emails.send({
@@ -43,6 +43,6 @@ export const resendProvider: EmailProvider = {
       throw new Error(`Failed to send email: ${result.error.message}`)
     }
 
-    return ResendResponseSchema.parse(result.data || {})
+    return EmailProviderResponseSchema.parse(result.data || {})
   },
 }
