@@ -45,9 +45,7 @@ export default async function Page() {
                   </div>
                   <div className='relative mb-4'>
                     <div className='bg-blue-500 text-primary-foreground px-4 py-2 rounded-full rounded-bl-xs'>
-                      <span className='text-lg text-white'>
-                        new competitor
-                      </span>
+                      <span className='text-lg text-white'>new competitor</span>
                     </div>
                     <div className='absolute -bottom-1 left-0 w-0 h-0 border-t-8 border-t-blue-500 border-r-8 border-r-transparent'></div>
                   </div>
