@@ -64,7 +64,7 @@ export const GET = async (request: Request) => {
             {title}
           </h1>
 
-          <span tw='text-6xl leading-normal text-slate-400'>{description}</span>
+          <span tw='text-8xl leading-normal text-slate-400'>{description}</span>
         </div>
 
         <div
