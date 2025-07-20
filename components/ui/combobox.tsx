@@ -71,6 +71,7 @@ export const Combobox = ({
                 <CommandItem
                   key={option.value}
                   value={option.value}
+                  keywords={[option.label]}
                   onSelect={(currentValue) => {
                     onValueChange?.(
                       currentValue === value ? null : currentValue,
