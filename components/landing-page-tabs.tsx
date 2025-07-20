@@ -61,13 +61,13 @@ export const LandingPageTabs = async () => {
           value='saas'
           className='bg-muted overflow-hidden rounded-b-none border-x border-t py-2 data-[state=active]:z-10 data-[state=active]:shadow-none'
         >
-          Cliché Edition
+          I-love-clichés Ed.
         </TabsTrigger>
         <TabsTrigger
           value='hn'
           className='bg-muted overflow-hidden rounded-b-none border-x border-t py-2 data-[state=active]:z-10 data-[state=active]:shadow-none'
         >
-          Cut-the-BS Edition
+          Cut-the-bullsh*t Ed.
         </TabsTrigger>
       </TabsList>
 
