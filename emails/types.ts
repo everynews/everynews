@@ -1,3 +1,5 @@
+import type { EmailResponse } from '@everynews/schema'
+
 export type SendSignInEmailParams = {
   to: string
 }
@@ -6,11 +8,6 @@ export type SendTemplateEmailParams = {
   to: string
   subject: string
   template: React.ReactElement
-}
-
-type EmailResponse = {
-  id?: string
-  [key: string]: unknown
 }
 
 export type EmailProvider = {
