@@ -4,11 +4,13 @@ import { GitHubCurator } from './curators/github'
 import { GoogleCurator } from './curators/google'
 import { HnBestCurator } from './curators/hnbest'
 import type { Curator } from './curators/type'
+import { WhoisCurator } from './curators/whois'
 
 const curators = {
   github: GitHubCurator,
   google: GoogleCurator,
   hnbest: HnBestCurator,
+  whois: WhoisCurator,
 }
 
 export const curator = async (alert: Alert): Promise<string[]> => {

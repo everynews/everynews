@@ -192,6 +192,22 @@ export const AlertCreatePage = ({
     }
   }, [isTesting, countdown])
 
+  // Set wait type and value for WHOIS provider
+  useEffect(() => {
+    if (strategyProvider === 'whois') {
+      form.setValue('wait.type', 'count', {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      })
+      form.setValue('wait.value', 1, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      })
+    }
+  }, [strategyProvider, form])
+
   const handlePromptCreated = (newPrompt: Prompt) => {
     setLocalPrompts([...localPrompts, newPrompt])
     form.setValue('promptId', newPrompt.id, {
@@ -378,6 +394,30 @@ export const AlertCreatePage = ({
                             </div>
                           </div>
                         </label>
+
+                        <label
+                          htmlFor={`${id}-whois`}
+                          className=' border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'
+                        >
+                          <RadioGroupItem
+                            value='whois'
+                            id={`${id}-whois`}
+                            aria-describedby={`${id}-whois-description`}
+                            className='order-1 after:absolute after:inset-0 cursor-pointer'
+                          />
+                          <div className='flex grow items-start gap-3'>
+                            <div className='grid grow gap-2'>
+                              <span>Domain Status</span>
+                              <p
+                                id={`${id}-whois-description`}
+                                className='text-muted-foreground text-sm'
+                              >
+                                Monitor domain availability. Get alerts when a
+                                domain becomes available or expires.
+                              </p>
+                            </div>
+                          </div>
+                        </label>
                       </RadioGroup>
                     </FormControl>
                     <FormMessage />
@@ -431,6 +471,29 @@ export const AlertCreatePage = ({
                 </>
               )}
 
+              {strategyProvider === 'whois' && (
+                <>
+                  <Separator />
+                  <FormField
+                    control={form.control}
+                    name='strategy.domain'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Domain Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder='example.com'
+                            {...field}
+                            value={field.value || ''}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+
               <Separator />
 
               <FormField
@@ -440,45 +503,69 @@ export const AlertCreatePage = ({
                   <FormItem>
                     <FormLabel>Update Frequency</FormLabel>
                     <FormControl>
-                      <RadioGroup
-                        className='gap-2 lg:grid lg:grid-cols-2'
-                        defaultValue={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <label
-                          htmlFor={`${id}-count`}
-                          className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none cursor-pointer'
+                      {strategyProvider === 'whois' ? (
+                        // For WHOIS, only show "Based on Count" option
+                        <RadioGroup
+                          value='count'
+                          onValueChange={field.onChange}
                         >
-                          <div className='grid grow gap-2'>
-                            <span>Based on Count</span>
-                            <p className='text-muted-foreground text-sm'>
-                              Send me updates only when there are enough news
-                              collected
-                            </p>
+                          <div className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'>
+                            <div className='grid grow gap-2'>
+                              <span>Based on Count</span>
+                              <p className='text-muted-foreground text-sm'>
+                                Send alerts immediately when domain becomes
+                                available
+                              </p>
+                            </div>
+                            <RadioGroupItem
+                              value='count'
+                              checked={true}
+                              className='order-1'
+                              disabled
+                            />
                           </div>
-                          <RadioGroupItem
-                            value='count'
-                            id={`${id}-count`}
-                            className='order-1 cursor-pointer'
-                          />
-                        </label>
-                        <label
-                          htmlFor={`${id}-schedule`}
-                          className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none cursor-pointer'
+                        </RadioGroup>
+                      ) : (
+                        <RadioGroup
+                          className='gap-2 lg:grid lg:grid-cols-2'
+                          defaultValue={field.value}
+                          onValueChange={field.onChange}
                         >
-                          <div className='grid grow gap-2'>
-                            <span>Based on Schedule</span>
-                            <p className='text-muted-foreground text-sm'>
-                              Send me updates based on periodic schedule
-                            </p>
-                          </div>
-                          <RadioGroupItem
-                            value='schedule'
-                            id={`${id}-schedule`}
-                            className='order-1 cursor-pointer'
-                          />
-                        </label>
-                      </RadioGroup>
+                          <label
+                            htmlFor={`${id}-count`}
+                            className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none cursor-pointer'
+                          >
+                            <div className='grid grow gap-2'>
+                              <span>Based on Count</span>
+                              <p className='text-muted-foreground text-sm'>
+                                Send me updates only when there are enough news
+                                collected
+                              </p>
+                            </div>
+                            <RadioGroupItem
+                              value='count'
+                              id={`${id}-count`}
+                              className='order-1 cursor-pointer'
+                            />
+                          </label>
+                          <label
+                            htmlFor={`${id}-schedule`}
+                            className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none cursor-pointer'
+                          >
+                            <div className='grid grow gap-2'>
+                              <span>Based on Schedule</span>
+                              <p className='text-muted-foreground text-sm'>
+                                Send me updates based on periodic schedule
+                              </p>
+                            </div>
+                            <RadioGroupItem
+                              value='schedule'
+                              id={`${id}-schedule`}
+                              className='order-1 cursor-pointer'
+                            />
+                          </label>
+                        </RadioGroup>
+                      )}
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -495,25 +582,51 @@ export const AlertCreatePage = ({
                       <FormItem>
                         <FormLabel>Article Count</FormLabel>
                         <FormControl>
-                          <Tabs
-                            defaultValue={String(field.value)}
-                            className='w-full'
-                          >
-                            <TabsList className='flex w-full'>
-                              {[1, 10, 20].map((count) => (
-                                <TabsTrigger
-                                  key={count}
-                                  value={count.toString()}
-                                  onClick={() => field.onChange(count)}
-                                  className='flex-1'
-                                >
-                                  {count === 1
-                                    ? 'Immediately'
-                                    : `Every ${count} articles`}
-                                </TabsTrigger>
-                              ))}
-                            </TabsList>
-                          </Tabs>
+                          {strategyProvider === 'whois' ? (
+                            // For WHOIS, only show "Immediately" option
+                            <RadioGroup
+                              value='1'
+                              onValueChange={(value) =>
+                                field.onChange(Number(value))
+                              }
+                            >
+                              <div className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'>
+                                <div className='grid grow gap-2'>
+                                  <span>Immediately</span>
+                                  <p className='text-muted-foreground text-sm'>
+                                    Send alert as soon as domain becomes
+                                    available
+                                  </p>
+                                </div>
+                                <RadioGroupItem
+                                  value='1'
+                                  checked={true}
+                                  className='order-1'
+                                  disabled
+                                />
+                              </div>
+                            </RadioGroup>
+                          ) : (
+                            <Tabs
+                              defaultValue={String(field.value)}
+                              className='w-full'
+                            >
+                              <TabsList className='flex w-full'>
+                                {[1, 10, 20].map((count) => (
+                                  <TabsTrigger
+                                    key={count}
+                                    value={count.toString()}
+                                    onClick={() => field.onChange(count)}
+                                    className='flex-1'
+                                  >
+                                    {count === 1
+                                      ? 'Immediately'
+                                      : `Every ${count} articles`}
+                                  </TabsTrigger>
+                                ))}
+                              </TabsList>
+                            </Tabs>
+                          )}
                         </FormControl>
                         <FormMessage />
                       </FormItem>

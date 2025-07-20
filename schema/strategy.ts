@@ -16,6 +16,10 @@ export const strategySchema = z
       provider: z.literal('github').openapi({ example: 'github' }),
       token: z.string().optional().openapi({ example: 'ghp_xxxxxxxxxxxxx' }),
     }),
+    z.object({
+      domain: z.string().openapi({ example: 'example.com' }),
+      provider: z.literal('whois').openapi({ example: 'whois' }),
+    }),
   ])
   .openapi({ ref: 'StrategySchema' })
 
