@@ -63,7 +63,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.2",
-    "@react-email/preview-server": "4.2.0",
+    "@react-email/preview-server": "4.2.3",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/bun": "^1.2.19",
     "@types/node": "^24.0.15",
