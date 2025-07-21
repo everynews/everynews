@@ -4,7 +4,6 @@ import {
   Container,
   Head,
   Heading,
-  Hr,
   Html,
   Img,
   Preview,
@@ -80,7 +79,6 @@ const AlertInvitationEmail = ({
                   {alertDescription}
                 </Text>
               )}
-              <Hr className='border-gray-200 my-6' />
 
               {message && (
                 <div className='bg-gray-50 rounded-md p-4 mb-6'>
@@ -92,7 +90,6 @@ const AlertInvitationEmail = ({
 
               {recentStories.length > 0 && (
                 <>
-                  <Hr className='border-gray-200 my-6' />
                   <Text className='text-[16px] font-semibold text-gray-900 mb-4'>
                     Recent Stories
                   </Text>

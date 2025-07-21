@@ -36,8 +36,6 @@ export const UserSchema = z
     id: z.string(),
     image: z.string().nullable(),
     name: z.string(),
-    phoneNumber: z.string().nullable(),
-    phoneNumberVerified: z.boolean().nullable(),
     updatedAt: z.coerce.date(),
   })
   .openapi({ ref: 'UserSchema' })
