@@ -4,7 +4,6 @@ import { GitHubCurator } from './curators/github'
 import { GoogleCurator } from './curators/google'
 import { HnBestCurator } from './curators/hnbest'
 import { ProductHuntCurator } from './curators/producthunt'
-import type { Curator } from './curators/type'
 import { WhoisCurator } from './curators/whois'
 
 const curators = {
@@ -29,8 +28,7 @@ export const curator = async (alert: Alert): Promise<string[]> => {
       },
     })
 
-    const curator: Curator = curators[alert.strategy.provider]
-    const urls = await curator(alert)
+    const urls = await curators[alert.strategy.provider](alert)
 
     // Deduplicate URLs to prevent processing the same URL multiple times
     const uniqueUrls = [...new Set(urls)]

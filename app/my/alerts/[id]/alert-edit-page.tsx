@@ -651,7 +651,7 @@ export const AlertEditPage = ({
                         <FormControl>
                           <Input
                             type='password'
-                            placeholder='Bearer YOUR_DEVELOPER_TOKEN'
+                            placeholder='Your developer token'
                             {...field}
                             value={field.value || ''}
                           />

@@ -39,11 +39,78 @@ export class ProductHuntClient {
     limit: number = 10,
   ): Promise<ProductHuntPost[]> {
     const query = `
-      query TopDailyLaunches($date: Date!, $limit: Int!) {
+      query TopDailyLaunches($postedAfter: DateTime!, $postedBefore: DateTime!, $limit: Int!) {
         posts(
           order: VOTES
-          postedAfter: $date
-          postedBefore: $date
+          postedAfter: $postedAfter
+          postedBefore: $postedBefore
+          first: $limit
+        ) {
+          edges {
+            node {
+              id
+              name
+              tagline
+              description
+              url
+              website
+              votesCount
+              thumbnail { url }
+            }
+          }
+        }
+      }
+    `
+
+    // Convert date to DateTime format with start and end of day
+    const startOfDay = `${date}T00:00:00Z`
+    const endOfDay = `${date}T23:59:59Z`
+
+    const variables = {
+      limit,
+      postedAfter: startOfDay,
+      postedBefore: endOfDay,
+    }
+
+    const response = await fetch(PRODUCTHUNT_API_URL, {
+      body: JSON.stringify({ query, variables }),
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(
+        `ProductHunt API error: ${response.status} ${response.statusText} - ${errorText}`,
+      )
+    }
+
+    const data = await response.json()
+
+    if (data.errors) {
+      throw new Error(
+        `ProductHunt GraphQL error: ${JSON.stringify(data.errors)}`,
+      )
+    }
+
+    const parsed = responseSchema.parse(data)
+
+    return parsed.data.posts.edges.map((edge) => edge.node)
+  }
+
+  async getTodaysTopLaunches(limit: number = 10): Promise<ProductHuntPost[]> {
+    // Get posts from last 24 hours
+    const now = new Date()
+    const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+
+    const query = `
+      query TopRecentLaunches($postedAfter: DateTime!, $limit: Int!) {
+        posts(
+          order: VOTES
+          postedAfter: $postedAfter
           first: $limit
         ) {
           edges {
@@ -63,33 +130,36 @@ export class ProductHuntClient {
     `
 
     const variables = {
-      date,
       limit,
+      postedAfter: yesterday.toISOString(),
     }
 
     const response = await fetch(PRODUCTHUNT_API_URL, {
       body: JSON.stringify({ query, variables }),
       headers: {
-        Authorization: this.token,
+        Authorization: `Bearer ${this.token}`,
         'Content-Type': 'application/json',
       },
       method: 'POST',
     })
 
     if (!response.ok) {
+      const errorText = await response.text()
       throw new Error(
-        `ProductHunt API error: ${response.status} ${response.statusText}`,
+        `ProductHunt API error: ${response.status} ${response.statusText} - ${errorText}`,
       )
     }
 
     const data = await response.json()
+
+    if (data.errors) {
+      throw new Error(
+        `ProductHunt GraphQL error: ${JSON.stringify(data.errors)}`,
+      )
+    }
+
     const parsed = responseSchema.parse(data)
 
     return parsed.data.posts.edges.map((edge) => edge.node)
-  }
-
-  async getTodaysTopLaunches(limit: number = 10): Promise<ProductHuntPost[]> {
-    const today = new Date().toISOString().split('T')[0]
-    return this.getTopDailyLaunches(today, limit)
   }
 }
