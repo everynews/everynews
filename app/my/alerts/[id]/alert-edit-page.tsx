@@ -23,6 +23,7 @@ import { Combobox } from '@everynews/components/ui/combobox'
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -531,6 +532,30 @@ export const AlertEditPage = ({
                             </div>
                           </div>
                         </label>
+
+                        <label
+                          htmlFor={`${id}-producthunt`}
+                          className=' border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'
+                        >
+                          <RadioGroupItem
+                            value='producthunt'
+                            id={`${id}-producthunt`}
+                            aria-describedby={`${id}-producthunt-description`}
+                            className='order-1 after:absolute after:inset-0 cursor-pointer'
+                          />
+                          <div className='flex grow items-start gap-3'>
+                            <div className='grid grow gap-2'>
+                              <span>Product Hunt</span>
+                              <p
+                                id={`${id}-producthunt-description`}
+                                className='text-muted-foreground text-sm'
+                              >
+                                Track the top daily launches on Product Hunt.
+                                Requires a Product Hunt developer token.
+                              </p>
+                            </div>
+                          </div>
+                        </label>
                       </RadioGroup>
                     </FormControl>
                     <FormMessage />
@@ -601,6 +626,60 @@ export const AlertEditPage = ({
                             value={field.value || ''}
                           />
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+
+              {strategyProvider === 'producthunt' && (
+                <>
+                  <Separator />
+                  <FormField
+                    control={form.control}
+                    name='strategy.token'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Product Hunt Token</FormLabel>
+                        <FormControl>
+                          <Input
+                            type='password'
+                            placeholder='Bearer YOUR_DEVELOPER_TOKEN'
+                            {...field}
+                            value={field.value || ''}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Get your developer token from the Product Hunt API
+                          dashboard
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name='strategy.limit'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Number of Products</FormLabel>
+                        <FormControl>
+                          <Input
+                            type='number'
+                            placeholder='10'
+                            {...field}
+                            value={field.value || 10}
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                            min={1}
+                            max={50}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          How many top products to fetch (1-50)
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}

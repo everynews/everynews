@@ -20,6 +20,11 @@ export const strategySchema = z
       domain: z.string().openapi({ example: 'example.com' }),
       provider: z.literal('whois').openapi({ example: 'whois' }),
     }),
+    z.object({
+      limit: z.number().min(1).max(50).default(10).openapi({ example: 10 }),
+      provider: z.literal('producthunt').openapi({ example: 'producthunt' }),
+      token: z.string().openapi({ example: 'Bearer YOUR_DEVELOPER_TOKEN' }),
+    }),
   ])
   .openapi({ ref: 'StrategySchema' })
 

@@ -3,6 +3,7 @@ import type { Alert } from '@everynews/schema'
 import { GitHubCurator } from './curators/github'
 import { GoogleCurator } from './curators/google'
 import { HnBestCurator } from './curators/hnbest'
+import { ProductHuntCurator } from './curators/producthunt'
 import type { Curator } from './curators/type'
 import { WhoisCurator } from './curators/whois'
 
@@ -10,6 +11,7 @@ const curators = {
   github: GitHubCurator,
   google: GoogleCurator,
   hnbest: HnBestCurator,
+  producthunt: ProductHuntCurator,
   whois: WhoisCurator,
 }
 
