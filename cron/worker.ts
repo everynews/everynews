@@ -3,8 +3,10 @@ import { track } from '@everynews/logs'
 import {
   type Alert,
   alerts,
+  type Channel,
   type Content,
   StorySchema,
+  type Subscription,
   stories,
   subscriptions,
   users,
@@ -14,6 +16,23 @@ import { herald } from '@everynews/subroutines/herald'
 import { reaper } from '@everynews/subroutines/reaper'
 import { sage } from '@everynews/subroutines/sage'
 import { and, eq, gte, isNull } from 'drizzle-orm'
+import type { z } from 'zod'
+
+// Constants
+const TIMEOUTS = {
+  CURATOR: 60 * 1000, // 1 minute
+  HERALD: 30 * 1000, // 30 seconds
+  REAPER: 3 * 60 * 1000, // 3 minutes
+  SAGE: 60 * 1000, // 1 minute
+} as const
+
+const FAST_CHANNEL_TYPES = ['phone', 'push', 'slack', 'discord'] as const
+type FastChannelType = (typeof FAST_CHANNEL_TYPES)[number]
+
+// Type definitions
+interface SubscriberWithChannel extends Subscription {
+  channel: Channel | null
+}
 
 const withTimeout = async <T>(
   promise: Promise<T>,
@@ -24,6 +43,98 @@ const withTimeout = async <T>(
     setTimeout(() => reject(new Error(errorMessage)), timeoutMs)
   })
   return Promise.race([promise, timeout])
+}
+
+// Helper functions
+const isFastChannel = (channelType: string): channelType is FastChannelType => {
+  return FAST_CHANNEL_TYPES.includes(channelType as FastChannelType)
+}
+
+const classifySubscribers = (subscribers: SubscriberWithChannel[]) => {
+  const fastChannelSubscribers: SubscriberWithChannel[] = []
+  const slowChannelSubscribers: SubscriberWithChannel[] = []
+
+  for (const subscriber of subscribers) {
+    if (!subscriber.channel) {
+      // No channel ID means default email channel (slow)
+      slowChannelSubscribers.push(subscriber)
+    } else if (isFastChannel(subscriber.channel.type)) {
+      fastChannelSubscribers.push(subscriber)
+    } else {
+      // Slow channels: email
+      slowChannelSubscribers.push(subscriber)
+    }
+  }
+
+  return { fastChannelSubscribers, slowChannelSubscribers }
+}
+
+const fetchStoriesForChannel = async (
+  alertId: string,
+  lastSent: Date | null,
+) => {
+  return StorySchema.array().parse(
+    await db.query.stories.findMany({
+      where: and(
+        isNull(stories.deletedAt),
+        eq(stories.alertId, alertId),
+        gte(stories.createdAt, lastSent ?? new Date(0)),
+      ),
+    }),
+  )
+}
+
+const deliverToSubscribers = async (
+  subscribers: SubscriberWithChannel[],
+  storiesToSend: z.infer<typeof StorySchema>[],
+  alert: Alert,
+  allSubscribersCount: number,
+  channelType: 'fast' | 'slow',
+): Promise<boolean> => {
+  let anySucceeded = false
+
+  for (const subscriber of subscribers) {
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, subscriber.userId),
+    })
+
+    try {
+      await withTimeout(
+        herald({
+          alertId: alert.id,
+          alertName: alert.name,
+          channelId: subscriber.channelId,
+          readerCount: allSubscribersCount,
+          stories: storiesToSend,
+          strategy: alert.strategy,
+          subscriptionId: subscriber.id,
+          user,
+          wait: alert.wait,
+        }),
+        TIMEOUTS.HERALD,
+        `Herald timeout for user ${user?.email || 'unknown'}`,
+      )
+      anySucceeded = true
+    } catch (error) {
+      await track({
+        channel: 'worker',
+        description: `Failed to send to ${channelType} channel subscriber: ${error instanceof Error ? error.message : String(error)}`,
+        event: `${channelType === 'fast' ? 'Fast' : 'Slow'} Channel Delivery Failed`,
+        icon: '❌',
+        tags: {
+          alert_id: alert.id,
+          alert_name: alert.name,
+          channel_id: subscriber.channelId || 'unknown',
+          error: String(error),
+          subscriber_id: subscriber.id,
+          type: 'error',
+          user_email: user?.email || 'unknown',
+        },
+      })
+    }
+  }
+
+  return anySucceeded
 }
 
 export const processAlert = async (item: Alert) => {
@@ -39,45 +150,33 @@ export const processAlert = async (item: Alert) => {
     },
   })
 
+  // Content gathering pipeline
   const urls = await withTimeout(
     curator(item),
-    60 * 1000, // 1 minute for curator
+    TIMEOUTS.CURATOR,
     `Curator timeout for alert: ${item.name}`,
   )
   const contents: Content[] = await withTimeout(
     reaper(urls),
-    3 * 60 * 1000, // 3 minutes for reaper
+    TIMEOUTS.REAPER,
     `Reaper timeout for alert: ${item.name}`,
   )
 
   await withTimeout(
     sage({ contents, news: item }),
-    60 * 1000, // 1 minute for sage
+    TIMEOUTS.SAGE,
     `Sage timeout for alert: ${item.name}`,
   )
 
-  const slowChannelFilteredStories = StorySchema.array().parse(
-    await db.query.stories.findMany({
-      where: and(
-        isNull(stories.deletedAt),
-        eq(stories.alertId, item.id),
-        gte(stories.createdAt, item.slowLastSent ?? new Date(0)),
-      ),
-    }),
-  )
-
-  const fastChannelFilteredStories = StorySchema.array().parse(
-    await db.query.stories.findMany({
-      where: and(
-        isNull(stories.deletedAt),
-        eq(stories.alertId, item.id),
-        gte(stories.createdAt, item.fastLastSent ?? new Date(0)),
-      ),
-    }),
-  )
+  // Fetch stories based on channel-specific last sent times
+  const [slowChannelFilteredStories, fastChannelFilteredStories] =
+    await Promise.all([
+      fetchStoriesForChannel(item.id, item.slowLastSent),
+      fetchStoriesForChannel(item.id, item.fastLastSent),
+    ])
 
   // Get all subscriptions and separate by channel type
-  const allSubscribers = await db.query.subscriptions.findMany({
+  const allSubscribers = (await db.query.subscriptions.findMany({
     where: and(
       eq(subscriptions.alertId, item.id),
       isNull(subscriptions.deletedAt),
@@ -85,31 +184,10 @@ export const processAlert = async (item: Alert) => {
     with: {
       channel: true,
     },
-  })
+  })) as SubscriberWithChannel[]
 
-  // Separate subscribers by channel speed type
-  const fastChannelSubscribers = []
-  const slowChannelSubscribers = []
-
-  for (const subscriber of allSubscribers) {
-    if (!subscriber.channel) {
-      // No channel ID means default email channel (slow)
-      slowChannelSubscribers.push(subscriber)
-    } else {
-      // Fast channels: phone, push, slack, discord, etc.
-      if (
-        subscriber.channel.type === 'phone' ||
-        subscriber.channel.type === 'push' ||
-        subscriber.channel.type === 'slack' ||
-        subscriber.channel.type === 'discord'
-      ) {
-        fastChannelSubscribers.push(subscriber)
-      } else {
-        // Slow channels: email
-        slowChannelSubscribers.push(subscriber)
-      }
-    }
-  }
+  const { fastChannelSubscribers, slowChannelSubscribers } =
+    classifySubscribers(allSubscribers)
 
   await track({
     channel: 'worker',
@@ -130,9 +208,8 @@ export const processAlert = async (item: Alert) => {
     },
   })
 
-  // Update lastRun to current time before setting nextRun
+  // Update lastRun and calculate nextRun
   const currentTime = new Date()
-
   const nextRun = new Date(Date.now() + 60 * 60 * 1000)
 
   await db
@@ -140,18 +217,16 @@ export const processAlert = async (item: Alert) => {
     .set({ lastRun: currentTime, nextRun })
     .where(eq(alerts.id, item.id))
 
+  // Determine if we should send to each channel type
   const shouldSendSlowChannels =
     item.wait.type === 'count'
       ? slowChannelFilteredStories.length >= item.wait.value
       : shouldSendScheduledAlert(item.wait.value, item.slowLastSent)
 
-  // Fast channels always send immediately if there are new stories
   const shouldSendFastChannels = fastChannelFilteredStories.length > 0
 
+  // Handle slow channel delivery
   let anySlowChannelSucceeded = false
-  let anyFastChannelSucceeded = false
-
-  // Send to slow channel subscribers if conditions are met
   if (shouldSendSlowChannels && slowChannelSubscribers.length > 0) {
     await track({
       channel: 'worker',
@@ -167,46 +242,13 @@ export const processAlert = async (item: Alert) => {
       },
     })
 
-    for (const subscriber of slowChannelSubscribers) {
-      const user = await db.query.users.findFirst({
-        where: eq(users.id, subscriber.userId),
-      })
-
-      try {
-        await withTimeout(
-          herald({
-            alertId: item.id,
-            alertName: item.name,
-            channelId: subscriber.channelId,
-            readerCount: allSubscribers.length,
-            stories: slowChannelFilteredStories,
-            strategy: item.strategy,
-            subscriptionId: subscriber.id,
-            user,
-            wait: item.wait,
-          }),
-          30 * 1000,
-          `Herald timeout for user ${user?.email || 'unknown'}`,
-        )
-        anySlowChannelSucceeded = true
-      } catch (error) {
-        await track({
-          channel: 'worker',
-          description: `Failed to send to slow channel subscriber: ${error instanceof Error ? error.message : String(error)}`,
-          event: 'Slow Channel Delivery Failed',
-          icon: '❌',
-          tags: {
-            alert_id: item.id,
-            alert_name: item.name,
-            channel_id: subscriber.channelId || 'unknown',
-            error: String(error),
-            subscriber_id: subscriber.id,
-            type: 'error',
-            user_email: user?.email || 'unknown',
-          },
-        })
-      }
-    }
+    anySlowChannelSucceeded = await deliverToSubscribers(
+      slowChannelSubscribers,
+      slowChannelFilteredStories,
+      item,
+      allSubscribers.length,
+      'slow',
+    )
   } else if (slowChannelSubscribers.length > 0) {
     const skipReason =
       item.wait.type === 'count'
@@ -231,7 +273,8 @@ export const processAlert = async (item: Alert) => {
     })
   }
 
-  // Send to fast channel subscribers immediately if there are new stories
+  // Handle fast channel delivery
+  let anyFastChannelSucceeded = false
   if (shouldSendFastChannels && fastChannelSubscribers.length > 0) {
     await track({
       channel: 'worker',
@@ -247,46 +290,13 @@ export const processAlert = async (item: Alert) => {
       },
     })
 
-    for (const subscriber of fastChannelSubscribers) {
-      const user = await db.query.users.findFirst({
-        where: eq(users.id, subscriber.userId),
-      })
-
-      try {
-        await withTimeout(
-          herald({
-            alertId: item.id,
-            alertName: item.name,
-            channelId: subscriber.channelId,
-            readerCount: allSubscribers.length,
-            stories: fastChannelFilteredStories,
-            strategy: item.strategy,
-            subscriptionId: subscriber.id,
-            user,
-            wait: item.wait,
-          }),
-          30 * 1000,
-          `Herald timeout for user ${user?.email || 'unknown'}`,
-        )
-        anyFastChannelSucceeded = true
-      } catch (error) {
-        await track({
-          channel: 'worker',
-          description: `Failed to send to fast channel subscriber: ${error instanceof Error ? error.message : String(error)}`,
-          event: 'Fast Channel Delivery Failed',
-          icon: '❌',
-          tags: {
-            alert_id: item.id,
-            alert_name: item.name,
-            channel_id: subscriber.channelId || 'unknown',
-            error: String(error),
-            subscriber_id: subscriber.id,
-            type: 'error',
-            user_email: user?.email || 'unknown',
-          },
-        })
-      }
-    }
+    anyFastChannelSucceeded = await deliverToSubscribers(
+      fastChannelSubscribers,
+      fastChannelFilteredStories,
+      item,
+      allSubscribers.length,
+      'fast',
+    )
   } else if (fastChannelSubscribers.length > 0) {
     await track({
       channel: 'worker',
@@ -302,20 +312,16 @@ export const processAlert = async (item: Alert) => {
     })
   }
 
-  // Update lastSent fields based on what was actually sent
-  if (anySlowChannelSucceeded) {
-    await db
-      .update(alerts)
-      .set({ slowLastSent: currentTime })
-      .where(eq(alerts.id, item.id))
-  }
-  if (anyFastChannelSucceeded) {
-    await db
-      .update(alerts)
-      .set({ fastLastSent: currentTime })
-      .where(eq(alerts.id, item.id))
+  // Update lastSent timestamps based on delivery results
+  const updates: Partial<typeof alerts.$inferInsert> = {}
+  if (anySlowChannelSucceeded) updates.slowLastSent = currentTime
+  if (anyFastChannelSucceeded) updates.fastLastSent = currentTime
+
+  if (Object.keys(updates).length > 0) {
+    await db.update(alerts).set(updates).where(eq(alerts.id, item.id))
   }
 
+  // Log if no subscribers found
   if (allSubscribers.length === 0) {
     await track({
       channel: 'worker',
@@ -330,6 +336,7 @@ export const processAlert = async (item: Alert) => {
     })
   }
 
+  // Final summary
   await track({
     channel: 'worker',
     description: `Completed processing: ${item.name} - Slow: ${shouldSendSlowChannels ? `sent ${slowChannelFilteredStories.length}` : `waiting (${slowChannelFilteredStories.length}/${item.wait.type === 'count' ? item.wait.value : '1'})`} to ${slowChannelSubscribers.length} subscribers. Fast: ${shouldSendFastChannels ? `sent ${fastChannelFilteredStories.length}` : 'no new'} to ${fastChannelSubscribers.length} subscribers`,
