@@ -3,10 +3,17 @@ import { sendMagicLink } from '@everynews/messengers'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { nextCookies } from 'better-auth/next-js'
-import { admin, magicLink, openAPI } from 'better-auth/plugins'
+import { admin, magicLink, oneTap, openAPI } from 'better-auth/plugins'
 
 if (!process.env.AUTH_SECRET) {
   throw new Error('AUTH_SECRET is not defined')
+}
+
+if (!process.env.GOOGLE_CLIENT_ID) {
+  throw new Error('GOOGLE_CLIENT_ID is not defined')
+}
+if (!process.env.GOOGLE_CLIENT_SECRET) {
+  throw new Error('GOOGLE_CLIENT_SECRET is not defined')
 }
 
 export const auth = betterAuth({
@@ -16,6 +23,9 @@ export const auth = betterAuth({
     provider: 'pg',
     usePlural: true,
   }),
+  emailAndPassword: {
+    enabled: true,
+  },
   plugins: [
     magicLink({
       sendMagicLink,
@@ -25,8 +35,16 @@ export const auth = betterAuth({
       disableDefaultReference: true,
     }),
     admin(),
+    oneTap(),
   ],
   secret: process.env.AUTH_SECRET,
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      enabled: true,
+    },
+  },
 })
 
 export type AuthType = {
