@@ -1,7 +1,9 @@
 'use client'
 
 import { api } from '@everynews/app/api'
+import { auth } from '@everynews/auth/client'
 import { SubmitButton } from '@everynews/components/submit-button'
+import { Button } from '@everynews/components/ui/button'
 import { Input } from '@everynews/components/ui/input'
 import { Label } from '@everynews/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -29,6 +31,7 @@ interface UpdateProfileFormProps {
 export const UpdateProfileForm = ({ user }: UpdateProfileFormProps) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const [isResettingPassword, setIsResettingPassword] = useState(false)
 
   const form = useForm<UpdateProfileFormData>({
     defaultValues: {
@@ -50,9 +53,19 @@ export const UpdateProfileForm = ({ user }: UpdateProfileFormProps) => {
       })
 
       if (response.ok) {
-        toast.success('Profile updated', {
-          description: 'Your profile has been updated successfully.',
-        })
+        const emailChanged = data.email !== user.email
+
+        if (emailChanged) {
+          toast.success('Profile updated', {
+            description:
+              'Your email has been changed. A verification email has been sent to your new address.',
+          })
+        } else {
+          toast.success('Profile updated', {
+            description: 'Your profile has been updated successfully.',
+          })
+        }
+
         router.refresh()
       } else {
         throw new Error('Failed to update profile')
@@ -63,6 +76,25 @@ export const UpdateProfileForm = ({ user }: UpdateProfileFormProps) => {
       })
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleResetPassword = async () => {
+    setIsResettingPassword(true)
+    try {
+      await auth.forgetPassword({
+        email: user.email,
+        redirectTo: '/reset-password',
+      })
+      toast.success('Password reset email sent', {
+        description: 'Check your email for password reset instructions.',
+      })
+    } catch (_error) {
+      toast.error('Error', {
+        description: 'Failed to send password reset email. Please try again.',
+      })
+    } finally {
+      setIsResettingPassword(false)
     }
   }
 
@@ -93,9 +125,19 @@ export const UpdateProfileForm = ({ user }: UpdateProfileFormProps) => {
         )}
       </div>
 
-      <SubmitButton type='submit' disabled={isLoading} loading={isLoading}>
-        Save Changes
-      </SubmitButton>
+      <div className='flex gap-2'>
+        <SubmitButton type='submit' disabled={isLoading} loading={isLoading}>
+          Save Changes
+        </SubmitButton>
+        <Button
+          type='button'
+          variant='outline'
+          onClick={handleResetPassword}
+          disabled={isResettingPassword}
+        >
+          {isResettingPassword ? 'Sending...' : 'Reset Password'}
+        </Button>
+      </div>
     </form>
   )
 }

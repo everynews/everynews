@@ -1,3 +1,4 @@
+import { auth } from '@everynews/auth/client'
 import { db } from '@everynews/database'
 import { track } from '@everynews/logs'
 import { users } from '@everynews/schema'
@@ -74,24 +75,39 @@ export const UserRouter = new Hono<WithAuth>()
         return c.json({ error: 'Forbidden' }, 403)
       }
 
+      // Check if email is being changed
+      const [currentUser] = await db
+        .select({ email: users.email })
+        .from(users)
+        .where(eq(users.id, id))
+
+      const emailChanged = currentUser.email !== data.email
+
       const [updatedUser] = await db
         .update(users)
         .set({
           email: data.email,
           name: data.name,
+          // Set emailVerified to false if email is changing
+          ...(emailChanged && { emailVerified: false }),
           updatedAt: new Date(),
         })
         .where(eq(users.id, id))
         .returning()
 
+      if (emailChanged) {
+        await auth.sendVerificationEmail({ email: updatedUser.email })
+      }
+
       await track({
         channel: 'users',
-        description: `User ${user.id} updated their profile`,
+        description: `User ${user.id} updated their profile${emailChanged ? ' (email changed)' : ''}`,
         event: 'Profile Updated',
         icon: '✏️',
         tags: {
           type: 'info',
           userId: user.id,
+          ...(emailChanged && { emailChanged: true }),
         },
       })
 
