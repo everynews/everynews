@@ -321,7 +321,13 @@ export const AlertCreatePage = ({
                       <RadioGroup
                         className='gap-2 xl:grid xl:grid-cols-2'
                         defaultValue={field.value}
-                        onValueChange={field.onChange}
+                        onValueChange={(value) => {
+                          field.onChange(value)
+                          // Set default limit when switching to producthunt
+                          if (value === 'producthunt') {
+                            form.setValue('strategy.limit', 10)
+                          }
+                        }}
                       >
                         <label
                           htmlFor={`${id}-hnbest`}
