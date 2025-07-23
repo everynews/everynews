@@ -4,8 +4,8 @@ import {
   type Alert,
   alerts,
   type Content,
-  stories,
   StorySchema,
+  stories,
   subscriptions,
   users,
 } from '@everynews/schema'
@@ -49,28 +49,32 @@ export const processAlert = async (item: Alert) => {
     3 * 60 * 1000, // 3 minutes for reaper
     `Reaper timeout for alert: ${item.name}`,
   )
-  
+
   await withTimeout(
     sage({ contents, news: item }),
     60 * 1000, // 1 minute for sage
     `Sage timeout for alert: ${item.name}`,
   )
 
-  const slowChannelFilteredStories = StorySchema.array().parse(await db.query.stories.findMany({
-    where: and(
-      isNull(stories.deletedAt),
-      eq(stories.alertId, item.id),
-      lte(stories.createdAt, item.slowLastSent ?? new Date(0)),
-    ),
-  }))
+  const slowChannelFilteredStories = StorySchema.array().parse(
+    await db.query.stories.findMany({
+      where: and(
+        isNull(stories.deletedAt),
+        eq(stories.alertId, item.id),
+        lte(stories.createdAt, item.slowLastSent ?? new Date(0)),
+      ),
+    }),
+  )
 
-  const fastChannelFilteredStories = StorySchema.array().parse(await db.query.stories.findMany({
-    where: and(
-      isNull(stories.deletedAt),
-      eq(stories.alertId, item.id),
-      lte(stories.createdAt, item.fastLastSent ?? new Date(0)),
-    ),
-  }))
+  const fastChannelFilteredStories = StorySchema.array().parse(
+    await db.query.stories.findMany({
+      where: and(
+        isNull(stories.deletedAt),
+        eq(stories.alertId, item.id),
+        lte(stories.createdAt, item.fastLastSent ?? new Date(0)),
+      ),
+    }),
+  )
 
   // Get all subscriptions and separate by channel type
   const allSubscribers = await db.query.subscriptions.findMany({
