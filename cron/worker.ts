@@ -13,7 +13,7 @@ import { curator } from '@everynews/subroutines/curator'
 import { herald } from '@everynews/subroutines/herald'
 import { reaper } from '@everynews/subroutines/reaper'
 import { sage } from '@everynews/subroutines/sage'
-import { and, eq, isNull, lte } from 'drizzle-orm'
+import { and, eq, gte, isNull } from 'drizzle-orm'
 
 const withTimeout = async <T>(
   promise: Promise<T>,
@@ -61,7 +61,7 @@ export const processAlert = async (item: Alert) => {
       where: and(
         isNull(stories.deletedAt),
         eq(stories.alertId, item.id),
-        lte(stories.createdAt, item.slowLastSent ?? new Date(0)),
+        gte(stories.createdAt, item.slowLastSent ?? new Date(0)),
       ),
     }),
   )
@@ -71,7 +71,7 @@ export const processAlert = async (item: Alert) => {
       where: and(
         isNull(stories.deletedAt),
         eq(stories.alertId, item.id),
-        lte(stories.createdAt, item.fastLastSent ?? new Date(0)),
+        gte(stories.createdAt, item.fastLastSent ?? new Date(0)),
       ),
     }),
   )
@@ -303,23 +303,17 @@ export const processAlert = async (item: Alert) => {
   }
 
   // Update lastSent fields based on what was actually sent
-  const updates: { slowLastSent?: Date; fastLastSent?: Date } = {}
-  if (
-    shouldSendSlowChannels &&
-    slowChannelSubscribers.length > 0 &&
-    anySlowChannelSucceeded
-  ) {
-    updates.slowLastSent = currentTime
+  if (anySlowChannelSucceeded) {
+    await db
+      .update(alerts)
+      .set({ slowLastSent: currentTime })
+      .where(eq(alerts.id, item.id))
   }
-  if (
-    shouldSendFastChannels &&
-    fastChannelSubscribers.length > 0 &&
-    anyFastChannelSucceeded
-  ) {
-    updates.fastLastSent = currentTime
-  }
-  if (Object.keys(updates).length > 0) {
-    await db.update(alerts).set(updates).where(eq(alerts.id, item.id))
+  if (anyFastChannelSucceeded) {
+    await db
+      .update(alerts)
+      .set({ fastLastSent: currentTime })
+      .where(eq(alerts.id, item.id))
   }
 
   if (allSubscribers.length === 0) {
