@@ -4,6 +4,8 @@ import {
   type Alert,
   alerts,
   type Content,
+  stories,
+  StorySchema,
   subscriptions,
   users,
 } from '@everynews/schema'
@@ -11,7 +13,7 @@ import { curator } from '@everynews/subroutines/curator'
 import { herald } from '@everynews/subroutines/herald'
 import { reaper } from '@everynews/subroutines/reaper'
 import { sage } from '@everynews/subroutines/sage'
-import { and, eq, isNull } from 'drizzle-orm'
+import { and, eq, isNull, lte } from 'drizzle-orm'
 
 const withTimeout = async <T>(
   promise: Promise<T>,
@@ -47,11 +49,28 @@ export const processAlert = async (item: Alert) => {
     3 * 60 * 1000, // 3 minutes for reaper
     `Reaper timeout for alert: ${item.name}`,
   )
-  const stories = await withTimeout(
+  
+  await withTimeout(
     sage({ contents, news: item }),
     60 * 1000, // 1 minute for sage
     `Sage timeout for alert: ${item.name}`,
   )
+
+  const slowChannelFilteredStories = StorySchema.array().parse(await db.query.stories.findMany({
+    where: and(
+      isNull(stories.deletedAt),
+      eq(stories.alertId, item.id),
+      lte(stories.createdAt, item.slowLastSent ?? new Date(0)),
+    ),
+  }))
+
+  const fastChannelFilteredStories = StorySchema.array().parse(await db.query.stories.findMany({
+    where: and(
+      isNull(stories.deletedAt),
+      eq(stories.alertId, item.id),
+      lte(stories.createdAt, item.fastLastSent ?? new Date(0)),
+    ),
+  }))
 
   // Get all subscriptions and separate by channel type
   const allSubscribers = await db.query.subscriptions.findMany({
@@ -88,24 +107,6 @@ export const processAlert = async (item: Alert) => {
     }
   }
 
-  // Filter stories for slow channels (since slowLastSent)
-  const slowChannelFilteredStories = stories.filter((story) => {
-    if (story.userMarkedIrrelevant || story.systemMarkedIrrelevant) {
-      return false
-    }
-    if (!item.slowLastSent) return true
-    return story.createdAt > item.slowLastSent
-  })
-
-  // Filter stories for fast channels (since fastLastSent)
-  const fastChannelFilteredStories = stories.filter((story) => {
-    if (story.userMarkedIrrelevant || story.systemMarkedIrrelevant) {
-      return false
-    }
-    if (!item.fastLastSent) return true
-    return story.createdAt > item.fastLastSent
-  })
-
   await track({
     channel: 'worker',
     description: `Slow channels: ${slowChannelFilteredStories.length} new stories since slowLastSent. Fast channels: ${fastChannelFilteredStories.length} new stories since fastLastSent`,
@@ -121,7 +122,6 @@ export const processAlert = async (item: Alert) => {
       slow_last_sent: item.slowLastSent?.toISOString() || 'null',
       slow_stories: slowChannelFilteredStories.length,
       slow_subscribers: slowChannelSubscribers.length,
-      stories_total: stories.length,
       type: 'info',
     },
   })
@@ -350,7 +350,6 @@ export const processAlert = async (item: Alert) => {
           : 'false',
       slow_stories: slowChannelFilteredStories.length,
       slow_subscribers: slowChannelSubscribers.length,
-      stories_total: stories.length,
       type: 'info',
       urls_found: urls.length,
       wait_type: item.wait.type,
