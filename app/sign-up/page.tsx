@@ -44,6 +44,7 @@ export default function SignUpPage() {
           name,
           password,
         })
+        await auth.sendVerificationEmail({ email })
         setIsSignUpComplete(true)
       } catch (e) {
         toastNetworkError(e as Error)
