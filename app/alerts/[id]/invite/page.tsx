@@ -1,9 +1,9 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { InviteToAlertForm } from '@everynews/components/invite-to-alert-form'
 import { db } from '@everynews/database'
 import { AlertSchema, alerts } from '@everynews/schema/alert'
 import { and, eq, isNull } from 'drizzle-orm'
-import { notFound, redirect } from 'next/navigation'
+import { notFound, unauthorized } from 'next/navigation'
 
 export default async function InviteToAlertPage({
   params,
@@ -11,11 +11,7 @@ export default async function InviteToAlertPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const user = await whoami()
-
-  if (!user) {
-    redirect('/sign-in')
-  }
+  const user = await guardUser()
 
   // Get alert details
   const alert = await db.query.alerts.findFirst({
@@ -28,7 +24,7 @@ export default async function InviteToAlertPage({
 
   // Only allow invites for public alerts
   if (!alert.isPublic) {
-    redirect(`/alerts/${id}`)
+    return unauthorized()
   }
 
   return (

@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { InvitationAcceptance } from '@everynews/components/invitation-acceptance'
 import { db } from '@everynews/database'
 import { invitations, subscriptions } from '@everynews/schema'
@@ -38,7 +38,7 @@ export default async function InvitationPage({
   }
 
   // Check if user is authenticated
-  const user = await whoami()
+  const user = await guardUser()
 
   // If user is authenticated, check if they're already subscribed
   let isAlreadySubscribed = false

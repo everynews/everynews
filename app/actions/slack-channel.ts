@@ -1,12 +1,12 @@
 'use server'
 
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { db } from '@everynews/database'
 import { channels, SlackChannelConfigSchema } from '@everynews/schema/channel'
 import { eq } from 'drizzle-orm'
 import humanId from 'human-id'
 import { revalidatePath } from 'next/cache'
-import { redirect, unauthorized } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
 export const updateSlackChannel = async (
   channelId: string,
@@ -14,8 +14,7 @@ export const updateSlackChannel = async (
   slackChannelName: string,
 ) => {
   // Check if user is authenticated
-  const user = await whoami()
-  if (!user) return unauthorized()
+  const user = await guardUser()
 
   try {
     // First get the existing channel to preserve config

@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { redirectToSignIn } from '@everynews/lib/auth-redirect'
 import { ChannelCreatePage } from './channel-create-page'
 
@@ -8,7 +8,7 @@ export const metadata = {
 }
 
 export default async function CreateChannelPage() {
-  const user = await whoami()
+  const user = await guardUser()
   if (!user) {
     return redirectToSignIn('/my/channels/create')
   }

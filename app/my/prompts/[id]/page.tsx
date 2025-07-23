@@ -1,8 +1,8 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { db } from '@everynews/database'
 import { prompt } from '@everynews/schema'
 import { and, eq } from 'drizzle-orm'
-import { notFound, unauthorized } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { PromptDetailPage } from './prompt-detail-page'
 
 export const metadata = {
@@ -16,10 +16,7 @@ export default async function PromptPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const user = await whoami()
-  if (!user) {
-    unauthorized()
-  }
+  const user = await guardUser()
 
   const promptData = await db.query.prompt.findFirst({
     where: and(eq(prompt.id, id), eq(prompt.userId, user.id)),

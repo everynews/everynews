@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { getUser } from '@everynews/auth/session'
 import { UpdateProfileForm } from '@everynews/components/settings/update-profile-form'
 import { db } from '@everynews/database'
 import { users } from '@everynews/schema'
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function SettingsPage() {
-  const sessionUser = await whoami()
+  const sessionUser = await getUser()
   if (!sessionUser) {
     redirect('/')
   }

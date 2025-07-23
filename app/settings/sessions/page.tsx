@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { SessionsList } from '@everynews/components/settings/sessions-list'
 import { db } from '@everynews/database'
 import { sessions } from '@everynews/schema'
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function SessionsPage() {
-  const user = await whoami()
+  const user = await guardUser()
   if (!user) {
     redirect('/')
   }

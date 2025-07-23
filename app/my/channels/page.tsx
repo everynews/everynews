@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import {
   CardActionsPopover,
   DropdownMenuItem,
@@ -20,7 +20,6 @@ import {
 import { and, eq, isNull } from 'drizzle-orm'
 import { CheckCircle, Edit, Mail, Phone, Slack } from 'lucide-react'
 import Link from 'next/link'
-import { unauthorized } from 'next/navigation'
 import { z } from 'zod'
 
 export const metadata = {
@@ -49,8 +48,7 @@ const getChannelDestination = (item: z.infer<typeof ChannelSchema>) => {
 }
 
 export default async function MyChannelsPage() {
-  const user = await whoami()
-  if (!user) return unauthorized()
+  const user = await guardUser()
 
   const res = await db
     .select()

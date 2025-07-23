@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { MobileSidebarLink } from '@everynews/components/mobile-sidebar-link'
 import { MobileSidebarShell } from '@everynews/components/mobile-sidebar-shell'
 import { SidebarLinkWithBadge } from '@everynews/components/sidebar-link-with-badge'
@@ -26,7 +26,7 @@ const MobileSidebar = ({ items }: { items: SidebarItem[] }) => (
 )
 
 const MyLayout = async ({ children }: { children: React.ReactNode }) => {
-  const user = await whoami()
+  const user = await guardUser()
 
   // Fetch counts for each section
   const [alertCount, promptCount, channelCount, subscriptionCount] =

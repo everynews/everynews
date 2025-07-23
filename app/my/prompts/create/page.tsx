@@ -1,5 +1,4 @@
-import { whoami } from '@everynews/auth/session'
-import { unauthorized } from 'next/navigation'
+import { guardUser } from '@everynews/auth/session'
 import { PromptCreatePage } from './prompt-create-page'
 
 export const metadata = {
@@ -8,9 +7,7 @@ export const metadata = {
 }
 
 export default async function CreatePromptPage() {
-  const user = await whoami()
-  if (!user) {
-    unauthorized()
-  }
+  await guardUser()
+
   return <PromptCreatePage />
 }

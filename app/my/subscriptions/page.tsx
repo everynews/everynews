@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import {
   CardActionsPopover,
   DropdownMenuItem,
@@ -22,7 +22,6 @@ import {
 import { and, eq, isNull } from 'drizzle-orm'
 import { ExternalLink, Mail, MessageSquare, Phone, Slack } from 'lucide-react'
 import Link from 'next/link'
-import { unauthorized } from 'next/navigation'
 import { z } from 'zod'
 
 export const metadata = {
@@ -52,8 +51,7 @@ const getChannelDestination = (
 }
 
 export default async function MySubscriptionsPage() {
-  const user = await whoami()
-  if (!user) return unauthorized()
+  const user = await guardUser()
 
   // Get user's subscriptions with related alert and channel data
   const subscriptionsRes = await db

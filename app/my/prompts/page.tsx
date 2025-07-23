@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import {
   CardActionsPopover,
   DropdownMenuItem,
@@ -12,7 +12,6 @@ import { prompt } from '@everynews/schema'
 import { and, eq, isNull } from 'drizzle-orm'
 import { Edit } from 'lucide-react'
 import Link from 'next/link'
-import { unauthorized } from 'next/navigation'
 
 export const metadata = {
   description: 'Manage your custom AI prompts for alert summarization',
@@ -20,10 +19,7 @@ export const metadata = {
 }
 
 export default async function PromptsPage() {
-  const user = await whoami()
-  if (!user) {
-    unauthorized()
-  }
+  const user = await guardUser()
 
   const prompts = await db.query.prompt.findMany({
     orderBy: (prompt, { desc }) => [desc(prompt.updatedAt)],

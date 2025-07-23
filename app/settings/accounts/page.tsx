@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { AccountsList } from '@everynews/components/settings/accounts-list'
 import { db } from '@everynews/database'
 import { accounts } from '@everynews/schema'
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function AccountsPage() {
-  const user = await whoami()
+  const user = await guardUser()
   if (!user) {
     redirect('/')
   }

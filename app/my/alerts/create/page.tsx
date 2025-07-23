@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { db } from '@everynews/database'
 import { redirectToSignIn } from '@everynews/lib/auth-redirect'
 import { prompt } from '@everynews/schema/prompt'
@@ -12,7 +12,7 @@ export const metadata = {
 }
 
 export default async function CreateAlertPage() {
-  const user = await whoami()
+  const user = await guardUser()
   if (!user) {
     return redirectToSignIn('/my/alerts/create')
   }

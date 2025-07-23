@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { getUser } from '@everynews/auth/session'
 import { NavUser } from '@everynews/components/auth/nav-user'
 import { Button } from '@everynews/components/ui/button'
 import { Logo } from '@everynews/public/logo'
@@ -8,7 +8,7 @@ import { MainNavigation } from './main-navigation'
 import { MobileNav } from './mobile-nav'
 
 export const AppNavbar = async () => {
-  const user = await whoami()
+  const user = await getUser()
 
   return (
     <div className='mx-auto container flex items-center justify-between gap-6 p-4 md:gap-10'>
@@ -36,9 +36,14 @@ export const AppNavbar = async () => {
           {user ? (
             <NavUser user={user} />
           ) : (
-            <Button asChild size='sm' className='md:size-md'>
-              <Link href='/sign-in'>Sign In</Link>
-            </Button>
+            <div className='flex items-center gap-2'>
+              <Button asChild size='sm' variant='outline'>
+                <Link href='/sign-in'>Sign In</Link>
+              </Button>
+              <Button asChild size='sm'>
+                <Link href='/sign-up'>Sign Up</Link>
+              </Button>
+            </div>
           )}
         </Suspense>
       </div>

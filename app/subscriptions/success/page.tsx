@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { Button } from '@everynews/components/ui/button'
 import {
   Card,
@@ -13,7 +13,7 @@ import { subscriptions } from '@everynews/schema/subscription'
 import { and, eq, gt, isNull } from 'drizzle-orm'
 import { CheckCircle2, Home, Settings } from 'lucide-react'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
 export default async function SubscriptionSuccessPage({
   searchParams,
@@ -55,14 +55,11 @@ export default async function SubscriptionSuccessPage({
   }
 
   // Check if user is authenticated
-  const user = await whoami()
-  if (!user) {
-    redirect('/sign-in')
-  }
+  const user = await guardUser()
 
   // If no alertId, redirect to home
   if (!alertId) {
-    redirect('/')
+    notFound()
   }
 
   // Get alert details
@@ -71,7 +68,7 @@ export default async function SubscriptionSuccessPage({
   })
 
   if (!alert || (!alert.isPublic && alert.userId !== user.id)) {
-    redirect('/')
+    notFound()
   }
 
   // Check if already subscribed

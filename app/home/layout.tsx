@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { SidebarLinkWithBadge } from '@everynews/components/sidebar-link-with-badge'
 import { db } from '@everynews/database'
 import { alerts } from '@everynews/schema/alert'
@@ -7,18 +7,13 @@ import { subscriptions } from '@everynews/schema/subscription'
 import { and, desc, eq, isNull, sql } from 'drizzle-orm'
 import { FileText } from 'lucide-react'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 
 export default async function HomeLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const user = await whoami()
-
-  if (!user) {
-    redirect('/sign-in')
-  }
+  const user = await guardUser()
 
   // Fetch user's subscribed alerts with story counts
   const userAlerts = await db

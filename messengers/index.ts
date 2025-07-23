@@ -1,7 +1,9 @@
 import { sendTemplateEmail } from '@everynews/emails'
 import ChannelVerificationEmail from '@everynews/emails/channel-verification'
 import MagicLinkEmail from '@everynews/emails/magic-link'
+import PasswordResetEmail from '@everynews/emails/password-reset'
 import SubscriptionConfirmationEmail from '@everynews/emails/subscription-confirmation'
+import VerifyEmail from '@everynews/emails/verify-email'
 
 export { sendDiscordAlert, sendDiscordVerification } from './discord'
 export { sendSlackAlert, sendSlackVerification } from './slack'
@@ -65,5 +67,45 @@ export const sendChannelVerification = async ({
     subject: `Verify your notification channel "${channelName}"`,
     template,
     to: email,
+  })
+}
+
+export const sendResetPassword = async (
+  {
+    user,
+    url,
+  }: {
+    user: { email: string }
+    url: string
+    token: string
+  },
+  _request?: Request,
+): Promise<void> => {
+  const template = PasswordResetEmail({ resetLink: url })
+
+  await sendTemplateEmail({
+    subject: 'Reset your password for Everynews',
+    template,
+    to: user.email,
+  })
+}
+
+export const sendVerificationEmail = async (
+  {
+    user,
+    url,
+  }: {
+    user: { email: string }
+    url: string
+    token: string
+  },
+  _request?: Request,
+): Promise<void> => {
+  const template = VerifyEmail({ verificationLink: url })
+
+  await sendTemplateEmail({
+    subject: 'Verify your email address for Everynews',
+    template,
+    to: user.email,
   })
 }

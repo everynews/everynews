@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { Badge } from '@everynews/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@everynews/components/ui/card'
 import { db } from '@everynews/database'
@@ -15,7 +15,7 @@ export default async function Page({
 }: {
   params: Promise<{ alertId: string }>
 }) {
-  const user = await whoami()
+  const user = await guardUser()
   const { alertId: selectedAlertId } = await params
 
   if (!user) {

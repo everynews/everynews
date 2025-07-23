@@ -77,7 +77,7 @@ The application follows a hybrid approach for data handling:
 - All user data presentation uses direct database access through Drizzle ORM
 - Server Components render data at request time for optimal performance and SEO
 - Examples: Alert lists (`app/alerts/(index)/page.tsx`), alert details (`app/alerts/[id]/page.tsx`)
-- Authentication state checked server-side with `whoami()` function
+- Authentication state checked server-side with `guardUser()` function
 - Data fetched directly: `db.select().from(alert).where(eq(alert.userId, user.id))`
 
 ### Client-Side Data Mutations (Hono RPC)

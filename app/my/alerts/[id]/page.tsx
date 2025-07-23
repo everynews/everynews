@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { db } from '@everynews/database'
 import { redirectToSignIn } from '@everynews/lib/auth-redirect'
 import { AlertSchema, alerts, prompt } from '@everynews/schema'
@@ -17,7 +17,7 @@ export default async function EditAlertPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const user = await whoami()
+  const user = await guardUser()
   if (!user) {
     return redirectToSignIn(`/my/alerts/${id}`)
   }

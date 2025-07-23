@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { DeleteAccountSection } from '@everynews/components/settings/delete-account-section'
 import {
   Card,
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 }
 
 export default async function DangerPage() {
-  const user = await whoami()
+  const user = await guardUser()
   if (!user) {
     redirect('/')
   }

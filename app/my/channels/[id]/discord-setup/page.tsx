@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import { DiscordChannelSelector } from '@everynews/components/discord-channel-selector'
 import { DiscordTestButton } from '@everynews/components/discord-test-button'
 import { db } from '@everynews/database'
@@ -8,7 +8,7 @@ import {
   DiscordChannelConfigSchema,
 } from '@everynews/schema/channel'
 import { and, eq, isNull } from 'drizzle-orm'
-import { notFound, unauthorized } from 'next/navigation'
+import { notFound } from 'next/navigation'
 
 export const metadata = {
   description: 'Select a Discord channel for your alerts',
@@ -25,8 +25,7 @@ export default async function DiscordSetupPage({
   params,
 }: DiscordSetupPageProps) {
   const { id } = await params
-  const user = await whoami()
-  if (!user) return unauthorized()
+  const user = await guardUser()
 
   // Verify channel exists and belongs to user
   const channelData = await db.query.channels.findFirst({

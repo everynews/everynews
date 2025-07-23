@@ -1,4 +1,4 @@
-import { whoami } from '@everynews/auth/session'
+import { guardUser } from '@everynews/auth/session'
 import {
   CardActionsPopover,
   DropdownMenuItem,
@@ -16,7 +16,6 @@ import { subscriptions } from '@everynews/schema/subscription'
 import { and, eq, isNull } from 'drizzle-orm'
 import { Edit } from 'lucide-react'
 import Link from 'next/link'
-import { unauthorized } from 'next/navigation'
 
 export const metadata = {
   description: 'Your created alerts.',
@@ -24,8 +23,7 @@ export const metadata = {
 }
 
 export default async function MyAlertsPage() {
-  const user = await whoami()
-  if (!user) return unauthorized()
+  const user = await guardUser()
 
   // Get user's alerts
   const res = await db

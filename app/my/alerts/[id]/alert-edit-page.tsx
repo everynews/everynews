@@ -538,27 +538,28 @@ export const AlertEditPage = ({
                 )}
               />
 
-              {STRATEGY_WITH_QUERY.includes(strategyProvider) && (
-                <>
-                  <Separator />
-                  <FormField
-                    control={form.control}
-                    name='strategy.query'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Search Query</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder='artificial intelligence'
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </>
-              )}
+              {strategyProvider &&
+                STRATEGY_WITH_QUERY.includes(strategyProvider) && (
+                  <>
+                    <Separator />
+                    <FormField
+                      control={form.control}
+                      name='strategy.query'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Search Query</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder='artificial intelligence'
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </>
+                )}
 
               {strategyProvider === 'github' && (
                 <>
