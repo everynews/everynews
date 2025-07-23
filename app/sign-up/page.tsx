@@ -105,12 +105,21 @@ export default function SignUpPage() {
             </p>
           </CardContent>
           <CardFooter className='flex justify-center'>
-            <Link
-              href='/sign-in'
-              className='text-sm text-muted-foreground hover:text-foreground'
-            >
-              Go to sign in
-            </Link>
+            {email.endsWith('@gmail.com') ? (
+              <Link
+                href='https://mail.google.com'
+                className='text-sm text-muted-foreground hover:text-foreground'
+              >
+                Open Gmail
+              </Link>
+            ) : (
+              <Link
+                href='/sign-in'
+                className='text-sm text-muted-foreground hover:text-foreground'
+              >
+                Go to sign in
+              </Link>
+            )}
           </CardFooter>
         </Card>
       </div>
