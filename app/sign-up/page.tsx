@@ -218,7 +218,7 @@ export default function SignUpPage() {
               <Separator />
             </div>
             <div className='relative flex justify-center text-xs uppercase'>
-              <span className='bg-background px-2 text-muted-foreground'>
+              <span className='px-2 text-muted-foreground'>
                 Or continue with
               </span>
             </div>
