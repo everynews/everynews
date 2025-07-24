@@ -443,20 +443,20 @@ export const AlertEditPage = ({
                         }}
                       >
                         <label
-                          htmlFor={`${id}-hnbest`}
+                          htmlFor={`${id}-hntop`}
                           className='border-input has-data-[state=checked]:border-primary/50 relative flex w-full items-start gap-2 rounded-md border p-4 shadow-xs outline-none'
                         >
                           <RadioGroupItem
-                            value='hnbest'
-                            id={`${id}-hnbest`}
-                            aria-describedby={`${id}-hnbest-description`}
+                            value='hntop'
+                            id={`${id}-hntop`}
+                            aria-describedby={`${id}-hntop-description`}
                             className='order-1 after:absolute after:inset-0 cursor-pointer'
                           />
                           <div className='flex grow items-center gap-3'>
                             <div className='grid grow gap-2'>
-                              <span>Popular Tech</span>
+                              <span>Hacker News Top Stories</span>
                               <p
-                                id={`${id}-hnbest-description`}
+                                id={`${id}-hntop-description`}
                                 className='text-muted-foreground text-sm'
                               >
                                 Automatically collect popular tech news online.

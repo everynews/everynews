@@ -2,14 +2,14 @@ import { track } from '@everynews/logs'
 import type { Alert } from '@everynews/schema'
 import { GitHubCurator } from './curators/github'
 import { GoogleCurator } from './curators/google'
-import { HnBestCurator } from './curators/hnbest'
+import { HnTopCurator } from './curators/hntop'
 import { ProductHuntCurator } from './curators/producthunt'
 import { WhoisCurator } from './curators/whois'
 
 const curators = {
   github: GitHubCurator,
   google: GoogleCurator,
-  hnbest: HnBestCurator,
+  hntop: HnTopCurator,
   producthunt: ProductHuntCurator,
   whois: WhoisCurator,
 }

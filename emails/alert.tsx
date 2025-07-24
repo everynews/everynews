@@ -43,8 +43,8 @@ const Alert = ({
 
               <Text className='block text-xs text-gray-500 my-0.5'>
                 Using{' '}
-                {strategy.provider === 'hnbest'
-                  ? 'Hacker News Best'
+                {strategy.provider === 'hntop'
+                  ? 'Hacker News Top'
                   : strategy.provider === 'google'
                     ? 'Google Search'
                     : 'Unknown Data Source'}{' '}

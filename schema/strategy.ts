@@ -5,7 +5,7 @@ import 'zod-openapi/extend'
 export const strategySchema = z
   .discriminatedUnion('provider', [
     z.object({
-      provider: z.literal('hnbest').openapi({ example: 'hnbest' }),
+      provider: z.literal('hntop').openapi({ example: 'hntop' }),
       query: z.string().optional().openapi({ example: 'News' }),
     }),
     z.object({

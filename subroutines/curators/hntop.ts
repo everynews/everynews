@@ -17,13 +17,13 @@ const HackerNewsStorySchema = z.object({
   url: z.string().optional(),
 })
 
-export const HnBestCurator: Curator = async (
+export const HnTopCurator: Curator = async (
   alert: Alert,
 ): Promise<string[]> => {
   const queue = new PQueue({
     concurrency: 16,
   })
-  if (alert.strategy.provider !== 'hnbest') {
+  if (alert.strategy.provider !== 'hntop') {
     throw new Error(
       `HackerNewsCurator got Alert Strategy ${alert.strategy.provider}`,
     )
@@ -35,7 +35,7 @@ export const HnBestCurator: Curator = async (
   let ids: number[]
   try {
     const response = await fetch(
-      'https://hacker-news.firebaseio.com/v0/beststories.json',
+      'https://hacker-news.firebaseio.com/v0/topstories.json',
       { signal: controller1.signal },
     )
     ids = await HackerNewsStoriesSchema.parse(await response.json())
