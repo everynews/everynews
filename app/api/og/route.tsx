@@ -10,6 +10,9 @@ export const GET = async (request: Request) => {
   const id = searchParams.get('id') ?? ''
   const post = await db.query.stories.findFirst({
     where: and(eq(stories.id, id), isNull(stories.deletedAt)),
+    with: {
+      alert: true,
+    },
   })
   const title =
     searchParams.get('title') ?? (id && post?.title) ?? '"bro did u see this"'
@@ -19,7 +22,7 @@ export const GET = async (request: Request) => {
       ? post.keyFindings.join(' ')
       : '') ??
     'You have that one bro sending the most urgent news. Everynews is one of them.'
-  const [fonts, logoData] = await Promise.all([
+  const [fonts] = await Promise.all([
     Promise.all([
       fs.readFile(join(process.cwd(), 'public/fonts/Pretendard-SemiBold.woff')),
       fs.readFile(
@@ -29,10 +32,7 @@ export const GET = async (request: Request) => {
       { data: kr, name: 'Pretendard', style: 'normal' },
       { data: jp, name: 'Pretendard JP', style: 'normal' },
     ]),
-    fs.readFile(join(process.cwd(), 'public/logo.png')),
   ])
-
-  const logoBase64 = `data:image/png;base64,${logoData.toString('base64')}`
 
   const image = new ImageResponse(
     <div tw='flex flex-col w-full items-start justify-start'>
@@ -49,22 +49,14 @@ export const GET = async (request: Request) => {
       >
         <div tw='flex flex-col w-full p-24 pt-16'>
           <h2 tw='items-center text-7xl text-slate-300 text-left flex flex-row'>
-            {/* biome-ignore lint/performance/noImgElement: ImageResponse requires img element for OG image generation */}
-            <img
-              src={logoBase64}
-              width='80'
-              height='80'
-              alt='Everynews'
-              tw='mr-4'
-            />
-            <span>Everynews</span>
+            {post?.alert?.name ?? 'Everynews'}
           </h2>
 
           <h1 tw='text-9xl tracking-tight text-slate-50 text-left font-black leading-tight'>
             {title}
           </h1>
 
-          <span tw='text-8xl leading-normal text-slate-400'>{description}</span>
+          <span tw='text-7xl leading-normal text-slate-400'>{description}</span>
         </div>
 
         <div
