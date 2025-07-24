@@ -1,4 +1,4 @@
-import { guardUser } from '@everynews/auth/session'
+import { getUser } from '@everynews/auth/session'
 import { ManageAlertSubscriptions } from '@everynews/components/manage-alert-subscriptions'
 import { OneClickSubscribeForm } from '@everynews/components/one-click-subscribe-form'
 import { Badge } from '@everynews/components/ui/badge'
@@ -69,7 +69,7 @@ export default async function AlertStoriesPage({
   const alertInfo = alertData[0]
 
   // Check access permissions
-  const user = await guardUser()
+  const user = await getUser()
   const isOwner = user?.id === alertInfo.userId
   const isPublic = alertInfo.isPublic
 
