@@ -1,4 +1,4 @@
-import { guardUser } from '@everynews/auth/session'
+import { getUser } from '@everynews/auth/session'
 import { SubscribeSimilarStories } from '@everynews/components/subscribe-similar-stories'
 import { Badge } from '@everynews/components/ui/badge'
 import { Button } from '@everynews/components/ui/button'
@@ -77,7 +77,7 @@ export default async function StoryPage({
   const alertData = AlertSchema.parse(alert)
 
   // Check if user is authenticated
-  const user = await guardUser()
+  const user = await getUser()
 
   return (
     <div

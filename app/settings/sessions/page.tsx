@@ -4,7 +4,6 @@ import { db } from '@everynews/database'
 import { sessions } from '@everynews/schema'
 import { eq } from 'drizzle-orm'
 import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   description: 'View and manage your active sessions',
@@ -13,9 +12,6 @@ export const metadata: Metadata = {
 
 export default async function SessionsPage() {
   const user = await guardUser()
-  if (!user) {
-    redirect('/')
-  }
 
   const sessionsList = await db
     .select()
