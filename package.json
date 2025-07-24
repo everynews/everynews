@@ -34,7 +34,7 @@
     "date-fns": "^4.1.0",
     "defuddle": "^0.6.4",
     "drizzle-orm": "^0.44.3",
-    "es-toolkit": "^1.39.7",
+    "es-toolkit": "^1.39.8",
     "hono": "^4.8.5",
     "hono-openapi": "^0.4.8",
     "human-id": "^4.1.1",
