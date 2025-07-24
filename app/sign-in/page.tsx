@@ -176,7 +176,7 @@ export default function SignInPage() {
                 <Separator />
               </div>
               <div className='relative flex justify-center text-xs uppercase'>
-                <span className='px-2 text-muted-foreground'>
+                <span className='px-2 text-muted-foreground bg-card'>
                   Or continue with
                 </span>
               </div>
@@ -215,7 +215,7 @@ export default function SignInPage() {
                 disabled={!email}
               >
                 <Mail className='mr-2 size-4' />
-                Email me a login link
+                Sign-in Link
               </SubmitButton>
             </div>
           </CardContent>
