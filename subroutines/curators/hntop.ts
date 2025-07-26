@@ -1,3 +1,4 @@
+import { track } from '@everynews/logs'
 import type { Alert } from '@everynews/schema'
 import PQueue from 'p-queue'
 import z from 'zod'
@@ -7,9 +8,7 @@ const HackerNewsStoriesSchema = z.array(z.number())
 
 const HackerNewsStorySchema = z.object({
   by: z.string(),
-  descendants: z.number(),
   id: z.number(),
-  kids: z.array(z.number()),
   score: z.number(),
   time: z.number(),
   title: z.string(),
@@ -61,6 +60,21 @@ export const HnTopCurator: Curator = async (
             item.url ||
             `https://news.ycombinator.com/item?id=${String(item.id)}`,
         }
+      } catch (error) {
+        await track({
+          channel: 'curator',
+          description: `Error fetching Hacker News story ${id}`,
+          event: 'Hacker News Story Fetch Error',
+          icon: '🚫',
+          tags: {
+            alert_id: alert.id,
+            alert_name: alert.name,
+            error: error instanceof Error ? error.message : String(error),
+            provider: alert.strategy.provider,
+            type: 'error',
+          },
+        })
+        return null
       } finally {
         clearTimeout(timeout2)
       }
@@ -69,6 +83,7 @@ export const HnTopCurator: Curator = async (
 
   // Sort by time (most recent first) and extract URLs
   const sortedUrls = itemsWithMetadata
+    .filter((item): item is { time: number; url: string } => item !== null)
     .sort((a, b) => b.time - a.time)
     .slice(0, 10)
     .map((item) => item.url)

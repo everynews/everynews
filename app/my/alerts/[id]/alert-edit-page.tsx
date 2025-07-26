@@ -460,7 +460,7 @@ export const AlertEditPage = ({
                                 className='text-muted-foreground text-sm'
                               >
                                 Automatically collect popular tech news online.
-                                Everynews uses Hacker News Best Stories as the
+                                Everynews uses Hacker News Top Stories as the
                                 source.
                               </p>
                             </div>
