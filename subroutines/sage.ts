@@ -21,7 +21,7 @@ import { z } from 'zod'
 
 const client = new OpenAI()
 
-const model = 'o4-mini'
+const model = 'o3'
 
 const SummaryResponseSchema = z.object({
   importance: z
