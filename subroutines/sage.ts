@@ -151,7 +151,7 @@ export const summarizeContent = async ({
         description: keyFindings?.length
           ? keyFindings.join('\n')
           : 'No key findings',
-        event: title,
+        event: `(${languageCode}) ${title}`,
         icon: '✅',
         tags: {
           content_id: content.id,
