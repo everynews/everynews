@@ -1,6 +1,6 @@
 import type { Alert } from '@everynews/schema'
-import type { Curator, CuratorResult } from './type'
 import { ProxyAgent } from 'undici'
+import type { Curator, CuratorResult } from './type'
 
 interface DnsResponse {
   Status: number
@@ -70,7 +70,7 @@ export const WhoisCurator: Curator = async (
     const isDomainNotFound = data.Status === 3
 
     if (isDomainNotFound || hasNoARecords) {
-      return [{ url: `https://whois.com/whois/${domain}`, metadata: null }]
+      return [{ metadata: null, url: `https://whois.com/whois/${domain}` }]
     }
 
     return []

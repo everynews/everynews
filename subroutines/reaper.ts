@@ -4,7 +4,9 @@ import PQueue from 'p-queue'
 import type { CuratorResult } from './curators/type'
 import { reap } from './reapers'
 
-export const reaper = async (curatorResults: CuratorResult[]): Promise<Content[]> => {
+export const reaper = async (
+  curatorResults: CuratorResult[],
+): Promise<Content[]> => {
   try {
     await track({
       channel: 'reaper',
@@ -49,7 +51,9 @@ export const reaper = async (curatorResults: CuratorResult[]): Promise<Content[]
       event: 'Reaping Completed',
       icon: '✅',
       tags: {
-        success_rate: Math.round((filteredResults.length / curatorResults.length) * 100),
+        success_rate: Math.round(
+          (filteredResults.length / curatorResults.length) * 100,
+        ),
         type: 'info',
         urls_attempted: curatorResults.length,
         urls_successful: filteredResults.length,

@@ -263,7 +263,7 @@ const summarizeWithCache = async ({
   })
 
   // Get the summary without database operations
-  const summary = await summarizeContent({ content, news, metadata })
+  const summary = await summarizeContent({ content, metadata, news })
   if (!summary) {
     return null
   }
@@ -317,7 +317,9 @@ export const sage = async ({
           stripWWW: true,
         })
         const metadata = urlToMetadata.get(normalizedContentUrl)
-        return queue.add(async () => summarizeWithCache({ content, news, metadata }))
+        return queue.add(async () =>
+          summarizeWithCache({ content, metadata, news }),
+        )
       }),
     )
 

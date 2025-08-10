@@ -62,7 +62,7 @@ export const GoogleCurator: Curator = async (
     }
 
     // Return unique URLs with no metadata
-    return [...new Set(urls)].map(url => ({ url, metadata: null }))
+    return [...new Set(urls)].map((url) => ({ metadata: null, url }))
   } finally {
     clearTimeout(timeout)
   }

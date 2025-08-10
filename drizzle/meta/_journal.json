@@ -30,11 +30,11 @@
       "when": 1752414570983
     },
     {
+      "breakpoints": true,
       "idx": 4,
-      "version": "7",
-      "when": 1754789345940,
       "tag": "0004_equal_doctor_faustus",
-      "breakpoints": true
+      "version": "7",
+      "when": 1754789345940
     }
   ],
   "version": "7"

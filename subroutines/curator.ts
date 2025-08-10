@@ -34,14 +34,14 @@ export const curator = async (alert: Alert): Promise<CuratorResult[]> => {
     // Deduplicate by URL to prevent processing the same URL multiple times
     const uniqueResults: CuratorResult[] = []
     const seenUrls = new Set<string>()
-    
+
     for (const result of results) {
       if (!seenUrls.has(result.url)) {
         seenUrls.add(result.url)
         uniqueResults.push(result)
       }
     }
-    
+
     const duplicatesRemoved = results.length - uniqueResults.length
 
     await track({

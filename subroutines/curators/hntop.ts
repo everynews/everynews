@@ -84,12 +84,15 @@ export const HnTopCurator: Curator = async (
 
   // Sort by time (most recent first) and create results with metadata
   const sortedResults = itemsWithMetadata
-    .filter((item): item is { id: number; time: number; url: string } => item !== null)
+    .filter(
+      (item): item is { id: number; time: number; url: string } =>
+        item !== null,
+    )
     .sort((a, b) => b.time - a.time)
     .slice(0, 10)
     .map((item) => ({
+      metadata: { hackerNewsId: item.id },
       url: item.url,
-      metadata: { hackerNewsId: item.id }
     }))
 
   return sortedResults

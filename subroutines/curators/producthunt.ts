@@ -21,5 +21,5 @@ export const ProductHuntCurator: Curator = async (
   const launches = await client.getTodaysTopLaunches(limit)
 
   // Return the Product Hunt URLs for each launch with no metadata
-  return launches.map((launch) => ({ url: launch.url, metadata: null }))
+  return launches.map((launch) => ({ metadata: null, url: launch.url }))
 }

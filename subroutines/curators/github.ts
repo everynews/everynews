@@ -105,7 +105,7 @@ export const GitHubCurator: Curator = async (
     }
 
     // Limit to top 20 most recent entries
-    return urls.slice(0, 20).map(url => ({ url, metadata: null }))
+    return urls.slice(0, 20).map((url) => ({ metadata: null, url }))
   } finally {
     clearTimeout(timeout)
   }
