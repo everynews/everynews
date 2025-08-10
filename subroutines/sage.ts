@@ -23,7 +23,7 @@ import type { CuratorResult } from './curators/type'
 
 const client = new OpenAI()
 
-const model = 'o3'
+const model = 'o4-mini'
 
 const SummaryResponseSchema = z.object({
   importance: z

@@ -1,5 +1,6 @@
 import type { Alert } from '@everynews/schema'
 import type { Curator, CuratorResult } from './type'
+import { ProxyAgent } from 'undici'
 
 interface DnsResponse {
   Status: number
@@ -43,15 +44,19 @@ export const WhoisCurator: Curator = async (
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), 30000)
 
+  const proxyUrl = process.env.HTTPS_PROXY || process.env.HTTP_PROXY
+  const dispatcher = proxyUrl ? new ProxyAgent(proxyUrl) : undefined
+
   try {
     const dnsUrl = `https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`
 
     const response = await fetch(dnsUrl, {
+      dispatcher,
       headers: {
         Accept: 'application/json',
       },
       signal: controller.signal,
-    })
+    } as RequestInit)
 
     if (!response.ok) {
       throw new Error(
