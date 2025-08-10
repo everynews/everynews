@@ -31,6 +31,7 @@ export const stories = pgTable(
     languageCode: text('language_code', { enum: LANGUAGE_CODES })
       .notNull()
       .default('en'),
+    metadata: json('metadata'),
     originalUrl: text('original_url').notNull(),
     promptId: text('prompt_id').references(() => prompt.id, {
       onDelete: 'set null',
@@ -52,6 +53,12 @@ export const stories = pgTable(
   }),
 )
 
+export const StoryMetadataSchema = z
+  .object({
+    hackerNewsId: z.number().optional(),
+  })
+  .nullable()
+
 export const StorySchema = z
   .object({
     alertId: z.coerce.string().openapi({ example: 'alert123' }),
@@ -66,6 +73,7 @@ export const StorySchema = z
         example: ['Key finding 1', 'Key finding 2', 'Key finding 3'],
       }),
     languageCode: LanguageCodeSchema,
+    metadata: StoryMetadataSchema,
     originalUrl: z.string().openapi({ example: 'https://example.com' }),
     promptId: z.coerce.string().nullable().openapi({ example: 'prompt123' }),
     systemMarkedIrrelevant: z.boolean().openapi({ example: false }),
@@ -89,6 +97,8 @@ export const StoryDtoSchema = StorySchema.omit({
 }).openapi({ ref: 'StoryDtoSchema' })
 
 export type Story = z.infer<typeof StorySchema>
+
+export type StoryMetadata = z.infer<typeof StoryMetadataSchema>
 
 export type StoryDto = z.infer<typeof StoryDtoSchema>
 

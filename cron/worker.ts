@@ -151,19 +151,19 @@ export const processAlert = async (item: Alert) => {
   })
 
   // Content gathering pipeline
-  const urls = await withTimeout(
+  const curatorResults = await withTimeout(
     curator(item),
     TIMEOUTS.CURATOR,
     `Curator timeout for alert: ${item.name}`,
   )
   const contents: Content[] = await withTimeout(
-    reaper(urls),
+    reaper(curatorResults),
     TIMEOUTS.REAPER,
     `Reaper timeout for alert: ${item.name}`,
   )
 
   await withTimeout(
-    sage({ contents, news: item }),
+    sage({ contents, curatorResults, news: item }),
     TIMEOUTS.SAGE,
     `Sage timeout for alert: ${item.name}`,
   )

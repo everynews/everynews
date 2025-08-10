@@ -23,7 +23,7 @@ export default function FirefighterModePage() {
               variant='outline'
               className='-top-0.5 relative bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 border-orange-300 dark:border-orange-900'
             >
-              open beta
+              beta
             </Badge>{' '}
             and things are literally on{' '}
             <Tooltip>

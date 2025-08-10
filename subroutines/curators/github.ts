@@ -1,5 +1,5 @@
 import type { Alert } from '@everynews/schema'
-import type { Curator } from './type'
+import type { Curator, CuratorResult } from './type'
 
 interface GitHubFeedLink {
   href: string
@@ -33,7 +33,7 @@ interface GitHubFeedsResponse {
 
 export const GitHubCurator: Curator = async (
   alert: Alert,
-): Promise<string[]> => {
+): Promise<CuratorResult[]> => {
   if (alert.strategy.provider !== 'github') {
     throw new Error(
       `GitHubCurator got Alert Strategy ${alert.strategy.provider}`,
@@ -105,7 +105,7 @@ export const GitHubCurator: Curator = async (
     }
 
     // Limit to top 20 most recent entries
-    return urls.slice(0, 20)
+    return urls.slice(0, 20).map(url => ({ url, metadata: null }))
   } finally {
     clearTimeout(timeout)
   }

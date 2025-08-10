@@ -2,7 +2,7 @@ import { track } from '@everynews/logs'
 import type { Alert } from '@everynews/schema'
 import PQueue from 'p-queue'
 import z from 'zod'
-import type { Curator } from './type'
+import type { Curator, CuratorResult } from './type'
 
 const HackerNewsStoriesSchema = z.array(z.number())
 
@@ -18,7 +18,7 @@ const HackerNewsStorySchema = z.object({
 
 export const HnTopCurator: Curator = async (
   alert: Alert,
-): Promise<string[]> => {
+): Promise<CuratorResult[]> => {
   const queue = new PQueue({
     concurrency: 16,
   })
@@ -55,6 +55,7 @@ export const HnTopCurator: Curator = async (
         )
         const item = await HackerNewsStorySchema.parse(await response.json())
         return {
+          id: item.id,
           time: item.time,
           url:
             item.url ||
@@ -81,13 +82,15 @@ export const HnTopCurator: Curator = async (
     }),
   )
 
-  // Sort by time (most recent first) and extract URLs
-  const sortedUrls = itemsWithMetadata
-    .filter((item): item is { time: number; url: string } => item !== null)
+  // Sort by time (most recent first) and create results with metadata
+  const sortedResults = itemsWithMetadata
+    .filter((item): item is { id: number; time: number; url: string } => item !== null)
     .sort((a, b) => b.time - a.time)
     .slice(0, 10)
-    .map((item) => item.url)
-    .filter((url): url is string => Boolean(url))
+    .map((item) => ({
+      url: item.url,
+      metadata: { hackerNewsId: item.id }
+    }))
 
-  return sortedUrls
+  return sortedResults
 }

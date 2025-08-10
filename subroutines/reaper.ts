@@ -1,31 +1,32 @@
 import { track } from '@everynews/logs'
 import type { Content } from '@everynews/schema'
 import PQueue from 'p-queue'
+import type { CuratorResult } from './curators/type'
 import { reap } from './reapers'
 
-export const reaper = async (urls: string[]): Promise<Content[]> => {
+export const reaper = async (curatorResults: CuratorResult[]): Promise<Content[]> => {
   try {
     await track({
       channel: 'reaper',
-      description: `Starting to crawl ${urls.length} URLs`,
+      description: `Starting to crawl ${curatorResults.length} URLs`,
       event: 'Reaping Started',
       icon: '🕷️',
       tags: {
         type: 'info',
-        url_count: urls.length,
+        url_count: curatorResults.length,
       },
     })
 
     const queue = new PQueue({ concurrency: 16 })
     const results = await Promise.all(
-      urls.map(async (url) => {
+      curatorResults.map(async (result) => {
         try {
-          return await queue.add(() => reap(url))
+          return await queue.add(() => reap(result.url))
         } catch (error) {
-          console.error(`Failed to process URL: ${url}`, error)
+          console.error(`Failed to process URL: ${result.url}`, error)
           await track({
             channel: 'reaper',
-            description: url,
+            description: result.url,
             event: 'URL Crawl Failed',
             icon: '❌',
             tags: {
@@ -44,13 +45,13 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
 
     await track({
       channel: 'reaper',
-      description: `Crawled ${filteredResults.length}/${urls.length} URLs`,
+      description: `Crawled ${filteredResults.length}/${curatorResults.length} URLs`,
       event: 'Reaping Completed',
       icon: '✅',
       tags: {
-        success_rate: Math.round((filteredResults.length / urls.length) * 100),
+        success_rate: Math.round((filteredResults.length / curatorResults.length) * 100),
         type: 'info',
-        urls_attempted: urls.length,
+        urls_attempted: curatorResults.length,
         urls_successful: filteredResults.length,
       },
     })
@@ -65,7 +66,7 @@ export const reaper = async (urls: string[]): Promise<Content[]> => {
       tags: {
         error: String(error),
         type: 'error',
-        url_count: urls.length,
+        url_count: curatorResults.length,
       },
     })
     throw error

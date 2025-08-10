@@ -1,5 +1,5 @@
 import type { Alert } from '@everynews/schema'
-import type { Curator } from './type'
+import type { Curator, CuratorResult } from './type'
 
 interface DnsResponse {
   Status: number
@@ -28,7 +28,7 @@ interface DnsResponse {
 
 export const WhoisCurator: Curator = async (
   alert: Alert,
-): Promise<string[]> => {
+): Promise<CuratorResult[]> => {
   if (alert.strategy.provider !== 'whois') {
     throw new Error(
       `WhoisCurator got Alert Strategy ${alert.strategy.provider}`,
@@ -65,7 +65,7 @@ export const WhoisCurator: Curator = async (
     const isDomainNotFound = data.Status === 3
 
     if (isDomainNotFound || hasNoARecords) {
-      return [`https://whois.com/whois/${domain}`]
+      return [{ url: `https://whois.com/whois/${domain}`, metadata: null }]
     }
 
     return []

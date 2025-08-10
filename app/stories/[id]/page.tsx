@@ -79,6 +79,9 @@ export default async function StoryPage({
   // Check if user is authenticated
   const user = await getUser()
 
+  // Check if this story has a Hacker News ID in metadata
+  const hnItemId = storyData.metadata?.hackerNewsId
+
   return (
     <div
       className='container mx-auto max-w-4xl p-4'
@@ -134,17 +137,32 @@ export default async function StoryPage({
       )}
       <div className='pt-6'>
         <div className='flex justify-between items-center'>
-          <Link
-            href={`${storyData.originalUrl}${storyData.originalUrl.includes('?') ? '&' : '?'}utm_source=every.news`}
-            target='_blank'
-            rel='noopener noreferrer'
-            className='text-sm text-muted-foreground hover:text-foreground flex items-center gap-2'
-          >
-            <Button variant='outline' className='text-sm'>
-              <ExternalLink className='size-4' />
-              Source
-            </Button>
-          </Link>
+          <div className='flex gap-2'>
+            <Link
+              href={`${storyData.originalUrl}${storyData.originalUrl.includes('?') ? '&' : '?'}utm_source=every.news`}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-sm text-muted-foreground hover:text-foreground flex items-center gap-2'
+            >
+              <Button variant='outline' className='text-sm'>
+                <ExternalLink className='size-4' />
+                Source
+              </Button>
+            </Link>
+            {hnItemId && (
+              <Link
+                href={`https://news.ycombinator.com/item?id=${hnItemId}`}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='text-sm text-muted-foreground hover:text-foreground flex items-center gap-2'
+              >
+                <Button variant='outline' className='text-sm'>
+                  <ExternalLink className='size-4' />
+                  Show Thread
+                </Button>
+              </Link>
+            )}
+          </div>
           <div className='flex gap-2'>
             <CopyMarkdownButton
               title={storyData.title}

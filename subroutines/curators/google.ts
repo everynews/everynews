@@ -1,9 +1,9 @@
 import type { Alert } from '@everynews/schema'
-import type { Curator } from './type'
+import type { Curator, CuratorResult } from './type'
 
 export const GoogleCurator: Curator = async (
   alert: Alert,
-): Promise<string[]> => {
+): Promise<CuratorResult[]> => {
   if (alert.strategy.provider !== 'google') {
     throw new Error(
       `GoogleCurator got Alert Strategy ${alert.strategy.provider}`,
@@ -61,8 +61,8 @@ export const GoogleCurator: Curator = async (
       match = urlRegex.exec(html)
     }
 
-    // Return unique URLs
-    return [...new Set(urls)]
+    // Return unique URLs with no metadata
+    return [...new Set(urls)].map(url => ({ url, metadata: null }))
   } finally {
     clearTimeout(timeout)
   }

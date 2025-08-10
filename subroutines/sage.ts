@@ -10,6 +10,7 @@ import {
   LANGUAGE_LABELS,
   prompt,
   type Story,
+  type StoryMetadata,
   StorySchema,
   stories,
 } from '@everynews/schema'
@@ -18,6 +19,7 @@ import normalizeUrl from 'normalize-url'
 import OpenAI from 'openai'
 import PQueue from 'p-queue'
 import { z } from 'zod'
+import type { CuratorResult } from './curators/type'
 
 const client = new OpenAI()
 
@@ -62,9 +64,11 @@ const input = async ({ content, news }: { content: Content; news: Alert }) => {
 export const summarizeContent = async ({
   content,
   news,
+  metadata,
 }: {
   content: Content
   news: Alert
+  metadata?: StoryMetadata
 }): Promise<Omit<Story, 'id' | 'createdAt' | 'updatedAt'> | null> => {
   try {
     const { fullPrompt } = await input({ content, news })
@@ -169,6 +173,7 @@ export const summarizeContent = async ({
       deletedAt: null,
       keyFindings,
       languageCode,
+      metadata: metadata || null,
       originalUrl: content.originalUrl,
       promptId: news.promptId,
       systemMarkedIrrelevant: isSystemIrrelevant,
@@ -199,9 +204,11 @@ export const summarizeContent = async ({
 const summarizeWithCache = async ({
   content,
   news,
+  metadata,
 }: {
   content: Content
   news: Alert
+  metadata?: StoryMetadata
 }): Promise<Story | null> => {
   const url = normalizeUrl(content.url, {
     stripProtocol: true,
@@ -256,7 +263,7 @@ const summarizeWithCache = async ({
   })
 
   // Get the summary without database operations
-  const summary = await summarizeContent({ content, news })
+  const summary = await summarizeContent({ content, news, metadata })
   if (!summary) {
     return null
   }
@@ -271,9 +278,11 @@ const summarizeWithCache = async ({
 
 export const sage = async ({
   contents,
+  curatorResults,
   news,
 }: {
   contents: Content[]
+  curatorResults: CuratorResult[]
   news: Alert
 }): Promise<Story[]> => {
   try {
@@ -288,11 +297,28 @@ export const sage = async ({
       },
     })
 
+    // Create a map of URL to metadata for easy lookup
+    const urlToMetadata = new Map<string, StoryMetadata>()
+    for (const result of curatorResults) {
+      const normalizedUrl = normalizeUrl(result.url, {
+        stripProtocol: true,
+        stripWWW: true,
+      })
+      if (result.metadata) {
+        urlToMetadata.set(normalizedUrl, result.metadata)
+      }
+    }
+
     const queue = new PQueue({ concurrency: 16 })
     const results = await Promise.all(
-      contents.map((content) =>
-        queue.add(async () => summarizeWithCache({ content, news })),
-      ),
+      contents.map((content) => {
+        const normalizedContentUrl = normalizeUrl(content.url, {
+          stripProtocol: true,
+          stripWWW: true,
+        })
+        const metadata = urlToMetadata.get(normalizedContentUrl)
+        return queue.add(async () => summarizeWithCache({ content, news, metadata }))
+      }),
     )
 
     const filteredResults = results.filter(

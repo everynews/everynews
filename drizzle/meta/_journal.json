@@ -28,6 +28,13 @@
       "tag": "0003_secret_frank_castle",
       "version": "7",
       "when": 1752414570983
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1754789345940,
+      "tag": "0004_equal_doctor_faustus",
+      "breakpoints": true
     }
   ],
   "version": "7"
