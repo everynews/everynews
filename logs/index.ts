@@ -1,18 +1,3 @@
-import { LogSnag } from '@logsnag/node'
-
-if (!process.env.LOGSNAG_PROJECT_TOKEN) {
-  throw new Error('LOGSNAG_PROJECT_TOKEN is not set')
-}
-
-if (!process.env.LOGSNAG_PROJECT_ID) {
-  throw new Error('LOGSNAG_PROJECT_ID is not set')
-}
-
-const logsnag = new LogSnag({
-  project: process.env.LOGSNAG_PROJECT_ID,
-  token: process.env.LOGSNAG_PROJECT_TOKEN,
-})
-
 type LogEventOptions = {
   channel: string
   event: string
@@ -28,20 +13,30 @@ export const track = async (options: LogEventOptions) => {
     const isDev = process.env.NODE_ENV === 'development'
     const channel = isDev ? `dev-${options.channel}` : `prod-${options.channel}`
 
-    await logsnag.track({
-      ...options,
+    const payload = {
       channel,
-      tags: options.tags
-        ? Object.fromEntries(
-            Object.entries(options.tags).map(([key, value]) => [
-              // LogSnag has a limit of 160 characters for tags, we truncate to 150
-              String(key).slice(0, 150),
-              String(value).slice(0, 150),
-            ]),
-          )
-        : undefined,
-    })
+      description: options.description,
+      event: options.event,
+      icon: options.icon,
+      notify: options.notify,
+      tags: options.tags,
+      timestamp: new Date().toISOString(),
+      user_id: options.user_id,
+    }
+
+    const severity =
+      typeof options.tags?.type === 'string'
+        ? String(options.tags.type).toLowerCase()
+        : 'info'
+
+    if (severity === 'error') {
+      console.error('LogEvent:', payload)
+    } else if (severity === 'warn' || severity === 'warning') {
+      console.warn('LogEvent:', payload)
+    } else {
+      console.log('LogEvent:', payload)
+    }
   } catch (error) {
-    console.error('Failed to track event to LogSnag:', error)
+    console.error('Failed to log event:', error, { options })
   }
 }

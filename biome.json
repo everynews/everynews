@@ -18,12 +18,12 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
-      "!**/node_modules/**",
-      "!**/.next/**",
-      "!**/.turbo/**",
-      "!**/dist/**",
-      "!**/build/**",
-      "!**/.cache/**"
+      "!**/node_modules",
+      "!**/.next",
+      "!**/.turbo",
+      "!**/dist",
+      "!**/build",
+      "!**/.cache"
     ]
   },
 
