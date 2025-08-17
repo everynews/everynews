@@ -9,7 +9,7 @@ import { toastNetworkError } from '@everynews/lib/error'
 import type { Alert } from '@everynews/schema/alert'
 import { CheckCircle2, Mail } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { toast } from 'sonner'
 
 interface InviteToAlertFormProps {
@@ -25,6 +25,8 @@ export const InviteToAlertForm = ({ alert }: InviteToAlertFormProps) => {
   const [sentCount, setSentCount] = useState(0)
   const [skippedCount, setSkippedCount] = useState(0)
   const router = useRouter()
+  const emailsId = useId()
+  const messageId = useId()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -138,9 +140,9 @@ export const InviteToAlertForm = ({ alert }: InviteToAlertFormProps) => {
   return (
     <form onSubmit={handleSubmit} className='space-y-4'>
       <div className='space-y-2'>
-        <Label htmlFor='emails'>Email addresses</Label>
+        <Label htmlFor={emailsId}>Email addresses</Label>
         <Textarea
-          id='emails'
+          id={emailsId}
           placeholder='email@example.com'
           value={emails}
           onChange={(e) => setEmails(e.target.value)}
@@ -153,9 +155,9 @@ export const InviteToAlertForm = ({ alert }: InviteToAlertFormProps) => {
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='message'>Personal message (optional)</Label>
+        <Label htmlFor={messageId}>Personal message (optional)</Label>
         <Textarea
-          id='message'
+          id={messageId}
           placeholder='I thought you might be interested in this alert...'
           value={message}
           onChange={(e) => setMessage(e.target.value)}

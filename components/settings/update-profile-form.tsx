@@ -8,7 +8,7 @@ import { Input } from '@everynews/components/ui/input'
 import { Label } from '@everynews/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -32,6 +32,8 @@ export const UpdateProfileForm = ({ user }: UpdateProfileFormProps) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [isResettingPassword, setIsResettingPassword] = useState(false)
+  const nameId = useId()
+  const emailId = useId()
 
   const form = useForm<UpdateProfileFormData>({
     defaultValues: {
@@ -101,8 +103,8 @@ export const UpdateProfileForm = ({ user }: UpdateProfileFormProps) => {
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
       <div className='space-y-2'>
-        <Label htmlFor='name'>Name</Label>
-        <Input id='name' {...form.register('name')} placeholder='Your name' />
+        <Label htmlFor={nameId}>Name</Label>
+        <Input id={nameId} {...form.register('name')} placeholder='Your name' />
         {form.formState.errors.name && (
           <p className='text-sm text-destructive'>
             {form.formState.errors.name.message}
@@ -111,9 +113,9 @@ export const UpdateProfileForm = ({ user }: UpdateProfileFormProps) => {
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='email'>Email</Label>
+        <Label htmlFor={emailId}>Email</Label>
         <Input
-          id='email'
+          id={emailId}
           type='email'
           {...form.register('email')}
           placeholder='your@email.com'

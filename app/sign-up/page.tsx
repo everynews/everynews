@@ -17,7 +17,7 @@ import { toastNetworkError } from '@everynews/lib/error'
 import { CheckCircle2, Mail } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { useCallback, useState } from 'react'
+import { useCallback, useId, useState } from 'react'
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('')
@@ -30,6 +30,9 @@ export default function SignUpPage() {
   const [isSignUpComplete, setIsSignUpComplete] = useState(false)
   const searchParams = useSearchParams()
   const callback = searchParams.get('callback')
+  const nameId = useId()
+  const emailId = useId()
+  const passwordId = useId()
 
   const handlePasswordSignUp = useCallback(
     async (e: React.FormEvent) => {
@@ -176,9 +179,9 @@ export default function SignUpPage() {
         <CardContent className='space-y-4'>
           <form onSubmit={handlePasswordSignUp} className='space-y-4'>
             <div className='space-y-2'>
-              <Label htmlFor='name'>Name</Label>
+              <Label htmlFor={nameId}>Name</Label>
               <Input
-                id='name'
+                id={nameId}
                 type='text'
                 placeholder='Elon Musk'
                 value={name}
@@ -187,9 +190,9 @@ export default function SignUpPage() {
               />
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='email'>Email</Label>
+              <Label htmlFor={emailId}>Email</Label>
               <Input
-                id='email'
+                id={emailId}
                 type='email'
                 placeholder='elon@x.com'
                 value={email}
@@ -198,9 +201,9 @@ export default function SignUpPage() {
               />
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='password'>Password</Label>
+              <Label htmlFor={passwordId}>Password</Label>
               <Input
-                id='password'
+                id={passwordId}
                 type='password'
                 placeholder='••••••••'
                 value={password}

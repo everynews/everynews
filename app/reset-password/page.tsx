@@ -16,7 +16,7 @@ import { toastNetworkError } from '@everynews/lib/error'
 import { CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useState } from 'react'
+import { useCallback, useId, useState } from 'react'
 import { toast } from 'sonner'
 
 export default function ResetPasswordPage() {
@@ -24,6 +24,8 @@ export default function ResetPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isPasswordReset, setIsPasswordReset] = useState(false)
+  const passwordId = useId()
+  const confirmPasswordId = useId()
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
   const router = useRouter()
@@ -122,9 +124,9 @@ export default function ResetPasswordPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className='space-y-4'>
             <div className='space-y-2'>
-              <Label htmlFor='password'>New Password</Label>
+              <Label htmlFor={passwordId}>New Password</Label>
               <Input
-                id='password'
+                id={passwordId}
                 type='password'
                 placeholder='••••••••'
                 value={password}
@@ -137,9 +139,9 @@ export default function ResetPasswordPage() {
               </p>
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='confirmPassword'>Confirm Password</Label>
+              <Label htmlFor={confirmPasswordId}>Confirm Password</Label>
               <Input
-                id='confirmPassword'
+                id={confirmPasswordId}
                 type='password'
                 placeholder='••••••••'
                 value={confirmPassword}

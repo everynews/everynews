@@ -25,7 +25,7 @@ import type { User } from '@everynews/schema/user'
 import { CheckCircle2, Mail } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { toast } from 'sonner'
 
 interface InvitationAcceptanceProps {
@@ -48,6 +48,7 @@ export const InvitationAcceptance = ({
   const [isEmailSent, setIsEmailSent] = useState(false)
   const [isSubscribing, setIsSubscribing] = useState(false)
   const router = useRouter()
+  const emailId = useId()
 
   // If user is already subscribed
   if (isAlreadySubscribed) {
@@ -234,9 +235,9 @@ export const InvitationAcceptance = ({
 
           <form onSubmit={handleSubmit} className='space-y-4'>
             <div className='space-y-2'>
-              <Label htmlFor='email'>Enter your email to accept</Label>
+              <Label htmlFor={emailId}>Enter your email to accept</Label>
               <Input
-                id='email'
+                id={emailId}
                 type='email'
                 placeholder='Enter your email'
                 value={email}

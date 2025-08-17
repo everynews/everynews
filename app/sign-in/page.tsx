@@ -17,7 +17,7 @@ import { toastNetworkError } from '@everynews/lib/error'
 import { CheckCircle2, Mail } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useState } from 'react'
+import { useCallback, useId, useState } from 'react'
 import { toast } from 'sonner'
 
 export default function SignInPage() {
@@ -27,6 +27,8 @@ export default function SignInPage() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [isMagicLinkLoading, setIsMagicLinkLoading] = useState(false)
   const [isEmailSent, setIsEmailSent] = useState(false)
+  const emailId = useId()
+  const passwordId = useId()
   const searchParams = useSearchParams()
   const callback = searchParams.get('callback')
   const router = useRouter()
@@ -133,9 +135,9 @@ export default function SignInPage() {
           <CardContent className='space-y-4'>
             <form onSubmit={handlePasswordSignIn} className='space-y-4'>
               <div className='space-y-2'>
-                <Label htmlFor='email'>Email</Label>
+                <Label htmlFor={emailId}>Email</Label>
                 <Input
-                  id='email'
+                  id={emailId}
                   type='email'
                   placeholder='elon@x.com'
                   value={email}
@@ -145,7 +147,7 @@ export default function SignInPage() {
               </div>
               <div className='space-y-2'>
                 <div className='flex items-center justify-between'>
-                  <Label htmlFor='password'>Password</Label>
+                  <Label htmlFor={passwordId}>Password</Label>
                   <Link
                     href='/forgot-password'
                     className='text-xs text-orange-500 hover:underline'
@@ -154,7 +156,7 @@ export default function SignInPage() {
                   </Link>
                 </div>
                 <Input
-                  id='password'
+                  id={passwordId}
                   type='password'
                   placeholder='••••••••'
                   value={password}

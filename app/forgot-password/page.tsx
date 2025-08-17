@@ -15,12 +15,13 @@ import { Label } from '@everynews/components/ui/label'
 import { toastNetworkError } from '@everynews/lib/error'
 import { CheckCircle2, Mail } from 'lucide-react'
 import Link from 'next/link'
-import { useCallback, useState } from 'react'
+import { useCallback, useId, useState } from 'react'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isEmailSent, setIsEmailSent] = useState(false)
+  const emailId = useId()
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -92,9 +93,9 @@ export default function ForgotPasswordPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className='space-y-4'>
             <div className='space-y-2'>
-              <Label htmlFor='email'>Email</Label>
+              <Label htmlFor={emailId}>Email</Label>
               <Input
-                id='email'
+                id={emailId}
                 type='email'
                 placeholder='elon@x.com'
                 value={email}
