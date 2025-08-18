@@ -356,7 +356,7 @@ export const processAlert = async (item: Alert) => {
       slow_stories: slowChannelFilteredStories.length,
       slow_subscribers: slowChannelSubscribers.length,
       type: 'info',
-      urls_found: urls.length,
+      urls_found: curatorResults.length,
       wait_type: item.wait.type,
     },
   })
