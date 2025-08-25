@@ -9,7 +9,6 @@ const HackerNewsStoriesSchema = z.array(z.number())
 const HackerNewsStorySchema = z.object({
   by: z.string(),
   id: z.number(),
-  score: z.number(),
   time: z.number(),
   title: z.string(),
   type: z.string(),

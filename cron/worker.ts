@@ -16,6 +16,7 @@ import { herald } from '@everynews/subroutines/herald'
 import { reaper } from '@everynews/subroutines/reaper'
 import { sage } from '@everynews/subroutines/sage'
 import { and, eq, gte, isNull } from 'drizzle-orm'
+import PQueue from 'p-queue'
 import type { z } from 'zod'
 
 // Constants
@@ -228,6 +229,89 @@ export const processAlert = async (item: Alert) => {
   // Handle slow channel delivery
   let anySlowChannelSucceeded = false
   if (shouldSendSlowChannels && slowChannelSubscribers.length > 0) {
+    // If HN Top, refresh scores and sort once for all slow-channel recipients
+    let storiesForSlow = slowChannelFilteredStories
+    if (item.strategy.provider === 'hntop' && storiesForSlow.length > 0) {
+      const start = Date.now()
+      const originalOrder = storiesForSlow
+      const items = originalOrder.map((story, index) => ({
+        hnId: story.metadata?.hackerNewsId as number | undefined,
+        index,
+        story,
+      }))
+      const ids = items
+        .map((i) => i.hnId)
+        .filter((id): id is number => typeof id === 'number')
+
+      let usedFallback = false
+      let hits = 0
+      if (ids.length > 0) {
+        const queue = new PQueue({ concurrency: 8 })
+        const fetchWithTimeout = async (id: number) => {
+          const controller = new AbortController()
+          const timeout = setTimeout(() => controller.abort(), 2000)
+          try {
+            const res = await fetch(
+              `https://hacker-news.firebaseio.com/v0/item/${id}.json`,
+              { signal: controller.signal },
+            )
+            const json = (await res.json()) as any
+            const score = typeof json?.score === 'number' ? json.score : null
+            const time = typeof json?.time === 'number' ? json.time : 0
+            if (score == null) return null
+            return { id, score, time }
+          } catch {
+            return null
+          } finally {
+            clearTimeout(timeout)
+          }
+        }
+
+        const results = await queue.addAll(
+          ids.map((id) => () => fetchWithTimeout(id)),
+        )
+        const scoreMap = new Map<number, { score: number; time: number }>()
+        for (const r of results)
+          if (r) scoreMap.set(r.id, { score: r.score, time: r.time })
+        hits = scoreMap.size
+
+        if (hits > 0) {
+          storiesForSlow = [...items]
+            .sort((a, b) => {
+              const sa =
+                a.hnId != null ? (scoreMap.get(a.hnId)?.score ?? -1) : -1
+              const sb =
+                b.hnId != null ? (scoreMap.get(b.hnId)?.score ?? -1) : -1
+              if (sb !== sa) return sb - sa
+              const ta = a.hnId != null ? (scoreMap.get(a.hnId)?.time ?? 0) : 0
+              const tb = b.hnId != null ? (scoreMap.get(b.hnId)?.time ?? 0) : 0
+              if (tb !== ta) return tb - ta
+              return a.index - b.index
+            })
+            .map((i) => i.story)
+        } else {
+          usedFallback = true
+        }
+      } else {
+        usedFallback = true
+      }
+
+      await track({
+        channel: 'worker',
+        description: `HN Top: ${usedFallback ? 'fallback' : 'sorted by score'} for slow channels`,
+        event: 'HN Top Sort Prepared',
+        icon: usedFallback ? '⏭️' : '🏁',
+        tags: {
+          alert_id: item.id,
+          alert_name: item.name,
+          fetched_scores: hits,
+          ms: Date.now() - start,
+          requested_scores: ids.length,
+          type: 'info',
+        },
+      })
+    }
+
     await track({
       channel: 'worker',
       description: `Sending ${slowChannelFilteredStories.length} stories to ${slowChannelSubscribers.length} slow channel subscribers`,
@@ -244,7 +328,7 @@ export const processAlert = async (item: Alert) => {
 
     anySlowChannelSucceeded = await deliverToSubscribers(
       slowChannelSubscribers,
-      slowChannelFilteredStories,
+      storiesForSlow,
       item,
       allSubscribers.length,
       'slow',
