@@ -136,8 +136,8 @@ export default async function StoryPage({
         </Card>
       )}
       <div className='pt-6'>
-        <div className='flex justify-between items-center'>
-          <div className='flex gap-2'>
+        <div className='flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center'>
+          <div className='flex gap-2 flex-wrap'>
             <Link
               href={`${storyData.originalUrl}${storyData.originalUrl.includes('?') ? '&' : '?'}utm_source=every.news`}
               target='_blank'
