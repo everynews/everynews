@@ -11,6 +11,14 @@ type LogEventOptions = {
 export const track = async (options: LogEventOptions) => {
   try {
     const isDev = process.env.NODE_ENV === 'development'
+    const isCI =
+      process.env.CI === 'true' ||
+      process.env.GITHUB_ACTIONS === 'true' ||
+      process.env.ACTIONS === 'true'
+
+    // Do not emit any logs in CI (e.g., GitHub Actions) to avoid leakage
+    if (isCI) return
+
     const channel = isDev ? `dev-${options.channel}` : `prod-${options.channel}`
 
     const payload = {
@@ -37,6 +45,12 @@ export const track = async (options: LogEventOptions) => {
       console.log('LogEvent:', payload)
     }
   } catch (error) {
-    console.error('Failed to log event:', error, { options })
+    const isCI =
+      process.env.CI === 'true' ||
+      process.env.GITHUB_ACTIONS === 'true' ||
+      process.env.ACTIONS === 'true'
+    if (!isCI) {
+      console.error('Failed to log event:', error)
+    }
   }
 }

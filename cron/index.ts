@@ -122,11 +122,23 @@ const GLOBAL_TIMEOUT = 30 * 60 * 1000
 
 withTimeout(main(), GLOBAL_TIMEOUT, 'Global cron job timeout after 30 minutes')
   .then(() => {
-    console.log('Cron job completed successfully')
+    const isCI =
+      process.env.CI === 'true' ||
+      process.env.GITHUB_ACTIONS === 'true' ||
+      process.env.ACTIONS === 'true'
+    if (!isCI) {
+      console.log('Cron job completed successfully')
+    }
     process.exit(0)
   })
   .catch((error) => {
-    console.error('Cron job failed:', error)
+    const isCI =
+      process.env.CI === 'true' ||
+      process.env.GITHUB_ACTIONS === 'true' ||
+      process.env.ACTIONS === 'true'
+    if (!isCI) {
+      console.error('Cron job failed:', error)
+    }
     track({
       channel: 'cron',
       event: 'Cron Job Failed',
